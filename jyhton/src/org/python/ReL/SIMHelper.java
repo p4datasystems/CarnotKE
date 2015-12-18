@@ -1,0 +1,558 @@
+package org.python.ReL;
+
+import java.sql.SQLException;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.python.antlr.base.expr;
+
+import org.python.ReL.SPARQLHelper;
+import org.python.ReL.PyRelConnection;
+
+public class SIMHelper {
+    PyRelConnection connection = null; 
+    SPARQLHelper sparqlHelper = null; 
+    String schemaString = null;
+    public static class EVAAttribute {
+        public String dvaName;
+        public List<String> evaAttributeNames;
+
+        public EVAAttribute(String dvaName, List<String> evaAttributeNames) {
+            this.dvaName = dvaName;
+            this.evaAttributeNames = evaAttributeNames;
+        }
+    }
+
+    /**
+     * Build a SIHHelper to process SIM commands and execute them against a connection to
+     * an Oracle semantic DB.
+     *
+     * Note:  The connection should not be closed within this class, as it will be closed
+     * by its parent (invoker).
+     *
+     * @param connection
+     */
+    public SIMHelper(PyRelConnection conn) {
+        connection = conn; 
+        sparqlHelper = new SPARQLHelper(connection);
+        schemaString = sparqlHelper.getSchemaString();
+    }
+
+    public String executeFrom(String className, List<String> dvaAttribs, List<String> evaAttribs,
+                              Map<String, String> whereAttrValues) throws SQLException {
+        // If form is EXECUTE FROM PERSONT SELECT *
+        if (dvaAttribs.size() > 0 && dvaAttribs.get(0).equals("*")) {
+            List<String> allDvas = SPARQLDoer.getAllAttributes(connection, className, "DatatypeProperty");
+            dvaAttribs.remove(0); // remove "*" element
+            allDvas.addAll(dvaAttribs);
+            dvaAttribs = allDvas;
+        }
+
+        // assume only a single 'dva OF eva' form, for now
+        List<List<String>> evaOfChains = new ArrayList<List<String>>();
+        //String dvaOfEva = null;
+        // the variable name for the dva e.g. lastnameOFspouse
+        //String dvaOfEvaVar = dvaOfEva + "OF" + eva;
+        for (String evaAttr : evaAttribs) {
+            // e.g.  ["firstname", "OF", "spouse", "OF", "children"]
+            List<String> evaOfChain = trimAndSplitOnDelim(evaAttr, " ");
+            // evaOfChain.removeAll(Collections.singletonList("OF"));
+            evaOfChain.removeAll(Collections.singletonList("OF"));
+            Collections.reverse(evaOfChain);
+            evaOfChains.add(evaOfChain); // e.g.  ["children", "spouse", "firstname"]
+        }
+
+        String colNames = "";
+        Map<String, String> colNameToLabelMap = new HashMap<String, String>();
+        String qBody = "	GRAPH <" + className + "_SCHEMA" + "> { ?indiv rdf:type :" + className + " }\n";
+        for (int i = 0; i < dvaAttribs.size(); i++) {
+            String attrURI = dvaAttribs.get(i);
+            String attrName = getName(attrURI);
+            if (i == 0) {
+                colNames += " " + attrName;
+            } else {
+                colNames += ", " + attrName;
+            }
+            qBody += "	?indiv :" + attrName + " ?" + attrName + " .\n";
+        }
+        for (String whereAttr : whereAttrValues.keySet()) {
+            qBody += "	?indiv :" + whereAttr + " :" + whereAttrValues.get(whereAttr) + " .\n";
+        }
+        if (evaOfChains.size() > 0) {
+            qBody += "   OPTIONAL { \n";
+            int i = -1;
+            int h = -1;
+            String previous_evaOfChain0 = "";
+            for (List<String> evaOfChain : evaOfChains) {
+
+                String evaColName = ""; // the retrieval last var name
+                for (int l = evaOfChain.size() - 1; l >= 0; l--) {
+                    // evaColName = ((evaColName.length() == 0) ? "" : evaColName + "OF") + evaOfChain.get(l);
+                    evaColName = ((evaColName.length() == 0) ? "" : evaColName + "AT") + evaOfChain.get(l);
+                }
+				// The following will only work if evaOfChains is sorted on the first element of each list.
+                if( previous_evaOfChain0.equals("") || ! previous_evaOfChain0.equals(evaOfChain.get(0))) i++;
+                h++;
+                previous_evaOfChain0 = evaOfChain.get(0);
+                String priorVarName = null; // previous var
+                String thisVarName = "?x" + i + "_0";
+                // e.g. lastName == "firstnameOFspouseOFchildren"
+                qBody += "      ?indiv :" + evaOfChain.get(0) + " " + thisVarName + " .\n";
+                for (int j = 1; j < evaOfChain.size(); j++) {
+                    priorVarName = "x" + i + "_" + (j - 1);
+                    thisVarName = "x" + h + "_" + j;
+                    if (j == evaOfChain.size() - 1) {
+                        if (colNames.length() > 0) {
+                            colNames += ", ";
+                        }
+                        colNames += thisVarName;
+                        colNameToLabelMap.put(thisVarName.toUpperCase(), evaColName.toUpperCase());
+                    }
+                    qBody += "      ?" + priorVarName + " :" + evaOfChain.get(j) + " ?" + thisVarName + " .\n";
+                }
+            }
+            qBody += "      } \n";
+        }
+        String query = "SELECT DISTINCT " + colNames + "\n from table(\n" +
+            "   sem_match('select * where {\n" +
+            qBody;
+        query += "   }',\n" +
+                "	SEM_MODELS('" + connection.getModel() + "'), null,\n" +
+                "	SEM_ALIASES( SEM_ALIAS('', '" + connection.getNamespace() + "')), null) )";
+        // System.out.println(query);
+        // SPARQLDoer.executeAndPrintRdfSelect(connection, query, colNameToLabelMap);
+        return query;
+    }
+
+    /**
+     * Trim and split String on a delimeter string.
+     *
+     * 1. trim leading/trailing spaces
+     * 2. split to parts on " "
+     * 3. trim each part, removing empty parts
+     *
+     * @param s
+     * @return trimmed split parts
+     */
+    private List<String> trimAndSplitOnDelim(String s, String delim) {
+        String r = s.trim();
+        String[] parts = s.split(delim);
+        List<String> parts2 = new ArrayList<String>();
+        for (String part : parts) {
+            part = part.trim();
+            if (part.length() > 0) {
+                parts2.add(part);
+            }
+        }
+        return parts2;
+    }
+
+    public static EVAAttribute getEvaAttribute(String evaAttributeStr) {
+        String[] tokens = evaAttributeStr.split(" of");
+        //System.out.println("Num of tokens "+tokens.length);
+        List<String> names = new ArrayList<String>();
+        for (int i = 1; i < tokens.length; i++)
+            names.add(tokens[i].trim());
+
+        EVAAttribute eva = new EVAAttribute(tokens[0].trim(), names);
+        //System.out.println("Created attribute "+eva.dvaName+" "+names.size());
+        return eva;
+    }
+
+    public static void printList(List<String> strings) {
+        //String []a = strings.toArray();
+        for (int i = 0; i < strings.size(); i++)
+            System.out.print(strings.get(i) + " ");
+        System.out.println();
+    }
+
+    /*
+     * XXX Might not need these 
+     * public static String getModelName(String className) {
+        return className + "_" + connection.getUsername();
+    }
+
+    public static String getRulebaseEntry(String className) {
+        return "'" + className + "_" + connection.getUsername() + "_rb'";
+    }
+
+    public static String getAliasEntry(String className) {
+        return "SEM_ALIAS('" + className + "URI', 'http://www.example.org/" + className + "/')";
+    }*/
+
+    /*
+ * For a given list of bases, populated the database where className is a subclass
+ * of the entries in the list of bases
+ */
+
+    public void executeBaseInsertion(String className, java.util.List<expr> bases) {
+        try {
+            for (expr base : bases) {
+                //populate the subclass data.
+                SPARQLDoer.insertObjectPropQuad(connection, className.trim(), "rdfs:subClassOf",
+                                           base.getText().trim());
+
+            }
+        } catch (Exception e) {
+            System.out.println("Database error ");
+        }
+    }
+    /*
+     * Insert an instance of a particular class into the database.
+     * This is a triple <instance, rdf:type, class>
+     */
+
+    public void executeInstance(String instanceName, String className) {
+        try {
+            SPARQLDoer.insertObjectPropQuad(connection, instanceName.toUpperCase().trim(), "rdf:type", className.trim());
+        } catch (Exception e) {
+            System.out.println("Database error");
+        }
+    }
+    /*
+     * Insert class member restrictions into the database.
+     */
+
+    public void executeMemberRestriction(ArrayList<String> data, String className) {
+        try {
+            String restriction = data.get(1);
+            String variable = data.get(0);
+            if (restriction.equals("Inverse")) {
+                SPARQLDoer.insertObjectPropQuad(connection, variable, "owl:inverseOf", variable);
+                SPARQLDoer.insertObjectPropQuad(connection, "INVERSEIS=" + variable, "owl:inverseOf", variable);
+            }
+            if (restriction.equals("Required")) {
+                String re = SPARQLDoer.getNextAnonNodeForModel(connection);
+                SPARQLDoer.insertObjectPropQuad(connection, re, "rdf:type", "owl:Restriction");
+                SPARQLDoer.insertObjectPropQuad(connection, re, "owl:onProperty", variable);
+                // Tmp Comment SPARQLDoer.insertDataPropQuad(connection, re, "owl:qualifiedCardinality", "1");
+                SPARQLDoer.insertObjectPropQuad(connection, re, "owl:onDataRange", "xsd:nonNegativeInteger");
+                SPARQLDoer.insertObjectPropQuad(connection, className, "rdfs:subClassOf", re);
+            }
+            if (restriction.equals("MV")) {
+
+
+            }
+        } catch (Exception e) {
+            System.out.println("Error while trying to insert class member data restrictions: \n" +
+                    e.getMessage());
+        }
+    }
+
+    public void executeMemberData(String instance, String type, String name, String value) {
+        try {
+            //build attribute type
+            StringBuilder s = new StringBuilder();
+            s.append('"' + value + '"' + "^^");
+            if (type == "str") {
+                s.append("xsd:string");
+            } else if (type == "int") {
+                s.append("xsd:integer");
+            } else if (type == "bool") {
+                s.append("xsd:boolean");
+            } else {
+                s.append(type);
+            }
+            SPARQLDoer.insertObjectPropQuad(connection, instance.toUpperCase().trim(), name, s.toString());
+        } catch (Exception e) {
+            System.out.println("Error occured when adding member data.\n" +
+                    e.getMessage());
+        }
+    }
+
+    public int executeClass(String className, List<String> attributeTypes, List<String> attributeValues, int linenumber, int guid, String scname) 
+    {
+        try{
+        //className = className.trim();
+        String sqlstmt = "";
+
+        String namedGraph = className;
+        String modelName = "RDF_MODEL_" + connection.getUsername().toUpperCase();
+        String quadName = modelName + ":<http://www.example.org/" + namedGraph + ">";
+        String type = "string";
+
+        SPARQLDoer.insertObjectPropQuad(connection, className, "rdf:type", "rdfs:Class");
+
+        if (scname != null) {
+            SPARQLDoer.insertObjectPropQuad(connection, className, "rdfs:subClassOf", scname.trim());
+        }
+
+        for (int i = 0; i < attributeTypes.size(); ++i) {
+
+            sqlstmt = "";
+            String attrType = attributeTypes.get(i).trim();
+            if (attrType.equals("ClassComment")) {
+                String value = attributeValues.get(i).substring(1, attributeValues.get(i).length() - 1);
+                // Tmp Comment SPARQLDoer.insertDataPropQuad(connection, className, "rdfs:comment", value);
+
+            } else {
+
+                // e.g. [dva, personid, "Description", INTEGERDATA, REQUIRED]
+                List<String> attrFeatures = trimAndSplitOnDelim(attributeValues.get(i), ":");
+                String dvaOrEva = attrFeatures.remove(0);
+                String attrName = attrFeatures.remove(0);
+
+                // if this is a description, insert with rdfs:comment
+                String nextFeature = attrFeatures.get(0);
+                if (nextFeature.startsWith("\"") && nextFeature.endsWith("\"")) {
+                    String description = nextFeature.substring(1, nextFeature.length() - 1);
+                    // Tmp Comment SPARQLDoer.insertDataPropQuad(connection, attrName, "rdfs:comment", description);
+                    attrFeatures.remove(0); // pop
+                }
+
+                if (attrType.equals("dvaAttribute")) {
+                    if (connection.getDebug() == "debug") System.out.println("Adding dvaAttribute: " + attrName);
+
+                    //Getting proper type from "INTEGERDATA" e.g. INTEGER
+                    String attrRange = attrFeatures.remove(0);
+                    type = attrRange.substring(0, attrRange.lastIndexOf("DATA"));
+                    //Type checking: Have only done integer and string
+                    if (type.toLowerCase().equals("numeric") || type.toLowerCase().equals("decimal") ||
+                        type.toLowerCase().equals("real")) {
+                        type = "xsd:decimal"; // was decimal
+                    } else if (type.toLowerCase().equals("string")) {
+                        type = "xsd:string"; // was string
+                    } else if (type.toLowerCase().equals("integer")) {
+                        type = "xsd:integer"; // was integer
+                    } else if (type.toLowerCase().equals("boolean")) {
+                        type = "xsd:boolean";
+                    } else if (type.toLowerCase().equals("date")) {
+                        type = "xsd:date"; // was integer
+                    } else {
+                        type = "xsd:decimal"; // was decimal
+                    }
+                    // if there is no MV present, then assume this is a single-valued attribute
+                    boolean multiValued = false;
+                    SPARQLDoer.insertObjectPropQuad(connection, attrName, "rdf:type", "owl:DatatypeProperty");
+                    SPARQLDoer.insertObjectPropQuad(connection, attrName, "rdfs:domain", className);
+                    SPARQLDoer.insertObjectPropQuad(connection, attrName, "rdf:range", "rdfs:" + type);
+
+                    while (attrFeatures.size() > 0) {
+                        String attrFeature = attrFeatures.remove(0);
+                        if (attrFeature.toLowerCase().contains("mv=")) {
+                            multiValued = true;
+                            SPARQLDoer.insertObjectPropQuad(connection, attrFeatures.get(1), "hasAttr", attrFeature);
+
+                        } else if ("REQUIRED".equals(attrFeature)) {
+                            String restriction = SPARQLDoer.getNextAnonNodeForModel(connection);
+                            SPARQLDoer.insertObjectPropQuad(connection, restriction, "rdf:type", "owl:Restriction");
+                            SPARQLDoer.insertObjectPropQuad(connection, restriction, "owl:onProperty", attrName);
+                            // Tmp Comment SPARQLDoer.insertDataPropQuad(connection, restriction, "owl:qualifiedCardinality", "1");
+                            SPARQLDoer.insertObjectPropQuad(connection, restriction, "owl:onDataRange", "xsd:nonNegativeInteger");
+                            SPARQLDoer.insertObjectPropQuad(connection, className, "rdfs:subClassOf", restriction);
+                        }
+                    }
+                    if (!multiValued) {
+                        SPARQLDoer.insertObjectPropQuad(connection, attrName, "rdf:type", "owl:FunctionalProperty");
+                    }
+
+                } else if (attrType.equals("evaAttribute")) {
+
+                    System.out.println("Inserting evaAttribute: ");
+                    String range = attrFeatures.remove(0);
+                    boolean multiValued = false;
+                    SPARQLDoer.insertObjectPropQuad(connection, attrName, "rdf:type", "owl:ObjectProperty");
+                    SPARQLDoer.insertObjectPropQuad(connection, attrName, "rdfs:domain", className);
+                    SPARQLDoer.insertObjectPropQuad(connection, attrName, "rdfs:range", range);
+
+                    while (attrFeatures.size() > 0) {
+                        String attrFeature = attrFeatures.remove(0);
+                        if (attrFeature.toLowerCase().contains("inverseis")) {
+                            String[] inverseArray = attrFeature.split("=");
+                            String inverseIs = inverseArray[1];
+                            SPARQLDoer.insertObjectPropQuad(connection, attrFeature, "owl:inverseOf", inverseIs);
+                            SPARQLDoer.insertObjectPropQuad(connection, inverseIs, "owl:inverseOf", attrName);
+                        } else if (attrFeature.toLowerCase().contains("mv=")) {
+                            multiValued = true;
+                            SPARQLDoer.insertObjectPropQuad(connection, attrName, "hasAttr", attrFeature);
+                        }
+                    }
+                    if (!multiValued) {
+                        SPARQLDoer.insertObjectPropQuad(connection, attrName, "rdf:type", "owl:FunctionalProperty");
+                    }
+                }
+            }
+        }
+            
+        }
+        catch (SQLException e) {
+            System.err.println("There was an error while trying to insert a class into the database");
+            e.printStackTrace();
+                
+        }
+                  
+        return linenumber;
+    }
+
+
+    // public int executeInsert(String className, List<String> attributeNames, List<String> attributeValues, String fromClause, String url, String pword, int linenumber, int guid) throws SQLException {    
+	public int executeInsert(String className, List<String> attributeNames, List<String> attributeValues, String fromClause) throws SQLException {
+
+        className = className.trim();
+        String instanceID = null;
+
+        if (fromClause != null && fromClause.length() > 0) {
+            // e.g. fromClause == "FROM male WHERE id := 4 name := 'Jack'"
+            List<String> fromParts = trimAndSplitOnDelim(fromClause, " ");
+
+            String superClass = fromParts.get(1);
+            Map<String, Object> attrValues = new HashMap<String, Object>();
+            for (int i = 3; i < fromParts.size(); i = i + 3) {
+                attrValues.put(fromParts.get(i), fromParts.get(i + 2));
+            }
+            List<String> instanceIDs = sparqlHelper.getInstancesWithObjectValue(superClass, superClass, attrValues);
+            if (instanceIDs.size() > 0) {
+                instanceID = instanceIDs.get(0); // should only be one
+            }
+
+        } else {
+            instanceID = SPARQLDoer.getNextAnonNodeForInd(connection);
+        }
+        
+        String[] classes = className.split("\\^");
+        String pType = "rdf:type";
+        String oType = "rdf:class";
+        for(String c : classes) {
+			sparqlHelper.insertSchemaQuad("", c, pType, oType);
+			pType = "rdf:subclassOf";
+			oType = c;
+			className = c;
+		}
+
+        for (int i = 0; i < attributeNames.size(); ++i) {
+            String attrName = attributeNames.get(i);
+            String attrValue = attributeValues.get(i).trim();
+            if (attrValue.contains("WITH")) {
+                // EVA
+                // e.g. PERSONT WITH firstname Bill zipcode 78705]
+                String[] withParts = attrValue.split("\\s+"); // e.g. [PERSONT WITH firstname DummyBill zipcode 78705]
+                String inverse = withParts[0];
+                String withClass = withParts[1];
+                Map<String, Object> attrValues = new HashMap<String, Object>();
+                for (int j = 3; j < withParts.length; j = j + 2) {
+                    String attr = withParts[j];
+                    String value = withParts[j + 1];
+                    attrValues.put(attr, value);
+                }
+                List<String> members = sparqlHelper.getInstancesWithObjectValue(withClass, withClass, attrValues);
+                for (String member : members) {
+					List<String> ObjectPropertyExists1 = SPARQLDoer.getObjectsWithGraph(connection, className + "_" + schemaString, "<" + connection.getNamespace() + attrName + ">", "rdf:type");
+					List<String> ObjectPropertyExists2 = SPARQLDoer.getObjectsWithGraph(connection, className + "_" + schemaString, attrName, "rdf:type");
+					if ( ! ObjectPropertyExists1.contains("ObjectProperty") &&  ! ObjectPropertyExists2.contains("ObjectProperty")) {
+                        sparqlHelper.insertSchemaQuad(className, attrName, "rdf:type", "owl:ObjectProperty");
+                        sparqlHelper.insertSchemaQuad(className, attrName, "rdfs:domain", className);
+                        sparqlHelper.insertSchemaQuad(className, attrName, "rdf:range", withClass);
+					}
+					ObjectPropertyExists1 = SPARQLDoer.getObjectsWithGraph(connection, withClass + "_" + schemaString, "<" + connection.getNamespace() + inverse + ">", "rdf:type");
+					ObjectPropertyExists2 = SPARQLDoer.getObjectsWithGraph(connection, withClass + "_" + schemaString, inverse, "rdf:type");
+					if ( ! ObjectPropertyExists1.contains("ObjectProperty") &&  ! ObjectPropertyExists2.contains("ObjectProperty")) {
+                        sparqlHelper.insertSchemaQuad(withClass, inverse, "rdf:type", "owl:ObjectProperty");
+                        sparqlHelper.insertSchemaQuad(withClass, inverse, "rdfs:domain", withClass);
+                        sparqlHelper.insertSchemaQuad(withClass, inverse, "rdf:range", className);
+					}
+                    sparqlHelper.insertQuad(className, instanceID, attrName, member, false);
+                    sparqlHelper.insertQuad(withClass, member, inverse, instanceID, false);
+                }
+                // The following statement puts the data value into the quad store so that SQL joins will work.
+				sparqlHelper.insertQuad(className, instanceID, attrName, withParts[4], false);
+            } 
+/*
+            else if (attrValue.contains("OF")) {
+                // RDVA
+                // e.g. DATE OF DEPTNO '1/1/1'
+                String[] ofParts = attrValue.split("\\s+");
+                System.out.println("Processing of Relationship Attribute TBD, attrName, attrValue: " + ofParts);
+                sparqlHelper.insertQuad(className, ofParts[0], "rdf:subPropertyOf", ofParts[0]);
+                sparqlHelper.insertQuad(className, ofParts[0], ofParts[0], ofParts[3]);
+            }
+*/
+            else {
+                // DVA
+                sparqlHelper.insertQuad(className, instanceID, attrName, attrValue, false);
+				List<String> TypeExists = SPARQLDoer.getObjectsWithGraph(connection, className + "_" + schemaString, instanceID, "rdf:type");
+				if ( ! TypeExists.contains(className)) { 
+					sparqlHelper.insertSchemaQuad(className, instanceID, "rdf:type", className);
+				}
+				
+				List<String> DatatypePropertyExists = SPARQLDoer.getObjectsWithGraph(connection, className + "_" + schemaString
+				, "<" + connection.getNamespace() + attrName + ">", "rdf:type");
+				if ( ! DatatypePropertyExists.contains("DatatypeProperty")) {
+					sparqlHelper.insertSchemaQuad(className, attrName, "rdf:type", "owl:DatatypeProperty");
+					sparqlHelper.insertSchemaQuad(className, attrName, "rdfs:domain", className);
+					sparqlHelper.insertSchemaQuad(className, attrName, "rdf:range", "rdfs:\"^^xsd:string");
+				    // sparqlHelper.insertQuad(className, attrName, "rdf:type", className);
+					// sparqlHelper.insertSchemaQuad(className, attr, "rdf:type", "owl:FunctionalProperty");
+				}
+            }
+        }
+        return 1;
+    }
+
+
+    public void executeModify(String className, Map<String, String> attributeValues,
+                              Map<String, Object> whereAttrValues, int limit) throws SQLException {
+
+        SPARQLHelper sparqlHelper = null;   
+        sparqlHelper = new SPARQLHelper(connection);
+        className = className.trim();
+        List<String> indivs = SPARQLDoer.getMembersWithAttrValues(connection, className, whereAttrValues);
+
+        if (indivs.size() > limit) {
+            throw new SQLException("Limit exceeded. Allowed " + limit + ". Found " + indivs.size() + " inidividuals");
+        }
+
+        for (String indiv : indivs) {
+            for (String attr : attributeValues.keySet()) {
+                String value = attributeValues.get(attr);
+                if (value.contains("WITH")) {
+                    // Process value of form "PERSONT WITH   firstname Bill  lastname Dawer"
+                    List<String> parts = trimAndSplitOnDelim(value, " ");
+                    String modifier = null;
+                    if (parts.get(0).equals("INCLUDE") || (parts.get(0).equals("EXCLUDE"))) {
+                        modifier = parts.get(0);
+                        parts = parts.subList(1, parts.size());
+                    }
+                    String withClass = parts.get(0);
+                    Map<String, Object> withAttrVals = new HashMap<String, Object>();
+                    for (int i = 2; i < parts.size(); i = i + 2) {
+                        withAttrVals.put(parts.get(i), parts.get(i + 1));
+                    }
+                    List<String> valuesToAdd = SPARQLDoer.getMembersWithAttrValues(connection, withClass, withAttrVals);
+                    List<String> originalValues = new ArrayList<String>();
+                    // if this is an EXCLUDE, remember original values
+                    if (modifier != null) {
+                        if (modifier.equals("EXCLUDE")) {
+                            originalValues = SPARQLDoer.getObjects(connection, indiv, attr);
+                            originalValues.removeAll(valuesToAdd);
+                            valuesToAdd = originalValues;
+                        }
+                        // if INCLUDE, add to original values:  don't delete originals
+                        if (!modifier.equals("INCLUDE")) {
+                            SPARQLDoer.deleteQuadsWithSubjectProp(connection, indiv, attr);
+                        }
+                    }
+                    for (String valueIndiv : valuesToAdd) {
+                        // SPARQLDoer.insertEvaValue(connection, indiv, attr, valueIndiv);
+                        // insertQuad(String graph, String subject, String predicate, String object)
+                        sparqlHelper.insertQuad(className, indiv, attr, valueIndiv, true);
+                        sparqlHelper.insertSchemaQuad(className, attr, "inverse_class", "emp");
+                    }
+                } else {
+                    // not WITH:  single dva value
+                    SPARQLDoer.deleteQuadsWithSubjectProp(connection, indiv, attr);
+                    // Tmp Comment SPARQLDoer.insertDataPropQuad(connection, indiv, attr, value);
+                }
+            }
+        }
+    }
+
+    private static String getName(String str) {
+        return str.substring(str.lastIndexOf("#") + 1);
+    }
+
+}
+

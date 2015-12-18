@@ -1,0 +1,204 @@
+package org.python.ReL;
+
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.python.core.PyObject;
+import org.python.ReL.SPARQLDoer;
+import org.python.ReL.PyRelConnection;
+
+/**
+ * SPARQLHelper is a set of utility functions that are useful
+ * for generating sparql, and executing the sparql on a database.
+ */
+public class SPARQLHelper {
+    PyRelConnection connection = null; 
+    String schemaString = "SCHEMA";
+
+    /**
+     * SPARQLHelper constructor.
+     *
+     * Note:  The connection should not be closed within this class, as it will be closed
+     * by its parent (invoker).
+     *
+     * @param connection
+     */
+    public SPARQLHelper(PyRelConnection conn) {
+        this.connection = conn; 
+    }
+    
+    public String getSchemaString() { return schemaString; }
+
+    /**
+     * Insert an RDF Quad into the RDF data store
+     *
+     * @param graph The subject of the statement  e.g. EMP
+     * @param subject The subject of the statement  e.g. EMP
+     * @param property The object-property  e.g. Name
+     * @param object The object of the statement  e.g. 'Phil'
+     * @throws SQLException
+     */
+    public void insertQuad(String graph, String subject, String predicate, String object) throws SQLException {
+        String graphName = connection.getModel() + ":<" + graph + ">";
+        
+        if (subject.indexOf(":") < 0) {
+            // no specified connection.getNamespace():  use current default connection.getNamespace()
+            subject = connection.getNamespace() + subject;
+        }
+        if (predicate.indexOf(":") < 0) {
+            // no specified connection.getNamespace():  use current default connection.getNamespace()
+            predicate = connection.getNamespace() + predicate;
+        }
+        if (object.indexOf(":") < 0) {
+            // no specified connection.getNamespace():  use current default connection.getNamespace()
+            object = connection.getNamespace() + object;
+        }
+		String typeString = "";
+/*  The following commented code works to set the RDF type but then I don't know how to get rid of the type information when doing SPARQL like so that 10 matches a value
+	select indiv from table(sem_match(
+	'select * where {
+			 ?indiv rdf:type :DEPT .
+			 ?indiv :DEPTNO  :10 .
+	}',
+	SEM_MODELS('F2014_C##CS347_PROF'), null,
+	SEM_ALIASES( SEM_ALIAS('', '#')), null) );
+	
+		String objectString = object.replace(connection.getNamespace(),"");
+	    try  
+	    { 
+		    Double.parseDouble(objectString); 
+		    try { 
+			   Integer.parseInt(objectString);
+			   typeString =  "\"^^xsd:integer";
+		    } catch(NumberFormatException e) { 
+			   typeString =  "\"^^xsd:decimal";
+		    }
+	    }  
+		   catch(NumberFormatException e)  
+	    {   
+		   typeString =   "\"^^xsd:string";
+	    }  
+System.out.println("----------------------------objectString, typeString: " + objectString + ", " + typeString);
+*/
+
+        String s =
+            "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName.toUpperCase() +
+            "', '" + subject.replaceAll("'", "").toUpperCase() + "', '" + predicate.replaceAll("'", "").toUpperCase() + "', '" + object.replaceAll("'", "").toUpperCase() + typeString + "'))";
+        connection.executeStatement(s);
+    } // End insertQuad
+
+    /**
+     * Insert an RDF Schema Quad into the RDF data store
+     *
+     * @param graph The subject of the statement  e.g. EMP
+     * @param subject The subject of the statement  e.g. EMP
+     * @param property The object-property  e.g. rdf:type
+     * @param object The object of the statement  e.g. rdfs:Class
+     * @throws SQLException
+     */
+    public void insertSchemaQuad(String graph, String subject, String predicate, String object)  throws SQLException {
+        String graphName = connection.getModel() + ":<" + graph + "_" + schemaString +">";
+        String graphName2 = connection.getModel() + ":<" + schemaString + ">";
+        
+        if (subject.indexOf(":") < 0) {
+            // no specified connection.getNamespace():  use current default connection.getNamespace()
+            subject = connection.getNamespace() + subject;
+        }
+        if (predicate.indexOf(":") < 0) {
+            // no specified connection.getNamespace():  use current default connection.getNamespace()
+            predicate = connection.getNamespace() + predicate;
+        }
+        if (object.indexOf(":") < 0) {
+            // no specified connection.getNamespace():  use current default connection.getNamespace()
+            object = connection.getNamespace() + object;
+        }
+        String s = "";
+        if( ! object.equals("rdf:class")) {
+			s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName.toUpperCase() +
+				"', '" + subject.toUpperCase() + "', '" + predicate.toUpperCase() + "', '" + object.toUpperCase() + "'))";
+			connection.executeStatement(s);
+		} else {
+			List<String> ClassExists = SPARQLDoer.getObjectsWithGraph(connection, schemaString, "<" + subject + ">", "rdf:type");
+			if ( ! ClassExists.contains("class")) {
+				s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
+					"', '" + subject + "', '" + predicate + "', '" + object + "'))";
+				connection.executeStatement(s);
+			}
+		}
+    } // End insertSchemaQuad
+
+    /**
+     * Get instances of a class, with datatype properties
+     * that match the attr-value pairs provided
+     * 
+     * @param graph
+     * @param className
+     * @param Map of attrValues
+     * @return class instances
+     * @throws SQLException
+     */
+    public List<String> getInstancesWithObjectValue(String graph, String className, Map<String, Object> attrValues) throws SQLException{
+		List<String> instances = new ArrayList<String>();
+		String typeTriple = "";
+		if (className != null) {
+				typeTriple =  "         ?indiv rdf:type :" + className.toUpperCase() + " .\n";
+		}
+		String attrValuesQ = "";
+		for (String attr : attrValues.keySet()) {
+			Object val = attrValues.get(attr); 
+			if(val instanceof String){
+				attrValuesQ += "?indiv :" + attr.toUpperCase() + " :" + ((String)val).replaceAll("'", "").toUpperCase() + " .\n";
+			}
+			else if(val instanceof Integer){
+				attrValuesQ += "?indiv :" + attr.toUpperCase() + " " + attrValues.get(attr).toString().toUpperCase() + " .\n";
+			}
+		}
+		String q =
+			"select indiv from table(sem_match(\n" +
+			"  'select * where {\n" +
+			typeTriple +
+			attrValuesQ +
+			"}',\n" +
+			"SEM_MODELS('" 
+			+ connection.getModel() +"'), null,\n" +
+			"SEM_ALIASES( SEM_ALIAS('', '" 
+			+ connection.getNamespace() + "')), null) )";
+		if (connection.getDebug() == "debug") System.out.println("\ngetInstancesWithObjectValue: query=\n" + q);
+		instances = SPARQLDoer.executeRdfSelect(connection, q);
+		return instances;
+    }  // End getInstancesWithObjectValue
+
+    /**
+     * Get subjects given a graph, predicate, and object.
+     * 
+     * @param graph
+     * @param predicate
+     * @param object
+     * @return subjects
+     * @throws SQLException
+     */
+    public List<String> getSubjects(String graph, String predicate, String object) throws SQLException{
+		List<String> subjects = new ArrayList<String>();
+		String q =
+			"select distinct sub from table(sem_match(\n'select * where {\n" +
+			"\tGRAPH <" + graph.toUpperCase() + "> {?sub " + predicate.toUpperCase() + " " + object.toUpperCase() + "}\n" +
+			"}',\n" +
+			"SEM_MODELS('" 
+			+ connection.getModel() +"'), null,\n" +
+			"SEM_ALIASES( SEM_ALIAS('', '" 
+			+ connection.getNamespace() + "')), null) )";
+		if (connection.getDebug() == "debug") System.out.println("\ngetSubjects: query=\n" + q);
+			try {
+				subjects = SPARQLDoer.executeRdfSelect(connection, q);
+			} catch (SQLException ex) {
+				System.out.println(ex);
+			}
+		return subjects;
+    }  // End getInstancesWithObjectValue
+}
