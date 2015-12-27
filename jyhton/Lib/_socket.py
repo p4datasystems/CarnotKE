@@ -31,7 +31,7 @@ from java.util.concurrent import (
     ExecutionException, RejectedExecutionException, ThreadFactory,
     TimeoutException, TimeUnit)
 from java.util.concurrent.atomic import AtomicBoolean, AtomicLong
-from javax.net.ssl import SSLPeerUnverifiedException, SSLException
+from javax.net.ssl import SSLPeerUnverifiedException, SSLException, SSLHandshakeException
 
 try:
     # jarjar-ed version
@@ -330,6 +330,12 @@ def _map_exception(java_exception):
     if isinstance(java_exception, SSLException) or isinstance(java_exception, CertificateException):
         cause = java_exception.cause
         if cause:
+            # netty is freaking backwards here. The original exception may be CertificateException
+            # but netty wraps it in SSLHandshakeException, we need to unwrap to present the right message
+            if isinstance(cause, SSLHandshakeException):
+                if isinstance(cause.cause, CertificateException):
+                    java_exception = cause.cause
+
             msg = "%s (%s)" % (java_exception.message, cause)
         else:
             msg = java_exception.message
@@ -771,7 +777,6 @@ class _realsocket(object):
             self._handle_timeout(future.await, reason)
             if not future.isSuccess():
                 log.debug("Got this failure %s during %s", future.cause(), reason, extra={"sock": self})
-                print "Got this failure %s during %s (%s)" % (future.cause(), reason, self)
                 raise future.cause()
             return future
         else:
@@ -918,9 +923,12 @@ class _realsocket(object):
             else:
                 return errno.EINPROGRESS
         elif self.connect_future.isSuccess():
+            # from socketmodule.c
+            # if (res == EISCONN)
+            #   res = 0;
+            # but http://bugs.jython.org/issue2428
             return errno.EISCONN
         else:
-            print self.connect_future.cause()
             return errno.ENOTCONN
 
     # SERVER METHODS
@@ -1126,6 +1134,8 @@ class _realsocket(object):
     def send(self, data, flags=0):
         # FIXME this almost certainly needs to chunk things
         self._verify_channel()
+        if isinstance(data, memoryview):
+            data = data.tobytes()
         data = str(data)  # FIXME temporary fix if data is of type buffer
         log.debug("Sending data <<<{!r:.20}>>>".format(data), extra={"sock": self})
 
@@ -1395,7 +1405,7 @@ socket = SocketType = _socketobject
 class ChildSocket(_realsocket):
     
     def __init__(self, parent_socket):
-        super(ChildSocket, self).__init__()
+        super(ChildSocket, self).__init__(type=parent_socket.type)
         self.parent_socket = parent_socket
         self.active = AtomicBoolean()
         self.active_latch = CountDownLatch(1)
@@ -1405,6 +1415,8 @@ class ChildSocket(_realsocket):
     def _ensure_post_connect(self):
         do_post_connect = not self.active.getAndSet(True)
         if do_post_connect:
+            if hasattr(self.parent_socket, "ssl_wrap_child_socket"):
+                self.parent_socket.ssl_wrap_child_socket(self)
             self._post_connect()
             self.active_latch.countDown()
 
