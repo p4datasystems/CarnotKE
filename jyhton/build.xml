@@ -213,6 +213,43 @@ oracle.jar=C:/workspace/HEAD/for_development/bisdevsrv28/jboss/server/infra/lib/
             <pathelement path="${extlibs.dir}/xml-apis-1.4.01.jar"/>
             <pathelement path="${extlibs.dir}/batches.jar" />
             <pathelement path="${extlibs.dir}/agraph-5.0.jar" />
+
+            <pathelement path="${extlibs.dir}/OracleNoSQL/antlr-complete.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/avro.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/gwt-servlet.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/jackson-core-asl.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/jackson-mapper-asl.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/jdmkrt.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/je.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/jetty-continuation.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/jetty-http.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/jetty-io.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/jetty-security.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/jetty-server.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/jetty-servlet.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/jetty-util.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/jetty-webapp.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/jetty-xml.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/jline.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/jsch.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/kvcli.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/kvclient.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/kvcoherence.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/kvstore-ee.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/kvstore.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/oraclepki.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/osdt_cert.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/osdt_core.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQL/servlet-api.jar"/>
+
+            <pathelement path="${extlibs.dir}/OracleNoSQLRDF/jena-arq-2.9.4.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQLRDF/jena-core-2.7.4.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQLRDF/jena-iri-0.9.4.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQLRDF/sdordfnosqlclient.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQLRDF/slf4j-api-1.7.13.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQLRDF/slf4j-simple-1.7.13.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQLRDF/xercesImpl.jar"/>
+            <pathelement path="${extlibs.dir}/OracleNoSQLRDF/xml-apis.jar"/>
         </path>
 
         <available property="informix.present" classname="com.informix.jdbc.IfxDriver" classpath="${informix.jar}" />
@@ -683,7 +720,44 @@ The readme text for the next release will be like:
             <zipfileset src="${extlibs.dir}/xercesImpl-2.10.0.jar"/>
             <zipfileset src="${extlibs.dir}/xml-apis-1.4.01.jar"/>
             <zipfileset src="${extlibs.dir}/batches.jar" />
-                <zipfileset src="${extlibs.dir}/agraph-4.14.1.jar"/>
+            <zipfileset src="${extlibs.dir}/agraph-4.14.1.jar"/>
+
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/antlr-complete.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/avro.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/gwt-servlet.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/jackson-core-asl.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/jackson-mapper-asl.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/jdmkrt.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/je.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/jetty-continuation.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/jetty-http.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/jetty-io.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/jetty-security.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/jetty-server.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/jetty-servlet.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/jetty-util.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/jetty-webapp.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/jetty-xml.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/jline.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/jsch.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/kvcli.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/kvclient.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/kvcoherence.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/kvstore-ee.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/kvstore.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/oraclepki.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/osdt_cert.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/osdt_core.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQL/servlet-api.jar"/>
+
+            <zipfileset src="${extlibs.dir}/OracleNoSQLRDF/jena-arq-2.9.4.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQLRDF/jena-core-2.7.4.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQLRDF/jena-iri-0.9.4.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQLRDF/sdordfnosqlclient.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQLRDF/slf4j-api-1.7.13.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQLRDF/slf4j-simple-1.7.13.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQLRDF/xercesImpl.jar"/>
+            <zipfileset src="${extlibs.dir}/OracleNoSQLRDF/xml-apis.jar"/>
 
             <rule pattern="org.apache.xml.**" result="org.python.apache.xml.@1"/>
             <rule pattern="org.apache.xerces.**" result="org.python.apache.xerces.@1"/>

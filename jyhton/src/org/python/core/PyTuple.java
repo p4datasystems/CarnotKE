@@ -51,6 +51,10 @@ import org.python.ReL.SIMHelper;
 import org.python.ReL.SQLVisitor;
 import org.python.ReL.ProcessLanguages;
 
+import com.hp.hpl.jena.graph.*;
+import com.hp.hpl.jena.query.*;
+import com.hp.hpl.jena.rdf.model.Model;
+import oracle.rdf.kv.client.jena.*;
 
 /**
  * A builtin python tuple.
@@ -477,7 +481,7 @@ conn.getNamespace() + caststmt.getName() + ">')";
     
     public void runAndOutputTuples(PyRelConnection conn, String ReLstmt) {
         ArrayList<PyObject> rows = new ArrayList<PyObject>();
-        ResultSet rs = null;
+        java.sql.ResultSet rs = null;
         try{
             try {
                 int dbuniqueid_column_idx = 0; 
