@@ -115,66 +115,75 @@ public class PyTuple extends PySequenceList implements List {
 // This constructor was added for ReL
     public PyTuple(PyType subtype, PyObject[] elements, String ReLstring, String ReLmode, PyObject connection) {
         super(subtype);
+        PyRelConnection conn = (PyRelConnection)connection;
 
-PyRelConnection conn = (PyRelConnection)connection;
+        if(conn.getConnectionDB().equals("OracleNoSQL")) {
+          OracleNoSqlConnection rdfconn = OracleNoSqlConnection.createInstance("kvstore", "Phils-MacBook-Pro.local", "5000");
+          // OracleRDFNoSQLInterface database = (OracleRDFNoSQLInterface)conn.getDatabase();
+          // OracleNoSqlConnection rdfconn =  database.getConnection(); 
 
+          // This object will handle operations over the default graph 
+          OracleGraphNoSql graph = new OracleGraphNoSql(rdfconn);
+          graph.clearRepository(); // Clear the graph including inferred triples
 
-OracleNoSqlConnection rdfconn = OracleNoSqlConnection.createInstance("kvstore", "Phils-MacBook-Pro.local", "5000");
-// OracleRDFNoSQLInterface database = (OracleRDFNoSQLInterface)conn.getDatabase();
-// OracleNoSqlConnection rdfconn =  database.getConnection(); 
+          graph.add(Triple.create(Node.createURI("u:John"), 
+                                  Node.createURI("u:parentOf"),
+                                  Node.createURI("u:Mary")));
+              
+          graph.add(Triple.create(Node.createURI("u:Mary"), 
+                                  Node.createURI("u:parentOf"),
+                                  Node.createURI("u:Jack")));
+             
+          String queryString = " select ?x ?y WHERE {?x <u:parentOf> ?y}";
 
-// This object will handle operations over the default graph 
-OracleGraphNoSql graph = new OracleGraphNoSql(rdfconn);
-graph.clearRepository(); // Clear the graph including inferred triples
+          System.out.println("Execute query " + queryString);
 
-graph.add(Triple.create(Node.createURI("u:John"), 
-                        Node.createURI("u:parentOf"),
-                        Node.createURI("u:Mary")));
-    
-graph.add(Triple.create(Node.createURI("u:Mary"), 
-                        Node.createURI("u:parentOf"),
-                        Node.createURI("u:Jack")));
-   
-String queryString = " select ?x ?y WHERE {?x <u:parentOf> ?y}";
+          Model model = new OracleModelNoSql(graph);
+          Query query = QueryFactory.create(queryString) ;
+          QueryExecution qexec = QueryExecutionFactory.create(query, model) ;
 
-System.out.println("Execute query " + queryString);
+          try {
+            com.hp.hpl.jena.query.ResultSet results = qexec.execSelect();
+            ResultSetFormatter.out(System.out, results, query);
+          }
 
-Model model = new OracleModelNoSql(graph);
-Query query = QueryFactory.create(queryString) ;
-QueryExecution qexec = QueryExecutionFactory.create(query, model) ;
+          finally {
+            qexec.close();
+          }
 
-try {
-  com.hp.hpl.jena.query.ResultSet results = qexec.execSelect();
-  ResultSetFormatter.out(System.out, results, query);
-}
+          graph.delete(Triple.create(Node.createURI("u:John"), 
+                                     Node.createURI("u:parentOf"),
+                                     Node.createURI("u:Mary")));
 
-finally {
-  qexec.close();
-}
+          queryString = "select ?x ?y ?z WHERE {?x ?y ?z}";
 
-graph.delete(Triple.create(Node.createURI("u:John"), 
-                           Node.createURI("u:parentOf"),
-                           Node.createURI("u:Mary")));
+          System.out.println("Execute query " + queryString);
 
-queryString = "select ?x ?y ?z WHERE {?x ?y ?z}";
+          query = QueryFactory.create(queryString) ;
+          qexec = QueryExecutionFactory.create(query, model);
 
-System.out.println("Execute query " + queryString);
+          try {
+            com.hp.hpl.jena.query.ResultSet results = qexec.execSelect();
+            ResultSetFormatter.out(System.out, results, query);
+          }
 
-query = QueryFactory.create(queryString) ;
-qexec = QueryExecutionFactory.create(query, model);
+          finally {
+            qexec.close();
+          }
 
-try {
-  com.hp.hpl.jena.query.ResultSet results = qexec.execSelect();
-  ResultSetFormatter.out(System.out, results, query);
-}
-
-finally {
-  qexec.close();
-}
-
-model.close();
-rdfconn.dispose();
-
+          model.close();
+          rdfconn.dispose();
+          //a lot of conversion going on here. . .
+          ArrayList<PyObject> rows = new ArrayList<PyObject>();
+          PyObject[] temp = new PyObject[1];
+          temp[0] = new PyString("NoSQL");
+          rows.add(new PyTuple(temp));
+          PyObject[] results = listtoarray(rows);
+          //put results in array for this tuple object
+          array = new PyObject[results.length];
+          System.arraycopy(results, 0, array, 0, results.length);
+          return;
+        }
 
         // PyRelConnection conn = (PyRelConnection)connection;
         String[] strings = ReLstring.split(";");
@@ -235,12 +244,12 @@ rdfconn.dispose();
                 runAndOutputTuples(conn, ReLstmt);
             } else if (conn.getConnectionType() == "rdf_mode" || conn.getConnectionType() == "ag_sql_rdf_mode"|| conn.getConnectionType() == "ag_sparql_rdf_mode") {
             
-    // If some type of rdf_mode, transfor SQL to SPARQL as follows:
-    // In PyTuple.doRDF: if (statement instanceof Select), call SQLVisitor.getSelect
-    //    In SQLVisitor.getSelect, somehow gets to visit, which calls visitSelect_buildSPARQL
-    //        visitSelect_buildSPARQL returns the SPARQL statement to SQLVisitor.getSelect
-    //    SQLVisitor.getSelect returns the SPARQL to PyTuple
-    // PyTuple.doRDF then calls runAndOutputTuples, which calls conn.executeQuery(ReLstmt) and the results from this are processed and stored in the results field of PyTuple
+            // If some type of rdf_mode, transfor SQL to SPARQL as follows:
+            // In PyTuple.doRDF: if (statement instanceof Select), call SQLVisitor.getSelect
+            //    In SQLVisitor.getSelect, somehow gets to visit, which calls visitSelect_buildSPARQL
+            //        visitSelect_buildSPARQL returns the SPARQL statement to SQLVisitor.getSelect
+            //    SQLVisitor.getSelect returns the SPARQL to PyTuple
+            // PyTuple.doRDF then calls runAndOutputTuples, which calls conn.executeQuery(ReLstmt) and the results from this are processed and stored in the results field of PyTuple
             
                 if (conn.getConnectionType() == "rdf_mode" || conn.getConnectionType() == "ag_sql_rdf_mode") {
                    CCJSqlParserManager pm = new CCJSqlParserManager();

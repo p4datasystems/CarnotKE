@@ -20,15 +20,7 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
      
     public OracleRDFNoSQLInterface(String url, String uname, String passw, String conn_type, String debug) {
         super();
-        try
-        {
-            Class.forName("oracle.jdbc.OracleDriver");
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        }
-            catch(ClassNotFoundException e)
-        {
-            e.printStackTrace();
-        }
+
         connection = null;
         this.debug = debug;
         if(conn_type != "none" ) {

@@ -35,13 +35,12 @@ import org.python.ReL.SIMHelper;
  * be able to implement database's other than oracle someday.
  *
  * PyRelConnections are created when a RelConnection node is visited.
- * For now Rel only supports one PyRelConnection, but there could potentially be
- * many connections.
  *
  * For now a Name node with the id = "RelConnection", can be used to place the PyRelConnection
  * on the frame.
- */
- @ExposedType(name = "PyRelConnection", base = PyObject.class, doc = BuiltinDocs.tuple_doc)
+*/
+
+@ExposedType(name = "PyRelConnection", base = PyObject.class, doc = BuiltinDocs.tuple_doc)
 public class PyRelConnection extends PyObject {
     
     // What type are we. 
@@ -94,10 +93,17 @@ System.out.println("________________ mode: " + model);
          * the DatabaseInterface.java abstract class, which is designed for connecting only to relational
          * databases. If DatabaseInterface.java is not re-implemented, than one can only make
          * connections to relational databases and not triple stores, such as AllegroGraph, through DatabaseInterface.java
-         */
-        database = new OracleInterface(url, uname, pword, conn_type, debug);
-        // database = new OracleRDFNoSQLInterface(url, uname, pword, conn_type, debug);  
-        connection_DB = "oracle";
+         */ 
+        
+        if (url.contains("jdbc:oracle")) {
+            database = new OracleInterface(url, uname, pword, conn_type, debug); 
+            connection_DB = "Oracle";
+        }
+        else if (url.contains("OracleNoSQL")) {
+                database = new OracleRDFNoSQLInterface(url, uname, pword,
+            conn_type, debug); 
+            connection_DB = "OracleNoSQL";
+        }
         
         // make sure the quad store is setup. 
         /*if(conn_type == "rdf_mode" || conn_type == "ag_sql_rdf_mode") {
