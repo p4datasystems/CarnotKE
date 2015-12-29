@@ -1,0 +1,54 @@
+CLASS emp "Employees of a company"	
+(		 
+	empno     : INTEGER, REQUIRED;	
+	ename     : STRING;
+	job       : STRING;
+        mgr       : emp, SV, INVERSE IS employees;
+	hiredate  : STRING;
+	sal       : INTEGER;
+	comm      : INTEGER;	
+	dept      : department, SV, INVERSE IS employees;
+);
+
+INSERT emp ( empno := 7369 , ename :=  "SMITH" , job := "CLERK" ,  hiredate := "17-DEC-1980", sal := 800 );
+INSERT emp ( empno := 7499 , ename :=  "ALLEN" , job := "SALESMAN" ,  hiredate := "20-FEB-1981", sal := 1600, comm := 300 );
+INSERT emp ( empno := 7521 , ename :=  "WARD" , job := "SALESMAN" ,  hiredate := "22-FEB-1981", sal := 1250, comm := 500 );
+INSERT emp ( empno := 7566 , ename :=  "JONES" , job := "MANAGER" ,  hiredate := "2-APR-1981", sal := 2975 );
+INSERT emp ( empno := 7654 , ename :=  "MARTIN" , job := "SALESMAN" ,  hiredate := "28-SEP-1981", sal := 1250 , comm := 1400 );
+INSERT emp ( empno := 7698 , ename :=  "BLAKE" , job := "MANAGER" ,  hiredate := "1-MAY-1981", sal := 2850 );
+INSERT emp ( empno := 7782 , ename :=  "CLARK" , job := "MANAGER" ,  hiredate := "9-JUN-1981", sal := 2450 );
+INSERT emp ( empno := 7788 , ename :=  "SCOTT" , job := "ANALYST" ,  hiredate := "09-DEC-1982", sal := 3000 );
+INSERT emp ( empno := 7839 , ename :=  "KING" , job := "PRESIDENT" ,  hiredate := "17-NOV-1981", sal := 5000 );
+INSERT emp ( empno := 7844 , ename :=  "TURNER" , job := "SALESMAN" ,  hiredate := "8-SEP-1981", sal := 1500 );
+INSERT emp ( empno := 7876 , ename :=  "ADAMS" , job := "CLERK" ,  hiredate := "12-JAN-1983", sal := 1100 );
+INSERT emp ( empno := 7900 , ename :=  "JAMES" , job := "CLERK" ,  hiredate := "3-DEC-1981", sal := 950 );
+INSERT emp ( empno := 7902 , ename :=  "FORD" , job := "ANALYST" ,  hiredate := "3-DEC-1981", sal := 3000 );
+INSERT emp ( empno := 7934 , ename :=  "MILLER" , job := "CLERK" ,  hiredate := "23-JAN-1982", sal := 1300 );
+
+CLASS department "Departments of a company"	
+(		 
+	deptno     : INTEGER, REQUIRED;	
+	dname      : STRING;
+	loc        : STRING;	
+	employees  : emp, MV, INVERSE IS dept;
+);
+
+INSERT department ( deptno := 10 , dname :=  "ACCOUNTING" , loc := "NEW YORK" );
+INSERT department ( deptno := 20 , dname :=  "RESEARCH" , loc := "DALLAS" );
+INSERT department ( deptno := 30 , dname :=  "SALES" , loc := "CHICAGO" );
+INSERT department ( deptno := 40 , dname :=  "OPERATIONS" , loc := "BOSTON" );
+
+MODIFY emp ( dept :=  department WITH (deptno =  20) ) WHERE empno = 7369 ;
+MODIFY emp ( dept :=  department WITH (deptno =  30) ) WHERE empno = 7499 ;
+MODIFY emp ( dept :=  department WITH (deptno =  30) ) WHERE empno = 7521 ;
+MODIFY emp ( dept :=  department WITH (deptno =  20) ) WHERE empno = 7566 ;
+MODIFY emp ( dept :=  department WITH (deptno =  30) ) WHERE empno = 7654 ;
+MODIFY emp ( dept :=  department WITH (deptno =  30) ) WHERE empno = 7698 ;
+MODIFY emp ( dept :=  department WITH (deptno =  10) ) WHERE empno = 7782 ;
+MODIFY emp ( dept :=  department WITH (deptno =  20) ) WHERE empno = 7788 ;
+MODIFY emp ( dept :=  department WITH (deptno =  10) ) WHERE empno = 7839 ;
+MODIFY emp ( dept :=  department WITH (deptno =  30) ) WHERE empno = 7844 ;
+MODIFY emp ( dept :=  department WITH (deptno =  20) ) WHERE empno = 7876 ;
+MODIFY emp ( dept :=  department WITH (deptno =  30) ) WHERE empno = 7900 ;
+MODIFY emp ( dept :=  department WITH (deptno =  20) ) WHERE empno = 7902 ;
+MODIFY emp ( dept :=  department WITH (deptno =  10) ) WHERE empno = 7934 ;

@@ -1,0 +1,13 @@
+INSERT Fd (timestamp := "06/Aug/2004:11:48:02",conn:="0",op:="-1",msgId:="-1",recordNum:="1",opType := "Fd", slot:="46",type:="LDAP",from:="129.153.141.67",to:="129.153.141.67");
+
+INSERT Bind (timestamp := "06/Aug/2004:11:48:02",conn:="0",op:="0",msgId:="172",recordNum:="2",opType :="Bind",dn:=" cn=Directory Manager ",method:="128",version:="3",mech:="",comment:="");
+
+INSERT Result (timestamp := "06/Aug/2004:11:48:02",conn:="0",op:="0",msgId:="172",recordNum:="3",opType:="Result",err:="0",tag:="97",nentries:="0",etime:="0",dn:=" cn=directory manager ", csn :="",notes:="",comment:="",operation:=Bind WITH (timestamp = "06/Aug/2004:11:48:02" AND conn ="0" AND op="0" AND opType="Bind"));
+
+INSERT Fd (timestamp := "06/Aug/2004:11:48:04",conn:="1",op:="-1",msgId:="-1",recordNum:="4",opType := "Fd", slot:="47",type:="LDAP",from:="129.153.141.67",to:="129.153.141.67");
+
+INSERT Bind (timestamp := "06/Aug/2004:11:48:04",conn:="1",op:="0",msgId:="142",recordNum:="5",opType :="Bind",dn:=" cn=Directory Manager ",method:="128",version:="3",mech:="",comment:="");
+
+INSERT Result (timestamp := "06/Aug/2004:11:48:04",conn:="1",op:="0",msgId:="142",recordNum:="6",opType:="Result",err:="0",tag:="97",nentries:="0",etime:="0",dn:=" cn=directory manager ", csn :="",notes:="",comment:="",operation:=Bind WITH (timestamp = "06/Aug/2004:11:48:04" AND conn ="1" AND op="0" AND opType="Bind"));
+
+INSERT Search (timestamp := "06/Aug/2004:11:48:07", conn:="1", op:="1", msgId := "143", recordNum := "7", opType := "Search", base := " cn=elements,cn=filtering service,cn=features,cn=config ", scope :="1",filter:=" (objectClass=*) ", attrs := "ALL");

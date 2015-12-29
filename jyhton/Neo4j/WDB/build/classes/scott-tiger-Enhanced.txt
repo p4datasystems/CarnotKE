@@ -1,0 +1,73 @@
+CLASS person
+(	
+        ss_num: INTEGER, REQUIRED;	
+	name: STRING;
+);
+
+SUBCLASS emp "Employees of a company" OF person	
+(		 
+
+	job       : STRING;
+        mgr       : emp, SV, INVERSE IS employees;
+        employees : emp, MV, INVERSE IS mgr;
+	sal       : INTEGER;
+	comm      : INTEGER;	
+	dept    : department, SV, INVERSE IS employees;
+);
+
+INSERT emp ( ss_num:= 7369 , name := "SMITH"  , job := "CLERK"     , sal := 800  );
+INSERT emp ( ss_num:= 7499 , name := "ALLEN"  , job := "SALESMAN"  , sal := 1600 , comm := 300 );
+INSERT emp ( ss_num:= 7521 , name := "WARD"   , job := "SALESMAN"  , sal := 1250 , comm := 500 );
+INSERT emp ( ss_num:= 7566 , name := "JONES"  , job := "MANAGER"   , sal := 2975 );
+INSERT emp ( ss_num:= 7654 , name := "MARTIN" , job := "SALESMAN"  , sal := 1250 , comm := 1400 );
+INSERT emp ( ss_num:= 7698 , name := "BLAKE"  , job := "MANAGER"   , sal := 2850 );
+INSERT emp ( ss_num:= 7782 , name := "CLARK"  , job := "MANAGER"   , sal := 2450 );
+INSERT emp ( ss_num:= 7788 , name := "SCOTT"  , job := "ANALYST"   , sal := 3000 );
+INSERT emp ( ss_num:= 7839 , name := "KING"   , job := "PRESIDENT" , sal := 5000 );
+INSERT emp ( ss_num:= 7844 , name := "TURNER" , job := "SALESMAN"  , sal := 1500 );
+INSERT emp ( ss_num:= 7876 , name := "ADAMS"  , job := "CLERK"     , sal := 1100 );
+INSERT emp ( ss_num:= 7900 , name := "JAMES"  , job := "CLERK"     , sal := 950  );
+INSERT emp ( ss_num:= 7902 , name := "FORD"   , job := "ANALYST"   , sal := 3000 );
+INSERT emp ( ss_num:= 7934 , name := "MILLER" , job := "CLERK"     , sal := 1300 );
+
+CLASS department "Departments of a company"	
+(		 
+	deptno     : INTEGER, REQUIRED;	
+	dname      : STRING;
+	loc        : STRING;	
+	employees  : emp, MV, INVERSE IS dept;
+);
+
+INSERT department ( deptno := 10 , dname :=  "ACCOUNTING" , loc := "NEW YORK" );
+INSERT department ( deptno := 20 , dname :=  "RESEARCH"   , loc := "DALLAS"   );
+INSERT department ( deptno := 30 , dname :=  "SALES"      , loc := "CHICAGO"  );
+INSERT department ( deptno := 40 , dname :=  "OPERATIONS" , loc := "BOSTON"   );
+
+MODIFY emp ( dept :=  department WITH (deptno =  20) ) WHERE ss_num = 7369 ;
+MODIFY emp ( dept :=  department WITH (deptno =  30) ) WHERE ss_num = 7499 ;
+MODIFY emp ( dept :=  department WITH (deptno =  30) ) WHERE ss_num = 7521 ;
+MODIFY emp ( dept :=  department WITH (deptno =  20) ) WHERE ss_num = 7566 ;
+MODIFY emp ( dept :=  department WITH (deptno =  30) ) WHERE ss_num = 7654 ;
+MODIFY emp ( dept :=  department WITH (deptno =  30) ) WHERE ss_num = 7698 ;
+MODIFY emp ( dept :=  department WITH (deptno =  10) ) WHERE ss_num = 7782 ;
+MODIFY emp ( dept :=  department WITH (deptno =  20) ) WHERE ss_num = 7788 ;
+MODIFY emp ( dept :=  department WITH (deptno =  10) ) WHERE ss_num = 7839 ;
+MODIFY emp ( dept :=  department WITH (deptno =  30) ) WHERE ss_num = 7844 ;
+MODIFY emp ( dept :=  department WITH (deptno =  20) ) WHERE ss_num = 7876 ;
+MODIFY emp ( dept :=  department WITH (deptno =  30) ) WHERE ss_num = 7900 ;
+MODIFY emp ( dept :=  department WITH (deptno =  20) ) WHERE ss_num = 7902 ;
+MODIFY emp ( dept :=  department WITH (deptno =  10) ) WHERE ss_num = 7934 ;
+
+MODIFY emp ( mgr  :=  emp  WITH (ss_num =  7902) ) WHERE ss_num = 7369 ;
+MODIFY emp ( mgr  :=  emp  WITH (ss_num =  7698) ) WHERE ss_num = 7499 ;
+MODIFY emp ( mgr  :=  emp  WITH (ss_num =  7698) ) WHERE ss_num = 7521 ;
+MODIFY emp ( mgr  :=  emp  WITH (ss_num =  7839) ) WHERE ss_num = 7566 ;
+MODIFY emp ( mgr  :=  emp  WITH (ss_num =  7698) ) WHERE ss_num = 7654 ;
+MODIFY emp ( mgr  :=  emp  WITH (ss_num =  7839) ) WHERE ss_num = 7698 ;
+MODIFY emp ( mgr  :=  emp  WITH (ss_num =  7839) ) WHERE ss_num = 7782 ;
+MODIFY emp ( mgr  :=  emp  WITH (ss_num =  7566) ) WHERE ss_num = 7788 ;
+MODIFY emp ( mgr  :=  emp  WITH (ss_num =  7698) ) WHERE ss_num = 7844 ;
+MODIFY emp ( mgr  :=  emp  WITH (ss_num =  7788) ) WHERE ss_num = 7876 ;
+MODIFY emp ( mgr  :=  emp  WITH (ss_num =  7698) ) WHERE ss_num = 7900 ;
+MODIFY emp ( mgr  :=  emp  WITH (ss_num =  7566) ) WHERE ss_num = 7902 ;
+MODIFY emp ( mgr  :=  emp  WITH (ss_num =  7782) ) WHERE ss_num = 7934 ;

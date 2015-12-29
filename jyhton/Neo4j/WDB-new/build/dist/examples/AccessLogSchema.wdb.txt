@@ -1,0 +1,116 @@
+CLASS AccessLogRecord (
+	timestamp "comment" : String;
+	conn "comment" : String[200];
+	op "comment" : String;
+	msgId "comment" : String;
+	recordNum "comment" : String;
+	opType "comment" : String;
+	);
+CLASS DSMLAvailable (
+	dummy "comment" : String[200];
+	);
+SUBCLASS Fd OF AccessLogRecord (
+	slot "comment" : String[200];
+	type "comment" : String[200];
+	from "comment" : String[200];
+	to "comment" : String[200];
+	);
+SUBCLASS Closing OF AccessLogRecord (
+	code "comment" : String[200];
+	);
+SUBCLASS Closed OF AccessLogRecord (
+	dummy "comment" : String[200];
+	);
+SUBCLASS Unbind OF AccessLogRecord (
+        bind  "comment"  : Bind, SV, INVERSE IS unbind;
+	);
+SUBCLASS Protocol OF AccessLogRecord (
+	host "comment" : String[200];
+	remlog "comment" : String[200];
+	uname "comment" : String[200];
+	date "comment" : String[200];
+	request "comment" : String[200];
+	status "comment" : String[200];
+	length "comment" : String[200];
+	dn "comment" : String[200];
+	);
+SUBCLASS Abandon OF AccessLogRecord (
+	targetop "comment" : String[200];
+	msgID "comment" : String[200];
+	nentries "comment" : String[200];
+	etime "comment" : String[200];
+	);
+SUBCLASS DSMLBatchRequest OF AccessLogRecord (
+	type "comment" : String[200];
+	requestId "comment" : String[200];
+        dsml  "comment"  : DSMLBatchRequest, SV, INVERSE IS dsmlbr;
+	);
+SUBCLASS SSL OF AccessLogRecord (
+	arg1 "comment" : String[200];
+	arg2 "comment" : String[200];
+	);
+SUBCLASS Result OF AccessLogRecord (
+	err "comment" : String[200];
+	tag "comment" : String[200];
+	nentries "comment" : String[200];
+	etime "comment" : String[200];
+	dn "comment" : String[200];
+	csn "comment" : String[200];
+	notes "comment" : String[200];
+	comment "comment" : String[200];
+        operation  "comment"  : HasResult, SV, INVERSE IS result;
+	);
+SUBCLASS HasResult OF AccessLogRecord (
+        result  "comment"  : Result, SV, INVERSE IS operation;
+	);
+SUBCLASS Bind OF HasResult AND DSMLAvailable (
+	dn "comment" : String[200];
+	method "comment" : String[200];
+	mech "comment" : String[200];
+	version "comment" : String[200];
+	comment "comment" : String[200];
+        unbind  "comment"  : Unbind, SV, INVERSE IS bind;
+	);
+SUBCLASS Search OF HasResult AND DSMLAvailable (
+	base "comment" : String[200];
+	scope "comment" : String[200];
+	filter "comment" : String[200];
+	attrs "comment" : String[200];
+	);
+SUBCLASS Modify OF HasResult AND DSMLAvailable (
+	dn "comment" : String[200];
+	);
+SUBCLASS Extended OF HasResult AND DSMLAvailable (
+	oid "comment" : String[200];
+	);
+SUBCLASS Add OF HasResult AND DSMLAvailable (
+	dn "comment" : String[200];
+	);
+SUBCLASS Delete OF HasResult AND DSMLAvailable (
+	dn "comment" : String[200];
+	);
+SUBCLASS ModRDN OF HasResult AND DSMLAvailable (
+	dn "comment" : String[200];
+	newrdn "comment" : String[200];
+	newsuperior "comment" : String[200];
+	);
+SUBCLASS DSML OF AccessLogRecord (
+	type "comment" : String[200];
+	requestId "comment" : String[200];
+	parentMsgid "comment" : String[200];
+        dsmlbr  "comment"  : DSMLBatchRequest, SV, INVERSE IS dsml;
+	);
+SUBCLASS Compare OF HasResult AND DSMLAvailable (
+	dn "comment" : String[200];
+	attr "comment" : String[200];
+	);
+SUBCLASS Sort OF HasResult (
+	attr "comment" : String[200];
+	type "comment" : String[200];
+	);
+SUBCLASS VLV OF HasResult (
+	arg1 "comment" : String[200];
+	arg2 "comment" : String[200];
+	arg3 "comment" : String[200];
+	);
+
