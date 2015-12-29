@@ -214,7 +214,6 @@ oracle.jar=C:/workspace/HEAD/for_development/bisdevsrv28/jboss/server/infra/lib/
             <pathelement path="${extlibs.dir}/batches.jar" />
             <pathelement path="${extlibs.dir}/agraph-5.0.jar" />
 
-            <pathelement path="${extlibs.dir}/antlr-complete.jar"/>
             <pathelement path="${extlibs.dir}/avro.jar"/>
             <pathelement path="${extlibs.dir}/gwt-servlet.jar"/>
             <pathelement path="${extlibs.dir}/jackson-core-asl.jar"/>
@@ -722,7 +721,6 @@ The readme text for the next release will be like:
             <zipfileset src="${extlibs.dir}/batches.jar" />
             <zipfileset src="${extlibs.dir}/agraph-4.14.1.jar"/>
 
-            <zipfileset src="${extlibs.dir}/antlr-complete.jar"/>
             <zipfileset src="${extlibs.dir}/avro.jar"/>
             <zipfileset src="${extlibs.dir}/gwt-servlet.jar"/>
             <zipfileset src="${extlibs.dir}/jackson-core-asl.jar"/>
