@@ -1957,7 +1957,7 @@ conn_stmt
           uname = actions.extractStrings($n, encoding, unicodeLiterals).toString();
           pword = actions.extractStrings($p, encoding, unicodeLiterals).toString();
           conntype = actions.extractStrings($t, encoding, unicodeLiterals).toString();
-          // We reset the model every connection. Since the user doesn't need one necessarly. 
+          // We reset the model every connection. Since the user doesn't need one necessarily. 
           model = ""; 
           debug = "debug";
       }
@@ -1966,9 +1966,9 @@ conn_stmt
           model = actions.extractStrings($m, encoding, unicodeLiterals).toString();
         }
       )?
-      (d += DODEBUG
+      (d += NODEBUG
         {
-          debug = "debug";
+          debug = "nodebug";
         }
       )?
       // -> ^(CONNECTTO<RelCommit>[$conn_stmt.start, 
@@ -2456,7 +2456,7 @@ Neo4j   : 'Neo4j' (' ')+ 'on' (' ')+ ;
 OORELINSERT: 'relInsert';
 OORELCOMMIT: 'relCommit';
 CONNECTTO:  'connectTo';
-DODEBUG:  'dodebug';
+NODEBUG:  'nodebug';
 
 LPAREN    : '(' {implicitLineJoiningLevel++;} ;
 
