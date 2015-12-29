@@ -114,7 +114,7 @@ public class ProcessLanguages {
 					String evaPath = "";
 					for(int k = rq.getAttributePath(j).levelsOfIndirection() - 1; k >= 0; k--)
 					{
-						System.out.println("rq.getAttributePath(j).getIndirection(k): " + rq.getAttributePath(j).getIndirection(k));
+						if (conn.getDebug() == "debug") System.out.println("rq.getAttributePath(j).getIndirection(k): " + rq.getAttributePath(j).getIndirection(k));
 						if(k > 0) evaPath = " OF " + rq.getAttributePath(j).getIndirection(k) + evaPath;
 						else evaPath = rq.getAttributePath(j).getIndirection(k) + evaPath;
 					}
@@ -122,33 +122,33 @@ public class ProcessLanguages {
 					evaAttribs.add(evaPath);
 				}
 			}
-System.out.println("className: " + className);
-System.out.println("dvaAttribs: " + dvaAttribs);
-System.out.println("evaAttribs: " + evaAttribs);
+			if (conn.getDebug() == "debug") System.out.println("className: " + className);
+			if (conn.getDebug() == "debug") System.out.println("dvaAttribs: " + dvaAttribs);
+			if (conn.getDebug() == "debug") System.out.println("evaAttribs: " + evaAttribs);
 			if (rq.expression != null) {
 				traverseWhereInorder(rq.expression);
 				where = where.replaceAll("= ", "= :").replaceAll("And", "&&").replaceAll("Or", "||");
 			}
-System.out.println("where: " + where);
+			if (conn.getDebug() == "debug") System.out.println("where: " + where);
 			// The following is temporary until filter is used for the where clause
 			String whereTmp = "";
 			if(where != "") {
 				whereTmp = where.replaceAll(" = :", " ").replaceAll("&&", " ").replaceAll("\\|\\|", " ").replaceAll("  *", " ").replaceAll("^  *", "").replaceAll("  *$", ""); //temporary
-				System.out.println(whereTmp); //temporary
+				if (conn.getDebug() == "debug") System.out.println(whereTmp); //temporary
 				String [] whereTmpArray = whereTmp.split(" "); //temporary
 				for( int i = 0; i <= whereTmpArray.length - 1; i+=2) //temporary
 				{
 					whereAttrValues.put(whereTmpArray[i], whereTmpArray[i+1]);
 				}
 			}
-System.out.println("whereAttrValues: " + whereAttrValues);
+			if (conn.getDebug() == "debug") System.out.println("whereAttrValues: " + whereAttrValues);
 			SIMHelper simhelper = new SIMHelper(conn);
 			try {
 					sparql = simhelper.executeFrom(className, dvaAttribs, evaAttribs, whereAttrValues);
 				} catch (Exception e) {
 					System.out.println(e);
 			}
-			System.out.println(sparql);
+			if (conn.getDebug() == "debug") System.out.println(sparql);
 		// --------------------------------------------------------------------------------- Modify
 		} else if(q instanceof ModifyQuery) {
 			ModifyQuery mq = (ModifyQuery)q;
@@ -181,7 +181,7 @@ System.out.println("whereAttrValues: " + whereAttrValues);
 				} catch (Exception e) {
 					System.out.println(e);
 			}
-			System.out.println(sparql);
+			if (conn.getDebug() == "debug") System.out.println(sparql);
 		}
 		return sparql;
 	}
@@ -199,7 +199,7 @@ System.out.println("whereAttrValues: " + whereAttrValues);
     public String processNeo4j(String ReLstmt) {
 		
     	CypherSimTranslator t = new CypherSimTranslator();
-    	System.out.println("SIM is: " + t.translate(ReLstmt));
+    	if (conn.getDebug() == "debug") System.out.println("SIM is: " + t.translate(ReLstmt));
 		return t.translate(ReLstmt);
 	}
 }

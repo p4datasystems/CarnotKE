@@ -118,7 +118,7 @@ public class PyTuple extends PySequenceList implements List {
 
 PyRelConnection conn = (PyRelConnection)connection;
 
-/*
+
 OracleNoSqlConnection rdfconn = OracleNoSqlConnection.createInstance("kvstore", "Phils-MacBook-Pro.local", "5000");
 // OracleRDFNoSQLInterface database = (OracleRDFNoSQLInterface)conn.getDatabase();
 // OracleNoSqlConnection rdfconn =  database.getConnection(); 
@@ -174,7 +174,7 @@ finally {
 
 model.close();
 rdfconn.dispose();
-*/
+
 
         // PyRelConnection conn = (PyRelConnection)connection;
         String[] strings = ReLstring.split(";");
@@ -317,7 +317,7 @@ rdfconn.dispose();
                 System.out.println("Connection type must be \"native_mode\", or \"rdf_mode\", not \"" + conn.getConnectionType() + "\"");
             }
         } else if(ReLmode == "SIM") {
-            System.out.println("PyTuple sim is: " + ReLstmt);
+            if (conn.getDebug() == "debug") System.out.println("PyTuple sim is: " + ReLstmt);
             ProcessLanguages processLanguage = new ProcessLanguages(conn);
             String sparql = null;
             try { sparql = processLanguage.processSIM(ReLstmt); }

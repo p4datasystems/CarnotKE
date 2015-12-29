@@ -352,7 +352,7 @@ public class SIMHelper {
 
                 } else if (attrType.equals("evaAttribute")) {
 
-                    System.out.println("Inserting evaAttribute: ");
+                    if (connection.getDebug() == "debug") System.out.println("Inserting evaAttribute: ");
                     String range = attrFeatures.remove(0);
                     boolean multiValued = false;
                     SPARQLDoer.insertObjectPropQuad(connection, attrName, "rdf:type", "owl:ObjectProperty");
