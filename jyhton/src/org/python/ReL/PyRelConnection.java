@@ -95,7 +95,8 @@ System.out.println("________________ mode: " + model);
          * databases. If DatabaseInterface.java is not re-implemented, than one can only make
          * connections to relational databases and not triple stores, such as AllegroGraph, through DatabaseInterface.java
          */
-        database = new OracleInterface(url, uname, pword, conn_type, debug); 
+        database = new OracleInterface(url, uname, pword, conn_type, debug);
+        // database = new OracleRDFNoSQLInterface(url, uname, pword, conn_type, debug);  
         connection_DB = "oracle";
         
         // make sure the quad store is setup. 
@@ -241,6 +242,7 @@ System.out.println("________________ mode: " + model);
     public String getPassword() { return password; }
     public String getConnectionType() { return connection_type; }
     public String getConnectionDB() { return connection_DB; }
+    public DatabaseInterface getDatabase() { return database; }
     
     // Accessor methods for the model, graph and namespace that this connection
     // should be writing too. 

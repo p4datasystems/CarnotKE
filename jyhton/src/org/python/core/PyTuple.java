@@ -50,6 +50,7 @@ import org.python.ReL.PyRelConnection;
 import org.python.ReL.SIMHelper;
 import org.python.ReL.SQLVisitor;
 import org.python.ReL.ProcessLanguages;
+import org.python.ReL.OracleRDFNoSQLInterface;
 
 import com.hp.hpl.jena.graph.*;
 import com.hp.hpl.jena.query.*;
@@ -114,7 +115,68 @@ public class PyTuple extends PySequenceList implements List {
 // This constructor was added for ReL
     public PyTuple(PyType subtype, PyObject[] elements, String ReLstring, String ReLmode, PyObject connection) {
         super(subtype);
-        PyRelConnection conn = (PyRelConnection)connection;
+
+PyRelConnection conn = (PyRelConnection)connection;
+
+/*
+OracleNoSqlConnection rdfconn = OracleNoSqlConnection.createInstance("kvstore", "Phils-MacBook-Pro.local", "5000");
+// OracleRDFNoSQLInterface database = (OracleRDFNoSQLInterface)conn.getDatabase();
+// OracleNoSqlConnection rdfconn =  database.getConnection(); 
+
+// This object will handle operations over the default graph 
+OracleGraphNoSql graph = new OracleGraphNoSql(rdfconn);
+graph.clearRepository(); // Clear the graph including inferred triples
+
+graph.add(Triple.create(Node.createURI("u:John"), 
+                        Node.createURI("u:parentOf"),
+                        Node.createURI("u:Mary")));
+    
+graph.add(Triple.create(Node.createURI("u:Mary"), 
+                        Node.createURI("u:parentOf"),
+                        Node.createURI("u:Jack")));
+   
+String queryString = " select ?x ?y WHERE {?x <u:parentOf> ?y}";
+
+System.out.println("Execute query " + queryString);
+
+Model model = new OracleModelNoSql(graph);
+Query query = QueryFactory.create(queryString) ;
+QueryExecution qexec = QueryExecutionFactory.create(query, model) ;
+
+try {
+  com.hp.hpl.jena.query.ResultSet results = qexec.execSelect();
+  ResultSetFormatter.out(System.out, results, query);
+}
+
+finally {
+  qexec.close();
+}
+
+graph.delete(Triple.create(Node.createURI("u:John"), 
+                           Node.createURI("u:parentOf"),
+                           Node.createURI("u:Mary")));
+
+queryString = "select ?x ?y ?z WHERE {?x ?y ?z}";
+
+System.out.println("Execute query " + queryString);
+
+query = QueryFactory.create(queryString) ;
+qexec = QueryExecutionFactory.create(query, model);
+
+try {
+  com.hp.hpl.jena.query.ResultSet results = qexec.execSelect();
+  ResultSetFormatter.out(System.out, results, query);
+}
+
+finally {
+  qexec.close();
+}
+
+model.close();
+rdfconn.dispose();
+*/
+
+        // PyRelConnection conn = (PyRelConnection)connection;
         String[] strings = ReLstring.split(";");
         int size = Math.max(strings.length - 1, elements.length);
         String ReLstmt = strings[0];

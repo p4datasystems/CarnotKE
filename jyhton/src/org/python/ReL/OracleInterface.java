@@ -25,7 +25,7 @@ public class OracleInterface extends DatabaseInterface {
         try
         {
             Class.forName("oracle.jdbc.OracleDriver");
-            // Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         }
             catch(ClassNotFoundException e)
         {
