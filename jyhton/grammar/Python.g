@@ -2247,7 +2247,7 @@ classdef
 @after {
    $classdef.tree = stype;
 }
-    : decorators? (PERSISTIT ON conn_name=NAME
+    : decorators? (PERSISTIT conn_name=NAME
             { 
                 persistant = true; 
                 conn_name_node = actions.makeNameNode($conn_name);
@@ -2422,7 +2422,6 @@ AS        : 'as' ;
 ASSERT    : 'assert' ;
 BREAK     : 'break' ;
 CLASS     : 'class' ;
-PERSISTIT   : 'persistit';
 CONTINUE  : 'continue' ;
 DEF       : 'def' ;
 DELETE    : 'del' ;
@@ -2450,11 +2449,12 @@ YIELD     : 'yield' ;
 BATCH     : 'mybatches' ;
 
 //ReL LEXER RULES
+PERSISTIT   : 'persist' (' ')+ 'on' (' ')+ ;
 SQL     : 'SQL' (' ')+ 'on' (' ')+ ;
 SIM     : 'SIM' (' ')+ 'on' (' ')+ ;
 Neo4j   : 'Neo4j' (' ')+ 'on' (' ')+ ;
-OORELINSERT: 'relInsert';
-OORELCOMMIT: 'relCommit';
+OORELINSERT: 'relInsert' (' ')+ 'on' (' ')+ ;
+OORELCOMMIT: 'relCommit' (' ')+ 'on' (' ')+ ;
 CONNECTTO:  'connectTo';
 NODEBUG:  'nodebug';
 
