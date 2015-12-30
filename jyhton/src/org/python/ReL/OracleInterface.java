@@ -16,7 +16,8 @@ import java.sql.*;
 public class OracleInterface extends DatabaseInterface {
 
     private Connection connection;
-    private Statement statement; 
+    private Statement callableStatement; 
+    private Statement createStatement; 
     private ResultSet rs;
     private String debug;
      
@@ -32,7 +33,8 @@ public class OracleInterface extends DatabaseInterface {
             e.printStackTrace();
         }
         connection = null;
-        statement = null;
+        callableStatement = null;
+        createStatement = null;
         this.debug = debug;
         if(conn_type != "none" ) {
         try
@@ -51,16 +53,16 @@ public class OracleInterface extends DatabaseInterface {
     {
         try
         {
-            if(statement != null) {
-                statement.close();
+            if(callableStatement != null) {
+                callableStatement.close();
             }
             if (debug == "debug") 
             {
                 System.out.println("exec -> " + stmt);
             }
-            statement = connection.createStatement();
-            statement.execute(stmt); 
-            statement.close();
+            callableStatement = connection.createStatement();
+            callableStatement.execute(stmt); 
+            callableStatement.close();
 
         }   catch(java.sql.SQLException e)
         { 
@@ -74,16 +76,16 @@ public class OracleInterface extends DatabaseInterface {
     {
         try
         {
-            if(statement != null) 
+            if(createStatement != null) 
             {
-                statement.close();
+                createStatement.close();
             }
             if(rs != null) 
             {
                 rs.close();
             }
-            statement = connection.createStatement();
-            rs = statement.executeQuery(query); 
+            createStatement = connection.createStatement();
+            rs = createStatement.executeQuery(query); 
         }   catch(java.sql.SQLException e)
         {
             System.out.println("exception: " + e.getMessage());
