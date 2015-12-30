@@ -50,6 +50,7 @@ import org.python.ReL.PyRelConnection;
 import org.python.ReL.SIMHelper;
 import org.python.ReL.SQLVisitor;
 import org.python.ReL.ProcessLanguages;
+import org.python.ReL.ProcessOracleEESQL;
 import org.python.ReL.OracleRDFNoSQLInterface;
 
 import com.hp.hpl.jena.graph.*;
@@ -241,7 +242,18 @@ public class PyTuple extends PySequenceList implements List {
                                                                                                     //sql = "select * from emp"
                                                                                                     //print SQL "" sql
                 if (conn.getDebug() == "debug") System.out.println("Remote: " + ReLstmt);
-                runAndOutputTuples(conn, ReLstmt);
+                // runAndOutputTuples(conn, ReLstmt);
+                ProcessOracleEESQL processOracleEESQL = new ProcessOracleEESQL(conn, relQueryInstancesType, relQueryInstancesTypeNames);
+                try {
+                  ArrayList<PyObject> rowResults = processOracleEESQL.processSQL(ReLstmt);
+                  //a lot of conversion going on here. . .
+                  PyObject[] results = listtoarray(rowResults);
+                  //put results in array for this tuple object
+                  array = new PyObject[results.length];
+                  System.arraycopy(results, 0, array, 0, results.length);
+                } catch (Exception e) {
+                  System.out.println(e);
+                }
             } else if (conn.getConnectionType() == "rdf_mode" || conn.getConnectionType() == "ag_sql_rdf_mode"|| conn.getConnectionType() == "ag_sparql_rdf_mode") {
             
             // If some type of rdf_mode, transfor SQL to SPARQL as follows:
@@ -331,7 +343,20 @@ public class PyTuple extends PySequenceList implements List {
             String sparql = null;
             try { sparql = processLanguage.processSIM(ReLstmt); }
             catch(Exception e1) { System.out.println(e1.getMessage()); }
-            if(sparql != null ) runAndOutputTuples(conn, sparql);
+            if(sparql != null ) {
+                //runAndOutputTuples(conn, sparql);
+                ProcessOracleEESQL processOracleEESQL = new ProcessOracleEESQL(conn, relQueryInstancesType, relQueryInstancesTypeNames);
+                try {
+                    ArrayList<PyObject> rowResults = processOracleEESQL.processSQL(sparql); 
+                    //a lot of conversion going on here. . .
+                    PyObject[] results = listtoarray(rowResults);
+                    //put results in array for this tuple object
+                    array = new PyObject[results.length];
+                    System.arraycopy(results, 0, array, 0, results.length);
+                } catch (Exception e) {
+                    System.out.println(e);
+                } 
+            }
         }
     }
     
@@ -378,7 +403,14 @@ public class PyTuple extends PySequenceList implements List {
               // String rdf = "";
               // an oo query forces the session to be committed first. 
               conn.commit_oorel_session();
-              runAndOutputTuples(conn, rdf); 
+              // runAndOutputTuples(conn, rdf); 
+              ProcessOracleEESQL processOracleEESQL = new ProcessOracleEESQL(conn, relQueryInstancesType, relQueryInstancesTypeNames);
+              ArrayList<PyObject> rowResults = processOracleEESQL.processSQL(rdf);
+              //a lot of conversion going on here. . .
+              PyObject[] results = listtoarray(rowResults);
+              //put results in array for this tuple object
+              array = new PyObject[results.length];
+              System.arraycopy(results, 0, array, 0, results.length);
            } catch (Exception e) {
               System.out.println(e);
               e.printStackTrace();
@@ -549,154 +581,7 @@ conn.getNamespace() + caststmt.getName() + ">')";
            }
         }
     }
-    
-    public void runAndOutputTuples(PyRelConnection conn, String ReLstmt) {
-        ArrayList<PyObject> rows = new ArrayList<PyObject>();
-        java.sql.ResultSet rs = null;
-        try{
-            try {
-                int dbuniqueid_column_idx = 0; 
-                if(ReLstmt.trim().toUpperCase().indexOf("SELECT") != 0) {
-                    String[] stmts = ReLstmt.split("~");   
-                    for (String s : stmts) {
-                       if (conn.getDebug() == "debug") System.out.println("stmt : " + s);
-                       if(s.length() > 5 && s.trim().indexOf("--") != 0) conn.executeStatement(s);
-                    }
-                    
-                    /**
-                    *   Example Java Batch
-                    */
-                    /*EvalService<File> dirServer = new EvalService<File>(new File("/"));
-                    for (File dir : dirServer) {
-                        for(File file :dir.listFiles()) {
-                            System.out.println("Listing files");
-                            if(file.length() > 1000) {
-                                System.out.println(file.getPath());
-                            }
-                        }
-                    }*/
-                }
-                else {
-                   rs = conn.executeQuery(ReLstmt);
-                   ResultSetMetaData rsmd = rs.getMetaData();
-                   int cc = rsmd.getColumnCount();
-                   PyObject[] temp;
-                   ArrayList<PyObject> columns = new ArrayList<PyObject>();
-                   int nTuple = cc;
-                   int dbuniqueid_idx = -1; 
-                   for (int i = 1; i <= cc; i++) {
-                      columns.add(new PyString(rsmd.getColumnLabel(i)));
-                      if(rsmd.getColumnName(i).equals("DBUNIQUEID"))
-                      {
-                          dbuniqueid_idx = i - 1; 
-                      }
-                   }
-                    
-                    // If we are not returning class instance's, then 
-                    // the first tuple should be a list of the column names. 
-                   if(this.relQueryInstancesType.size() == 0)
-                    {
-                        temp = listtoarray(columns);
-                        rows.add(new PyTuple(temp));
-                    }
-    
-                   while (rs.next()) {
-                      ArrayList<PyObject> items = new ArrayList<PyObject>();
-                      for (int i = 1; i <= cc; i++) {   // cc is the column count
-                         int type = rsmd.getColumnType(i);
-                         if (rs.getString(i) == null) items.add(new PyString("null"));
-/* The commented code is just not working correctly
-                         else if (type == Types.NUMERIC) {
-                            if (rsmd.getScale(i) == 0) items.add(new PyInteger(rs.getInt(i)));
-                            else items.add(new PyFloat(rs.getLong(i)));
-                         }
-                         else if (type == Types.DECIMAL ||
-                            type == Types.REAL ||
-                            type == Types.FLOAT ||
-                            type == Types.DOUBLE) items.add(new PyFloat(rs.getLong(i)));
-                         else if (
-                            type == Types.BIT ||
-                            type == Types.TINYINT ||
-                            type == Types.SMALLINT ||
-                            type == Types.INTEGER ||
-                            type == Types.BIGINT ) items.add(new PyInteger(rs.getInt(i)));
-*/
-                         else {
-/*
-    Can't get this to work because import org.apache.commons.lang3.math; above fails even though
-    I put commons-lang3-3.0.jar in extlibs and added it to build.xml. It would probably be a better
-    solution than the try blocks below, but for the time being, they work.
-                           if(NumberUtils.isNumber(s)) {
-                              if(NumberUtils.isDigits(s)) items.add(new PyInteger(rs.getInt(i)));
-                              else items.add(new PyFloat(rs.getLong(i)));
-                           }
-                           else {
-                              String s = rs.getString(i) == null ? "": rs.getString(i);
-                              items.add(new PyString(s));
-                           }
-*/
-                           String rsString = rs.getString(i).replace(conn.getNamespace(),"");
-                           try  
-                           { 
-                               Double.parseDouble(rsString); 
-                               try { 
-                                  Integer.parseInt(rsString);
-                                  items.add(new PyInteger(Integer.parseInt(rsString))); 
-                               } catch(NumberFormatException e) { 
-                                     items.add(new PyFloat(Float.parseFloat(rsString))); 
-                               }
-                           }  
-                              catch(NumberFormatException e)  
-                           {   
-                              items.add(new PyString(rsString));  
-                           }  
-                         }
-                      }
-                       
-                       // Return tuples of the data or return class instances with the data populated in them. 
-                      if(this.relQueryInstancesType.size() == 0)
-                       {
-                            temp = listtoarray(items);
-                            rows.add(new PyTuple(temp));
-                       }
-                       else{ // return the instances of a class. 
-                           // So the first type in the query is the type that is actually returned.
-                           // then pointers to the other types are added to the first types dictionary.
-                           // so select * from a, b, c where a.id == b.id and a.id == c.id;
-                           // will return instance of A and in a's dictionary there will be A.b -> instance of b, etc.
-                           // Create instances for each table we queried data from.
-                           PyObjectDerived top_instance = createInstanceFromResults(conn, relQueryInstancesType.get(0), columns, items);
-                           ConcurrentMap<Object, PyObject> main_inst_dict;
-                           main_inst_dict = ((PyStringMap)top_instance.fastGetDict()).getMap();
-                           for(int i = 1; i < relQueryInstancesType.size(); i++)
-                           {
-                               PyObjectDerived new_instance = createInstanceFromResults(conn, relQueryInstancesType.get(i), columns, items);
-                               main_inst_dict.put(relQueryInstancesType.get(i).getName(), new_instance);
-                           }
-                           rows.add(top_instance);
-                           
-                       }
-                   }
-                   rs.close();
-                }
-            } catch (Exception e) {
-                try { rs.close(); } catch (Exception ignore) { }
-                PyObject[] temp = new PyObject[1];
-                temp[0] = new PyString(e.toString());
-                rows.add(new PyTuple(temp));
-            }
-        } finally {
-           try { rs.close(); } catch (Exception ignore) { }
-        }
-        //a lot of conversion going on here. . .
-        PyObject[] results = listtoarray(rows);
-        //put results in array for this tuple object
-        array = new PyObject[results.length];
-        System.arraycopy(results, 0, array, 0, results.length);
-    }
-
-
-
+  
     /* A helper for creating user object instances.
        This is useful for returning instance during joins. This guy expects the columns associated with
        each type to have the types name_ appended to the front of the column name. 
@@ -724,8 +609,6 @@ conn.getNamespace() + caststmt.getName() + ">')";
             }
         }
         return instance;
-        
-
     }
 
     //helper to convert lists to arrays
@@ -738,7 +621,6 @@ conn.getNamespace() + caststmt.getName() + ">')";
             iter++;
         }
         return results;
-
     }
     
 // End ReL addition
