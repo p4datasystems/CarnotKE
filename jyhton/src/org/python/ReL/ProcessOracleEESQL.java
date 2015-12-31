@@ -64,19 +64,6 @@ public class ProcessOracleEESQL {
                        if (conn.getDebug() == "debug") System.out.println("stmt : " + s);
                        if(s.length() > 5 && s.trim().indexOf("--") != 0) conn.executeStatement(s);
                     }
-                    
-                    /**
-                    *   Example Java Batch
-                    */
-                    /*EvalService<File> dirServer = new EvalService<File>(new File("/"));
-                    for (File dir : dirServer) {
-                        for(File file :dir.listFiles()) {
-                            System.out.println("Listing files");
-                            if(file.length() > 1000) {
-                                System.out.println(file.getPath());
-                            }
-                        }
-                    }*/
                 }
                 else {
                    rs = conn.executeQuery(ReLstmt);
@@ -176,7 +163,6 @@ public class ProcessOracleEESQL {
                                main_inst_dict.put(relQueryInstancesType.get(i).getName(), new_instance);
                            }
                            rows.add(top_instance);
-                           
                        }
                    }
                    rs.close();
@@ -220,12 +206,9 @@ public class ProcessOracleEESQL {
             }
         }
         return instance;
-        
-
     }
 
     //helper to convert lists to arrays
-
     private PyObject[] listtoarray(ArrayList<PyObject> a) {
         PyObject[] results = new PyObject[a.size()];
         int iter = 0;
@@ -234,6 +217,5 @@ public class ProcessOracleEESQL {
             iter++;
         }
         return results;
-
     }
 }

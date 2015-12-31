@@ -57,6 +57,11 @@ import com.hp.hpl.jena.graph.*;
 import com.hp.hpl.jena.query.*;
 import com.hp.hpl.jena.rdf.model.Model;
 import oracle.rdf.kv.client.jena.*;
+import com.hp.hpl.jena.sparql.core.*;
+
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A builtin python tuple.
@@ -119,71 +124,197 @@ public class PyTuple extends PySequenceList implements List {
         PyRelConnection conn = (PyRelConnection)connection;
 
         if(conn.getConnectionDB().equals("OracleNoSQL")) {
-          OracleNoSqlConnection rdfconn = OracleNoSqlConnection.createInstance("kvstore", "Phils-MacBook-Pro.local", "5000");
-          // OracleRDFNoSQLInterface database = (OracleRDFNoSQLInterface)conn.getDatabase();
-          // OracleNoSqlConnection rdfconn =  database.getConnection(); 
+            OracleNoSqlConnection rdfconn = OracleNoSqlConnection.createInstance("kvstore", "Phils-MacBook-Pro.local", "5000");
+            // OracleRDFNoSQLInterface database = (OracleRDFNoSQLInterface)conn.getDatabase();
+            // OracleNoSqlConnection rdfconn =  database.getConnection();
 
-          // This object will handle operations over the default graph 
-          OracleGraphNoSql graph = new OracleGraphNoSql(rdfconn);
-          graph.clearRepository(); // Clear the graph including inferred triples
+            // Create OracleNoSQl graph and dataset 
+            OracleGraphNoSql graph = new OracleGraphNoSql(rdfconn);
+            DatasetGraphNoSql datasetGraph = DatasetGraphNoSql.createFrom(graph);
 
-          graph.add(Triple.create(Node.createURI("u:John"), 
-                                  Node.createURI("u:parentOf"),
-                                  Node.createURI("u:Mary")));
-              
-          graph.add(Triple.create(Node.createURI("u:Mary"), 
-                                  Node.createURI("u:parentOf"),
-                                  Node.createURI("u:Jack")));
-             
-          String queryString = " select ?x ?y WHERE {?x <u:parentOf> ?y}";
+            // Close graph, as it is no longer needed
+            graph.close(); 
+            
+            // Clear dataset
+            datasetGraph.clearRepository();
+/*
+            // add data to the default graph
+            datasetGraph.add(new Quad(
+                Quad.defaultGraphIRI, // specifies default graph
+                Node.createURI("http://example.org/bob"),
+                Node.createURI("http://purl.org/dc/elements/1.1/publisher"),
+                Node.createLiteral("Bob Hacker")));
+            
+            datasetGraph.add(new Quad(
+                Quad.defaultGraphIRI, // specifies default graph
+                Node.createURI("http://example.org/alice"),
+                Node.createURI("http://purl.org/dc/elements/1.1/publisher"),
+                Node.createLiteral("alice Hacker")));
+            
+            // add data to the bob named graph
+            datasetGraph.add(new Quad(
+                Node.createURI("http://example.org/bob"), // graph name
+                Node.createURI("urn:bob"),
+                Node.createURI("http://xmlns.com/foaf/0.1/name"),
+                Node.createLiteral("Bob")));
 
-          System.out.println("Execute query " + queryString);
+            datasetGraph.add(new Quad(
+                Node.createURI("http://example.org/bob"), // graph name
+                Node.createURI("urn:bob"),
+                Node.createURI("http://xmlns.com/foaf/0.1/mbox"),
+                Node.createURI("mailto:bob@example")));
 
-          Model model = new OracleModelNoSql(graph);
-          Query query = QueryFactory.create(queryString) ;
-          QueryExecution qexec = QueryExecutionFactory.create(query, model) ;
+            // add data to the alice named graph
+            datasetGraph.add(new Quad(
+                Node.createURI("http://example.org/alice"), // graph name
+                Node.createURI("urn:alice"),
+                Node.createURI("http://xmlns.com/foaf/0.1/name"),
+                Node.createLiteral("Alice")));
 
-          try {
-            com.hp.hpl.jena.query.ResultSet results = qexec.execSelect();
-            ResultSetFormatter.out(System.out, results, query);
-          }
+            datasetGraph.add(new Quad(
+                Node.createURI("http://example.org/alice"), // graph name
+                Node.createURI("urn:alice"),
+                Node.createURI("http://xmlns.com/foaf/0.1/mbox"),
+                Node.createURI("mailto:alice@example")));
+*/   
+            datasetGraph.add(new Quad(
+                Node.createURI("carnot:DATA"), // graph name
+                Node.createURI("carnot:Phil \"Cannata"),
+                Node.createURI("carnot:mbox"),
+                Node.createURI("mailto:phil@example")));
 
-          finally {
-            qexec.close();
-          }
+            datasetGraph.add(new Quad(
+                Node.createURI("carnot:DATA"), // graph name
+                Node.createURI("carnot:Phil \"Cannata"),
+                Node.createURI("carnot:mbox"),
+                Node.createURI("phil@yahoo")));
 
-          graph.delete(Triple.create(Node.createURI("u:John"), 
-                                     Node.createURI("u:parentOf"),
-                                     Node.createURI("u:Mary")));
+            datasetGraph.add(new Quad(
+                Node.createURI("carnot:DATA"), // graph name
+                Node.createURI("carnot:Phil \"Cannata"),
+                Node.createURI("carnot:age"),
+                Node.createLiteral("66.9"))); 
 
-          queryString = "select ?x ?y ?z WHERE {?x ?y ?z}";
+            datasetGraph.add(new Quad(
+                Node.createURI("carnot:DATA"), // graph name
+                Node.createURI("http://xmlns.com/foaf/0.1/Rita Cannata"),
+                Node.createURI("carnot:mbox"),
+                Node.createURI("rita@example")));  
 
-          System.out.println("Execute query " + queryString);
+            datasetGraph.add(new Quad(
+                Node.createURI("carnot:OTHER"), // graph name
+                Node.createURI("http://xmlns.com/foaf/0.1/Rita Cannata"),
+                Node.createURI("carnot:mbox"),
+                Node.createURI("rita@yahoo")));
+                      
+            datasetGraph.add(new Quad(
+                Node.createURI("carnot:DATA"), // graph name
+                Node.createURI("http://xmlns.com/foaf/0.1/Rita Cannata"),
+                Node.createURI("carnot:age"),
+                Node.createURI("60"))); 
 
-          query = QueryFactory.create(queryString) ;
-          qexec = QueryExecutionFactory.create(query, model);
+            datasetGraph.add(new Quad(
+                Node.createURI("carnot:DATA"), // graph name
+                Node.createURI("http://xmlns.com/foaf/0.1/Chris Cannata"),
+                Node.createURI("carnot:mbox"),
+                Node.createURI("chris@example")));
 
-          try {
-            com.hp.hpl.jena.query.ResultSet results = qexec.execSelect();
-            ResultSetFormatter.out(System.out, results, query);
-          }
+            Dataset ds = DatasetImpl.wrap(datasetGraph);
+            String szQuery =     " PREFIX c: <carnot:> "                    + 
+                                                                            // See URI discussion at https://en.wikipedia.org/wiki/Uniform_Resource_Identifier
+                                                                            // For known non generic URI see https://gist.github.com/knu/744715/0143487cc3f3fffb0b6faf9b18b0da6f0642e7d5
+                                 " SELECT ?x ?age ?mbox"                    +
+                                 " WHERE "                                  +
+                                 " { "                                      +
+                                 "     GRAPH c:DATA { ?x c:mbox ?mbox ."    +
+                                 "         OPTIONAL { ?x c:age  ?age } } "  +
+                                 " } ";
 
-          finally {
-            qexec.close();
-          }
+            Query query = QueryFactory.create(szQuery);
+            QueryExecution qexec = QueryExecutionFactory.create(query, ds);
+            
+            try {
+              com.hp.hpl.jena.query.ResultSet queryResults = qexec.execSelect();
+// ResultSetFormatter.out(System.out, queryResults, query);
+              String xmlstr = ResultSetFormatter.asXMLString(queryResults); // For documentation, see http://grepcode.com/file/repo1.maven.org/maven2/com.hp.hpl.jena/arq/2.6.0/com/hp/hpl/jena/query/ResultSetFormatter.java#ResultSetFormatter.toList%28com.hp.hpl.jena.query.ResultSet%29
+System.out.println("xmlstr is: " + xmlstr);
+              Matcher m = Pattern.compile("variable name=.*").matcher(xmlstr);
+              ArrayList<String> attrs = new ArrayList<String>();
+              ArrayList<PyObject> rows = new ArrayList<PyObject>();
+              ArrayList<PyObject> items = new ArrayList<PyObject>();
+              PyObject[] temp;
 
-          model.close();
-          rdfconn.dispose();
-          //a lot of conversion going on here. . .
-          ArrayList<PyObject> rows = new ArrayList<PyObject>();
-          PyObject[] temp = new PyObject[1];
-          temp[0] = new PyString("NoSQL");
-          rows.add(new PyTuple(temp));
-          PyObject[] results = listtoarray(rows);
-          //put results in array for this tuple object
-          array = new PyObject[results.length];
-          System.arraycopy(results, 0, array, 0, results.length);
-          return;
+              while (m.find()) {
+                String item = m.group().replaceAll("variable name=.", "").replaceAll("./>", "");
+                attrs.add(item);
+                items.add(new PyString(item)); 
+              }
+              temp = listtoarray(items);
+              rows.add(new PyTuple(temp)); 
+              items = new ArrayList<PyObject>();
+
+              m = Pattern.compile("<binding name=.*|<uri>:?.*|<literal datatype=.*|</result>").matcher(xmlstr);
+              String attrName = "";
+              int num = 0;
+              while (m.find()) {
+                  for(int i = 0; i <= attrs.size(); i++) {
+                      if(m.group().contains("<uri>") || m.group().contains("<literal datatype=")) {
+    System.out.println("attrName is: " + attrName);
+    System.out.println("attrs.get(num) is: " + attrs.get(num));
+                          if(attrName.equals(attrs.get(num))) {
+                              String item = m.group().replaceAll("<uri>:?", "").replaceAll("</uri>", "").replaceAll("<literal datatype=", "").replaceAll("</literal>", "");  
+                              // Literals:                                 
+                              // For numberic data types, see http://www.w3schools.com/xml/schema_dtypes_numeric.asp
+                              // For string data types, see http://www.w3schools.com/xml/schema_dtypes_string.asp
+                              // For date data types, see http://www.w3schools.com/xml/schema_dtypes_date.asp
+                              // For misc. data types, see http://www.w3schools.com/xml/schema_dtypes_misc.asp
+
+                              try  { 
+                                  Double.parseDouble(item); 
+                                  try { 
+                                    Integer.parseInt(item);
+                                    items.add(new PyInteger(Integer.parseInt(item))); 
+                                  } catch(NumberFormatException e) { 
+                                       items.add(new PyFloat(Float.parseFloat(item))); 
+                                  }
+                              }  
+                                  catch(NumberFormatException e)  
+                              {   
+                                  items.add(new PyString(item));  
+                              }
+                              num++;
+                              break;
+                          }
+                          else {
+                              items.add(new PyString("null"));
+                              num++;
+                          }
+                      }
+                      else if(m.group().contains("</result>")) {
+                          temp = listtoarray(items);
+                          rows.add(new PyTuple(temp));
+                          items = new ArrayList<PyObject>();
+                          num = 0;
+                          break;
+                      }
+                      else if(m.group().contains("<binding name=")) {
+                          attrName = m.group().replaceAll("<binding name=.", "").replaceAll(".>", "");
+                          System.out.println("attrName is: " + attrName);
+                      }
+                  }
+              }
+              //a lot of conversion going on here. . .
+              PyObject[] results = listtoarray(rows);
+              //put results in array for this tuple object
+              array = new PyObject[results.length];
+              System.arraycopy(results, 0, array, 0, results.length);
+            }
+            finally {
+              qexec.close();
+            }
+            ds.close();
+            rdfconn.dispose();
+            return;
         }
 
         // PyRelConnection conn = (PyRelConnection)connection;
@@ -233,11 +364,6 @@ public class PyTuple extends PySequenceList implements List {
 
         if(ReLmode == "SQL") {
             if (conn.getConnectionType() == "native_mode") {
-                /* Test in R with
-                On localhost run: pcannata$ dist/bin/jython RestfulReL/mike68561-restful-rel-ea5e3cef544e/restful_start.py
-                In R run:
-                df <- data.frame(eval(parse(text=substring(getURL(URLencode('localhost:5001/rest/native/?query="select empno, ename, job, mgr, hiredate, sal, nvl(comm,0) comm, deptno from emp"'), httpheader=c(DB='jdbc:oracle:thin:@129.152.144.84:1521/PDB1.usuniversi01134.oraclecloud.internal', USER='DV_Vehicles', PASS='orcl', MODE='native_mode', MODEL='model', returnFor = 'R', returnDimensions = 'False'), verbose = TRUE), 1, 2^31-1)))); df
-                */
                 if (ReLstmt.charAt(0) == '\'' ) ReLstmt = ReLstmt.substring(1, ReLstmt.length()-1); //This happens for a py program like:
                                                                                                     //sql = "select * from emp"
                                                                                                     //print SQL "" sql
@@ -254,86 +380,16 @@ public class PyTuple extends PySequenceList implements List {
                 } catch (Exception e) {
                   System.out.println(e);
                 }
-            } else if (conn.getConnectionType() == "rdf_mode" || conn.getConnectionType() == "ag_sql_rdf_mode"|| conn.getConnectionType() == "ag_sparql_rdf_mode") {
-            
-            // If some type of rdf_mode, transfor SQL to SPARQL as follows:
-            // In PyTuple.doRDF: if (statement instanceof Select), call SQLVisitor.getSelect
-            //    In SQLVisitor.getSelect, somehow gets to visit, which calls visitSelect_buildSPARQL
-            //        visitSelect_buildSPARQL returns the SPARQL statement to SQLVisitor.getSelect
-            //    SQLVisitor.getSelect returns the SPARQL to PyTuple
-            // PyTuple.doRDF then calls runAndOutputTuples, which calls conn.executeQuery(ReLstmt) and the results from this are processed and stored in the results field of PyTuple
-            
-                if (conn.getConnectionType() == "rdf_mode" || conn.getConnectionType() == "ag_sql_rdf_mode") {
-                   CCJSqlParserManager pm = new CCJSqlParserManager();
-                   net.sf.jsqlparser.statement.Statement statement = null;
-                   try {
-                       statement = (net.sf.jsqlparser.statement.Statement)pm.parse(new StringReader(ReLstmt));
-                       } catch (Exception e) {
-                          System.out.println(e);
-                   }
-                   if (conn.getDebug() == "debug") System.out.println("jsqlstmt is: " + statement.toString());
-                   if (conn.getConnectionType() == "rdf_mode") {
-                   /* Test in R with
-                   On localhost run: pcannata$ dist/bin/jython RestfulReL/mike68561-restful-rel-ea5e3cef544e/restful_start.py
-                   In R run:
-                   df <- data.frame(eval(parse(text=substring(getURL(URLencode('localhost:5001/rest/native/?query="select * from emp"'), httpheader=c(DB='jdbc:oracle:thin:@128.83.138.158:1521:orcl', USER='C##cs347_prof', PASS='orcl_prof', MODE='rdf_mode', MODEL='F2014', returnFor = 'R', returnDimensions = 'False'), verbose = TRUE), 1, 2^31-1)))); df
-                   */
-                      doRDF(statement, conn);
-                   } else if (conn.getConnectionType() == "ag_sql_rdf_mode") {
-                   /*
-               
-                   r <- data.frame(fromJSON(getURL(URLencode('ec2-user@ec2-52-10-0-189.us-west-2.compute.amazonaws.com:5001/rest/native/?query="SELECT * from Person"'),httpheader=c(DB='jdbc:oracle:thin:@129.152.144.84:1521/PDB1.usuniversi01134.oraclecloud.internal',USER='DV_Diamonds',PASS='orcl',MODE='ag_sql_rdf_mode',MODEL='model',returnDimensions = 'False',returnFor = 'JSON', q="WHERE"),verbose = TRUE))); r
-               
-                   SELECT v1 "HIREDATE", v2 "COMM", v3 "DBUNIQUEID", v4 "JOB", v5 "DEPTNO", v6 "SAL", v7 "ENAME", v8 "MGR", v9 "EMPNO"
-                   FROM TABLE(SEM_MATCH('SELECT * WHERE {
-                   ?s1 rdf:type :EMP .
-                   OPTIONAL { ?s1 :HIREDATE ?v1 }
-                   OPTIONAL { ?s1 :COMM ?v2 }
-                   OPTIONAL { ?s1 :DBUNIQUEID ?v3 }
-                   OPTIONAL { ?s1 :JOB ?v4 }
-                   OPTIONAL { ?s1 :DEPTNO ?v5 }
-                   OPTIONAL { ?s1 :SAL ?v6 }
-                   OPTIONAL { ?s1 :ENAME ?v7 }
-                   OPTIONAL { ?s1 :MGR ?v8 }
-                   OPTIONAL { ?s1 :EMPNO ?v9 }
-                   }
-                   */
-                      doRDF(statement, conn);
-                   }
-                } else if (conn.getConnectionType() == "ag_sparql_rdf_mode") {
-                   /* Test in R with:
-                   r <- data.frame(fromJSON(getURL(URLencode('ec2-user@ec2-52-10-0-189.us-west-2.compute.amazonaws.com:5001/rest/native/?query="SELECT ?s ?p ?o  "(lambda x: x)(q)" {?s ?p ?o .}"'),httpheader=c(DB='jdbc:oracle:thin:@129.152.144.84:1521/PDB1.usuniversi01134.oraclecloud.internal',USER='DV_Diamonds',PASS='orcl',MODE='ag_sparql_rdf_mode',MODEL='model',returnDimensions = 'False',returnFor = 'JSON', q="WHERE"),verbose = TRUE))); r
-                   */
-                   System.out.println("Ready for some AllegroGraph processing.");
-                   if (ReLstmt.charAt(0) == '\'' ) ReLstmt = ReLstmt.substring(1, ReLstmt.length()-1); //This happens for a py program like:
-                                                                                                       //sql = "select * from emp"
-                                                                                                       //print SQL "" sql
-                  if (conn.getDebug() == "debug") System.out.println("Remote: " + ReLstmt);
-                  try {
-                     ArrayList<ArrayList<String>> agrows = JenaTutorialExamples.example3(ReLstmt);
-                     System.out.println("----------" + agrows + "\n__________");
-                     ArrayList<PyObject> rows = new ArrayList<PyObject>();
-                     ArrayList<PyObject> items = new ArrayList<PyObject>();
-                     items.add(new PyString("Subject"));
-                     items.add(new PyString("Predicate"));
-                     items.add(new PyString("Object"));
-                     rows.add(new PyTuple(listtoarray(items)));
-                     for (ArrayList<String> a : agrows) {
-                        items = new ArrayList<PyObject>();
-                        for (String s : a) {
-                           items.add(new PyString(s));
-                        }
-                        rows.add(new PyTuple(listtoarray(items)));
-                     }
-                     PyObject[] results = listtoarray(rows);
-                     //put results in array for this tuple object
-                     array = new PyObject[results.length];
-                     System.arraycopy(results, 0, array, 0, results.length);
-                
-                  } catch (Exception e) {
-                       System.out.println(e);
-                  } // End try/catch
-               }
+            } else if (conn.getConnectionType() == "rdf_mode") { 
+                 CCJSqlParserManager pm = new CCJSqlParserManager();
+                 net.sf.jsqlparser.statement.Statement statement = null;
+                 try {
+                     statement = (net.sf.jsqlparser.statement.Statement)pm.parse(new StringReader(ReLstmt));
+                     } catch (Exception e) {
+                        System.out.println(e);
+                 }
+                 if (conn.getDebug() == "debug") System.out.println("jsqlstmt is: " + statement.toString());
+                 doRDF(statement, conn);
             } else {
                 System.out.println("Connection type must be \"native_mode\", or \"rdf_mode\", not \"" + conn.getConnectionType() + "\"");
             }
