@@ -137,46 +137,7 @@ public class PyTuple extends PySequenceList implements List {
             
             // Clear dataset
             datasetGraph.clearRepository();
-/*
-            // add data to the default graph
-            datasetGraph.add(new Quad(
-                Quad.defaultGraphIRI, // specifies default graph
-                Node.createURI("http://example.org/bob"),
-                Node.createURI("http://purl.org/dc/elements/1.1/publisher"),
-                Node.createLiteral("Bob Hacker")));
-            
-            datasetGraph.add(new Quad(
-                Quad.defaultGraphIRI, // specifies default graph
-                Node.createURI("http://example.org/alice"),
-                Node.createURI("http://purl.org/dc/elements/1.1/publisher"),
-                Node.createLiteral("alice Hacker")));
-            
-            // add data to the bob named graph
-            datasetGraph.add(new Quad(
-                Node.createURI("http://example.org/bob"), // graph name
-                Node.createURI("urn:bob"),
-                Node.createURI("http://xmlns.com/foaf/0.1/name"),
-                Node.createLiteral("Bob")));
 
-            datasetGraph.add(new Quad(
-                Node.createURI("http://example.org/bob"), // graph name
-                Node.createURI("urn:bob"),
-                Node.createURI("http://xmlns.com/foaf/0.1/mbox"),
-                Node.createURI("mailto:bob@example")));
-
-            // add data to the alice named graph
-            datasetGraph.add(new Quad(
-                Node.createURI("http://example.org/alice"), // graph name
-                Node.createURI("urn:alice"),
-                Node.createURI("http://xmlns.com/foaf/0.1/name"),
-                Node.createLiteral("Alice")));
-
-            datasetGraph.add(new Quad(
-                Node.createURI("http://example.org/alice"), // graph name
-                Node.createURI("urn:alice"),
-                Node.createURI("http://xmlns.com/foaf/0.1/mbox"),
-                Node.createURI("mailto:alice@example")));
-*/   
             datasetGraph.add(new Quad(
                 Node.createURI("carnot:DATA"), // graph name
                 Node.createURI("carnot:Phil \"Cannata"),
@@ -220,15 +181,15 @@ public class PyTuple extends PySequenceList implements List {
                 Node.createURI("chris@example")));
 
             Dataset ds = DatasetImpl.wrap(datasetGraph);
-            String szQuery =     " PREFIX c: <carnot:> "                    + 
-                                                                            // See URI discussion at https://en.wikipedia.org/wiki/Uniform_Resource_Identifier
-                                                                            // For known non generic URI see https://gist.github.com/knu/744715/0143487cc3f3fffb0b6faf9b18b0da6f0642e7d5
-                                 " SELECT ?x ?age ?mbox"                    +
-                                 " WHERE "                                  +
-                                 " { "                                      +
-                                 "     GRAPH c:DATA { ?x c:mbox ?mbox ."    +
-                                 "         OPTIONAL { ?x c:age  ?age } } "  +
-                                 " } ";
+            String szQuery = " PREFIX c: <carnot:> "                    + 
+                                                          // See URI discussion at https://en.wikipedia.org/wiki/Uniform_Resource_Identifier
+                                                          // For known non generic URI see https://gist.github.com/knu/744715/0143487cc3f3fffb0b6faf9b18b0da6f0642e7d5
+               " SELECT ?x ?age ?mbox"                    +
+               " WHERE "                                  +
+               " { "                                      +
+               "     GRAPH c:DATA { ?x c:mbox ?mbox ."    +
+               "         OPTIONAL { ?x c:age  ?age } } "  +
+               " } ";
 
             Query query = QueryFactory.create(szQuery);
             QueryExecution qexec = QueryExecutionFactory.create(query, ds);
@@ -237,7 +198,7 @@ public class PyTuple extends PySequenceList implements List {
               com.hp.hpl.jena.query.ResultSet queryResults = qexec.execSelect();
 // ResultSetFormatter.out(System.out, queryResults, query);
               String xmlstr = ResultSetFormatter.asXMLString(queryResults); // For documentation, see http://grepcode.com/file/repo1.maven.org/maven2/com.hp.hpl.jena/arq/2.6.0/com/hp/hpl/jena/query/ResultSetFormatter.java#ResultSetFormatter.toList%28com.hp.hpl.jena.query.ResultSet%29
-System.out.println("xmlstr is: " + xmlstr);
+              if (conn.getDebug() == "debug") System.out.println("xmlstr is: " + xmlstr);
               Matcher m = Pattern.compile("variable name=.*").matcher(xmlstr);
               ArrayList<String> attrs = new ArrayList<String>();
               ArrayList<PyObject> rows = new ArrayList<PyObject>();
@@ -258,16 +219,9 @@ System.out.println("xmlstr is: " + xmlstr);
               int num = 0;
               while (m.find()) {
                   for(int i = 0; i <= attrs.size(); i++) {
-                      if(m.group().contains("<uri>") || m.group().contains("<literal datatype=")) {
-    System.out.println("attrName is: " + attrName);
-    System.out.println("attrs.get(num) is: " + attrs.get(num));
+                      if(m.group().contains("<uri>")) {
                           if(attrName.equals(attrs.get(num))) {
-                              String item = m.group().replaceAll("<uri>:?", "").replaceAll("</uri>", "").replaceAll("<literal datatype=", "").replaceAll("</literal>", "");  
-                              // Literals:                                 
-                              // For numberic data types, see http://www.w3schools.com/xml/schema_dtypes_numeric.asp
-                              // For string data types, see http://www.w3schools.com/xml/schema_dtypes_string.asp
-                              // For date data types, see http://www.w3schools.com/xml/schema_dtypes_date.asp
-                              // For misc. data types, see http://www.w3schools.com/xml/schema_dtypes_misc.asp
+                              String item = m.group().replaceAll("<uri>:?", "").replaceAll("</uri>", ""); 
 
                               try  { 
                                   Double.parseDouble(item); 
@@ -290,6 +244,24 @@ System.out.println("xmlstr is: " + xmlstr);
                               num++;
                           }
                       }
+                      else if(m.group().contains("<literal datatype=")) {
+                          if(attrName.equals(attrs.get(num))) {
+                              String item = m.group().replaceAll("<literal datatype=", "").replaceAll("</literal>", "");  
+                              // Literals:                                 
+                              // For numberic data types, see http://www.w3schools.com/xml/schema_dtypes_numeric.asp
+                              // For string data types, see http://www.w3schools.com/xml/schema_dtypes_string.asp
+                              // For date data types, see http://www.w3schools.com/xml/schema_dtypes_date.asp
+                              // For misc. data types, see http://www.w3schools.com/xml/schema_dtypes_misc.asp
+
+                              items.add(new PyString(item));  
+                              num++;
+                              break;
+                          }
+                          else {
+                              items.add(new PyString("null"));
+                              num++;
+                          }
+                      }
                       else if(m.group().contains("</result>")) {
                           temp = listtoarray(items);
                           rows.add(new PyTuple(temp));
@@ -299,7 +271,6 @@ System.out.println("xmlstr is: " + xmlstr);
                       }
                       else if(m.group().contains("<binding name=")) {
                           attrName = m.group().replaceAll("<binding name=.", "").replaceAll(".>", "");
-                          System.out.println("attrName is: " + attrName);
                       }
                   }
               }
