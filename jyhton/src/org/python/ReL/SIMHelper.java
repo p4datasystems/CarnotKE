@@ -464,21 +464,10 @@ public class SIMHelper {
 */
             else {
                 // DVA
-                sparqlHelper.insertQuad(className, instanceID, attrName, attrValue, false);
-				List<String> TypeExists = SPARQLDoer.getObjectsWithGraph(connection, className + "_" + schemaString, instanceID, "rdf:type");
-				if ( ! TypeExists.contains(className)) { 
-					sparqlHelper.insertSchemaQuad(className, instanceID, "rdf:type", className);
-				}
-				
-				List<String> DatatypePropertyExists = SPARQLDoer.getObjectsWithGraph(connection, className + "_" + schemaString
-				, "<" + connection.getNamespace() + attrName + ">", "rdf:type");
-				if ( ! DatatypePropertyExists.contains("DatatypeProperty")) {
-					sparqlHelper.insertSchemaQuad(className, attrName, "rdf:type", "owl:DatatypeProperty");
-					sparqlHelper.insertSchemaQuad(className, attrName, "rdfs:domain", className);
-					sparqlHelper.insertSchemaQuad(className, attrName, "rdf:range", "rdfs:\"^^xsd:string");
-				    // sparqlHelper.insertQuad(className, attrName, "rdf:type", className);
-					// sparqlHelper.insertSchemaQuad(className, attr, "rdf:type", "owl:FunctionalProperty");
-				}
+				sparqlHelper.insertSchemaQuad(className, instanceID, "rdf:type", className);
+				sparqlHelper.insertSchemaQuad(className, attrName, "rdf:type", "owl:DatatypeProperty");
+				sparqlHelper.insertSchemaQuad(className, attrName, "rdfs:domain", className);
+				sparqlHelper.insertSchemaQuad(className, attrName, "rdf:range", "rdfs:\"^^xsd:string");
             }
         }
         return 1;

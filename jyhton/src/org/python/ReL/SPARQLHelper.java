@@ -124,12 +124,9 @@ public class SPARQLHelper {
 				"', '" + subject + "', '" + predicate + "', '" + object + "'))";
 			connection.executeStatement(s);
 		} else {
-			List<String> ClassExists = SPARQLDoer.getObjectsWithGraph(connection, schemaString, "<" + subject + ">", "rdf:type");
-			if ( ! ClassExists.contains("class")) {
-				s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
-					"', '" + subject + "', '" + predicate + "', '" + object + "'))";
-				connection.executeStatement(s);
-			}
+			s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
+				"', '" + subject + "', '" + predicate + "', '" + object + "'))";
+			connection.executeStatement(s);
 		}
     } // End insertSchemaQuad
 

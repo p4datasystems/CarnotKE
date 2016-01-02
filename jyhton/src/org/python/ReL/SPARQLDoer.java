@@ -477,7 +477,7 @@ public class SPARQLDoer {
             "}',\n" +
             "SEM_MODELS('"+connection.getModel() + "'), null,\n" +
             "SEM_ALIASES( SEM_ALIAS('', '" + connection.getNamespace() + "')), null) )";
-        if (connection.getDebug() == "debug") System.out.println("\ngetMembersWithAttrValues: query=\n" + q);
+        if (connection.getDebug() == "debug") System.out.println("\ngetSubjectsWithAttrValue: query=\n" + q);
         List<String> objects = executeRdfSelect(connection, q);
         return objects;
     }
@@ -494,7 +494,7 @@ public class SPARQLDoer {
 					"}',\n" +
 					"SEM_MODELS('"+connection.getModel() + "'), null,\n" +
 					"SEM_ALIASES( SEM_ALIAS('', '" + connection.getNamespace() + "')), null) )";
-        if (connection.getDebug() == "debug") System.out.println("\ngetMembersWithAttrValues: query=\n" + q);
+        if (connection.getDebug() == "debug") System.out.println("\ngetObjectsWithGraph: query=\n" + q);
         List<String> objects = executeRdfSelect(connection, q);
         return objects;
     }
