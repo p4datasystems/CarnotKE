@@ -28,6 +28,12 @@ import org.python.core.PyInteger;
 import org.python.core.PyTuple;
 import org.python.ReL.SIMHelper;
 
+import com.hp.hpl.jena.graph.*;
+import com.hp.hpl.jena.query.*;
+import com.hp.hpl.jena.rdf.model.Model;
+import oracle.rdf.kv.client.jena.*;
+import com.hp.hpl.jena.sparql.core.*;
+
 /**
  * A class that is resposible for communicating with a database.
  *
@@ -67,7 +73,11 @@ public class PyRelConnection extends PyObject {
     private String debug; 
 
     // the current graph
-    private String graph;
+    private String graph; 
+
+    // the current rdfConn
+    private OracleNoSqlConnection rdfConn = null;
+    DatasetGraphNoSql datasetGraph = null;
 
     //private ArrayList<String> statements;
     
@@ -79,13 +89,12 @@ public class PyRelConnection extends PyObject {
     public PyRelConnection(String url, String uname, String pword, String conn_type, String user_model, String user_table, String debug) {
         super();
         this.url = url; 
-        username = uname.toUpperCase();
-        password = pword; 
-        connection_type = conn_type; 
-        model = user_model.toUpperCase();
-        table = user_table.toUpperCase();
+        this.username = uname.toUpperCase();
+        this.password = pword; 
+        this.connection_type = conn_type; 
+        this.model = user_model.toUpperCase();
+        this.table = user_table.toUpperCase();
         this.debug = debug;
-System.out.println("________________ mode: " + model);
         
         // For now we create a oracle database connection, but we could create any type of connection.
         /* 
@@ -103,15 +112,25 @@ System.out.println("________________ mode: " + model);
                 database = new OracleRDFNoSQLInterface(url, uname, pword,
             conn_type, debug); 
             connection_DB = "OracleNoSQL";
-        }
-        
-        // make sure the quad store is setup. 
-        /*if(conn_type == "rdf_mode" || conn_type == "ag_sql_rdf_mode") {
-            SPARQLDoer.createQuadStore(this);
-        }*/
-        if(conn_type == "rdf_mode") {
-            SPARQLDoer.createQuadStore(this);
-        }
+            this.rdfConn = OracleNoSqlConnection.createInstance("kvstore", "Phils-MacBook-Pro.local", "5000");
+            OracleGraphNoSql graph = new OracleGraphNoSql(rdfConn);
+            this.datasetGraph = DatasetGraphNoSql.createFrom(graph);
+
+            // Close graph, as it is no longer needed
+            graph.close(); 
+            
+            // Clear dataset
+            System.out.println("\nWRNING: the NoSQL database is being cleared in PyRelConnection!\n");
+            datasetGraph.clearRepository();
+            }
+            
+            // make sure the quad store is setup. 
+            /*if(conn_type == "rdf_mode" || conn_type == "ag_sql_rdf_mode") {
+                SPARQLDoer.createQuadStore(this);
+            }*/
+            if(conn_type == "rdf_mode") {
+                SPARQLDoer.createQuadStore(this);
+            }
     }
     
     // Provide access to our OORel session information. 
@@ -257,6 +276,8 @@ System.out.println("________________ mode: " + model);
     public String getGraph() { return graph; }
     public String getNamespace() { return namespace; } 
     public String getDebug() { return debug; }
+    public OracleNoSqlConnection getRdfConn() { return rdfConn; }
+    public DatasetGraphNoSql getDatasetGraph() { return datasetGraph; }
    
     public void batchExecuteStatement(ArrayList<String> stmts) throws SQLException, UnknownHostException {
 	InetAddress address = InetAddress.getByName("");
@@ -280,7 +301,4 @@ System.out.println("________________ mode: " + model);
     {
         return database.executeQuery(query);     
     }
-
-    
-    
 }

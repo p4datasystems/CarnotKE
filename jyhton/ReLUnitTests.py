@@ -1,6 +1,5 @@
 import unittest
 
-"""
 conn0 = connectTo 'jdbc:oracle:thin:@sayonara.microlab.cs.utexas.edu:1521:orcl' 'C##cs329e_UTEid' 'orcl_UTEid' 'native_mode' nodebug
 SQL on conn0 "{call SEM_APIS.DROP_RDF_MODEL('A0_C##CS329E_UTEID')}"
 SQL on conn0 "drop table A0_C##CS329E_UTEID_DATA;"
@@ -40,7 +39,6 @@ Neo4j on conn "MATCH (a:emp),(b:dept) WHERE a.deptno = 10 AND b.deptno = 10 CREA
 Neo4j on conn "MATCH (a:emp),(b:dept) WHERE a.deptno = 20 AND b.deptno = 20 CREATE (a)-[:dept]->(b)"
 Neo4j on conn "MATCH (a:emp),(b:dept) WHERE a.deptno = 30 AND b.deptno = 30 CREATE (a)-[:dept]->(b)"
 Neo4j on conn "MATCH (a:emp),(b:dept) WHERE a.deptno = 40 AND b.deptno = 40 CREATE (a)-[:dept]->(b)"
-"""
 
 conn_native = connectTo 'jdbc:oracle:thin:@sayonara.microlab.cs.utexas.edu:1521:orcl' 'C##cs329e_UTEid' 'orcl_UTEid' 'native_mode' 'A0' nodebug
 SQL on conn_native "truncate table emp"

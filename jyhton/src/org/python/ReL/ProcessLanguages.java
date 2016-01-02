@@ -61,10 +61,10 @@ public class ProcessLanguages {
 		catch(Exception e1) { System.out.println(e1.getMessage()); }
 		String sparql = null;
 		// --------------------------------------------------------------------------------- Insert
+	    // E.G., INSERT INTO onto_DATA VALUES ( 1, SDO_RDF_TRIPLE_S('onto', '#PERSON', 'rdf:type', 'rdfs:Class'));
 		if(q instanceof InsertQuery) {
 			InsertQuery iq = (InsertQuery)q;
 			String instanceID = SPARQLDoer.getNextAnonNodeForInd(conn);
-			//INSERT INTO onto_DATA VALUES ( 1, SDO_RDF_TRIPLE_S('onto', '#PERSON', 'rdf:type', 'rdfs:Class'));
 			sparqlHelper.insertSchemaQuad("", iq.className, "rdf:type", "rdfs:Class");
 			for (int i = 0; i < iq.numberOfAssignments(); i++) {
 				if(iq.getAssignment(i)instanceof EvaAssignment) {
