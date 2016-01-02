@@ -440,12 +440,20 @@ public class SIMHelper {
                 }
                 List<String> members = sparqlHelper.getInstancesWithObjectValue(withClass, withClass, attrValues);
                 for (String member : members) {
-                    sparqlHelper.insertSchemaQuad(className, attrName, "rdf:type", "owl:ObjectProperty");
-                    sparqlHelper.insertSchemaQuad(className, attrName, "rdfs:domain", className);
-                    sparqlHelper.insertSchemaQuad(className, attrName, "rdf:range", withClass);
-                    sparqlHelper.insertSchemaQuad(withClass, inverse, "rdf:type", "owl:ObjectProperty");
-                    sparqlHelper.insertSchemaQuad(withClass, inverse, "rdfs:domain", withClass);
-                    sparqlHelper.insertSchemaQuad(withClass, inverse, "rdf:range", className);
+					List<String> ObjectPropertyExists1 = SPARQLDoer.getObjectsWithGraph(connection, className + "_" + schemaString, "<" + connection.getNamespace() + attrName + ">", "rdf:type");
+					List<String> ObjectPropertyExists2 = SPARQLDoer.getObjectsWithGraph(connection, className + "_" + schemaString, attrName, "rdf:type");
+					if ( ! ObjectPropertyExists1.contains("ObjectProperty") &&  ! ObjectPropertyExists2.contains("ObjectProperty")) {
+                        sparqlHelper.insertSchemaQuad(className, attrName, "rdf:type", "owl:ObjectProperty");
+                        sparqlHelper.insertSchemaQuad(className, attrName, "rdfs:domain", className);
+                        sparqlHelper.insertSchemaQuad(className, attrName, "rdf:range", withClass);
+					}
+					ObjectPropertyExists1 = SPARQLDoer.getObjectsWithGraph(connection, withClass + "_" + schemaString, "<" + connection.getNamespace() + inverse + ">", "rdf:type");
+					ObjectPropertyExists2 = SPARQLDoer.getObjectsWithGraph(connection, withClass + "_" + schemaString, inverse, "rdf:type");
+					if ( ! ObjectPropertyExists1.contains("ObjectProperty") &&  ! ObjectPropertyExists2.contains("ObjectProperty")) {
+                        sparqlHelper.insertSchemaQuad(withClass, inverse, "rdf:type", "owl:ObjectProperty");
+                        sparqlHelper.insertSchemaQuad(withClass, inverse, "rdfs:domain", withClass);
+                        sparqlHelper.insertSchemaQuad(withClass, inverse, "rdf:range", className);
+					}
                     sparqlHelper.insertQuad(className, instanceID, attrName, member, false);
                     sparqlHelper.insertQuad(withClass, member, inverse, instanceID, false);
                 }
