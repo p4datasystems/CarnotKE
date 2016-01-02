@@ -123,144 +123,6 @@ public class PyTuple extends PySequenceList implements List {
         super(subtype);
         PyRelConnection conn = (PyRelConnection)connection;
 
-        if(conn.getConnectionDB().equals("OracleNoSQL X")) {
-            OracleNoSqlConnection rdfconn = conn.getRdfConn();
-            // OracleRDFNoSQLInterface database = (OracleRDFNoSQLInterface)conn.getDatabase();
-            // OracleNoSqlConnection rdfconn =  database.getConnection();
-/*
-            // Create OracleNoSQl graph and dataset 
-            OracleGraphNoSql graph = new OracleGraphNoSql(rdfconn);
-            DatasetGraphNoSql datasetGraph = DatasetGraphNoSql.createFrom(graph);
-
-            // Close graph, as it is no longer needed
-            graph.close(); 
-            
-            // Clear dataset
-            datasetGraph.clearRepository();
-*/
-            DatasetGraphNoSql datasetGraph = conn.getDatasetGraph();
-
-            try { 
-              SPARQLHelper sparqlHelper = new SPARQLHelper(conn); 
-              sparqlHelper.insertQuad("carnot:DATA",  "carnot:Phil \"Cannata",                   "carnot:mbox", "phil@example",  false);
-              sparqlHelper.insertQuad("carnot:DATA",  "carnot:Phil \"Cannata",                   "carnot:mbox", "phil@yahoo",    false);
-              sparqlHelper.insertQuad("carnot:DATA",  "carnot:Phil \"Cannata",                   "carnot:age",  "66.9",          false);
-              sparqlHelper.insertQuad("carnot:DATA",  "http://xmlns.com/foaf/0.1/Rita Cannata",  "carnot:mbox", "rita@example",  false);
-              sparqlHelper.insertQuad("carnot:OTHER", "http://xmlns.com/foaf/0.1/Rita Cannata",  "carnot:mbox", "rita@yahoo",    false);
-              sparqlHelper.insertQuad("carnot:DATA",  "http://xmlns.com/foaf/0.1/Rita Cannata",  "carnot:age",  "60",            false);
-              sparqlHelper.insertQuad("carnot:DATA",  "http://xmlns.com/foaf/0.1/Chris Cannata", "carnot:mbox", "chris@example", false);
-            }
-            catch(Exception e) { System.out.println(e.getMessage()); 
-            }
-
-            Dataset ds = DatasetImpl.wrap(datasetGraph);
-            String szQuery = " PREFIX c: <carnot:> "                    + 
-                                                          // See URI discussion at https://en.wikipedia.org/wiki/Uniform_Resource_Identifier
-                                                          // For known non generic URI see https://gist.github.com/knu/744715/0143487cc3f3fffb0b6faf9b18b0da6f0642e7d5
-               " SELECT ?x ?age ?mbox"                    +
-               " WHERE "                                  +
-               " { "                                      +
-               "     GRAPH c:DATA { ?x c:mbox ?mbox ."    +
-               "         OPTIONAL { ?x c:age  ?age } } "  +
-               " } ";
-
-            Query query = QueryFactory.create(szQuery);
-            QueryExecution qexec = QueryExecutionFactory.create(query, ds);
-            
-            try {
-              com.hp.hpl.jena.query.ResultSet queryResults = qexec.execSelect();
-// ResultSetFormatter.out(System.out, queryResults, query);
-              String xmlstr = ResultSetFormatter.asXMLString(queryResults); // For documentation, see http://grepcode.com/file/repo1.maven.org/maven2/com.hp.hpl.jena/arq/2.6.0/com/hp/hpl/jena/query/ResultSetFormatter.java#ResultSetFormatter.toList%28com.hp.hpl.jena.query.ResultSet%29
-              if (conn.getDebug() == "debug") System.out.println("xmlstr is: " + xmlstr);
-              Matcher m = Pattern.compile("variable name=.*").matcher(xmlstr);
-              ArrayList<String> attrs = new ArrayList<String>();
-              ArrayList<PyObject> rows = new ArrayList<PyObject>();
-              ArrayList<PyObject> items = new ArrayList<PyObject>();
-              PyObject[] temp;
-
-              while (m.find()) {
-                String item = m.group().replaceAll("variable name=.", "").replaceAll("./>", "");
-                attrs.add(item);
-                items.add(new PyString(item)); 
-              }
-              temp = listtoarray(items);
-              rows.add(new PyTuple(temp)); 
-              items = new ArrayList<PyObject>();
-
-              m = Pattern.compile("<binding name=.*|<uri>:?.*|<literal datatype=.*|</result>").matcher(xmlstr);
-              String attrName = "";
-              int num = 0;
-              while (m.find()) {
-                  for(int i = 0; i <= attrs.size(); i++) {
-                      if(m.group().contains("<uri>")) {
-                          if(attrName.equals(attrs.get(num))) {
-                              String item = m.group().replaceAll("<uri>:?", "").replaceAll("</uri>", ""); 
-
-                              try  { 
-                                  Double.parseDouble(item); 
-                                  try { 
-                                    Integer.parseInt(item);
-                                    items.add(new PyInteger(Integer.parseInt(item))); 
-                                  } catch(NumberFormatException e) { 
-                                       items.add(new PyFloat(Float.parseFloat(item))); 
-                                  }
-                              }  
-                                  catch(NumberFormatException e)  
-                              {   
-                                  items.add(new PyString(item));  
-                              }
-                              num++;
-                              break;
-                          }
-                          else {
-                              items.add(new PyString("null"));
-                              num++;
-                          }
-                      }
-                      else if(m.group().contains("<literal datatype=")) {
-                          if(attrName.equals(attrs.get(num))) {
-                              String item = m.group().replaceAll("<literal datatype=", "").replaceAll("</literal>", "");  
-                              // Literals:                                 
-                              // For numberic data types, see http://www.w3schools.com/xml/schema_dtypes_numeric.asp
-                              // For string data types, see http://www.w3schools.com/xml/schema_dtypes_string.asp
-                              // For date data types, see http://www.w3schools.com/xml/schema_dtypes_date.asp
-                              // For misc. data types, see http://www.w3schools.com/xml/schema_dtypes_misc.asp
-
-                              items.add(new PyString(item));  
-                              num++;
-                              break;
-                          }
-                          else {
-                              items.add(new PyString("null"));
-                              num++;
-                          }
-                      }
-                      else if(m.group().contains("</result>")) {
-                          temp = listtoarray(items);
-                          rows.add(new PyTuple(temp));
-                          items = new ArrayList<PyObject>();
-                          num = 0;
-                          break;
-                      }
-                      else if(m.group().contains("<binding name=")) {
-                          attrName = m.group().replaceAll("<binding name=.", "").replaceAll(".>", "");
-                      }
-                  }
-              }
-              //a lot of conversion going on here. . .
-              PyObject[] results = listtoarray(rows);
-              //put results in array for this tuple object
-              array = new PyObject[results.length];
-              System.arraycopy(results, 0, array, 0, results.length);
-            }
-            finally {
-              qexec.close();
-            }
-            ds.close();
-            rdfconn.dispose();
-            return;
-        }
-
         // PyRelConnection conn = (PyRelConnection)connection;
         String[] strings = ReLstring.split(";");
         int size = Math.max(strings.length - 1, elements.length);
@@ -358,6 +220,145 @@ public class PyTuple extends PySequenceList implements List {
                 } 
             }
         }
+
+/*
+        if(conn.getConnectionDB().equals("OracleNoSQL")) {
+            OracleNoSqlConnection rdfconn = conn.getRdfConn();
+            DatasetGraphNoSql datasetGraph = conn.getDatasetGraph();
+
+            try { 
+              SPARQLHelper sparqlHelper = new SPARQLHelper(conn); 
+              sparqlHelper.insertQuad("carnot:DATA",  "carnot:Phil \"Cannata",                   "carnot:mbox", "phil@example",  false);
+              sparqlHelper.insertQuad("carnot:DATA",  "carnot:Phil \"Cannata",                   "carnot:mbox", "phil@yahoo",    false);
+              sparqlHelper.insertQuad("carnot:DATA",  "carnot:Phil \"Cannata",                   "carnot:age",  "66.9",          false);
+              sparqlHelper.insertQuad("carnot:DATA",  "http://xmlns.com/foaf/0.1/Rita Cannata",  "carnot:mbox", "rita@example",  false);
+              sparqlHelper.insertQuad("carnot:OTHER", "http://xmlns.com/foaf/0.1/Rita Cannata",  "carnot:mbox", "rita@yahoo",    false);
+              sparqlHelper.insertQuad("carnot:DATA",  "http://xmlns.com/foaf/0.1/Rita Cannata",  "carnot:age",  "60",            false);
+              sparqlHelper.insertQuad("carnot:DATA",  "http://xmlns.com/foaf/0.1/Chris Cannata", "carnot:mbox", "chris@example", false);
+            }
+            catch(Exception e) { System.out.println(e.getMessage()); 
+            }
+
+            Dataset ds = DatasetImpl.wrap(datasetGraph);
+            String szQuery = " PREFIX c: <carnot:> "                    + 
+                                                          // See URI discussion at https://en.wikipedia.org/wiki/Uniform_Resource_Identifier
+                                                          // For known non generic URI see https://gist.github.com/knu/744715/0143487cc3f3fffb0b6faf9b18b0da6f0642e7d5
+               " SELECT ?x ?age ?mbox"                    +
+               " WHERE "                                  +
+               " { "                                      +
+               "     GRAPH c:DATA { ?x c:mbox ?mbox ."    +
+               "         OPTIONAL { ?x c:age  ?age } } "  +
+               " } ";
+
+            Query query = QueryFactory.create(szQuery);
+            QueryExecution qexec = QueryExecutionFactory.create(query, ds);
+
+            szQuery = " PREFIX c: <carnot:> "                    + 
+                                                          // See URI discussion at https://en.wikipedia.org/wiki/Uniform_Resource_Identifier
+                                                          // For known non generic URI see https://gist.github.com/knu/744715/0143487cc3f3fffb0b6faf9b18b0da6f0642e7d5
+               " SELECT ?g ?s ?p ?o"           +
+               " WHERE "                       +
+               " { "                           +
+               "     GRAPH ?g { ?s ?p ?o }"    +
+               " } ";
+
+             query = QueryFactory.create(szQuery);
+             qexec = QueryExecutionFactory.create(query, ds);
+            
+            try {
+              com.hp.hpl.jena.query.ResultSet queryResults = qexec.execSelect();
+// ResultSetFormatter.out(System.out, queryResults, query);
+              String xmlstr = ResultSetFormatter.asXMLString(queryResults); // For documentation, see http://grepcode.com/file/repo1.maven.org/maven2/com.hp.hpl.jena/arq/2.6.0/com/hp/hpl/jena/query/ResultSetFormatter.java#ResultSetFormatter.toList%28com.hp.hpl.jena.query.ResultSet%29
+              if (conn.getDebug() == "debug") System.out.println("xmlstr is: " + xmlstr);
+              Matcher m = Pattern.compile("variable name=.*").matcher(xmlstr);
+              ArrayList<String> attrs = new ArrayList<String>();
+              ArrayList<PyObject> rows = new ArrayList<PyObject>();
+              ArrayList<PyObject> items = new ArrayList<PyObject>();
+              PyObject[] temp;
+
+              while (m.find()) {
+                String item = m.group().replaceAll("variable name=.", "").replaceAll("./>", "");
+                attrs.add(item);
+                items.add(new PyString(item)); 
+              }
+              temp = listtoarray(items);
+              rows.add(new PyTuple(temp)); 
+              items = new ArrayList<PyObject>();
+
+              m = Pattern.compile("<binding name=.*|<uri>:?.*|<literal datatype=.*|</result>").matcher(xmlstr);
+              String attrName = "";
+              int num = 0;
+              while (m.find()) {
+                  for(int i = 0; i <= attrs.size(); i++) {
+                      if(m.group().contains("<uri>")) {
+                          if(attrName.equals(attrs.get(num))) {
+                              String item = m.group().replaceAll("<uri>:?", "").replaceAll("</uri>", ""); 
+
+                              try  { 
+                                  Double.parseDouble(item); 
+                                  try { 
+                                    Integer.parseInt(item);
+                                    items.add(new PyInteger(Integer.parseInt(item))); 
+                                  } catch(NumberFormatException e) { 
+                                       items.add(new PyFloat(Float.parseFloat(item))); 
+                                  }
+                              }  
+                                  catch(NumberFormatException e)  
+                              {   
+                                  items.add(new PyString(item));  
+                              }
+                              num++;
+                              break;
+                          }
+                          else {
+                              items.add(new PyString("null"));
+                              num++;
+                          }
+                      }
+                      else if(m.group().contains("<literal datatype=")) {
+                          if(attrName.equals(attrs.get(num))) {
+                              String item = m.group().replaceAll("<literal datatype=", "").replaceAll("</literal>", "");  
+                              // Literals:                                 
+                              // For numberic data types, see http://www.w3schools.com/xml/schema_dtypes_numeric.asp
+                              // For string data types, see http://www.w3schools.com/xml/schema_dtypes_string.asp
+                              // For date data types, see http://www.w3schools.com/xml/schema_dtypes_date.asp
+                              // For misc. data types, see http://www.w3schools.com/xml/schema_dtypes_misc.asp
+
+                              items.add(new PyString(item));  
+                              num++;
+                              break;
+                          }
+                          else {
+                              items.add(new PyString("null"));
+                              num++;
+                          }
+                      }
+                      else if(m.group().contains("</result>")) {
+                          temp = listtoarray(items);
+                          rows.add(new PyTuple(temp));
+                          items = new ArrayList<PyObject>();
+                          num = 0;
+                          break;
+                      }
+                      else if(m.group().contains("<binding name=")) {
+                          attrName = m.group().replaceAll("<binding name=.", "").replaceAll(".>", "");
+                      }
+                  }
+              }
+              //a lot of conversion going on here. . .
+              PyObject[] results = listtoarray(rows);
+              //put results in array for this tuple object
+              array = new PyObject[results.length];
+              System.arraycopy(results, 0, array, 0, results.length);
+            }
+            finally {
+              qexec.close();
+            }
+            ds.close();
+            rdfconn.dispose();
+            //return;
+        }
+*/
     }
     
     public void doRDF(net.sf.jsqlparser.statement.Statement statement, PyRelConnection conn) {

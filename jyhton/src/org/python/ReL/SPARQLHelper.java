@@ -45,52 +45,58 @@ public class SPARQLHelper {
      * @throws SQLException
      */
     public void insertQuad(String graph, String subject, String predicate, String object, Boolean eva) throws SQLException {
-        String graphName = connection.getModel() + ":<" + graph + ">";
-        String graphName2 = connection.getModel() + ":<" + graph + "_" + schemaString + ">";
-        
-        if (subject.indexOf(":") < 0) {
-            // no specified connection.getNamespace():  use current default connection.getNamespace()
-            subject = connection.getNamespace() + subject;
+        String connection_DB = connection.getConnectionDB();
+        if(connection_DB.equals("OracleNoSQL")) {
+            connection.OracleNoSQLAddQuad(graph, subject, predicate, object);
         }
-        if (predicate.indexOf(":") < 0) {
-            // no specified connection.getNamespace():  use current default connection.getNamespace()
-            predicate = connection.getNamespace() + predicate;
+        else if(connection_DB.equals("Oracle")) {
+            String graphName = connection.getModel() + ":<" + graph + ">";
+            String graphName2 = connection.getModel() + ":<" + graph + "_" + schemaString + ">";
+            
+            if (subject.indexOf(":") < 0) {
+                // no specified connection.getNamespace():  use current default connection.getNamespace()
+                subject = connection.getNamespace() + subject;
+            }
+            if (predicate.indexOf(":") < 0) {
+                // no specified connection.getNamespace():  use current default connection.getNamespace()
+                predicate = connection.getNamespace() + predicate;
+            }
+            if (object.indexOf(":") < 0) {
+                // no specified connection.getNamespace():  use current default connection.getNamespace()
+                object = connection.getNamespace() + object;
+            }
+    		String typeString = "";
+            String s = "";
+            if(  ! graph.equals("")) {
+    			s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName +
+    				"', '" + subject.replaceAll("'", "") + "', '" + predicate.replaceAll("'", "") + "', '" + object.replaceAll("'", "") + typeString + "'))";
+    			connection.executeStatement(s);		
+    			s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
+    				"', '" + subject.replaceAll("'", "") + "', 'rdf:type', '" + connection.getNamespace() + graph + "'))";
+    			connection.executeStatement(s);	
+    			if(eva) s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
+    				"', '" + predicate.replaceAll("'", "") + "', 'rdf:type', 'owl:FunctionalProperty'))";
+    			else s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
+    				"', '" + predicate.replaceAll("'", "") + "', 'rdf:type', 'owl:DatatypeProperty'))";
+    			connection.executeStatement(s);	
+    			s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
+    				"', '" + predicate.replaceAll("'", "") + "', 'rdfs:domain', '" + connection.getNamespace() + graph + "'))";
+    			connection.executeStatement(s);	
+    			s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
+    				"', '" + predicate.replaceAll("'", "") + "', 'rdfs:range', 'xsd:string'))";
+    			connection.executeStatement(s);	
+    		}
+    		else {
+    			s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
+    				"', '" + subject.replaceAll("'", "") + "', '" + predicate.replaceAll("'", "") + "', '" + object.replaceAll("'", "") + typeString + "'))";
+    			connection.executeStatement(s);
+    				
+    //INSERT INTO F2014_C##CS347_PROF_DATA VALUES ( 4, SDO_RDF_TRIPLE_S('F2014_C##CS347_PROF:<MALE_SCHEMA>', '#i1529', 'rdf:type', '#MALE'));
+    //INSERT INTO F2014_C##CS347_PROF_DATA VALUES ( 5, SDO_RDF_TRIPLE_S('F2014_C##CS347_PROF:<MALE_SCHEMA>', '#ID', 'rdf:type', 'owl:DatatypeProperty'));
+    //INSERT INTO F2014_C##CS347_PROF_DATA VALUES ( 6, SDO_RDF_TRIPLE_S('F2014_C##CS347_PROF:<MALE_SCHEMA>', '#ID', 'rdfs:domain', '#MALE'));
+    //INSERT INTO F2014_C##CS347_PROF_DATA VALUES ( 7, SDO_RDF_TRIPLE_S('F2014_C##CS347_PROF:<MALE_SCHEMA>', '#ID', 'rdfs:range', 'xsd:string'));
+    		}
         }
-        if (object.indexOf(":") < 0) {
-            // no specified connection.getNamespace():  use current default connection.getNamespace()
-            object = connection.getNamespace() + object;
-        }
-		String typeString = "";
-        String s = "";
-        if(  ! graph.equals("")) {
-			s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName +
-				"', '" + subject.replaceAll("'", "") + "', '" + predicate.replaceAll("'", "") + "', '" + object.replaceAll("'", "") + typeString + "'))";
-			connection.executeStatement(s);		
-			s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
-				"', '" + subject.replaceAll("'", "") + "', 'rdf:type', '" + connection.getNamespace() + graph + "'))";
-			connection.executeStatement(s);	
-			if(eva) s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
-				"', '" + predicate.replaceAll("'", "") + "', 'rdf:type', 'owl:FunctionalProperty'))";
-			else s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
-				"', '" + predicate.replaceAll("'", "") + "', 'rdf:type', 'owl:DatatypeProperty'))";
-			connection.executeStatement(s);	
-			s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
-				"', '" + predicate.replaceAll("'", "") + "', 'rdfs:domain', '" + connection.getNamespace() + graph + "'))";
-			connection.executeStatement(s);	
-			s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
-				"', '" + predicate.replaceAll("'", "") + "', 'rdfs:range', 'xsd:string'))";
-			connection.executeStatement(s);	
-		}
-		else {
-			s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
-				"', '" + subject.replaceAll("'", "") + "', '" + predicate.replaceAll("'", "") + "', '" + object.replaceAll("'", "") + typeString + "'))";
-			connection.executeStatement(s);
-				
-//INSERT INTO F2014_C##CS347_PROF_DATA VALUES ( 4, SDO_RDF_TRIPLE_S('F2014_C##CS347_PROF:<MALE_SCHEMA>', '#i1529', 'rdf:type', '#MALE'));
-//INSERT INTO F2014_C##CS347_PROF_DATA VALUES ( 5, SDO_RDF_TRIPLE_S('F2014_C##CS347_PROF:<MALE_SCHEMA>', '#ID', 'rdf:type', 'owl:DatatypeProperty'));
-//INSERT INTO F2014_C##CS347_PROF_DATA VALUES ( 6, SDO_RDF_TRIPLE_S('F2014_C##CS347_PROF:<MALE_SCHEMA>', '#ID', 'rdfs:domain', '#MALE'));
-//INSERT INTO F2014_C##CS347_PROF_DATA VALUES ( 7, SDO_RDF_TRIPLE_S('F2014_C##CS347_PROF:<MALE_SCHEMA>', '#ID', 'rdfs:range', 'xsd:string'));
-		}
     } // End insertQuad
 
     /**
@@ -103,31 +109,38 @@ public class SPARQLHelper {
      * @throws SQLException
      */
     public void insertSchemaQuad(String graph, String subject, String predicate, String object)  throws SQLException {
-        String graphName = connection.getModel() + ":<" + graph + "_" + schemaString +">";
-        String graphName2 = connection.getModel() + ":<" + schemaString + ">";
-        
-        if (subject.indexOf(":") < 0) {
-            // no specified connection.getNamespace():  use current default connection.getNamespace()
-            subject = connection.getNamespace() + subject;
+
+        String connection_DB = connection.getConnectionDB();
+        if(connection_DB.equals("OracleNoSQL")) {
+            connection.OracleNoSQLAddQuad(graph, subject, predicate, object);
         }
-        if (predicate.indexOf(":") < 0) {
-            // no specified connection.getNamespace():  use current default connection.getNamespace()
-            predicate = connection.getNamespace() + predicate;
+        else if(connection_DB.equals("Oracle")) {
+            String graphName = connection.getModel() + ":<" + graph + "_" + schemaString +">";
+            String graphName2 = connection.getModel() + ":<" + schemaString + ">";
+            
+            if (subject.indexOf(":") < 0) {
+                // no specified connection.getNamespace():  use current default connection.getNamespace()
+                subject = connection.getNamespace() + subject;
+            }
+            if (predicate.indexOf(":") < 0) {
+                // no specified connection.getNamespace():  use current default connection.getNamespace()
+                predicate = connection.getNamespace() + predicate;
+            }
+            if (object.indexOf(":") < 0) {
+                // no specified connection.getNamespace():  use current default connection.getNamespace()
+                object = connection.getNamespace() + object;
+            }
+            String s = "";
+            if( ! object.equals("rdf:class") && ! graph.equals("")) {
+    			s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName +
+    				"', '" + subject + "', '" + predicate + "', '" + object + "'))";
+    			connection.executeStatement(s);
+    		} else {
+    			s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
+    				"', '" + subject + "', '" + predicate + "', '" + object + "'))";
+    			connection.executeStatement(s);
+    		}
         }
-        if (object.indexOf(":") < 0) {
-            // no specified connection.getNamespace():  use current default connection.getNamespace()
-            object = connection.getNamespace() + object;
-        }
-        String s = "";
-        if( ! object.equals("rdf:class") && ! graph.equals("")) {
-			s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName +
-				"', '" + subject + "', '" + predicate + "', '" + object + "'))";
-			connection.executeStatement(s);
-		} else {
-			s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
-				"', '" + subject + "', '" + predicate + "', '" + object + "'))";
-			connection.executeStatement(s);
-		}
     } // End insertSchemaQuad
 
     /**

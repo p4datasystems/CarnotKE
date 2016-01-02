@@ -14,8 +14,16 @@ import java.sql.SQLException;
 public abstract class DatabaseInterface{
 
     // This will just execute the statement. 
-    public abstract void executeStatement(String stmt) throws SQLException;
+    public void executeStatement(String stmt) throws SQLException {
+        System.out.println("This is the top level executeStatement statement and probably should be overridden if it's being called, query is: " + stmt);
+    }; 
     
     // This will execute a query. 
-    public abstract ResultSet executeQuery(String query) throws SQLException; 
+    public ResultSet executeQuery(String query) throws SQLException {
+        System.out.println("This is the top level executeQuery statement and probably should be overridden if it's being called, query is: " + query);
+        return null;
+    }; 
+
+    // This will execute OracleNoSQLAddQuad. 
+    public void OracleNoSQLAddQuad(String graph, String subject, String predicate, String object) {};
 }

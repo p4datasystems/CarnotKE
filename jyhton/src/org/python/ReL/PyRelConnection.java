@@ -75,10 +75,6 @@ public class PyRelConnection extends PyObject {
     // the current graph
     private String graph; 
 
-    // the current rdfConn
-    private OracleNoSqlConnection rdfConn = null;
-    DatasetGraphNoSql datasetGraph = null;
-
     //private ArrayList<String> statements;
     
     // Keep internals about which instances persist in our session. 
@@ -107,22 +103,6 @@ public class PyRelConnection extends PyObject {
         if (url.contains("jdbc:oracle")) {
             database = new OracleInterface(url, uname, pword, conn_type, debug); 
             connection_DB = "Oracle";
-        }
-        else if (url.contains("OracleNoSQL")) {
-                database = new OracleRDFNoSQLInterface(url, uname, pword,
-            conn_type, debug); 
-            connection_DB = "OracleNoSQL";
-            this.rdfConn = OracleNoSqlConnection.createInstance("kvstore", "Phils-MacBook-Pro.local", "5000");
-            OracleGraphNoSql graph = new OracleGraphNoSql(rdfConn);
-            this.datasetGraph = DatasetGraphNoSql.createFrom(graph);
-
-            // Close graph, as it is no longer needed
-            graph.close(); 
-            
-            // Clear dataset
-            System.out.println("\nWRNING: the NoSQL database is being cleared in PyRelConnection!\n");
-            datasetGraph.clearRepository();
-            }
             
             // make sure the quad store is setup. 
             /*if(conn_type == "rdf_mode" || conn_type == "ag_sql_rdf_mode") {
@@ -131,9 +111,59 @@ public class PyRelConnection extends PyObject {
             if(conn_type == "rdf_mode") {
                 SPARQLDoer.createQuadStore(this);
             }
+        }
+        else if (url.contains("OracleNoSQL")) {
+            database = new OracleRDFNoSQLInterface(url, uname, pword, conn_type, debug); 
+            connection_DB = "OracleNoSQL";
+        }
     }
     
-    // Provide access to our OORel session information. 
+    // We need to provide access to the following to generate some queries i suppose.
+    public String getUrl() { return url;}
+    public String getUsername() { return username; }
+    public String getPassword() { return password; }
+    public String getConnectionType() { return connection_type; }
+    public String getConnectionDB() { return connection_DB; }
+    public DatabaseInterface getDatabase() { return database; }
+    
+    // Accessor methods for the model, graph and namespace that this connection
+    // should be writing too. 
+    public String getModel() { return model; }
+    public String getTable() { return table; }
+    public String getGraph() { return graph; }
+    public String getNamespace() { return namespace; } 
+    public String getDebug() { return debug; }
+   
+    public void batchExecuteStatement(ArrayList<String> stmts) throws SQLException, UnknownHostException {
+	InetAddress address = InetAddress.getByName("");
+	BatchTransport transport = new JSONTransport();
+	//Reader sql_stmts = new Reader();
+	//transport.read(sql_stmts);
+        TCPClient test = new TCPClient(address, 80, transport);		
+	/*batch (String stmt: stmts) {
+	     database.executeStatement(stmt);
+	}*/
+    }
+ 
+    // Provide access to our database dependent methods
+    // This will just execute the statement. 
+    public void executeStatement(String stmt) throws SQLException {
+	   database.executeStatement(stmt);
+    }
+    
+    // This will execute a query. 
+    public ResultSet executeQuery(String query) throws SQLException 
+    {
+        return database.executeQuery(query);     
+    }
+    
+    // This will execute OracleNoSQLAddQuad. 
+    public void OracleNoSQLAddQuad(String graph, String subject, String predicate, String object) 
+    {
+        database.OracleNoSQLAddQuad(graph, subject, predicate, object);     
+    }
+
+    // The rest of this code is to provide access to our OORel session information. 
     // We return the unique id this instace has in our connection. 
     // Each connection could have different instances in the sessions. 
     public int addToSession(PyObject obj) { 
@@ -196,7 +226,6 @@ public class PyRelConnection extends PyObject {
         return instances_map.get(new Integer(DBUNIQUEID)); 
     }
     
-    
     /**
      * Insert a class instance into the database.
      */
@@ -231,74 +260,33 @@ public class PyRelConnection extends PyObject {
      * populate the database.
     */
     private void addMemberDataHelper(PyObject instance, PyStringMap variableMap, TreeSet<String> used_vars, SIMHelper simHelper)
-        {
-          ConcurrentMap<Object, PyObject> data = variableMap.getMap(); 
-          for (Map.Entry<Object, PyObject> entry : data.entrySet()) {
-              Object key = entry.getKey();
-              PyObject value = entry.getValue();
-              String value_type = value.getType().getName();
-              //keys that start with _ are considered invalid characters in the database. 
-              if(key.toString().startsWith("_")) 
-              {
-                continue;    
-              }
-              //Only do the logic required for adding member data, if we have not already added the data. 
-              if(!used_vars.contains(key.toString()))
-              {
-
-                  //Filter out types we don't want, as well as variables that start with _
-                  if(!value.getType().getName().equals("function") && !value_type.equals("NoneType") && (value.toString().length() > 0 && !value.toString().substring(0,1).equals("_")))
-                  { 
-                      if(value instanceof PyTuple)
-                      {
-                          throw new IllegalStateException("Only multi-valued attributes can be of type Tuple.");
-                      }
-                      simHelper.executeMemberData(((PyStringMap)instance.getDict()).getMap().get("DBUNIQUEID").toString(), value_type, key.toString(), value.toString());
-                      
-                  }
-                  used_vars.add(key.toString());
-              }
-          }
-        }
-    
-    // We need to provide access to the following to generate some queries i suppose.
-    public String getUrl() { return url;}
-    public String getUsername() { return username; }
-    public String getPassword() { return password; }
-    public String getConnectionType() { return connection_type; }
-    public String getConnectionDB() { return connection_DB; }
-    public DatabaseInterface getDatabase() { return database; }
-    
-    // Accessor methods for the model, graph and namespace that this connection
-    // should be writing too. 
-    public String getModel() { return model; }
-    public String getTable() { return table; }
-    public String getGraph() { return graph; }
-    public String getNamespace() { return namespace; } 
-    public String getDebug() { return debug; }
-    public OracleNoSqlConnection getRdfConn() { return rdfConn; }
-    public DatasetGraphNoSql getDatasetGraph() { return datasetGraph; }
-   
-    public void batchExecuteStatement(ArrayList<String> stmts) throws SQLException, UnknownHostException {
-	InetAddress address = InetAddress.getByName("");
-	BatchTransport transport = new JSONTransport();
-	//Reader sql_stmts = new Reader();
-	//transport.read(sql_stmts);
-        TCPClient test = new TCPClient(address, 80, transport);		
-	/*batch (String stmt: stmts) {
-	     database.executeStatement(stmt);
-	}*/
-    }
- 
-    // Provide access to our database dependent methods
-    // This will just execute the statement. 
-    public void executeStatement(String stmt) throws SQLException {
-	   database.executeStatement(stmt);
-    }
-    
-    // This will execute a query. 
-    public ResultSet executeQuery(String query) throws SQLException 
     {
-        return database.executeQuery(query);     
+        ConcurrentMap<Object, PyObject> data = variableMap.getMap(); 
+        for (Map.Entry<Object, PyObject> entry : data.entrySet()) {
+            Object key = entry.getKey();
+            PyObject value = entry.getValue();
+            String value_type = value.getType().getName();
+            //keys that start with _ are considered invalid characters in the database. 
+            if(key.toString().startsWith("_")) 
+            {
+            continue;    
+            }
+            //Only do the logic required for adding member data, if we have not already added the data. 
+            if(!used_vars.contains(key.toString()))
+            {
+
+              //Filter out types we don't want, as well as variables that start with _
+              if(!value.getType().getName().equals("function") && !value_type.equals("NoneType") && (value.toString().length() > 0 && !value.toString().substring(0,1).equals("_")))
+              { 
+                  if(value instanceof PyTuple)
+                  {
+                      throw new IllegalStateException("Only multi-valued attributes can be of type Tuple.");
+                  }
+                  simHelper.executeMemberData(((PyStringMap)instance.getDict()).getMap().get("DBUNIQUEID").toString(), value_type, key.toString(), value.toString());
+                  
+              }
+              used_vars.add(key.toString());
+            }
+        }
     }
 }
