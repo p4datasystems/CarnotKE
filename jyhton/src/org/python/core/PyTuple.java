@@ -47,6 +47,7 @@ import batch.json.JSONTransport;
 import org.python.util.JenaTutorialExamples;
 
 import org.python.ReL.PyRelConnection;
+import org.python.ReL.SPARQLHelper;
 import org.python.ReL.SIMHelper;
 import org.python.ReL.SQLVisitor;
 import org.python.ReL.ProcessLanguages;
@@ -58,7 +59,6 @@ import com.hp.hpl.jena.query.*;
 import com.hp.hpl.jena.rdf.model.Model;
 import oracle.rdf.kv.client.jena.*;
 import com.hp.hpl.jena.sparql.core.*;
-
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -123,11 +123,11 @@ public class PyTuple extends PySequenceList implements List {
         super(subtype);
         PyRelConnection conn = (PyRelConnection)connection;
 
-        if(conn.getConnectionDB().equals("OracleNoSQL")) {
-            OracleNoSqlConnection rdfconn = OracleNoSqlConnection.createInstance("kvstore", "Phils-MacBook-Pro.local", "5000");
+        if(conn.getConnectionDB().equals("OracleNoSQL X")) {
+            OracleNoSqlConnection rdfconn = conn.getRdfConn();
             // OracleRDFNoSQLInterface database = (OracleRDFNoSQLInterface)conn.getDatabase();
             // OracleNoSqlConnection rdfconn =  database.getConnection();
-
+/*
             // Create OracleNoSQl graph and dataset 
             OracleGraphNoSql graph = new OracleGraphNoSql(rdfconn);
             DatasetGraphNoSql datasetGraph = DatasetGraphNoSql.createFrom(graph);
@@ -137,48 +137,21 @@ public class PyTuple extends PySequenceList implements List {
             
             // Clear dataset
             datasetGraph.clearRepository();
+*/
+            DatasetGraphNoSql datasetGraph = conn.getDatasetGraph();
 
-            datasetGraph.add(new Quad(
-                Node.createURI("carnot:DATA"), // graph name
-                Node.createURI("carnot:Phil \"Cannata"),
-                Node.createURI("carnot:mbox"),
-                Node.createURI("mailto:phil@example")));
-
-            datasetGraph.add(new Quad(
-                Node.createURI("carnot:DATA"), // graph name
-                Node.createURI("carnot:Phil \"Cannata"),
-                Node.createURI("carnot:mbox"),
-                Node.createURI("phil@yahoo")));
-
-            datasetGraph.add(new Quad(
-                Node.createURI("carnot:DATA"), // graph name
-                Node.createURI("carnot:Phil \"Cannata"),
-                Node.createURI("carnot:age"),
-                Node.createLiteral("66.9"))); 
-
-            datasetGraph.add(new Quad(
-                Node.createURI("carnot:DATA"), // graph name
-                Node.createURI("http://xmlns.com/foaf/0.1/Rita Cannata"),
-                Node.createURI("carnot:mbox"),
-                Node.createURI("rita@example")));  
-
-            datasetGraph.add(new Quad(
-                Node.createURI("carnot:OTHER"), // graph name
-                Node.createURI("http://xmlns.com/foaf/0.1/Rita Cannata"),
-                Node.createURI("carnot:mbox"),
-                Node.createURI("rita@yahoo")));
-                      
-            datasetGraph.add(new Quad(
-                Node.createURI("carnot:DATA"), // graph name
-                Node.createURI("http://xmlns.com/foaf/0.1/Rita Cannata"),
-                Node.createURI("carnot:age"),
-                Node.createURI("60"))); 
-
-            datasetGraph.add(new Quad(
-                Node.createURI("carnot:DATA"), // graph name
-                Node.createURI("http://xmlns.com/foaf/0.1/Chris Cannata"),
-                Node.createURI("carnot:mbox"),
-                Node.createURI("chris@example")));
+            try { 
+              SPARQLHelper sparqlHelper = new SPARQLHelper(conn); 
+              sparqlHelper.insertQuad("carnot:DATA",  "carnot:Phil \"Cannata",                   "carnot:mbox", "phil@example",  false);
+              sparqlHelper.insertQuad("carnot:DATA",  "carnot:Phil \"Cannata",                   "carnot:mbox", "phil@yahoo",    false);
+              sparqlHelper.insertQuad("carnot:DATA",  "carnot:Phil \"Cannata",                   "carnot:age",  "66.9",          false);
+              sparqlHelper.insertQuad("carnot:DATA",  "http://xmlns.com/foaf/0.1/Rita Cannata",  "carnot:mbox", "rita@example",  false);
+              sparqlHelper.insertQuad("carnot:OTHER", "http://xmlns.com/foaf/0.1/Rita Cannata",  "carnot:mbox", "rita@yahoo",    false);
+              sparqlHelper.insertQuad("carnot:DATA",  "http://xmlns.com/foaf/0.1/Rita Cannata",  "carnot:age",  "60",            false);
+              sparqlHelper.insertQuad("carnot:DATA",  "http://xmlns.com/foaf/0.1/Chris Cannata", "carnot:mbox", "chris@example", false);
+            }
+            catch(Exception e) { System.out.println(e.getMessage()); 
+            }
 
             Dataset ds = DatasetImpl.wrap(datasetGraph);
             String szQuery = " PREFIX c: <carnot:> "                    + 
