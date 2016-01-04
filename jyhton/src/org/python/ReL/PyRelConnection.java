@@ -51,27 +51,20 @@ public class PyRelConnection extends PyObject {
     
     // What type are we. 
     public static final PyType TYPE = PyType.fromClass(PyRelConnection.class);
-    
     // A PyRelConnection provides access to a database via a DatabaseInterface
     private DatabaseInterface database; 
-    
     // Information about the connection
     private String url, username, password, connection_type, connection_DB;
-
     // the default namespace (or graph) within which full object URIs are resolved
     // private String namespace = "http://www.example.org/people.owl#";
     // private String namespace = "NA#";
     private String namespace = "#";
-
     // the current model
     private String model;
-    
     // the current table
     private String table;
-    
     // the current debug
     private String debug; 
-
     // the current graph
     private String graph; 
 

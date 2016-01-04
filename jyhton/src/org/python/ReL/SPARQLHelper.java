@@ -47,6 +47,28 @@ public class SPARQLHelper {
     public void insertQuad(String graph, String subject, String predicate, String object, Boolean eva) throws SQLException {
         String connection_DB = connection.getConnectionDB();
         if(connection_DB.equals("OracleNoSQL")) {
+/*
+A0_C##CS329E_UTEID:<SCHEMA> <#dept> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>   <http://www.w3.org/2000/01/rdf-schema#Class>
+A0_C##CS329E_UTEID:<dept_SCHEMA>    <#deptno>   <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>   <http://www.w3.org/2002/07/owl#DatatypeProperty>
+A0_C##CS329E_UTEID:<dept_SCHEMA>    <#deptno>   <http://www.w3.org/2000/01/rdf-schema#domain>   <#dept>
+A0_C##CS329E_UTEID:<dept_SCHEMA>    <#deptno>   <http://www.w3.org/2000/01/rdf-schema#range>    <http://www.w3.org/2001/XMLSchema#string>
+A0_C##CS329E_UTEID:<dept_SCHEMA>    <#i15>  <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>   <#dept>
+
+sim is: INSERT dept ( DEPTNO := 10 );
+
+exec -> INSERT INTO A0_C##CS329E_UTEID_DATA VALUES ( A0_C##CS329E_UTEID_SQNC.nextval, SDO_RDF_TRIPLE_S('A0_C##CS329E_UTEID:<SCHEMA>', '#dept', 'rdf:type', 'rdfs:Class'))
+exec -> INSERT INTO A0_C##CS329E_UTEID_DATA VALUES ( A0_C##CS329E_UTEID_SQNC.nextval, SDO_RDF_TRIPLE_S('A0_C##CS329E_UTEID:<dept_SCHEMA>', '#deptno', 'rdf:type', 'owl:DatatypeProperty'))
+exec -> INSERT INTO A0_C##CS329E_UTEID_DATA VALUES ( A0_C##CS329E_UTEID_SQNC.nextval, SDO_RDF_TRIPLE_S('A0_C##CS329E_UTEID:<dept_SCHEMA>', '#deptno', 'rdfs:domain', '#dept'))
+exec -> INSERT INTO A0_C##CS329E_UTEID_DATA VALUES ( A0_C##CS329E_UTEID_SQNC.nextval, SDO_RDF_TRIPLE_S('A0_C##CS329E_UTEID:<dept_SCHEMA>', '#deptno', 'rdfs:range', 'xsd:string'))
+exec -> INSERT INTO A0_C##CS329E_UTEID_DATA VALUES ( A0_C##CS329E_UTEID_SQNC.nextval, SDO_RDF_TRIPLE_S('A0_C##CS329E_UTEID:<dept_SCHEMA>', '#i20', 'rdf:type', '#dept'))
+exec -> INSERT INTO A0_C##CS329E_UTEID_DATA VALUES ( A0_C##CS329E_UTEID_SQNC.nextval, SDO_RDF_TRIPLE_S('A0_C##CS329E_UTEID:<dept>', '#i20', '#deptno', '#10'))
+*/
+
+            connection.OracleNoSQLAddQuad("SCHEMA", graph, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "rdfs:Class");
+            connection.OracleNoSQLAddQuad("SCHEMA", subject, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "owl:DatatypeProperty");
+            connection.OracleNoSQLAddQuad("SCHEMA", subject, "http://www.w3.org/2000/01/rdf-schema#domain", graph);
+            connection.OracleNoSQLAddQuad("SCHEMA", subject, "http://www.w3.org/2000/01/rdf-schema#range", "xsd:string");
+            connection.OracleNoSQLAddQuad("SCHEMA", subject, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", graph);
             connection.OracleNoSQLAddQuad(graph, subject, predicate, object);
         }
         else if(connection_DB.equals("Oracle")) {

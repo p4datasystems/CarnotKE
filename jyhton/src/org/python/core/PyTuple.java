@@ -122,6 +122,7 @@ public class PyTuple extends PySequenceList implements List {
     public PyTuple(PyType subtype, PyObject[] elements, String ReLstring, String ReLmode, PyObject connection) {
         super(subtype);
         PyRelConnection conn = (PyRelConnection)connection;
+        ArrayList<PyObject> rows = new ArrayList<PyObject>();
 
         // PyRelConnection conn = (PyRelConnection)connection;
         String[] strings = ReLstring.split(";");
@@ -160,6 +161,15 @@ public class PyTuple extends PySequenceList implements List {
 
         ReLstmt = ReLstmt.trim();
         if (conn.getDebug() == "debug") System.out.println("ReLstmt is: " + ReLstmt);
+
+        if(ReLmode == "SPARQL") {
+            rows = conn.getDatabase().OracleNoSQLRunSPARQL(ReLstmt, (conn.getDebug() == "debug") ? true : false);
+            //a lot of conversion going on here. . .
+            PyObject[] results = listtoarray(rows);
+            //put results in array for this tuple object
+            array = new PyObject[results.length];
+            System.arraycopy(results, 0, array, 0, results.length);
+        }
 
         if(ReLmode == "Neo4j") {
             ProcessLanguages processLanguage = new ProcessLanguages(conn);
