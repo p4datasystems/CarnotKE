@@ -216,7 +216,6 @@ public class PyTuple extends PySequenceList implements List {
             try { sparql = processLanguage.processSIM(ReLstmt); }
             catch(Exception e1) { System.out.println(e1.getMessage()); }
             if(sparql != null ) {
-                //runAndOutputTuples(conn, sparql);
                 ProcessOracleEESQL processOracleEESQL = new ProcessOracleEESQL(conn, relQueryInstancesType, relQueryInstancesTypeNames);
                 try {
                     ArrayList<PyObject> rowResults = processOracleEESQL.processSQL(sparql); 

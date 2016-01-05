@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.util.UUID;
+
 import org.python.antlr.base.expr;
 
 import org.python.ReL.PyRelConnection;
@@ -64,7 +66,9 @@ public class ProcessLanguages {
 	    // E.G., INSERT INTO onto_DATA VALUES ( 1, SDO_RDF_TRIPLE_S('onto', '#PERSON', 'rdf:type', 'rdfs:Class'));
 		if(q instanceof InsertQuery) {
 			InsertQuery iq = (InsertQuery)q;
-			String instanceID = SPARQLDoer.getNextAnonNodeForInd(conn);
+			String instanceID = "";
+			if(conn.getConnectionDB() == "OracleNoSQL") instanceID = String.valueOf(UUID.randomUUID());
+			else instanceID = SPARQLDoer.getNextAnonNodeForInd(conn);
 			sparqlHelper.insertSchemaQuad("", iq.className, "rdf:type", "rdfs:Class");
 			for (int i = 0; i < iq.numberOfAssignments(); i++) {
 				if(iq.getAssignment(i)instanceof EvaAssignment) {

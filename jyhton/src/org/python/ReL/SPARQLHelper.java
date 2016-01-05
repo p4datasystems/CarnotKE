@@ -65,9 +65,10 @@ exec -> INSERT INTO A0_C##CS329E_UTEID_DATA VALUES ( A0_C##CS329E_UTEID_SQNC.nex
 */
 
             connection.OracleNoSQLAddQuad("SCHEMA", graph, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "rdfs:Class");
-            connection.OracleNoSQLAddQuad("SCHEMA", subject, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "owl:DatatypeProperty");
-            connection.OracleNoSQLAddQuad("SCHEMA", subject, "http://www.w3.org/2000/01/rdf-schema#domain", graph);
-            connection.OracleNoSQLAddQuad("SCHEMA", subject, "http://www.w3.org/2000/01/rdf-schema#range", "xsd:string");
+            if(eva) connection.OracleNoSQLAddQuad("SCHEMA", predicate, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "owl:FunctionalProperty");
+            else connection.OracleNoSQLAddQuad("SCHEMA", predicate, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "owl:DatatypeProperty");
+            connection.OracleNoSQLAddQuad("SCHEMA", predicate, "http://www.w3.org/2000/01/rdf-schema#domain", graph);
+            connection.OracleNoSQLAddQuad("SCHEMA", predicate, "http://www.w3.org/2000/01/rdf-schema#range", "xsd:string");
             connection.OracleNoSQLAddQuad("SCHEMA", subject, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", graph);
             connection.OracleNoSQLAddQuad(graph, subject, predicate, object);
         }

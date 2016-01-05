@@ -34,6 +34,7 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
     DatasetGraphNoSql datasetGraph = null;
     private ResultSet rs = null;
     private String debug;
+    private String nameSpace = "carnot:";
      
     public OracleRDFNoSQLInterface(String url, String uname, String passw, String conn_type, String debug) {
         super();
@@ -61,19 +62,11 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
     @Override
     public void OracleNoSQLAddQuad(String graph, String subject, String predicate, String object)
     {
-        System.out.println("In addQuad, stmt is: " + graph + ", " + subject + ", " + predicate + ", " + object);
-
-        /*
-
-           xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-           xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-           xmlns:owl="http://www.w3.org/2002/07/owl#"
-           xmlns:foaf="http://xmlns.com/foaf/0.1/"
-        */
-        if(graph.contains("rdf:") || graph.contains("http://"))         {} else graph     = "#" + graph;
-        if(subject.contains("rdf:") || subject.contains("http://"))     {} else subject   = "#" + subject;
-        if(predicate.contains("rdf:") || predicate.contains("http://")) {} else predicate = "#" + predicate;
-        if(object.contains("rdf:") || object.contains("http://"))       {} else object    = "#" + object;
+        if( ! graph.contains("http://"))     graph     = nameSpace + graph;
+        if( ! subject.contains("http://"))   subject   = nameSpace + subject;
+        if( ! predicate.contains("http://")) predicate = nameSpace + predicate;
+        if( ! object.contains("http://"))    object    = nameSpace + object;
+        if(debug.equals("debug")) System.out.println("In addQuad, stmt is: " + graph + ", " + subject + ", " + predicate + ", " + object);
 
         datasetGraph.add(Node.createURI(graph), Node.createURI(subject), Node.createURI(predicate), Node.createURI(object));
     }
