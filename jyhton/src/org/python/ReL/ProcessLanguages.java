@@ -71,7 +71,7 @@ public class ProcessLanguages {
 			else instanceID = SPARQLDoer.getNextAnonNodeForInd(conn);
 			sparqlHelper.insertSchemaQuad("", iq.className, "rdf:type", "rdfs:Class");
 			for (int i = 0; i < iq.numberOfAssignments(); i++) {
-				if(iq.getAssignment(i)instanceof EvaAssignment) {
+				if(iq.getAssignment(i)instanceof EvaAssignment) { // This isn't implemented yet because currently EVAs are constructed in the SIM MODIFY statement.
 				/*
 					Map<String, Object> attrValues = new HashMap<String, Object>();
 					EvaAssignment evaAssignment = (EvaAssignment)iq.getAssignment(i);

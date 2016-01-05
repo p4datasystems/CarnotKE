@@ -388,6 +388,92 @@ public class SIMHelper {
         return linenumber;
     }
 
+    // public int executeInsert(String className, List<String> attributeNames, List<String> attributeValues, String fromClause, String url, String pword, int linenumber, int guid) throws SQLException {    
+    public int executeInsert(String className, List<String> attributeNames, List<String> attributeValues, String fromClause) throws SQLException {
+
+// ************** THIS METHOD IS NO LOMGER CALLED AND COULD BE DELETED AT SOME POINT. ****************************
+
+        className = className.trim();
+        String instanceID = null;
+
+        if (fromClause != null && fromClause.length() > 0) {
+            // e.g. fromClause == "FROM male WHERE id := 4 name := 'Jack'"
+            List<String> fromParts = trimAndSplitOnDelim(fromClause, " ");
+
+            String superClass = fromParts.get(1);
+            Map<String, Object> attrValues = new HashMap<String, Object>();
+            for (int i = 3; i < fromParts.size(); i = i + 3) {
+                attrValues.put(fromParts.get(i), fromParts.get(i + 2));
+            }
+            List<String> instanceIDs = sparqlHelper.getInstancesWithObjectValue(superClass, superClass, attrValues);
+            if (instanceIDs.size() > 0) {
+                instanceID = instanceIDs.get(0); // should only be one
+            }
+
+        } else {
+            instanceID = SPARQLDoer.getNextAnonNodeForInd(connection);
+        }
+        
+        String[] classes = className.split("\\^");
+        String pType = "rdf:type";
+        String oType = "rdf:class";
+        for(String c : classes) {
+            sparqlHelper.insertSchemaQuad("", c, pType, oType);
+            pType = "rdf:subclassOf";
+            oType = c;
+            className = c;
+        }
+
+        for (int i = 0; i < attributeNames.size(); ++i) {
+            String attrName = attributeNames.get(i);
+            String attrValue = attributeValues.get(i).trim();
+            if (attrValue.contains("WITH")) {
+                // EVA
+                // e.g. PERSONT WITH firstname Bill zipcode 78705]
+                String[] withParts = attrValue.split("\\s+"); // e.g. [PERSONT WITH firstname DummyBill zipcode 78705]
+                String inverse = withParts[0];
+                String withClass = withParts[1];
+                Map<String, Object> attrValues = new HashMap<String, Object>();
+                for (int j = 3; j < withParts.length; j = j + 2) {
+                    String attr = withParts[j];
+                    String value = withParts[j + 1];
+                    attrValues.put(attr, value);
+                }
+                List<String> members = sparqlHelper.getInstancesWithObjectValue(withClass, withClass, attrValues);
+                for (String member : members) {
+                    sparqlHelper.insertSchemaQuad(className, attrName, "rdf:type", "owl:ObjectProperty");
+                    sparqlHelper.insertSchemaQuad(className, attrName, "rdfs:domain", className);
+                    sparqlHelper.insertSchemaQuad(className, attrName, "rdf:range", withClass);
+                    sparqlHelper.insertSchemaQuad(withClass, inverse, "rdf:type", "owl:ObjectProperty");
+                    sparqlHelper.insertSchemaQuad(withClass, inverse, "rdfs:domain", withClass);
+                    sparqlHelper.insertSchemaQuad(withClass, inverse, "rdf:range", className);
+                    sparqlHelper.insertQuad(className, instanceID, attrName, member, false);
+                    sparqlHelper.insertQuad(withClass, member, inverse, instanceID, false);
+                }
+                // The following statement puts the data value into the quad store so that SQL joins will work.
+                sparqlHelper.insertQuad(className, instanceID, attrName, withParts[4], false);
+            } 
+/*
+            else if (attrValue.contains("OF")) {
+                // RDVA
+                // e.g. DATE OF DEPTNO '1/1/1'
+                String[] ofParts = attrValue.split("\\s+");
+                System.out.println("Processing of Relationship Attribute TBD, attrName, attrValue: " + ofParts);
+                sparqlHelper.insertQuad(className, ofParts[0], "rdf:subPropertyOf", ofParts[0]);
+                sparqlHelper.insertQuad(className, ofParts[0], ofParts[0], ofParts[3]);
+            }
+*/
+            else {
+                // DVA
+                sparqlHelper.insertSchemaQuad(className, instanceID, "rdf:type", className);
+                sparqlHelper.insertSchemaQuad(className, attrName, "rdf:type", "owl:DatatypeProperty");
+                sparqlHelper.insertSchemaQuad(className, attrName, "rdfs:domain", className);
+                sparqlHelper.insertSchemaQuad(className, attrName, "rdf:range", "rdfs:\"^^xsd:string");
+            }
+        }
+        return 1;
+    }
+
     public void executeModify(String className, Map<String, String> attributeValues,
                               Map<String, Object> whereAttrValues, int limit) throws SQLException {
 
