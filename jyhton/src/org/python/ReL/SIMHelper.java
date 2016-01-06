@@ -391,7 +391,7 @@ public class SIMHelper {
     // public int executeInsert(String className, List<String> attributeNames, List<String> attributeValues, String fromClause, String url, String pword, int linenumber, int guid) throws SQLException {    
     public int executeInsert(String className, List<String> attributeNames, List<String> attributeValues, String fromClause) throws SQLException {
 
-// ************** THIS METHOD IS NO LOMGER CALLED AND COULD BE DELETED AT SOME POINT. ****************************
+// ************** THIS METHOD IS NO LONGER CALLED AND COULD BE DELETED AT SOME POINT. ****************************
 
         className = className.trim();
         String instanceID = null;

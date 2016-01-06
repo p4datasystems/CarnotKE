@@ -68,22 +68,13 @@ public class ProcessLanguages {
 			InsertQuery iq = (InsertQuery)q;
 			String instanceID = "";
 			if(conn.getConnectionDB() == "OracleNoSQL") instanceID = String.valueOf(UUID.randomUUID());
-			else instanceID = SPARQLDoer.getNextAnonNodeForInd(conn);
-			sparqlHelper.insertSchemaQuad("", iq.className, "rdf:type", "rdfs:Class");
+			else {
+				instanceID = SPARQLDoer.getNextAnonNodeForInd(conn);
+				sparqlHelper.insertSchemaQuad("", iq.className, "rdf:type", "rdfs:Class");
+			}
 			for (int i = 0; i < iq.numberOfAssignments(); i++) {
-				if(iq.getAssignment(i)instanceof EvaAssignment) { // This isn't implemented yet because currently EVAs are constructed in the SIM MODIFY statement.
-				/*
-					Map<String, Object> attrValues = new HashMap<String, Object>();
-					EvaAssignment evaAssignment = (EvaAssignment)iq.getAssignment(i);
-					String evaValue = (String)evaAssignment.expression.jjtGetChild(0).toString();
-					List<String> members = sparqlHelper.getInstancesWithObjectValue("dept", "dept", attrValues);
-					for (String member : members) {
-						sparqlHelper.insertQuad(iq.className, instanceID, evaAssignment.AttributeName, member);
-						// sparqlHelper.insertQuad(withClass, member, inverse, instanceID);
-					}
-					// The following statement puts the data value into the quad store so that SQL joins will work.
-					// sparqlHelper.insertQuad(iq.className, instanceID, attrName, withParts[4]);	
-				*/
+				if(iq.getAssignment(i)instanceof EvaAssignment) { 
+					// This isn't implemented yet because currently EVAs are constructed in the SIM MODIFY statement.
 				} else if(iq.getAssignment(i)instanceof DvaAssignment) {
 					DvaAssignment dvaAssignment = (DvaAssignment)iq.getAssignment(i);
 					sparqlHelper.insertQuad(iq.className, instanceID, dvaAssignment.AttributeName, (String)dvaAssignment.Value.toString(), false);
@@ -101,7 +92,7 @@ public class ProcessLanguages {
 			{
 				if(rq.getAttributePath(j).attribute == "*")
 				{
-					columns = sparqlHelper.getSubjects(className + "_" + sparqlHelper.getSchemaString(), "rdf:type", "owl:" + "DatatypeProperty");
+					columns = sparqlHelper.getSubjects(className + "_" + sparqlHelper.getSchemaString(), "rdf:type", "owl:DatatypeProperty");
 					if(rq.getAttributePath(j).levelsOfIndirection() == 0) {
 						for(int i = 0; i < columns.size(); i++) {
 							dvaAttribs.add(columns.get(i));

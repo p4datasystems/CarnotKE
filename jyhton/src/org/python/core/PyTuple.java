@@ -163,7 +163,7 @@ public class PyTuple extends PySequenceList implements List {
         if (conn.getDebug() == "debug") System.out.println("ReLstmt is: " + ReLstmt);
 
         if(ReLmode == "SPARQL") {
-            rows = conn.getDatabase().OracleNoSQLRunSPARQL(ReLstmt, (conn.getDebug() == "debug") ? true : false);
+            rows = conn.getDatabase().OracleNoSQLRunSPARQL(ReLstmt);
             //a lot of conversion going on here. . .
             PyObject[] results = listtoarray(rows);
             //put results in array for this tuple object

@@ -40,7 +40,6 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
         super();
 
         connection = null;
-
         this.debug = debug;
 
         if(conn_type != "none" ) {
@@ -57,7 +56,7 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
         }
     }
 
-    public OracleNoSqlConnection getConnection() { return connection; }
+    public String getNameSpace() { return nameSpace; }
 
     @Override
     public void OracleNoSQLAddQuad(String graph, String subject, String predicate, String object)
@@ -72,9 +71,15 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
     }
 
     @Override
-    public ArrayList<PyObject> OracleNoSQLRunSPARQL(String sparql, Boolean debug)
+    public ArrayList<PyObject> OracleNoSQLRunSPARQL(String sparql)
     {
         Dataset ds = DatasetImpl.wrap(datasetGraph);
+
+        sparql = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " + 
+                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "      +
+                 "PREFIX owl: <http://www.w3.org/2002/07/owl#> "              +
+                 "PREFIX c: <carnot:> "                                       +
+                 sparql;
 
         Query query = QueryFactory.create(sparql);
         QueryExecution qexec = QueryExecutionFactory.create(query, ds);
@@ -88,10 +93,10 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
             if(queryResults != null) {
                   String xmlstr = "Initial string";
                   xmlstr = ResultSetFormatter.asXMLString(queryResults); // For documentation, see http://grepcode.com/file/repo1.maven.org/maven2/com.hp.hpl.  
-                  if(debug) System.out.println("xmlstr is: " + xmlstr);
+                  if(debug.equals("debug")) System.out.println("xmlstr is: " + xmlstr);
                   Matcher m = Pattern.compile("variable name=.*").matcher(xmlstr);
                   while (m.find()) {
-                    String item = m.group().replaceAll("variable name=.", "").replaceAll("./>", "");
+                    String item = m.group().replaceAll("variable name=.", "").replaceAll("./>", "").replaceAll(nameSpace, "");
                     attrs.add(item);
                     items.add(new PyString(item)); 
                   }
@@ -106,7 +111,7 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
                       for(int i = 0; i <= attrs.size(); i++) {
                           if(m.group().contains("<uri>")) {
                               if(attrName.equals(attrs.get(num))) {
-                                  String item = m.group().replaceAll("<uri>:?", "").replaceAll("</uri>", ""); 
+                                  String item = m.group().replaceAll("<uri>:?", "").replaceAll("</uri>", "").replaceAll(nameSpace, ""); 
 
                                   try  { 
                                       Double.parseDouble(item); 
@@ -131,7 +136,7 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
                           }
                           else if(m.group().contains("<literal datatype=")) {
                               if(attrName.equals(attrs.get(num))) {
-                                  String item = m.group().replaceAll("<literal datatype=", "").replaceAll("</literal>", "");  
+                                  String item = m.group().replaceAll("<literal datatype=", "").replaceAll("</literal>", "").replaceAll(nameSpace, "");  
                                   // Literals:                                 
                                   // For numberic data types, see http://www.w3schools.com/xml/schema_dtypes_numeric.asp
                                   // For string data types, see http://www.w3schools.com/xml/schema_dtypes_string.asp
@@ -155,7 +160,7 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
                               break;
                           }
                           else if(m.group().contains("<binding name=")) {
-                              attrName = m.group().replaceAll("<binding name=.", "").replaceAll(".>", "");
+                              attrName = m.group().replaceAll("<binding name=.", "").replaceAll(".>", "").replaceAll(nameSpace, "");
                           }
                       }
                   }

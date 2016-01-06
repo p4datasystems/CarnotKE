@@ -25,6 +25,7 @@ import java.sql.SQLException;
  */
 
 public abstract class DatabaseInterface{
+    private String nameSpace = "nameSpace should be overrided.";
 
     // This will just execute the statement. 
     public void executeStatement(String stmt) throws SQLException {
@@ -37,13 +38,16 @@ public abstract class DatabaseInterface{
         return null;
     }; 
 
+
+    public String getNameSpace() { return nameSpace; }
+
     // This will execute OracleNoSQLAddQuad. 
     public void OracleNoSQLAddQuad(String graph, String subject, String predicate, String object) {
         System.out.println("\nThis is the top level OracleNoSQLAddQuad statement in DatabaseInterface and probably should be overridden if it's being called.\n");
     }; 
 
     // This will execute OracleNoSQL SPARQL. 
-    public ArrayList<PyObject> OracleNoSQLRunSPARQL(String sparql, Boolean debug) {
+    public ArrayList<PyObject> OracleNoSQLRunSPARQL(String sparql) {
         System.out.println("\nThis is the top level OracleNoSQLRunSPARQL statement in DatabaseInterface and probably should be overridden if it's being called.\n");
         return null;
     };

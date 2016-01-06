@@ -47,29 +47,15 @@ public class SPARQLHelper {
     public void insertQuad(String graph, String subject, String predicate, String object, Boolean eva) throws SQLException {
         String connection_DB = connection.getConnectionDB();
         if(connection_DB.equals("OracleNoSQL")) {
-/*
-A0_C##CS329E_UTEID:<SCHEMA> <#dept> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>   <http://www.w3.org/2000/01/rdf-schema#Class>
-A0_C##CS329E_UTEID:<dept_SCHEMA>    <#deptno>   <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>   <http://www.w3.org/2002/07/owl#DatatypeProperty>
-A0_C##CS329E_UTEID:<dept_SCHEMA>    <#deptno>   <http://www.w3.org/2000/01/rdf-schema#domain>   <#dept>
-A0_C##CS329E_UTEID:<dept_SCHEMA>    <#deptno>   <http://www.w3.org/2000/01/rdf-schema#range>    <http://www.w3.org/2001/XMLSchema#string>
-A0_C##CS329E_UTEID:<dept_SCHEMA>    <#i15>  <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>   <#dept>
-
-sim is: INSERT dept ( DEPTNO := 10 );
-
-exec -> INSERT INTO A0_C##CS329E_UTEID_DATA VALUES ( A0_C##CS329E_UTEID_SQNC.nextval, SDO_RDF_TRIPLE_S('A0_C##CS329E_UTEID:<SCHEMA>', '#dept', 'rdf:type', 'rdfs:Class'))
-exec -> INSERT INTO A0_C##CS329E_UTEID_DATA VALUES ( A0_C##CS329E_UTEID_SQNC.nextval, SDO_RDF_TRIPLE_S('A0_C##CS329E_UTEID:<dept_SCHEMA>', '#deptno', 'rdf:type', 'owl:DatatypeProperty'))
-exec -> INSERT INTO A0_C##CS329E_UTEID_DATA VALUES ( A0_C##CS329E_UTEID_SQNC.nextval, SDO_RDF_TRIPLE_S('A0_C##CS329E_UTEID:<dept_SCHEMA>', '#deptno', 'rdfs:domain', '#dept'))
-exec -> INSERT INTO A0_C##CS329E_UTEID_DATA VALUES ( A0_C##CS329E_UTEID_SQNC.nextval, SDO_RDF_TRIPLE_S('A0_C##CS329E_UTEID:<dept_SCHEMA>', '#deptno', 'rdfs:range', 'xsd:string'))
-exec -> INSERT INTO A0_C##CS329E_UTEID_DATA VALUES ( A0_C##CS329E_UTEID_SQNC.nextval, SDO_RDF_TRIPLE_S('A0_C##CS329E_UTEID:<dept_SCHEMA>', '#i20', 'rdf:type', '#dept'))
-exec -> INSERT INTO A0_C##CS329E_UTEID_DATA VALUES ( A0_C##CS329E_UTEID_SQNC.nextval, SDO_RDF_TRIPLE_S('A0_C##CS329E_UTEID:<dept>', '#i20', '#deptno', '#10'))
-*/
-
-            connection.OracleNoSQLAddQuad("SCHEMA", graph, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "rdfs:Class");
-            if(eva) connection.OracleNoSQLAddQuad("SCHEMA", predicate, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "owl:FunctionalProperty");
-            else connection.OracleNoSQLAddQuad("SCHEMA", predicate, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "owl:DatatypeProperty");
-            connection.OracleNoSQLAddQuad("SCHEMA", predicate, "http://www.w3.org/2000/01/rdf-schema#domain", graph);
-            connection.OracleNoSQLAddQuad("SCHEMA", predicate, "http://www.w3.org/2000/01/rdf-schema#range", "xsd:string");
-            connection.OracleNoSQLAddQuad("SCHEMA", subject, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", graph);
+            connection.OracleNoSQLAddQuad(schemaString, graph, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://www.w3.org/2000/01/rdf-schema#Class");
+            if(eva) {
+                connection.OracleNoSQLAddQuad(graph + "_" + schemaString, predicate, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://www.w3.org/2002/07/owl#FunctionalProperty");
+            } else {
+                connection.OracleNoSQLAddQuad(graph + "_" + schemaString, predicate, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://www.w3.org/2002/07/owl#DatatypeProperty");
+            }
+            connection.OracleNoSQLAddQuad(graph + "_" + schemaString, predicate, "http://www.w3.org/2000/01/rdf-schema#domain", graph);
+            connection.OracleNoSQLAddQuad(graph + "_" + schemaString, predicate, "http://www.w3.org/2000/01/rdf-schema#range", "http://www.w3.org/2001/XMLSchema#string");
+            connection.OracleNoSQLAddQuad(graph + "_" + schemaString, subject, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", graph);
             connection.OracleNoSQLAddQuad(graph, subject, predicate, object);
         }
         else if(connection_DB.equals("Oracle")) {
@@ -217,21 +203,31 @@ exec -> INSERT INTO A0_C##CS329E_UTEID_DATA VALUES ( A0_C##CS329E_UTEID_SQNC.nex
      * @throws SQLException
      */
     public List<String> getSubjects(String graph, String predicate, String object) throws SQLException{
+        ArrayList<PyObject> rows = new ArrayList<PyObject>();
 		List<String> subjects = new ArrayList<String>();
-		String q =
-			"select distinct sub from table(sem_match(\n'select * where {\n" +
-			"\tGRAPH <" + graph + "> {?sub " + predicate + " " + object + "}\n" +
-			"}',\n" +
-			"SEM_MODELS('" 
-			+ connection.getModel() +"'), null,\n" +
-			"SEM_ALIASES( SEM_ALIAS('', '" 
-			+ connection.getNamespace() + "')), null) )";
-		if (connection.getDebug() == "debug") System.out.println("\ngetSubjects: query=\n" + q);
+        String connection_DB = connection.getConnectionDB();
+        if(connection_DB.equals("OracleNoSQL")) {
+            String sparql = "SELECT ?s WHERE { GRAPH " + "c:" + graph + " { ?s " + predicate + " " + object + " } } ";
+            rows = connection.getDatabase().OracleNoSQLRunSPARQL(sparql);
+            for (int i = 1; i < rows.size(); i++) {
+                subjects.add(String.format("%s", rows.get(i)).replaceAll("[()]", "").replaceAll("'", "").replaceAll(",", ""));
+            }
+        } else {
+    		String q =
+    			"select distinct sub from table(sem_match(\n'select * where {\n" +
+    			"\tGRAPH <" + graph + "> {?sub " + predicate + " " + object + "}\n" +
+    			"}',\n" +
+    			"SEM_MODELS('" 
+    			+ connection.getModel() +"'), null,\n" +
+    			"SEM_ALIASES( SEM_ALIAS('', '" 
+    			+ connection.getNamespace() + "')), null) )";
+    		if (connection.getDebug() == "debug") System.out.println("\ngetSubjects: query=\n" + q);
 			try {
 				subjects = SPARQLDoer.executeRdfSelect(connection, q);
 			} catch (SQLException ex) {
 				System.out.println(ex);
 			}
+        }
 		return subjects;
     }  // End getInstancesWithObjectValue
 }
