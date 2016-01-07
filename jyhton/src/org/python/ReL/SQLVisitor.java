@@ -84,15 +84,6 @@ import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromItemVisitor, ExpressionVisitor, ItemsListVisitor, SelectItemVisitor, OrderByVisitor {
-	
-    //Variables needed to connect to AllegroGraph Database. Set to appropriate values.
-    //private static String PREFIX = "http://example.org/people/";
-    private static String PREFIX = "http://example.org/people.owl#";
-    private static String SERVER_URL = "http://172.16.18.134:10035";
-    private static String CATALOG_ID = "java-catalog";
-    private static String REPOSITORY_ID = "jenatutorial";
-    private static String USERNAME = "test";
-    private static String PASSWORD = "xyzzy";
 
     private List<String> filters;
 	private List<String> matches;
@@ -133,219 +124,33 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 		this.connection = (PyRelConnection)conn;
 	}
 	
-	/**
-	 *
-	 */
 	public void doDrop(Drop stmt, OracleConnection conn) {
 		String tableToDrop = stmt.getName();
 		String command = "";
-/*
-		if ( tableToDrop.equals("RDF_DATA") ) {
-			System.out.println("Dropping the RDF model and everything associated with it: " + tableToDrop);
-			//Do the RDF data drop of models and everything else
-			try {
-                conn.createStatement().executeStatement("DROP SEQUENCE RDF_DATA_TABLE_SQNC");
-			} catch (SQLException e) {
-				System.out.println("Failed to drop RDF data table sequence\n" + e);
-			}
-                        try {
-				conn.createStatement().executeStatement("DROP SEQUENCE RDF_GUID_SQNC");       
-			} catch (SQLException e) {
-				System.out.println("Failed to drop RDF GUID sequence\n" + e);
-			}
-			try {
-                        	conn.createStatement().executeStatement("BEGIN\nSEM_APIS.DROP_RDF_MODEL('" + connection.getModel() + "');\nEND;");
-			} catch (SQLException e) {
-				System.out.println("Failed to drop RDF model: RDF_MODEL_" +uname.toUpperCase() + "\n" + e);
-			}
-			try {
-                        	conn.createStatement().executeStatement("DROP TABLE RDF_DATA_TABLE");
-			} catch (SQLException e) {
-				System.out.println("Failed to drop RDF data table\n" + e);
-			}
-
-		} else {
-
-			System.out.println("Dropping just one named graph from the RDF data: " + tableToDrop);
-			command = "DELETE from RDF_DATA_TABLE a where a.triple.GET_MODEL() = '" + connection.getModel()  + ":<" + website + tableToDrop + ">'";
-			try {
-				conn.createStatement().executeStatement(command);
-				System.out.println("|" + command + "|");
-			} catch (SQLException e) {
-				System.out.println("Failed to drop RDF named graph: " + tableToDrop);
-				System.out.println(e);
-			}
-		}
-*/
-	}
-
-    /* 
-     * Convenience method called by doInsert(). This method takes 2 arguments: 1) a string containing
-     * the table name to insert triples into 2) an ArrayList of HashMap of 3 key-value pairs - key "attr" maps to
-     * attribute  value (E.g. "name"), key "valStr" maps to the actual value of the attribute (E.g.
-     * "Alice" for attribute name), key "type" maps to the type string of the attribute.
-     * Hence, each HashMap corresponds to one attribute of the table. The ArrayList of HashMap corresponds
-     * to the collection of attributes of the table.
-     * Method then makes a connection to AG triple store and inserts triples into AG. Note, this convenience method
-     * is a hack. The connection to AG should take place in another class (perhaps a class that inherits from 
-     * DatabaseInterface.java...?), not in this method. Methods in SQLVisitor.java should assume that connection
-     * to the database has already been made. For now, AGInsert not only makes the connection to AG but also inserts
-     * the triples into the DB. Perhaps the inserting of the triples should be delegated to the appropriate methods
-     * in SPARQLDoer.java?
-     */
-    public void AGInsert(String tableName, ArrayList<HashMap<String, String>> attrVals) {
-    	try {
-			// Boiler plate code to establish connection to AG repository.
-            AGServer server = new AGServer(SERVER_URL, USERNAME, PASSWORD);
-       		AGCatalog catalog = server.getCatalog(CATALOG_ID);
-        	AGRepository myRepository = catalog.openRepository(REPOSITORY_ID);
-        	AGRepositoryConnection conn = myRepository.getConnection();
-
-        	// Boiler plate code to create variable of type AGModel for inserts
-            AGGraphMaker maker = new AGGraphMaker(conn);
-            // Graph should be "http://www.example.org/people.owl" instead of default-graph?
-        	AGGraph graph = maker.getGraph();
-        	AGModel model = new AGModel(graph);
-        	
-	    	for (HashMap<String, String> attrVal : attrVals) {
-                //Create some resources and literals to make statements from
-                String idString = AnonId.create().toString();
-	    	    Resource id = model.createResource(PREFIX + idString); //id for triples
-			    Property attr = model.createProperty(PREFIX + attrVal.get("attr"));
-			    Resource table = model.createResource(PREFIX + tableName);
-                Property dbUniqueID = model.createProperty(PREFIX + "DBUNIQUEID");
-
-			    /*
-                 * Need switch statement here to determine the type of literal to create.
-                 * Not that Java 1.6 does not support strings in switch statement
-                 * To find out type of literal to create, attrVal.get("type") returns a variable (of type string)
-                 * that represents the value type of attribute (string, integer, etc...)
-                 */
-                Literal valStr = model.createTypedLiteral(attrVal.get("valStr"), XSDDatatype.XSDstring); 
-
-                // Need to make literal for ID. Usually, ID would be an integer, but AnonID.create()
-                // returns a value consisting of alpha numeric characters.
-                Literal idLiteral = model.createTypedLiteral(idString, XSDDatatype.XSDstring);
-                       
-			    /*
-                 * Inserting 11 triples per SQL relational insert statement.
-                 * The first 5 triples adhere to guidelines from RDF/OWL standards.
-                 * The last 6 triples refer to metadata needed? internally by ReL
-                 * When connecting to AG.
-                 */
-                model.add(id, attr, valStr);
-			    model.add(attr, RDF.type, OWL.DatatypeProperty);
-                model.add(attr, RDFS.domain, table);
-                /* 
-                 * According to com.hp.hpl.jena.vocabulary, RDF does not have field type range, only RDFS does. Is this
-                 * appropriate?
-                 * According to com.hp.hpl.jena.vocabulary, it seems that rdfs:xsd:string datatype does not exist. Not
-                 * sure whether this datatype is internal only to ReL? For now, string literal of "rdfs:xsd:string" 
-                 * is used for object value of triple.
-                 */
-                model.add(attr, RDFS.range, "rdfs:xsd:string");
-                model.add(attr, RDF.type, OWL.FunctionalProperty);
-
-                model.add(id, dbUniqueID, idLiteral);
-                model.add(dbUniqueID, RDF.type, OWL.DatatypeProperty);
-                model.add(dbUniqueID, RDFS.domain, table);
-                // Same problem as a few lines above.
-                model.add(dbUniqueID, RDFS.range, "rdfs:xsd:integer");
-                model.add(dbUniqueID, RDF.type, OWL.FunctionalProperty);
-                model.add(id, RDF.type, table);
-            }
-
-           	// Closing model, connection, and repository
-            model.close();
-           	graph.close();
-           	maker.close();
-       		conn.close();
-       		myRepository.shutDown();
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			System.exit(-1);
-		}
     }
 
-    /**
-     * 
-     */
     //public void doInsert(Insert stmt) throws SQLException { // Old method signature
     public void doInsert(Insert stmt, String getConnectionType) throws SQLException {//New method signature
         if (stmt.getColumns() != null) {
         	this.connectionType = getConnectionType;
 
-            // Inserting into Oracle RDF
-        	if (connectionType == "rdf_mode") {
-            	Iterator valsIt = ((ExpressionList)stmt.getItemsList()).getExpressions().iterator();
-            	String id = Integer.toString(SPARQLDoer.getNextGUID(connection));
-            	String subject = id;
-            	String attvalPairs = "DBUNIQUEID" + " := " + id + " ";
+        	Iterator valsIt = ((ExpressionList)stmt.getItemsList()).getExpressions().iterator();
+        	String id = Integer.toString(SPARQLDoer.getNextGUID(connection));
+        	String subject = id;
+        	String attvalPairs = "DBUNIQUEID" + " := " + id + " ";
 
-            	for (Iterator colsIt = stmt.getColumns().iterator(); colsIt.hasNext(); ) {
-                	String attr = ((Column)colsIt.next()).getColumnName().replaceAll("'", "").replaceAll("\"", "");
-                	Object attrValue = valsIt.next(); 
-                	String valStr = (attrValue.toString().replaceAll("'", "")).replaceAll("\'", "").replaceAll("\"", "");
-                	attvalPairs += attr + " := " + valStr + " ";
-            	}
-                	
-				ProcessLanguages processLanguage = new ProcessLanguages(connection);
-				processLanguage.processSIM("INSERT " + stmt.getTable().toString() + " " + attvalPairs);
-        	
-        	// Inserting into AllegroGraph
-            } else if (connectionType == "ag_sql_rdf_mode") {
-
-      			String tableName = null;
-      			ArrayList<HashMap<String, String>> attrVals = new ArrayList<HashMap<String, String>>();
-
-        		Iterator valsIt = ((ExpressionList)stmt.getItemsList()).getExpressions().iterator();
-        		for (Iterator colsIt = stmt.getColumns().iterator(); colsIt.hasNext(); ) {
-                	String attr = ((Column)colsIt.next()).getColumnName().replaceAll("'", "").replaceAll("\"", "");
-                	Object attrValue = valsIt.next(); 
-                	String valStr = (attrValue.toString().replaceAll("'", "")).replaceAll("\'", "").replaceAll("\"", "");
-                	// Determine a type string for our object being inserted.
-                	String typeString = null;
-                	if (attrValue instanceof LongValue)
-                	{
-                    	typeString = "integer";
-                	}
-                	else if(attrValue instanceof DoubleValue)
-                	{
-                        typeString = "float";
-                	}
-                	else
-                	{
-                    	if(valStr.toUpperCase().equals("TRUE") || valStr.toUpperCase().equals("FALSE"))
-                    	{
-                        	typeString = "boolean";
-                    	}
-                    	else
-                    	{
-                        	typeString = "string";
-                    	}
-                	}
-                	
-                	// Creating and setting HashMap for the attribute and its metadata
-                    HashMap<String, String> attrVal = new HashMap<String, String>();
-                	attrVal.put("attr", attr);
-                	attrVal.put("valStr", valStr);
-                	attrVal.put("type", typeString);
-
-                    // Adding HashMap to ArrayList attrVals
-                	attrVals.add(attrVal);
-            	}
-                // Getting table name
-                tableName = stmt.getTable().toString();
-
-                // Calling AGInsert convenience method
-        		AGInsert(tableName, attrVals);
+        	for (Iterator colsIt = stmt.getColumns().iterator(); colsIt.hasNext(); ) {
+            	String attr = ((Column)colsIt.next()).getColumnName().replaceAll("'", "").replaceAll("\"", "");
+            	Object attrValue = valsIt.next(); 
+            	String valStr = (attrValue.toString().replaceAll("'", "")).replaceAll("\'", "").replaceAll("\"", "");
+            	attvalPairs += attr + " := " + valStr + " ";
         	}
+            	
+			ProcessLanguages processLanguage = new ProcessLanguages(connection);
+			processLanguage.processSIM("INSERT " + stmt.getTable().toString() + " " + attvalPairs);
         }
     }
 	
-	/**
-	 *
-	 */
     public void doCreateTable(CreateTable stmt) throws SQLException {
         String modelName = connection.getModel();
         String tableName = stmt.getTable().getName();
@@ -447,62 +252,6 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 
 		subq.add(tempSub);
 	}
-	
-	/**
-	 * Convenience method called by visitSelect_buildSPARQL. Perhaps a better implementation would be to create
-     * a custom class called MyTriple? MyTriple would have three class variables: subject, predicate, and object.
-     * These three variables would store the triple values of subject, predicate, and object.
-     * Returns an ArrayList representing the result set of SPARQL query.
-	 */
-	public ArrayList<String> queryAG(String queryString) {
-		
-        // Data structure for result set of SPARQL query
-        ArrayList<String> queryResults = new ArrayList<String>();
-		try {
-            // Boiler plate code to establish connection to AG repository.
-			AGServer server = new AGServer(SERVER_URL, USERNAME, PASSWORD);
-       		AGCatalog catalog = server.getCatalog(CATALOG_ID);
-        	AGRepository myRepository = catalog.openRepository(REPOSITORY_ID);
-        	AGRepositoryConnection conn = myRepository.getConnection();
-
-        	// Boiler plate code to create variable of type AGModel for SPARQL query.
-            AGGraphMaker maker = new AGGraphMaker(conn);
-            // Graph should be "http://www.example.org/people.owl" instead of default-graph?
-        	AGGraph graph = maker.getGraph();
-        	AGModel model = new AGModel(graph);
-
-        	try {
-                // Boiler plate code to execute AG Query
-            	AGQuery sparql = AGQueryFactory.create(queryString);
-            	QueryExecution qe = AGQueryExecutionFactory.create(sparql, model);
-            	try {
-               		com.hp.hpl.jena.query.ResultSet results = qe.execSelect();
-               		while (results.hasNext()) {
-                   		QuerySolution result = results.next();
-                        // Note that result.varNames() returns an iterator of string, sorted in alphabetical order.
-                   		Iterator<String> varNames = result.varNames();
-						StringBuilder sb = new StringBuilder();
-						while(varNames.hasNext()) {
-							String var = varNames.next();
-							RDFNode rdfNode = result.get(var);
-							sb.append(rdfNode.toString() + " ");
-						}
-						queryResults.add(sb.toString());
-                	}
-            	} finally {
-               		qe.close();
-            	}
-        	} finally {
-           		model.close();
-        	}
-       		conn.close();
-       		myRepository.shutDown();
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			System.exit(-1);
-		}
-		return queryResults;
-	}
 
 	/**
 	 * Build the SPARQL for a SELECT statement.
@@ -528,30 +277,20 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 		List<String> RDFTableNames = new ArrayList<String>();
 		SPARQLHelper sparqlHelper = new SPARQLHelper(connection);
 
-        if(connectionType == "rdf_mode") { 
-			try {		// Get all of the classes (i.e., table names in this case) in the SCHEMA graph	
-				RDFtables = sparqlHelper.getSubjects(sparqlHelper.getSchemaString(), "rdf:type", "rdfs:Class");
-				for (String t : RDFtables) {
-				   RDFTableNames.add(t);
-				}
-			} catch (SQLException ex) {
-				System.out.println(ex);
+		try {		// Get all of the classes (i.e., table names in this case) in the SCHEMA graph	
+			RDFtables = sparqlHelper.getSubjects(sparqlHelper.getSchemaString(), "rdf:type", "rdfs:Class");
+			for (String t : RDFtables) {
+			   RDFTableNames.add(t);
 			}
-			// Check to see if there are any table names that differ only by case.
-			for (String t1 : RDFTableNames) {
-			   for (String t2 : RDFTableNames) {
-				  if((! t1.equals(t2)) && t1.toUpperCase().equals(t2.toUpperCase()))
-					  System.out.println("Table name " + t1 + " and table name " + t2 + " appear in the RDF data, this is probably an error.");
-			   }
-			}
-		} else if(connectionType == "ag_sql_rdf_mode") {
-		    ArrayList<String> queryResults = queryAG("SELECT * WHERE { ?sub rdfs:domain ?obj . }");
-		    for (String tuple : queryResults) {
-		    	String parts[] = tuple.split(" ")[0].split("#");//Not a good way to obtain the table names 
-		    	if (!RDFTableNames.contains(parts[parts.length - 1])) {
-                    RDFTableNames.add(parts[parts.length - 1]);
-                }
-		    }
+		} catch (SQLException ex) {
+			System.out.println(ex);
+		}
+		// Check to see if there are any table names that differ only by case.
+		for (String t1 : RDFTableNames) {
+		   for (String t2 : RDFTableNames) {
+			  if((! t1.equals(t2)) && t1.toUpperCase().equals(t2.toUpperCase()))
+				  System.out.println("Table name " + t1 + " and table name " + t2 + " appear in the RDF data, this is probably an error.");
+		   }
 		}
 
 // End getting all table names from the RDF data.
@@ -609,29 +348,16 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 
 // Get all column names from tables.
 		List<String> columnNames = new ArrayList<String>();
-        if(connectionType == "rdf_mode") {  
-			List<String> columns = null;  
-			for (String table : tables) { 
-				try {		// Get all of the column names for each of the tables.	
-					columns = sparqlHelper.getSubjects(table + "_" +sparqlHelper.getSchemaString(), "rdfs:domain", ":" + table);
-					for (String column : columns) {
-					   columnNames.add(tables2alias.get(table) + "." + column);
-					}
-				} catch (SQLException ex) {
-					System.out.println(ex);
+		List<String> columns = null;  
+		for (String table : tables) { 
+			try {		// Get all of the column names for each of the tables.	
+				columns = sparqlHelper.getSubjects(table + "_" +sparqlHelper.getSchemaString(), "rdfs:domain", ":" + table);
+				for (String column : columns) {
+				   columnNames.add(tables2alias.get(table) + "." + column);
 				}
+			} catch (SQLException ex) {
+				System.out.println(ex);
 			}
-		} else if(connectionType == "ag_sql_rdf_mode") {
-		    ArrayList<String> queryResults = queryAG("SELECT * WHERE { ?col rdfs:domain <" + PREFIX + "Person> .\n" +
-		    	"?s1 ?col ?v . }");
-		    for (String tuple : queryResults) {
-		    	String parts[] = tuple.split(" ")[0].split("#");//Not a good way to obtain the column names
-                // Add column name to columnNames if columnNames does not contain column name and if column name is not
-                // "DBUNIQUEID"
-		    	if (!columnNames.contains(parts[parts.length - 1]) && !parts[parts.length - 1].equals("DBUNIQUEID")) {
-                    columnNames.add(parts[parts.length - 1]);
-                }
-		    }
 		}
 
 // End getting column names.
@@ -928,22 +654,9 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 			  String filter = "";
 			  if(filters != null) if (filters.size() != 0) filter = filters.get(0);
 			  for (String table : tables) {
-		         List<String> columns = new ArrayList<String>();
+		         columns = new ArrayList<String>();
 	             try {
-				    if(connectionType == "rdf_mode") {
-						columns = sparqlHelper.getSubjects(table + "_" +sparqlHelper.getSchemaString(), "rdfs:domain", ":" + table);
-					} else if(connectionType == "ag_sql_rdf_mode") {
-						ArrayList<String> queryResults = queryAG("SELECT * WHERE { ?col rdfs:domain <" + PREFIX + "Person> .\n" +
-		    				"?s1 ?col ?v . }");
-		    			for (String tuple : queryResults) {
-		    				String parts[] = tuple.split(" ")[0].split("#");//JOOJAY: Not a good way to obtain the column names
-		    				// Add column name to columns if columns does not contain column name and if column name is not
-                            // "DBUNIQUEID"
-                            if (!columns.contains(parts[parts.length - 1]) && !parts[parts.length - 1].equals("DBUNIQUEID")) {
-                                columns.add(parts[parts.length - 1]);
-                            }
-		    			}
-					}
+					columns = sparqlHelper.getSubjects(table + "_" +sparqlHelper.getSchemaString(), "rdfs:domain", ":" + table);
 			        for (String column : columns) {
                        if( ! column.equals("DBUNIQUEID")) {
 						   columnsAs.put(tables2alias.get(table) + "." + column, "\"" + column + "\"");
@@ -1053,15 +766,6 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
                 if (connectionType == "rdf_mode") {
                     tmpSparql += "\tOPTIONAL { ?s1" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
                           + " :" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " }\n";
-                } else if (connectionType == "ag_sql_rdf_mode") {
-
-                    /* 
-                     * For now, give full URI of predicate instead of :Predicate. This issue must be resolved quickly.
-                     * Oracle RDF accepts :Person but AG does not. AG only accepts the full URI 
-                     * (E.g. <http://example.org/people.owl#Person) or a prefix before the colon (E.g. a:Person - where
-                     * PREFIX a: <http://example.org/people.owl#>). How to resolve the discrepancies?  
-                     */
-                    tmpSparql += "\tOPTIONAL { ?s1" + " <" + PREFIX + key.substring(key.lastIndexOf(".") + 1) + "> ?v" + n + " }\n";
                 } else { //representing default case
                     tmpSparql += "\tOPTIONAL { ?s1" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
                           + " :" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " }\n";
@@ -1072,16 +776,6 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 				if (connectionType == "rdf_mode") {
                     tmpSparql += "\tOPTIONAL { ?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
 			              + " :" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " }\n";
-                } else if (connectionType == "ag_sql_rdf_mode") {
-
-                    /* 
-                     * For now, give full URI of predicate instead of :Predicate. This issue must be resolved quickly.
-                     * Oracle RDF accepts :Person but AG does not. AG only accepts the full URI 
-                     * (E.g. <http://example.org/people.owl#Person) or a prefix before the colon (E.g. a:Person - where
-                     * PREFIX a: <http://example.org/people.owl#>). How to resolve the discrepancies?  
-                     */
-                    tmpSparql += "\tOPTIONAL { ?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
-                          + " <" + PREFIX + key.substring(key.lastIndexOf(".") + 1) + "> ?v" + n + " }\n";
                 } else { //representing default case
                     tmpSparql += "\tOPTIONAL { ?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
                           + " :" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " }\n";
@@ -1169,9 +863,6 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
             String value = entry.getValue();
             if (connectionType == "rdf_mode") {
                 SPARQL += "\tGRAPH <" + key + "_" + sparqlHelper.getSchemaString() + "> { ?" + value + " rdf:type :" + key + " }\n";
-            } else if (connectionType == "ag_sql_rdf_mode") {
-                // For now, print out full URI of object instead of :object. This issue must be resolved quickly.
-                SPARQL += "\t?" + value + " rdf:type <" + PREFIX + key + "> .\n";
             } else { //representing the default case 
                 SPARQL += "\t?" + value + " rdf:type :" + key + " .\n";
             }
