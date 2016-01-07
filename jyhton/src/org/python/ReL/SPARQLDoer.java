@@ -256,31 +256,6 @@ public class SPARQLDoer {
     public static String getNextAnonNodeForModel(PyRelConnection connection) throws SQLException {
     	return "_:m" + getNextGUID(connection);
     }
-
-    /**
-     * Get all attributes as list of short names without namefix prefix (e.g. zipCode)
-     *
-     * TODO:  fix the hard coded connection.getGraph()
-     *
-     * @param userName
-     * @param className
-     * @param propTypeName The property type name: "DatatypeProperty" or "ObjectProperty"
-     * @return
-     * @throws SQLException
-     */
-    public static List<String> getAllAttributes(PyRelConnection connection, 
-                                         String className, String propTypeName) // e.g. "DatatypeProperty"
-        throws SQLException {
-        String stmt = "select attr from table(sem_match(\n" +
-            "  'select * where {\n" +
-            "        ?attr rdf:type owl:" + propTypeName + " .\n" +
-            "        ?attr rdfs:domain :" + connection.getUsername() + "\n" +
-            "}',\n" +
-            "SEM_MODELS('" + connection.getModel() + "'), null,\n" +
-            "SEM_ALIASES( SEM_ALIAS('', '" + connection.getNamespace() + "')), null) )";
-        return executeRdfSelect(connection, stmt);
-    }
-
     public static List<String> getAllColumns(PyRelConnection connection, String className) throws SQLException {
         String stmt = "select col from table(sem_match(\n" +
             "  'select * where {\n" +

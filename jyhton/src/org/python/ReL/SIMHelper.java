@@ -44,13 +44,6 @@ public class SIMHelper {
 
     public String executeFrom(String className, List<String> dvaAttribs, List<String> evaAttribs,
                               Map<String, String> whereAttrValues) throws SQLException {
-        // If form is EXECUTE FROM PERSONT SELECT *
-        if (dvaAttribs.size() > 0 && dvaAttribs.get(0).equals("*")) {
-            List<String> allDvas = SPARQLDoer.getAllAttributes(connection, className, "DatatypeProperty");
-            dvaAttribs.remove(0); // remove "*" element
-            allDvas.addAll(dvaAttribs);
-            dvaAttribs = allDvas;
-        }
 
         // assume only a single 'dva OF eva' form, for now
         List<List<String>> evaOfChains = new ArrayList<List<String>>();
@@ -68,7 +61,15 @@ public class SIMHelper {
 
         String colNames = "";
         Map<String, String> colNameToLabelMap = new HashMap<String, String>();
-        String qBody = "	GRAPH <" + className + "_SCHEMA" + "> { ?indiv rdf:type :" + className + " }\n";
+        String qBody = "";
+        String namespace = "";
+        String projectString = "";
+        if(connection.getConnectionDB().equals("OracleNoSQL")) {
+            qBody = "GRAPH c:" + className + "_SCHEMA" + " { ?indiv rdf:type c:" + className + " } GRAPH c:" + className + " { ";
+            namespace = "c";
+        } else {
+            qBody = "    GRAPH <" + className + "_SCHEMA" + "> { ?indiv rdf:type :" + className + " }\n";
+        }
         for (int i = 0; i < dvaAttribs.size(); i++) {
             String attrURI = dvaAttribs.get(i);
             String attrName = getName(attrURI);
@@ -77,10 +78,11 @@ public class SIMHelper {
             } else {
                 colNames += ", " + attrName;
             }
-            qBody += "	?indiv :" + attrName + " ?" + attrName + " .\n";
+            projectString += "?" + attrName + " ";
+            qBody += "	?indiv " + namespace + ":" + attrName + " ?" + attrName + " .\n";
         }
         for (String whereAttr : whereAttrValues.keySet()) {
-            qBody += "	?indiv :" + whereAttr + " :" + whereAttrValues.get(whereAttr) + " .\n";
+            qBody += "	?indiv " + namespace + ":" + whereAttr + " " +namespace + ":" + whereAttrValues.get(whereAttr) + " .\n";
         }
         if (evaOfChains.size() > 0) {
             qBody += "   OPTIONAL { \n";
@@ -101,7 +103,7 @@ public class SIMHelper {
                 String priorVarName = null; // previous var
                 String thisVarName = "?x" + i + "_0";
                 // e.g. lastName == "firstnameOFspouseOFchildren"
-                qBody += "      ?indiv :" + evaOfChain.get(0) + " " + thisVarName + " .\n";
+                qBody += "      ?indiv " + namespace + ":" + evaOfChain.get(0) + " " + thisVarName + " .\n";
                 for (int j = 1; j < evaOfChain.size(); j++) {
                     priorVarName = "x" + i + "_" + (j - 1);
                     thisVarName = "x" + h + "_" + j;
@@ -112,19 +114,27 @@ public class SIMHelper {
                         colNames += thisVarName;
                         colNameToLabelMap.put(thisVarName.toUpperCase(), evaColName.toUpperCase());
                     }
-                    qBody += "      ?" + priorVarName + " :" + evaOfChain.get(j) + " ?" + thisVarName + " .\n";
+                    projectString += "?" + thisVarName + " ";
+                    qBody += "      ?" + priorVarName + " " + namespace + ":" + evaOfChain.get(j) + " ?" + thisVarName + " .\n";
                 }
             }
             qBody += "      } \n";
         }
-        String query = "SELECT DISTINCT " + colNames + "\n from table(\n" +
-            "   sem_match('select * where {\n" +
-            qBody;
-        query += "   }',\n" +
-                "	SEM_MODELS('" + connection.getModel() + "'), null,\n" +
-                "	SEM_ALIASES( SEM_ALIAS('', '" + connection.getNamespace() + "')), null) )";
-        // System.out.println(query);
-        // SPARQLDoer.executeAndPrintRdfSelect(connection, query, colNameToLabelMap);
+System.out.println("qBody is: " + qBody);
+        String query = "";
+        if(connection.getConnectionDB().equals("OracleNoSQL")) {
+            query = "select " + projectString + " where { " + qBody + " } }";
+        } else {
+            query = "SELECT DISTINCT " + colNames + "\n from table(\n" +
+                "   sem_match('select * where {\n" +
+                qBody;
+            query += "   }',\n" +
+                    "	SEM_MODELS('" + connection.getModel() + "'), null,\n" +
+                    "	SEM_ALIASES( SEM_ALIAS('', '" + connection.getNamespace() + "')), null) )";
+            // System.out.println(query);
+            // SPARQLDoer.executeAndPrintRdfSelect(connection, query, colNameToLabelMap);
+        }
+System.out.println("query is: " + query);
         return query;
     }
 

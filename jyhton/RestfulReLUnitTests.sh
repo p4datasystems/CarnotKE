@@ -1,5 +1,5 @@
 ant clean
-rm -rf ./dist
+sudo rm -rf ./dist
 ant
 ant
 sudo pip install --target=/Users/pcannata/Mine/Carnot/CarnotKE/jyhton/dist/Lib/ Flask
