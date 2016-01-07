@@ -120,7 +120,6 @@ public class SIMHelper {
             }
             qBody += "      } \n";
         }
-System.out.println("qBody is: " + qBody);
         String query = "";
         if(connection.getConnectionDB().equals("OracleNoSQL")) {
             query = "select " + projectString + " where { " + qBody + " } }";
@@ -134,7 +133,6 @@ System.out.println("qBody is: " + qBody);
             // System.out.println(query);
             // SPARQLDoer.executeAndPrintRdfSelect(connection, query, colNameToLabelMap);
         }
-System.out.println("query is: " + query);
         return query;
     }
 
