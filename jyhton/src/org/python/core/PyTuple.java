@@ -273,25 +273,33 @@ public class PyTuple extends PySequenceList implements List {
 
               net.sf.jsqlparser.statement.select.Select caststmt = (net.sf.jsqlparser.statement.select.Select)statement;
               SQLVisitor visitor = new SQLVisitor(conn);
-              String rdf; 
+              String sparql = ""; 
               if (this.relQueryInstancesTypeNames.size() > 0)
               {
-                  rdf = visitor.getSelect(caststmt, relQueryInstancesTypeNames, conn.getConnectionType());
+                  sparql = visitor.getSelect(caststmt, relQueryInstancesTypeNames, conn.getConnectionType());
               }
               else {
-                  rdf = visitor.getSelect(caststmt, null, conn.getConnectionType());
+                  sparql = visitor.getSelect(caststmt, null, conn.getConnectionType());
               }
-              // String rdf = "";
               // an oo query forces the session to be committed first. 
               conn.commit_oorel_session();
-              // runAndOutputTuples(conn, rdf); 
-              ProcessOracleEESQL processOracleEESQL = new ProcessOracleEESQL(conn, relQueryInstancesType, relQueryInstancesTypeNames);
-              ArrayList<PyObject> rowResults = processOracleEESQL.processSQL(rdf);
-              //a lot of conversion going on here. . .
-              PyObject[] results = listtoarray(rowResults);
-              //put results in array for this tuple object
-              array = new PyObject[results.length];
-              System.arraycopy(results, 0, array, 0, results.length);
+              ArrayList<PyObject> rowResults;
+              if(conn.getConnectionDB().equals("OracleNoSQL")) {    
+                  rowResults = conn.getDatabase().OracleNoSQLRunSPARQL(sparql);
+                  //a lot of conversion going on here. . .
+                  PyObject[] results = listtoarray(rowResults);
+                  //put results in array for this tuple object
+                  array = new PyObject[results.length];
+                  System.arraycopy(results, 0, array, 0, results.length);
+              } else {
+                  ProcessOracleEESQL processOracleEESQL = new ProcessOracleEESQL(conn, relQueryInstancesType, relQueryInstancesTypeNames);
+                  rowResults = processOracleEESQL.processSQL(sparql);
+                  //a lot of conversion going on here. . .
+                  PyObject[] results = listtoarray(rowResults);
+                  //put results in array for this tuple object
+                  array = new PyObject[results.length];
+                  System.arraycopy(results, 0, array, 0, results.length);
+              }
            } catch (Exception e) {
               System.out.println(e);
               e.printStackTrace();

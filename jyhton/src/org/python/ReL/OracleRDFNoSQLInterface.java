@@ -35,6 +35,7 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
     private ResultSet rs = null;
     private String debug;
     private String nameSpace = "carnot:";
+    private String nameSpacePrefix = "c";
      
     public OracleRDFNoSQLInterface(String url, String uname, String passw, String conn_type, String debug) {
         super();
@@ -57,6 +58,7 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
     }
 
     public String getNameSpace() { return nameSpace; }
+    public String getNameSpacePrefix() { return nameSpacePrefix; }
 
     @Override
     public void OracleNoSQLAddQuad(String graph, String subject, String predicate, String object)

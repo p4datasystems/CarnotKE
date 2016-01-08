@@ -99,11 +99,6 @@ public class SPARQLHelper {
     			s = "INSERT INTO " + connection.getTable() + " VALUES ( " + connection.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
     				"', '" + subject.replaceAll("'", "") + "', '" + predicate.replaceAll("'", "") + "', '" + object.replaceAll("'", "") + typeString + "'))";
     			connection.executeStatement(s);
-    				
-    //INSERT INTO F2014_C##CS347_PROF_DATA VALUES ( 4, SDO_RDF_TRIPLE_S('F2014_C##CS347_PROF:<MALE_SCHEMA>', '#i1529', 'rdf:type', '#MALE'));
-    //INSERT INTO F2014_C##CS347_PROF_DATA VALUES ( 5, SDO_RDF_TRIPLE_S('F2014_C##CS347_PROF:<MALE_SCHEMA>', '#ID', 'rdf:type', 'owl:DatatypeProperty'));
-    //INSERT INTO F2014_C##CS347_PROF_DATA VALUES ( 6, SDO_RDF_TRIPLE_S('F2014_C##CS347_PROF:<MALE_SCHEMA>', '#ID', 'rdfs:domain', '#MALE'));
-    //INSERT INTO F2014_C##CS347_PROF_DATA VALUES ( 7, SDO_RDF_TRIPLE_S('F2014_C##CS347_PROF:<MALE_SCHEMA>', '#ID', 'rdfs:range', 'xsd:string'));
     		}
         }
     } // End insertQuad

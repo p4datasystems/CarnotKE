@@ -97,7 +97,7 @@ SQL on conn_native "INSERT INTO DEPT (DEPTNO, DNAME, LOC) VALUES (40, 'OPERATION
 class RDFSQLTestCase(unittest.TestCase):
     def runTest(self):
         results = SQL on connOracleEE "select ename from emp"
-        assert sorted(results) == [('ADAMS',), ('ALLEN',), ('BLAKE',), ('CLARK',), ('FORD',), ('JAMES',), ('JONES',), ('KING',), ('MARTIN',), ('MILLER',), ('SCOTT',), ('SMITH',), ('TURNER',), ('WARD',), ('ename',)], 'RDFSQL query failed'
+        assert sorted(results) == [('ADAMS',), ('ALLEN',), ('BLAKE',), ('CLARK',), ('FORD',), ('JAMES',), ('JONES',), ('KING',), ('MARTIN',), ('MILLER',), ('SCOTT',), ('SMITH',), ('TURNER',), ('WARD',), ('ename',)], 'SQL query failed'
 
 class SIMTestCase_1(unittest.TestCase):
     def runTest(self):

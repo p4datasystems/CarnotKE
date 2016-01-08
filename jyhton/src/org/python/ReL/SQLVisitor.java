@@ -116,12 +116,15 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 	public CCJSqlParserManager parserManager = new CCJSqlParserManager();
 	
 	static private HashMap<String, String> map  = new HashMap<String, String>();
+
+    String NoSQLNameSpacePrefix = "";
 	
 	/**
 	 *
 	 */
 	public SQLVisitor(PyObject conn) {
 		this.connection = (PyRelConnection)conn;
+        if(connection.getConnectionDB().equals("OracleNoSQL")) NoSQLNameSpacePrefix = connection.getDatabase().getNameSpacePrefix();
 	}
 	
 	public void doDrop(Drop stmt, OracleConnection conn) {
@@ -257,17 +260,17 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 	 * Build the SPARQL for a SELECT statement.
 	 */
 	public String visitSelect_buildSPARQL(
-	               PlainSelect plainSelect, 
-				   List<String> filters,
-				   List<String> tables,
-				   List<String> orderby,
-				   List<String> groupby,
-				   List<String> having,
-				   HashMap<String, String> tablesAliases,
-				   HashMap<String, String> tables2alias,
-				   LinkedHashMap<String, String> columnsAs,
-				   LinkedHashMap<String, String> aggrColumnsAs,
-				   List<String> joinColumns)
+        PlainSelect plainSelect, 
+        List<String> filters,
+        List<String> tables,
+        List<String> orderby,
+        List<String> groupby,
+        List<String> having,
+        HashMap<String, String> tablesAliases,
+        HashMap<String, String> tables2alias,
+        LinkedHashMap<String, String> columnsAs,
+        LinkedHashMap<String, String> aggrColumnsAs,
+        List<String> joinColumns)
 	{ 
 	
 		// Visit the Select statement and build structures necessary to build the SPARQL statement.
@@ -351,7 +354,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 		List<String> columns = null;  
 		for (String table : tables) { 
 			try {		// Get all of the column names for each of the tables.	
-				columns = sparqlHelper.getSubjects(table + "_" +sparqlHelper.getSchemaString(), "rdfs:domain", ":" + table);
+				columns = sparqlHelper.getSubjects(table + "_" +sparqlHelper.getSchemaString(), "rdfs:domain", NoSQLNameSpacePrefix + ":" + table);
 				for (String column : columns) {
 				   columnNames.add(tables2alias.get(table) + "." + column);
 				}
@@ -638,9 +641,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 //Build SPARQL.
 	    
         String SPARQL = "";
-		if(connectionType == "rdf_mode") {
-        	SPARQL = "SELECT ";
-        }
+		if(! connection.getConnectionDB().equals("OracleNoSQL")) SPARQL = "SELECT ";
         String tmpSparql = "";
         n = 0;
         // Add the columns to be projected to the SPARQL string. 
@@ -656,7 +657,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 			  for (String table : tables) {
 		         columns = new ArrayList<String>();
 	             try {
-					columns = sparqlHelper.getSubjects(table + "_" +sparqlHelper.getSchemaString(), "rdfs:domain", ":" + table);
+					columns = sparqlHelper.getSubjects(table + "_" +sparqlHelper.getSchemaString(), "rdfs:domain", NoSQLNameSpacePrefix + ":" + table);
 			        for (String column : columns) {
                        if( ! column.equals("DBUNIQUEID")) {
 						   columnsAs.put(tables2alias.get(table) + "." + column, "\"" + column + "\"");
@@ -703,51 +704,46 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 
 
         // Prepend all group by columns to optional selects
-        for (int groupbyVar = 0; groupbyVar < groupby.size(); groupbyVar++){
+        for (int groupbyVar = 0; groupbyVar < groupby.size(); groupbyVar++) {
             /* 
              * There should be an if block for Oracle RDF and AG
              * Each if block should create the correct SPARQL version for the specified connectionType,
              * similar to lines
         	 */
             String groupbyCol = allCols.get(groupbyVar);
-			if (tablesAliases.get(groupbyCol.split("\\.")[0]) == null){
-				tmpSparql += "\tOPTIONAL { ?s1" + " :" + groupbyCol.substring(groupbyCol.lastIndexOf(".") + 1) + " ?v" + (groupbyVar + 1) + " }\n";
+			if (tablesAliases.get(groupbyCol.split("\\.")[0]) == null) {
+				tmpSparql += "\tOPTIONAL { ?s1"  + " " + NoSQLNameSpacePrefix + ":" + groupbyCol.substring(groupbyCol.lastIndexOf(".") + 1) + " ?v" + (groupbyVar + 1) + " }\n";
 				nonExistentColumns = true;
 			}
 			else {
 				tmpSparql += "\tOPTIONAL { ?" + tableSymbols.get(tablesAliases.get(groupbyCol.split("\\.")[0]))
-			              + " :" + groupbyCol.substring(groupbyCol.lastIndexOf(".") + 1) + " ?v" + (groupbyVar + 1) + " }\n";
+			              + " " + NoSQLNameSpacePrefix + ":" + groupbyCol.substring(groupbyCol.lastIndexOf(".") + 1) + " ?v" + (groupbyVar + 1) + " }\n";
 			}
         }
 
         n += groupby.size();
 
-        for (String col: columnsAs.keySet()){
+        for (String col: columnsAs.keySet()) {
 			n++;
-			if (aggrColumnsAs.keySet().contains(col)){
+			if (aggrColumnsAs.keySet().contains(col)) {
 				aggrPos++;
 				String v = aggrColumnsAs.get(col).toUpperCase();
-				SPARQL += "n" + aggrPos + " " + v;
-			}
-			else{
+                if(! connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += "n" + aggrPos + " " + v;
+			} else {
 				int n2 = n;
-				for (int j = 1; j < allCols.size(); j++){
-					if (allCols.get(j - 1).equals(allCols.get(n-1))){
+				for (int j = 1; j < allCols.size(); j++) {
+					if (allCols.get(j - 1).equals(allCols.get(n-1))) {
 						n2 = j;
 						break;
 					}
 				}
-		    	if(connectionType == "rdf_mode") {
-					SPARQL += "v" + n2 + " " + columnsAs.get(col);
-	       		}
+		    	if(! connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += "v" + n2 + " " + columnsAs.get(col);
 			}	    	
 			if (n != allCols.size())
-		    	if(connectionType == "rdf_mode") {
-					SPARQL += ", ";
-	       		}
+                if(! connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += ", ";
 			// Break the col into a key (if it is an aggregate, we must get rid of the function)
 			String key;
-			if (aggrColumnsAs.keySet().contains("?v" + n)){
+			if (aggrColumnsAs.keySet().contains("?v" + n)) {
 				key = aggrColumnsAs.get(col);
 				key = key.substring(key.indexOf("(") + 1, key.indexOf(")"));
 			}
@@ -762,23 +758,23 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 
 			// Create sparql statements in tmpSparql for the columns to be projected, e.g., ?s1 :domain ?v1 . This will be used later.
 			//                                         | This will get the symbol from tableSymbols for the e from e.domain |        | This will get domain from e.domain   |
-            if (tablesAliases.get(key.split("\\.")[0]) == null){
+            if (tablesAliases.get(key.split("\\.")[0]) == null) {
                 if (connectionType == "rdf_mode") {
                     tmpSparql += "\tOPTIONAL { ?s1" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
-                          + " :" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " }\n";
+                           + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " }\n";
                 } else { //representing default case
                     tmpSparql += "\tOPTIONAL { ?s1" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
-                          + " :" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " }\n";
+                           + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " }\n";
                 }
 				nonExistentColumns = true;
 			}
 			else {
 				if (connectionType == "rdf_mode") {
                     tmpSparql += "\tOPTIONAL { ?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
-			              + " :" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " }\n";
+			               + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " }\n";
                 } else { //representing default case
                     tmpSparql += "\tOPTIONAL { ?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
-                          + " :" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " }\n";
+                           + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " }\n";
                 }
 			}
 	    }		
@@ -823,36 +819,29 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 
 		// unless as is specified, go with ?n1, ?n2, etc instead of ?v1, ?v2...		
 		if (aggrColumnsAs.keySet().size() == 0 && !nonExistentColumns)
-		    if(connectionType == "rdf_mode") {
-			    SPARQL += "\n FROM TABLE(SEM_MATCH('SELECT * WHERE {\n";
-			} else if(connectionType == "ag_sql_rdf_mode") {
-			    SPARQL += "\nSELECT * WHERE {\n";
-			}
-		else{
-		    if(connectionType == "rdf_mode") {
-			    SPARQL += "\n FROM TABLE(SEM_MATCH('SELECT ";
-			} else if(connectionType == "ag_sql_rdf_mode") {
-			    SPARQL += "\nSELECT";
-			}
+            if(connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += "\nSELECT * WHERE {\n";
+            else SPARQL += "\n FROM TABLE(SEM_MATCH('SELECT * WHERE {\n";
+		else {
+            if(connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += "\nSELECT";
+            else SPARQL += "\n FROM TABLE(SEM_MATCH('SELECT ";
 			int x = 1;
 			for (String groupbyVars: groupby)
 				SPARQL += groupbyVars + " ";
-			for (int pull = groupby.size(); pull <= allCols.size(); pull++){
-				if (aggrColumnsAs.keySet().contains("?v" + pull)){
+			for (int pull = groupby.size(); pull <= allCols.size(); pull++) {
+				if (aggrColumnsAs.keySet().contains("?v" + pull)) {
 					SPARQL += "(" + getAggregateSelect(allCols.get(pull - 1).toLowerCase())[0] 
 						   + "(?v" + pull + ")" + " as ?n" + x + ") ";
 					x++;
 				}
-				else{
+				else {
 					boolean alreadySelected = false;
-		    		for (int j = 1; j <= groupby.size(); j++){
-		    			if (allCols.get(j - 1).equals(allCols.get(pull - 1)) && (j-1 != pull-1)){
+		    		for (int j = 1; j <= groupby.size(); j++) {
+		    			if (allCols.get(j - 1).equals(allCols.get(pull - 1)) && (j-1 != pull-1)) {
 		    				alreadySelected = true;
 		    				break;
 		    			}
 		    		}
-		    		if (!alreadySelected)
-						SPARQL += "?v" + pull + " ";
+		    		if (!alreadySelected) SPARQL += "?v" + pull + " ";
 				}
 			}
 			SPARQL += "WHERE {\n";	
@@ -861,7 +850,9 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 		for (Map.Entry<String, String> entry : tableSymbols.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            if (connectionType == "rdf_mode") {
+            if(connection.getConnectionDB().equals("OracleNoSQL")) {
+                SPARQL += "GRAPH " + NoSQLNameSpacePrefix + ":" + key + "_SCHEMA" + " { ?indiv rdf:type " + NoSQLNameSpacePrefix + ":" + key + " } GRAPH " + NoSQLNameSpacePrefix + ":" + key + " { ";
+            } else if (connectionType == "rdf_mode") {
                 SPARQL += "\tGRAPH <" + key + "_" + sparqlHelper.getSchemaString() + "> { ?" + value + " rdf:type :" + key + " }\n";
             } else { //representing the default case 
                 SPARQL += "\t?" + value + " rdf:type :" + key + " .\n";
@@ -892,20 +883,17 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 		String havingStr = having.toString().substring(1 , having.toString().length() - 1);
 
         SPARQL += "}";
-        if (groupby.size() > 0){
+        if (groupby.size() > 0) {
         	SPARQL += "\nGROUPBY ";
-	        for (String groupbyElem: groupby){
+	        for (String groupbyElem: groupby) {
 	        	if (n++ > 0) SPARQL += " ";
 	        	SPARQL += groupbyElem;
 	        }
         }
         if (havingStr.length() > 0)	SPARQL += "\n" + havingStr;
         if (orderbyStr.length() > 0) SPARQL += "\n" + orderbyStr;
-		if(connectionType == "rdf_mode") {
-           SPARQL += "\n" + "' ,\nSEM_MODELS('" + connection.getModel() + "'), null,\nSEM_ALIASES( SEM_ALIAS('', '" + connection.getNamespace() + "')), null) )";
-		} else if(connectionType == "ag_sql_rdf_mode") {
-           SPARQL += "\n";
-		}
+        if(connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += "}\n";
+        else SPARQL += "\n" + "' ,\nSEM_MODELS('" + connection.getModel() + "'), null,\nSEM_ALIASES( SEM_ALIAS('', '" + connection.getNamespace() + "')), null) )";
 		return SPARQL;		
 
 /* Test python statements:

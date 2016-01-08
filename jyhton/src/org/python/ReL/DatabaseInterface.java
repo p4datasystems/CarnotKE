@@ -25,7 +25,8 @@ import java.sql.SQLException;
  */
 
 public abstract class DatabaseInterface{
-    private String nameSpace = "nameSpace should be overrided.";
+    private String nameSpace = "nameSpace should be overridden.";
+    private String nameSpacePrefix = "nameSpacePrefix should be overridden.";
 
     // This will just execute the statement. 
     public void executeStatement(String stmt) throws SQLException {
@@ -40,6 +41,7 @@ public abstract class DatabaseInterface{
 
 
     public String getNameSpace() { return nameSpace; }
+    public String getNameSpacePrefix() { return nameSpacePrefix; }
 
     // This will execute OracleNoSQLAddQuad. 
     public void OracleNoSQLAddQuad(String graph, String subject, String predicate, String object) {

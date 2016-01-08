@@ -17,6 +17,7 @@ public class SIMHelper {
     PyRelConnection connection = null; 
     SPARQLHelper sparqlHelper = null; 
     String schemaString = null;
+    String NoSQLNameSpacePrefix = "";
     public static class EVAAttribute {
         public String dvaName;
         public List<String> evaAttributeNames;
@@ -40,6 +41,7 @@ public class SIMHelper {
         connection = conn; 
         sparqlHelper = new SPARQLHelper(connection);
         schemaString = sparqlHelper.getSchemaString();
+        if(connection.getConnectionDB().equals("OracleNoSQL")) NoSQLNameSpacePrefix = connection.getDatabase().getNameSpacePrefix();
     }
 
     public String executeFrom(String className, List<String> dvaAttribs, List<String> evaAttribs,
@@ -62,13 +64,11 @@ public class SIMHelper {
         String colNames = "";
         Map<String, String> colNameToLabelMap = new HashMap<String, String>();
         String qBody = "";
-        String namespace = "";
         String projectString = "";
         if(connection.getConnectionDB().equals("OracleNoSQL")) {
-            qBody = "GRAPH c:" + className + "_SCHEMA" + " { ?indiv rdf:type c:" + className + " } GRAPH c:" + className + " { ";
-            namespace = "c";
+            qBody = "GRAPH " + NoSQLNameSpacePrefix + ":" + className + "_" + sparqlHelper.getSchemaString() + " { ?indiv rdf:type " + NoSQLNameSpacePrefix + ":" + className + " } GRAPH " + NoSQLNameSpacePrefix + ":" + className + " { ";
         } else {
-            qBody = "    GRAPH <" + className + "_SCHEMA" + "> { ?indiv rdf:type :" + className + " }\n";
+            qBody = "    GRAPH <" + className + "_" + sparqlHelper.getSchemaString() + "> { ?indiv rdf:type :" + className + " }\n";
         }
         for (int i = 0; i < dvaAttribs.size(); i++) {
             String attrURI = dvaAttribs.get(i);
@@ -79,10 +79,10 @@ public class SIMHelper {
                 colNames += ", " + attrName;
             }
             projectString += "?" + attrName + " ";
-            qBody += "	?indiv " + namespace + ":" + attrName + " ?" + attrName + " .\n";
+            qBody += "	?indiv " + NoSQLNameSpacePrefix + ":" + attrName + " ?" + attrName + " .\n";
         }
         for (String whereAttr : whereAttrValues.keySet()) {
-            qBody += "	?indiv " + namespace + ":" + whereAttr + " " +namespace + ":" + whereAttrValues.get(whereAttr) + " .\n";
+            qBody += "	?indiv " + NoSQLNameSpacePrefix + ":" + whereAttr + " " + NoSQLNameSpacePrefix + ":" + whereAttrValues.get(whereAttr) + " .\n";
         }
         if (evaOfChains.size() > 0) {
             qBody += "   OPTIONAL { \n";
@@ -103,7 +103,7 @@ public class SIMHelper {
                 String priorVarName = null; // previous var
                 String thisVarName = "?x" + i + "_0";
                 // e.g. lastName == "firstnameOFspouseOFchildren"
-                qBody += "      ?indiv " + namespace + ":" + evaOfChain.get(0) + " " + thisVarName + " .\n";
+                qBody += "      ?indiv " + NoSQLNameSpacePrefix + ":" + evaOfChain.get(0) + " " + thisVarName + " .\n";
                 for (int j = 1; j < evaOfChain.size(); j++) {
                     priorVarName = "x" + i + "_" + (j - 1);
                     thisVarName = "x" + h + "_" + j;
@@ -115,7 +115,7 @@ public class SIMHelper {
                         colNameToLabelMap.put(thisVarName.toUpperCase(), evaColName.toUpperCase());
                     }
                     projectString += "?" + thisVarName + " ";
-                    qBody += "      ?" + priorVarName + " " + namespace + ":" + evaOfChain.get(j) + " ?" + thisVarName + " .\n";
+                    qBody += "      ?" + priorVarName + " " + NoSQLNameSpacePrefix + ":" + evaOfChain.get(j) + " ?" + thisVarName + " .\n";
                 }
             }
             qBody += "      } \n";
