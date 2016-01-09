@@ -12,35 +12,7 @@ connOracleRDFNoSQL = connectTo 'OracleNoSQL' 'C##cs329e_UTEid' 'orcl_UTEid' 'rdf
 conn_native = connectTo 'jdbc:oracle:thin:@sayonara.microlab.cs.utexas.edu:1521:orcl' 'C##cs329e_UTEid' 'orcl_UTEid' 'native_mode' 'A0' nodebug
 global_conn = connectTo 'jdbc:oracle:thin:@sayonara.microlab.cs.utexas.edu:1521:orcl' 'C##cs329e_UTEid' 'orcl_UTEid' 'rdf_mode' 'A1' nodebug
 
-Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7369, ENAME : 'SMITH', JOB : 'CLERK', MGR : 7902, HIREDATE : '17-DEC-80', SAL : 800, COMM : 0, DEPTNO : 20})"
-Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7499, ENAME : 'ALLEN', JOB : 'SALESMAN', MGR : 7698, HIREDATE : '20-FEB-81', SAL : 1600, COMM : 300, DEPTNO : 30})"
-Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7521, ENAME : 'WARD', JOB : 'SALESMAN', MGR : 7698, HIREDATE : '22-FEB-81', SAL : 1250, COMM : 500, DEPTNO : 30})"
-Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7566, ENAME : 'JONES', JOB : 'MANAGER', MGR : 7839, HIREDATE : '02-APR-81', SAL : 2975, COMM : 0, DEPTNO : 20})"
-Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7654, ENAME : 'MARTIN', JOB : 'SALESMAN', MGR : 7698, HIREDATE : '28-SEP-81', SAL : 1250, COMM : 1400, DEPTNO : 30})"
-Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7698, ENAME : 'BLAKE', JOB : 'MANAGER', MGR : 7839, HIREDATE : '01-MAY-81', SAL : 2850, COMM : 0, DEPTNO : 30})"
-Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7782, ENAME : 'CLARK', JOB : 'MANAGER', MGR : 7839, HIREDATE : '09-JUN-81', SAL : 2450, COMM : 0, DEPTNO : 10})"
-Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7788, ENAME : 'SCOTT', JOB : 'ANALYST', MGR : 7566, HIREDATE : '09-DEC-82', SAL : 3000, COMM : 0, DEPTNO : 20})"
-Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7839, ENAME : 'KING', JOB : 'PRESIDENT', MGR : 0, HIREDATE : '17-NOV-81', SAL : 5000, COMM : 0, DEPTNO : 10})"
-Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7844, ENAME : 'TURNER', JOB : 'SALESMAN', MGR : 7698, HIREDATE : '08-SEP-81', SAL : 1500, COMM : 0, DEPTNO : 30})"
-Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7876, ENAME : 'ADAMS', JOB : 'CLERK', MGR : 7788, HIREDATE : '12-JAN-83', SAL : 1100, COMM : 0, DEPTNO : 20})"
-Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7900, ENAME : 'JAMES', JOB : 'CLERK', MGR : 7698, HIREDATE : '03-DEC-81', SAL : 950, COMM : 0, DEPTNO : 30})"
-Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7902, ENAME : 'FORD', JOB : 'ANALYST', MGR : 7566, HIREDATE : '03-DEC-81', SAL : 3000, COMM : 0, DEPTNO : 20})"
-Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7934, ENAME : 'MILLER', JOB : 'CLERK', MGR : 7782, HIREDATE : '23-JAN-82', SAL : 1300, COMM : 0, DEPTNO : 50})"
-
-Neo4j on connOracleEE "CREATE (:dept { DEPTNO : 10, DNAME : 'ACCOUNTING', LOC : 'NEW YORK' })"
-Neo4j on connOracleEE "CREATE (:dept { DEPTNO : 20, DNAME : 'RESEARCH', LOC : 'DALLAS' })"
-Neo4j on connOracleEE "CREATE (:dept { DEPTNO : 30, DNAME : 'SALES', LOC : 'CHICAGO' })"
-Neo4j on connOracleEE "CREATE (:dept { DEPTNO : 40, DNAME : 'OPERATIONS', LOC : 'BOSTON' })"
-
-Neo4j on connOracleEE "MATCH (a:emp),(b:dept) WHERE a.deptno = 10 AND b.deptno = 10 CREATE (a)<-[:employees]-(b)"
-Neo4j on connOracleEE "MATCH (a:emp),(b:dept) WHERE a.deptno = 20 AND b.deptno = 20 CREATE (a)<-[:employees]-(b)"
-Neo4j on connOracleEE "MATCH (a:emp),(b:dept) WHERE a.deptno = 30 AND b.deptno = 30 CREATE (a)<-[:employees]-(b)"
-Neo4j on connOracleEE "MATCH (a:emp),(b:dept) WHERE a.deptno = 40 AND b.deptno = 40 CREATE (a)<-[:employees]-(b)"
-
-Neo4j on connOracleEE "MATCH (a:emp),(b:dept) WHERE a.deptno = 10 AND b.deptno = 10 CREATE (a)-[:dept]->(b)"
-Neo4j on connOracleEE "MATCH (a:emp),(b:dept) WHERE a.deptno = 20 AND b.deptno = 20 CREATE (a)-[:dept]->(b)"
-Neo4j on connOracleEE "MATCH (a:emp),(b:dept) WHERE a.deptno = 30 AND b.deptno = 30 CREATE (a)-[:dept]->(b)"
-Neo4j on connOracleEE "MATCH (a:emp),(b:dept) WHERE a.deptno = 40 AND b.deptno = 40 CREATE (a)-[:dept]->(b)"
+print "Connections are opened, start loading Databases"
 
 Neo4j on connOracleRDFNoSQL "CREATE (:emp { EMPNO : 7369, ENAME : 'SMITH', JOB : 'CLERK', MGR : 7902, HIREDATE : '17-DEC-80', SAL : 800, COMM : 0, DEPTNO : 20})"
 Neo4j on connOracleRDFNoSQL "CREATE (:emp { EMPNO : 7499, ENAME : 'ALLEN', JOB : 'SALESMAN', MGR : 7698, HIREDATE : '20-FEB-81', SAL : 1600, COMM : 300, DEPTNO : 30})"
@@ -72,6 +44,40 @@ Neo4j on connOracleRDFNoSQL "MATCH (a:emp),(b:dept) WHERE a.deptno = 20 AND b.de
 Neo4j on connOracleRDFNoSQL "MATCH (a:emp),(b:dept) WHERE a.deptno = 30 AND b.deptno = 30 CREATE (a)-[:dept]->(b)"
 Neo4j on connOracleRDFNoSQL "MATCH (a:emp),(b:dept) WHERE a.deptno = 40 AND b.deptno = 40 CREATE (a)-[:dept]->(b)"
 
+print "Finished loading the NoSQL Database"
+
+Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7369, ENAME : 'SMITH', JOB : 'CLERK', MGR : 7902, HIREDATE : '17-DEC-80', SAL : 800, COMM : 0, DEPTNO : 20})"
+Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7499, ENAME : 'ALLEN', JOB : 'SALESMAN', MGR : 7698, HIREDATE : '20-FEB-81', SAL : 1600, COMM : 300, DEPTNO : 30})"
+Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7521, ENAME : 'WARD', JOB : 'SALESMAN', MGR : 7698, HIREDATE : '22-FEB-81', SAL : 1250, COMM : 500, DEPTNO : 30})"
+Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7566, ENAME : 'JONES', JOB : 'MANAGER', MGR : 7839, HIREDATE : '02-APR-81', SAL : 2975, COMM : 0, DEPTNO : 20})"
+Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7654, ENAME : 'MARTIN', JOB : 'SALESMAN', MGR : 7698, HIREDATE : '28-SEP-81', SAL : 1250, COMM : 1400, DEPTNO : 30})"
+Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7698, ENAME : 'BLAKE', JOB : 'MANAGER', MGR : 7839, HIREDATE : '01-MAY-81', SAL : 2850, COMM : 0, DEPTNO : 30})"
+Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7782, ENAME : 'CLARK', JOB : 'MANAGER', MGR : 7839, HIREDATE : '09-JUN-81', SAL : 2450, COMM : 0, DEPTNO : 10})"
+Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7788, ENAME : 'SCOTT', JOB : 'ANALYST', MGR : 7566, HIREDATE : '09-DEC-82', SAL : 3000, COMM : 0, DEPTNO : 20})"
+Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7839, ENAME : 'KING', JOB : 'PRESIDENT', MGR : 0, HIREDATE : '17-NOV-81', SAL : 5000, COMM : 0, DEPTNO : 10})"
+Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7844, ENAME : 'TURNER', JOB : 'SALESMAN', MGR : 7698, HIREDATE : '08-SEP-81', SAL : 1500, COMM : 0, DEPTNO : 30})"
+Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7876, ENAME : 'ADAMS', JOB : 'CLERK', MGR : 7788, HIREDATE : '12-JAN-83', SAL : 1100, COMM : 0, DEPTNO : 20})"
+Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7900, ENAME : 'JAMES', JOB : 'CLERK', MGR : 7698, HIREDATE : '03-DEC-81', SAL : 950, COMM : 0, DEPTNO : 30})"
+Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7902, ENAME : 'FORD', JOB : 'ANALYST', MGR : 7566, HIREDATE : '03-DEC-81', SAL : 3000, COMM : 0, DEPTNO : 20})"
+Neo4j on connOracleEE "CREATE (:emp { EMPNO : 7934, ENAME : 'MILLER', JOB : 'CLERK', MGR : 7782, HIREDATE : '23-JAN-82', SAL : 1300, COMM : 0, DEPTNO : 50})"
+
+Neo4j on connOracleEE "CREATE (:dept { DEPTNO : 10, DNAME : 'ACCOUNTING', LOC : 'NEW YORK' })"
+Neo4j on connOracleEE "CREATE (:dept { DEPTNO : 20, DNAME : 'RESEARCH', LOC : 'DALLAS' })"
+Neo4j on connOracleEE "CREATE (:dept { DEPTNO : 30, DNAME : 'SALES', LOC : 'CHICAGO' })"
+Neo4j on connOracleEE "CREATE (:dept { DEPTNO : 40, DNAME : 'OPERATIONS', LOC : 'BOSTON' })"
+
+Neo4j on connOracleEE "MATCH (a:emp),(b:dept) WHERE a.deptno = 10 AND b.deptno = 10 CREATE (a)<-[:employees]-(b)"
+Neo4j on connOracleEE "MATCH (a:emp),(b:dept) WHERE a.deptno = 20 AND b.deptno = 20 CREATE (a)<-[:employees]-(b)"
+Neo4j on connOracleEE "MATCH (a:emp),(b:dept) WHERE a.deptno = 30 AND b.deptno = 30 CREATE (a)<-[:employees]-(b)"
+Neo4j on connOracleEE "MATCH (a:emp),(b:dept) WHERE a.deptno = 40 AND b.deptno = 40 CREATE (a)<-[:employees]-(b)"
+
+Neo4j on connOracleEE "MATCH (a:emp),(b:dept) WHERE a.deptno = 10 AND b.deptno = 10 CREATE (a)-[:dept]->(b)"
+Neo4j on connOracleEE "MATCH (a:emp),(b:dept) WHERE a.deptno = 20 AND b.deptno = 20 CREATE (a)-[:dept]->(b)"
+Neo4j on connOracleEE "MATCH (a:emp),(b:dept) WHERE a.deptno = 30 AND b.deptno = 30 CREATE (a)-[:dept]->(b)"
+Neo4j on connOracleEE "MATCH (a:emp),(b:dept) WHERE a.deptno = 40 AND b.deptno = 40 CREATE (a)-[:dept]->(b)"
+
+print "Finished loading the EE Database"
+
 SQL on conn_native "truncate table emp"
 SQL on conn_native "INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO) VALUES (7369, 'SMITH',  'CLERK',     7902, TO_DATE('17-DEC-1980', 'DD-MON-YYYY'),  800, NULL, 20);"
 SQL on conn_native "INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO) VALUES (7499, 'ALLEN',  'SALESMAN',  7698, TO_DATE('20-FEB-1981', 'DD-MON-YYYY'), 1600,  300, 30);"
@@ -93,6 +99,8 @@ SQL on conn_native "INSERT INTO DEPT (DEPTNO, DNAME, LOC) VALUES (10, 'ACCOUNTIN
 SQL on conn_native "INSERT INTO DEPT (DEPTNO, DNAME, LOC) VALUES (20, 'RESEARCH',   'DALLAS');"
 SQL on conn_native "INSERT INTO DEPT (DEPTNO, DNAME, LOC) VALUES (30, 'SALES',      'CHICAGO');"
 SQL on conn_native "INSERT INTO DEPT (DEPTNO, DNAME, LOC) VALUES (40, 'OPERATIONS', 'BOSTON');"
+
+print "Finished loading the Native Database"
 
 # Start testing of Oracle EE
 class EESQLTestCase(unittest.TestCase):
@@ -130,7 +138,7 @@ class OracleNoSQLTestCase_Neo4J_select(unittest.TestCase):
 class OracleNoSQLTestCase_Neo4J_join(unittest.TestCase):
     def runTest(self):
         results = Neo4j on connOracleRDFNoSQL "MATCH(a:emp)-[:dept]->(b:dept) RETURN b.dname, a.ename"
-        assert sorted(results) == [('ADAMS',), ('ALLEN',), ('BLAKE',), ('CLARK',), ('FORD',), ('JAMES',), ('JONES',), ('KING',), ('MARTIN',), ('MILLER',), ('SCOTT',), ('SMITH',), ('TURNER',), ('WARD',), ('ename', 'x0_1')], 'OracleNoSQLTestCase_Neo4J_join query failed'
+        assert sorted(results) == [('ADAMS', 'RESEARCH'), ('ALLEN', 'SALES'), ('BLAKE', 'SALES'), ('CLARK', 'ACCOUNTING'), ('FORD', 'RESEARCH'), ('JAMES', 'SALES'), ('JONES', 'RESEARCH'), ('KING', 'ACCOUNTING'), ('MARTIN', 'SALES'), ('MILLER',), ('SCOTT', 'RESEARCH'), ('SMITH', 'RESEARCH'), ('TURNER', 'SALES'), ('WARD', 'SALES'), ('ename', 'x0_1')], 'OracleNoSQLTestCase_Neo4J_join query failed'
 
 class OracleNoSQLTestCase_Neo4J_where(unittest.TestCase):
     def runTest(self):
@@ -145,7 +153,7 @@ class OracleNoSQLTestCase_SIM_select(unittest.TestCase):
 class OracleNoSQLTestCase_SIM_join(unittest.TestCase):
     def runTest(self):
         results = SIM on connOracleRDFNoSQL "FROM emp RETRIEVE dname OF dept, ename;"
-        assert sorted(results) == [('ADAMS',), ('ALLEN',), ('BLAKE',), ('CLARK',), ('FORD',), ('JAMES',), ('JONES',), ('KING',), ('MARTIN',), ('MILLER',), ('SCOTT',), ('SMITH',), ('TURNER',), ('WARD',), ('ename', 'x0_1')], 'OracleNoSQLTestCase_SIM_join query failed'
+        assert sorted(results) == [('ADAMS', 'RESEARCH'), ('ALLEN', 'SALES'), ('BLAKE', 'SALES'), ('CLARK', 'ACCOUNTING'), ('FORD', 'RESEARCH'), ('JAMES', 'SALES'), ('JONES', 'RESEARCH'), ('KING', 'ACCOUNTING'), ('MARTIN', 'SALES'), ('MILLER',), ('SCOTT', 'RESEARCH'), ('SMITH', 'RESEARCH'), ('TURNER', 'SALES'), ('WARD', 'SALES'), ('ename', 'x0_1')], 'OracleNoSQLTestCase_SIM_join query failed'
 
 class OracleNoSQLTestCase_SIM_where(unittest.TestCase):
     def runTest(self):
@@ -154,8 +162,8 @@ class OracleNoSQLTestCase_SIM_where(unittest.TestCase):
 
 class OracleNoSQLTestCase_SPARQL_join(unittest.TestCase):
     def runTest(self):
-        results = SPARQL on connOracleRDFNoSQL "select ?ename ?x0_1  where { GRAPH c:emp_SCHEMA { ?indiv rdf:type c:emp } GRAPH c:emp {     ?indiv c:ename ?ename . OPTIONAL { ?indiv c:dept ?x0_0 . ?x0_0 c:dname ?x0_1 . } } }"
-        assert sorted(results) == [('ADAMS',), ('ALLEN',), ('BLAKE',), ('CLARK',), ('FORD',), ('JAMES',), ('JONES',), ('KING',), ('MARTIN',), ('MILLER',), ('SCOTT',), ('SMITH',), ('TURNER',), ('WARD',), ('ename', 'x0_1')], 'OracleNoSQLTestCase_SPARQL_join query failed'
+        results = SPARQL on connOracleRDFNoSQL "select ?ename ?x0_1  where { GRAPH c:emp_SCHEMA { ?indiv rdf:type c:emp } GRAPH c:emp {  ?indiv c:ename ?ename . }  OPTIONAL { GRAPH ?0 { ?indiv c:dept ?x0_0 . } GRAPH ?1 { ?x0_0 c:dname ?x0_1 . }  }  }"
+        assert sorted(results) == [('ADAMS', 'RESEARCH'), ('ALLEN', 'SALES'), ('BLAKE', 'SALES'), ('CLARK', 'ACCOUNTING'), ('FORD', 'RESEARCH'), ('JAMES', 'SALES'), ('JONES', 'RESEARCH'), ('KING', 'ACCOUNTING'), ('MARTIN', 'SALES'), ('MILLER',), ('SCOTT', 'RESEARCH'), ('SMITH', 'RESEARCH'), ('TURNER', 'SALES'), ('WARD', 'SALES'), ('ename', 'x0_1')], 'OracleNoSQLTestCase_SPARQL_join query failed'
 
 class OOReLTestCase(unittest.TestCase):
     def runTest(self):

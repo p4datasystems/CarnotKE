@@ -70,6 +70,8 @@ public class SIMHelper {
         } else {
             qBody = "    GRAPH <" + className + "_" + sparqlHelper.getSchemaString() + "> { ?indiv rdf:type :" + className + " }\n";
         }
+
+        // Process DVAs
         for (int i = 0; i < dvaAttribs.size(); i++) {
             String attrURI = dvaAttribs.get(i);
             String attrName = getName(attrURI);
@@ -79,13 +81,21 @@ public class SIMHelper {
                 colNames += ", " + attrName;
             }
             projectString += "?" + attrName + " ";
-            qBody += "	?indiv " + NoSQLNameSpacePrefix + ":" + attrName + " ?" + attrName + " .\n";
+            if(connection.getConnectionDB().equals("OracleNoSQL")) qBody += " ?indiv " + NoSQLNameSpacePrefix + ":" + attrName + " ?" + attrName + " .";
+            else qBody += "  ?indiv " + NoSQLNameSpacePrefix + ":" + attrName + " ?" + attrName + " .\n";
         }
+
+        // Process WHERE Clause
         for (String whereAttr : whereAttrValues.keySet()) {
-            qBody += "	?indiv " + NoSQLNameSpacePrefix + ":" + whereAttr + " " + NoSQLNameSpacePrefix + ":" + whereAttrValues.get(whereAttr) + " .\n";
+            if(connection.getConnectionDB().equals("OracleNoSQL")) qBody += "   ?indiv " + NoSQLNameSpacePrefix + ":" + whereAttr + " " + NoSQLNameSpacePrefix + ":" + whereAttrValues.get(whereAttr) + " .";
+            else qBody += "	?indiv " + NoSQLNameSpacePrefix + ":" + whereAttr + " " + NoSQLNameSpacePrefix + ":" + whereAttrValues.get(whereAttr) + " .\n";
         }
+        if(connection.getConnectionDB().equals("OracleNoSQL")) qBody += " } ";
+
+        // Process EVAs
         if (evaOfChains.size() > 0) {
-            qBody += "   OPTIONAL { \n";
+            if(connection.getConnectionDB().equals("OracleNoSQL")) qBody += " OPTIONAL { ";
+            else qBody += "   OPTIONAL { \n";
             int i = -1;
             int h = -1;
             String previous_evaOfChain0 = "";
@@ -103,7 +113,8 @@ public class SIMHelper {
                 String priorVarName = null; // previous var
                 String thisVarName = "?x" + i + "_0";
                 // e.g. lastName == "firstnameOFspouseOFchildren"
-                qBody += "      ?indiv " + NoSQLNameSpacePrefix + ":" + evaOfChain.get(0) + " " + thisVarName + " .\n";
+                if(connection.getConnectionDB().equals("OracleNoSQL")) qBody += "GRAPH ?" + i + " { ?indiv " + NoSQLNameSpacePrefix + ":" + evaOfChain.get(0) + " " + thisVarName + " . }";
+                else qBody += "      ?indiv " + NoSQLNameSpacePrefix + ":" + evaOfChain.get(0) + " " + thisVarName + " .\n";
                 for (int j = 1; j < evaOfChain.size(); j++) {
                     priorVarName = "x" + i + "_" + (j - 1);
                     thisVarName = "x" + h + "_" + j;
@@ -115,14 +126,15 @@ public class SIMHelper {
                         colNameToLabelMap.put(thisVarName.toUpperCase(), evaColName.toUpperCase());
                     }
                     projectString += "?" + thisVarName + " ";
-                    qBody += "      ?" + priorVarName + " " + NoSQLNameSpacePrefix + ":" + evaOfChain.get(j) + " ?" + thisVarName + " .\n";
+                    if(connection.getConnectionDB().equals("OracleNoSQL")) qBody += " GRAPH ?" + j + " { ?" + priorVarName + " " + NoSQLNameSpacePrefix + ":" + evaOfChain.get(j) + " ?" + thisVarName + " . }";
+                    else qBody += "      ?" + priorVarName + " " + NoSQLNameSpacePrefix + ":" + evaOfChain.get(j) + " ?" + thisVarName + " .\n";
                 }
             }
             qBody += "      } \n";
         }
         String query = "";
         if(connection.getConnectionDB().equals("OracleNoSQL")) {
-            query = "select " + projectString + " where { " + qBody + " } }";
+            query = "select " + projectString + " where { " + qBody + " }";
         } else {
             query = "SELECT DISTINCT " + colNames + "\n from table(\n" +
                 "   sem_match('select * where {\n" +
