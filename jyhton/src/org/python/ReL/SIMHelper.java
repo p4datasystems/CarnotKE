@@ -525,9 +525,7 @@ public class SIMHelper {
                         }
                     }
                     for (String valueIndiv : valuesToAdd) {
-                        // SPARQLDoer.insertEvaValue(connection, indiv, attr, valueIndiv);
-                        // insertQuad(String graph, String subject, String predicate, String object)
-                        sparqlHelper.insertQuad(className, indiv, attr, valueIndiv, true);
+                        sparqlHelper.insertQuad(className, indiv.replace(connection.getDatabase().getNameSpace(), ""), attr, valueIndiv.replace(connection.getDatabase().getNameSpace(), ""), true);
                         sparqlHelper.insertSchemaQuad(className, attr, "inverse_class", "emp");
                     }
                 } else {

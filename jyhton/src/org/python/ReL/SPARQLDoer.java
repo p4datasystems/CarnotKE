@@ -9,10 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.python.core.PyObject;
+
 import org.python.ReL.PyRelConnection;
 
 /**
- * SPARQLDoer is a set of static utility function that are useful
+ * SPARQLDoer is a set of static utility functions that are useful
  * for generating sparql, and executing the sparql on a database.
  */
 public class SPARQLDoer {
@@ -314,23 +316,33 @@ public class SPARQLDoer {
     public static List<String> executeRdfSelect(PyRelConnection connection, String selectStmt) throws SQLException {
         if (connection.getDebug() == "debug") System.out.println("In executeRdfSelect, selectStmt is: " + selectStmt);
         List<String> rowIds = new ArrayList<String>();
-        ResultSet rs = null;
-        try {
-			try {
-				rs = connection.executeQuery(selectStmt);
-			} catch (SQLException e) {
-			    try { rs.close(); } catch (Exception ignore) { }
-				System.out.println(e);
-			} 
-			ResultSetMetaData rd = rs.getMetaData();
-			int cc = rd.getColumnCount();
-			while (rs.next()) {
-				rowIds.add(getValue(rs.getString(1)));
-			}
-			rs.close();
-		} finally {
-           try { rs.close(); } catch (Exception ignore) { }
+        if(connection.getConnectionDB().equals("OracleNoSQL")) {
+            ArrayList<PyObject> rows = new ArrayList<PyObject>();
+            rows = connection.getDatabase().OracleNoSQLRunSPARQL(selectStmt);
+            for (int i = 1; i < rows.size(); i++) {
+                rowIds.add(String.format("%s", rows.get(i)).replaceAll("[()]", "").replaceAll("'", "").replaceAll(",", ""));
+            }
+
+        } else {
+            ResultSet rs = null;
+            try {
+    			try {
+    				rs = connection.executeQuery(selectStmt);
+    			} catch (SQLException e) {
+    			    try { rs.close(); } catch (Exception ignore) { }
+    				System.out.println(e);
+    			} 
+    			// ResultSetMetaData rd = rs.getMetaData();
+    			// int cc = rd.getColumnCount();
+    			while (rs.next()) {
+    				rowIds.add(getValue(rs.getString(1)));
+    			}
+    			rs.close();
+    		} finally {
+               try { rs.close(); } catch (Exception ignore) { }
+            }
         }
+        if (connection.getDebug() == "debug") System.out.println("In executeRdfSelect, rowIds is: " + rowIds);
 		return rowIds;
     }
 
@@ -396,35 +408,27 @@ public class SPARQLDoer {
      */
     public static List<String> getMembersWithAttrValues(PyRelConnection connection, String className, Map<String, Object> attrValues) throws SQLException{
 		List<String> members = new ArrayList<String>();
+        String NoSQLNameSpacePrefix = "";
+        if(connection.getConnectionDB().equals("OracleNoSQL")) NoSQLNameSpacePrefix = connection.getDatabase().getNameSpacePrefix();
 		String typeTriple = "";
 		if (className != null) {
-				typeTriple =  "         ?indiv rdf:type :" + className + ".\n";
+				typeTriple =  " ?indiv rdf:type " + NoSQLNameSpacePrefix + ":" + className + ".\n";
 		}
 		String attrValuesQ = "";
 		for (String attr : attrValues.keySet()) {
 			Object val = attrValues.get(attr); 
 			if(val instanceof String){
-						attrValuesQ += "?indiv :" + attr + " :" + ((String)val).replaceAll("'", "") + " .\n";
+						attrValuesQ += "?indiv " + NoSQLNameSpacePrefix + ":" + attr + " " + NoSQLNameSpacePrefix + ":" + ((String)val).replaceAll("'", "") + " .\n";
 			}
 			else if(val instanceof Integer){
-				attrValuesQ += "?indiv :" + attr + " " +attrValues.get(attr).toString() + " .\n";
+				attrValuesQ += "?indiv " + NoSQLNameSpacePrefix + ":" + attr + " " +attrValues.get(attr).toString() + " .\n";
 			}
 		}
-		String q =
-			"select indiv from table(sem_match(\n" +
-			"  'select * where {\n" +
-			typeTriple +
-			attrValuesQ +
-			"}',\n" +
-			"SEM_MODELS('" 
-			+ connection.getModel() +"'), null,\n" +
-			"SEM_ALIASES( SEM_ALIAS('', '" 
-			+ connection.getNamespace() + "')), null) )";
+		String q = formatSPARQL(connection, "indiv", className, typeTriple, className, attrValuesQ);
 		// if (connection.getDebug() == "debug") System.out.println("\ngetMembersWithAttrValues: query=\n" + q);
 		members = executeRdfSelect(connection, q);
 		return members;
     }
-
 
     /**
      * Get the subject nodes with the supplied attribute value pair.
@@ -490,7 +494,6 @@ public class SPARQLDoer {
         return classes;
     }
 
-
     /**
      * Delete all quads with the provided subject and property.
      *
@@ -524,8 +527,6 @@ public class SPARQLDoer {
 		}
     }
     
-    
-    
     /**
      * Delete instances of a class whose attributes match 
      * those in the key_vals map. 
@@ -537,7 +538,6 @@ public class SPARQLDoer {
      */
     public static void deleteSubjectsWithAttrValues(PyRelConnection connection, String classname, Map<String, Object> key_vals) throws SQLException
     {
-    
     List<String> instances = getMembersWithAttrValues(connection, classname, (Map)key_vals);
 
          if(instances.size() > 0)
@@ -560,10 +560,25 @@ public class SPARQLDoer {
          String sql_stmt = delete_stmt + " "+ where_stmt; 
          connection.executeStatement(sql_stmt);
          }
-
     }
             
-
-
+    public static String formatSPARQL(PyRelConnection connection, String returnAttr, String graph1, String body1, String graph2, String body2)
+    {
+        String q = "";
+        if(connection.getConnectionDB().equals("OracleNoSQL")) {
+            // sparqlHelper = new SPARQLHelper(connection);
+            String NoSQLNameSpacePrefix = connection.getDatabase().getNameSpacePrefix();
+            q = "select ?" + returnAttr + "  where { GRAPH " + NoSQLNameSpacePrefix + ":" + graph1 + "_SCHEMA" + " { " + body1 + " } GRAPH " + NoSQLNameSpacePrefix + ":" + graph2 + " { " + body2 + "}}";
+        } else {
+            q = "select indiv from table(sem_match(\n" +
+            "  'select * where {\n" + body1 + body2 +
+            "}',\n" +
+            "SEM_MODELS('" 
+            + connection.getModel() +"'), null,\n" +
+            "SEM_ALIASES( SEM_ALIAS('', '" 
+            + connection.getNamespace() + "')), null) )";
+        }
+        return(q);
+    }
 }
 

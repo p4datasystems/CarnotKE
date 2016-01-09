@@ -62,15 +62,15 @@ Neo4j on connOracleRDFNoSQL "CREATE (:dept { DEPTNO : 20, DNAME : 'RESEARCH', LO
 Neo4j on connOracleRDFNoSQL "CREATE (:dept { DEPTNO : 30, DNAME : 'SALES', LOC : 'CHICAGO' })"
 Neo4j on connOracleRDFNoSQL "CREATE (:dept { DEPTNO : 40, DNAME : 'OPERATIONS', LOC : 'BOSTON' })"
 
-# Neo4j on connOracleRDFNoSQL "MATCH (a:emp),(b:dept) WHERE a.deptno = 10 AND b.deptno = 10 CREATE (a)<-[:employees]-(b)"
-# Neo4j on connOracleRDFNoSQL "MATCH (a:emp),(b:dept) WHERE a.deptno = 20 AND b.deptno = 20 CREATE (a)<-[:employees]-(b)"
-# Neo4j on connOracleRDFNoSQL "MATCH (a:emp),(b:dept) WHERE a.deptno = 30 AND b.deptno = 30 CREATE (a)<-[:employees]-(b)"
-# Neo4j on connOracleRDFNoSQL "MATCH (a:emp),(b:dept) WHERE a.deptno = 40 AND b.deptno = 40 CREATE (a)<-[:employees]-(b)"
+Neo4j on connOracleRDFNoSQL "MATCH (a:emp),(b:dept) WHERE a.deptno = 10 AND b.deptno = 10 CREATE (a)<-[:employees]-(b)"
+Neo4j on connOracleRDFNoSQL "MATCH (a:emp),(b:dept) WHERE a.deptno = 20 AND b.deptno = 20 CREATE (a)<-[:employees]-(b)"
+Neo4j on connOracleRDFNoSQL "MATCH (a:emp),(b:dept) WHERE a.deptno = 30 AND b.deptno = 30 CREATE (a)<-[:employees]-(b)"
+Neo4j on connOracleRDFNoSQL "MATCH (a:emp),(b:dept) WHERE a.deptno = 40 AND b.deptno = 40 CREATE (a)<-[:employees]-(b)"
 
-# Neo4j on connOracleRDFNoSQL "MATCH (a:emp),(b:dept) WHERE a.deptno = 10 AND b.deptno = 10 CREATE (a)-[:dept]->(b)"
-# Neo4j on connOracleRDFNoSQL "MATCH (a:emp),(b:dept) WHERE a.deptno = 20 AND b.deptno = 20 CREATE (a)-[:dept]->(b)"
-# Neo4j on connOracleRDFNoSQL "MATCH (a:emp),(b:dept) WHERE a.deptno = 30 AND b.deptno = 30 CREATE (a)-[:dept]->(b)"
-# Neo4j on connOracleRDFNoSQL "MATCH (a:emp),(b:dept) WHERE a.deptno = 40 AND b.deptno = 40 CREATE (a)-[:dept]->(b)"
+Neo4j on connOracleRDFNoSQL "MATCH (a:emp),(b:dept) WHERE a.deptno = 10 AND b.deptno = 10 CREATE (a)-[:dept]->(b)"
+Neo4j on connOracleRDFNoSQL "MATCH (a:emp),(b:dept) WHERE a.deptno = 20 AND b.deptno = 20 CREATE (a)-[:dept]->(b)"
+Neo4j on connOracleRDFNoSQL "MATCH (a:emp),(b:dept) WHERE a.deptno = 30 AND b.deptno = 30 CREATE (a)-[:dept]->(b)"
+Neo4j on connOracleRDFNoSQL "MATCH (a:emp),(b:dept) WHERE a.deptno = 40 AND b.deptno = 40 CREATE (a)-[:dept]->(b)"
 
 SQL on conn_native "truncate table emp"
 SQL on conn_native "INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO) VALUES (7369, 'SMITH',  'CLERK',     7902, TO_DATE('17-DEC-1980', 'DD-MON-YYYY'),  800, NULL, 20);"
@@ -94,26 +94,28 @@ SQL on conn_native "INSERT INTO DEPT (DEPTNO, DNAME, LOC) VALUES (20, 'RESEARCH'
 SQL on conn_native "INSERT INTO DEPT (DEPTNO, DNAME, LOC) VALUES (30, 'SALES',      'CHICAGO');"
 SQL on conn_native "INSERT INTO DEPT (DEPTNO, DNAME, LOC) VALUES (40, 'OPERATIONS', 'BOSTON');"
 
-class RDFSQLTestCase(unittest.TestCase):
+# Start testing of Oracle EE
+class EESQLTestCase(unittest.TestCase):
     def runTest(self):
         results = SQL on connOracleEE "select ename from emp"
         assert sorted(results) == [('ADAMS',), ('ALLEN',), ('BLAKE',), ('CLARK',), ('FORD',), ('JAMES',), ('JONES',), ('KING',), ('MARTIN',), ('MILLER',), ('SCOTT',), ('SMITH',), ('TURNER',), ('WARD',), ('ename',)], 'SQL query failed'
 
-class SIMTestCase_1(unittest.TestCase):
+class EESIMTestCase_1(unittest.TestCase):
     def runTest(self):
         results = SIM on connOracleEE "From emp Retrieve ename"
         assert sorted(results) == [('ADAMS',), ('ALLEN',), ('BLAKE',), ('CLARK',), ('ENAME',), ('FORD',), ('JAMES',), ('JONES',), ('KING',), ('MARTIN',), ('MILLER',), ('SCOTT',), ('SMITH',), ('TURNER',), ('WARD',)], 'SIM query failed'
 
-class SIMTestCase_2(unittest.TestCase):
+class EESIMTestCase_2(unittest.TestCase):
     def runTest(self):
         results = SIM on connOracleEE "FROM EMP RETRIEVE DNAME OF dept, ENAME"
         assert sorted(results) == [('ADAMS', 'RESEARCH'), ('ALLEN', 'SALES'), ('BLAKE', 'SALES'), ('CLARK', 'ACCOUNTING'), ('ENAME', 'X0_1'), ('FORD', 'RESEARCH'), ('JAMES', 'SALES'), ('JONES', 'RESEARCH'), ('KING', 'ACCOUNTING'), ('MARTIN', 'SALES'), ('MILLER', 'null'), ('SCOTT', 'RESEARCH'), ('SMITH', 'RESEARCH'), ('TURNER', 'SALES'), ('WARD', 'SALES')], 'SIM query failed'
 
-class Neo4jTestCase(unittest.TestCase):
+class EENeo4jTestCase(unittest.TestCase):
     def runTest(self):
         results = Neo4j on connOracleEE "MATCH(a:emp)-[:dept]->(b:dept) RETURN b.dname, a.ename"
         assert sorted(results) == [('ADAMS', 'RESEARCH'), ('ALLEN', 'SALES'), ('BLAKE', 'SALES'), ('CLARK', 'ACCOUNTING'), ('ENAME', 'X0_1'), ('FORD', 'RESEARCH'), ('JAMES', 'SALES'), ('JONES', 'RESEARCH'), ('KING', 'ACCOUNTING'), ('MARTIN', 'SALES'), ('MILLER', 'null'), ('SCOTT', 'RESEARCH'), ('SMITH', 'RESEARCH'), ('TURNER', 'SALES'), ('WARD', 'SALES')], 'Neo4j query failed'
 
+# Start testing of native_mode
 class SQLTestCase(unittest.TestCase):
     def runTest(self):
         results = SQL on conn_native "select ename, dname from emp e join dept d on(e.deptno = d.deptno)"

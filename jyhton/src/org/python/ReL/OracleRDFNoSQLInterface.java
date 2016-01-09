@@ -98,7 +98,9 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
                   if(debug.equals("debug")) System.out.println("xmlstr is: " + xmlstr);
                   Matcher m = Pattern.compile("variable name=.*").matcher(xmlstr);
                   while (m.find()) {
-                    String item = m.group().replaceAll("variable name=.", "").replaceAll("./>", "").replaceAll(nameSpace, "");
+                    String item = "";
+                    if(debug.equals("debug")) item = m.group().replaceAll("variable name=.", "").replaceAll("./>", "");
+                    else item = m.group().replaceAll("variable name=.", "").replaceAll("./>", "").replaceAll(nameSpace, "");
                     attrs.add(item);
                     items.add(new PyString(item)); 
                   }
@@ -113,7 +115,9 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
                       for(int i = 0; i <= attrs.size(); i++) {
                           if(m.group().contains("<uri>")) {
                               if(attrName.equals(attrs.get(num))) {
-                                  String item = m.group().replaceAll("<uri>:?", "").replaceAll("</uri>", "").replaceAll(nameSpace, ""); 
+                                  String item = "";
+                                  if(debug.equals("debug")) item = m.group().replaceAll("<uri>:?", "").replaceAll("</uri>", ""); 
+                                  else item = m.group().replaceAll("<uri>:?", "").replaceAll("</uri>", "").replaceAll(nameSpace, ""); 
 
                                   try  { 
                                       Double.parseDouble(item); 
@@ -138,7 +142,9 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
                           }
                           else if(m.group().contains("<literal datatype=")) {
                               if(attrName.equals(attrs.get(num))) {
-                                  String item = m.group().replaceAll("<literal datatype=", "").replaceAll("</literal>", "").replaceAll(nameSpace, "");  
+                                  String item = "";
+                                  if(debug.equals("debug")) item = m.group().replaceAll("<literal datatype=", "").replaceAll("</literal>", "");
+                                  else item = m.group().replaceAll("<literal datatype=", "").replaceAll("</literal>", "").replaceAll(nameSpace, "");  
                                   // Literals:                                 
                                   // For numberic data types, see http://www.w3schools.com/xml/schema_dtypes_numeric.asp
                                   // For string data types, see http://www.w3schools.com/xml/schema_dtypes_string.asp
@@ -162,7 +168,8 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
                               break;
                           }
                           else if(m.group().contains("<binding name=")) {
-                              attrName = m.group().replaceAll("<binding name=.", "").replaceAll(".>", "").replaceAll(nameSpace, "");
+                              if(debug.equals("debug")) attrName = m.group().replaceAll("<binding name=.", "").replaceAll(".>", "");
+                              else attrName = m.group().replaceAll("<binding name=.", "").replaceAll(".>", "").replaceAll(nameSpace, "");
                           }
                       }
                   }
