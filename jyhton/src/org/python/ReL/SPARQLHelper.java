@@ -205,7 +205,7 @@ public class SPARQLHelper {
             String sparql = "SELECT ?s WHERE { GRAPH " + "c:" + graph + " { ?s " + predicate + " " + object + " } } ";
             rows = connection.getDatabase().OracleNoSQLRunSPARQL(sparql);
             for (int i = 1; i < rows.size(); i++) {
-                subjects.add(String.format("%s", rows.get(i)).replaceAll("[()]", "").replaceAll("'", "").replaceAll(",", ""));
+                subjects.add(String.format("%s", rows.get(i)).replaceAll("[()]", "").replaceAll("'", "").replaceAll(",", "").replaceAll(connection.getDatabase().getNameSpace(), ""));
             }
         } else {
     		String q =

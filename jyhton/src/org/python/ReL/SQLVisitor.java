@@ -640,8 +640,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 		
 //Build SPARQL.
 	    
-        String SPARQL = "";
-		if(! connection.getConnectionDB().equals("OracleNoSQL")) SPARQL = "SELECT ";
+        String SPARQL = "SELECT ";
         String tmpSparql = "";
         n = 0;
         // Add the columns to be projected to the SPARQL string. 
@@ -722,13 +721,13 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
         }
 
         n += groupby.size();
-
         for (String col: columnsAs.keySet()) {
 			n++;
 			if (aggrColumnsAs.keySet().contains(col)) {
 				aggrPos++;
 				String v = aggrColumnsAs.get(col).toUpperCase();
-                if(! connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += "n" + aggrPos + " " + v;
+                if( ! connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += "n" + aggrPos + " AS " + v;
+                else  SPARQL += "(?n" + aggrPos + " AS ?" + v.replaceAll("\"", "") + ")";
 			} else {
 				int n2 = n;
 				for (int j = 1; j < allCols.size(); j++) {
@@ -737,31 +736,23 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 						break;
 					}
 				}
-		    	if(! connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += "v" + n2 + " " + columnsAs.get(col);
+		    	if( ! connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += "v" + n2 + " " + columnsAs.get(col);
+                else SPARQL += "(?v" + n2 + " AS ?" + columnsAs.get(col).replaceAll("\"", "") + ")";
 			}	    	
 			if (n != allCols.size())
-                if(! connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += ", ";
+                if( ! connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += ", ";
+                else SPARQL += " ";
 			// Break the col into a key (if it is an aggregate, we must get rid of the function)
 			String key;
 			if (aggrColumnsAs.keySet().contains("?v" + n)) {
 				key = aggrColumnsAs.get(col);
 				key = key.substring(key.indexOf("(") + 1, key.indexOf(")"));
 			}
-			else
-				key = allCols.get(n - 1);
-	        /* Old code; this does not allow to project columns that do not exist in the tables. */
-			// if(key.contains(".")) tmpSparql += "\tOPTIONAL { ?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
-			//               + " :" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " }\n";
-			//               // So tmpSparql will be appended with ?s1 :domain ?v1 .
-			// else System.out.println("Column names without aliases are not yet supported. - " + key);
-			
-
-			// Create sparql statements in tmpSparql for the columns to be projected, e.g., ?s1 :domain ?v1 . This will be used later.
-			//                                         | This will get the symbol from tableSymbols for the e from e.domain |        | This will get domain from e.domain   |
+			else key = allCols.get(n - 1);
             if (tablesAliases.get(key.split("\\.")[0]) == null) {
-                if (connectionType == "rdf_mode") {
-                    tmpSparql += "\tOPTIONAL { ?s1" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
-                           + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " }\n";
+                if (connection.getConnectionDB().equals("OracleNoSQL")) {
+                    tmpSparql += " OPTIONAL { ?indiv" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
+                           + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " } ";
                 } else { //representing default case
                     tmpSparql += "\tOPTIONAL { ?s1" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
                            + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " }\n";
@@ -769,9 +760,9 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 				nonExistentColumns = true;
 			}
 			else {
-				if (connectionType == "rdf_mode") {
-                    tmpSparql += "\tOPTIONAL { ?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
-			               + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " }\n";
+				if (connection.getConnectionDB().equals("OracleNoSQL")) {
+                    tmpSparql += "OPTIONAL { GRAPH ?g" + n + " {?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
+			               + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " } } ";
                 } else { //representing default case
                     tmpSparql += "\tOPTIONAL { ?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
                            + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " }\n";
@@ -819,10 +810,10 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 
 		// unless as is specified, go with ?n1, ?n2, etc instead of ?v1, ?v2...		
 		if (aggrColumnsAs.keySet().size() == 0 && !nonExistentColumns)
-            if(connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += "\nSELECT * WHERE {\n";
-            else SPARQL += "\n FROM TABLE(SEM_MATCH('SELECT * WHERE {\n";
+            if(connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += " WHERE {";
+            else SPARQL += "\n FROM TABLE(SEM_MATCH('SELECT * WHERE { ";
 		else {
-            if(connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += "\nSELECT";
+            if(connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += " ";
             else SPARQL += "\n FROM TABLE(SEM_MATCH('SELECT ";
 			int x = 1;
 			for (String groupbyVars: groupby)
@@ -843,15 +834,15 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 		    		}
 		    		if (!alreadySelected) SPARQL += "?v" + pull + " ";
 				}
-			}
-			SPARQL += "WHERE {\n";	
+			}if(connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += " WHERE {";
+            else SPARQL += "WHERE {\n";	
 		}
 		
 		for (Map.Entry<String, String> entry : tableSymbols.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
             if(connection.getConnectionDB().equals("OracleNoSQL")) {
-                SPARQL += "GRAPH " + NoSQLNameSpacePrefix + ":" + key + "_SCHEMA" + " { ?indiv rdf:type " + NoSQLNameSpacePrefix + ":" + key + " } GRAPH " + NoSQLNameSpacePrefix + ":" + key + " { ";
+                SPARQL += "GRAPH " + NoSQLNameSpacePrefix + ":" + key + "_SCHEMA" + " { ?" + value + " rdf:type " + NoSQLNameSpacePrefix + ":" + key + " } ";
             } else if (connectionType == "rdf_mode") {
                 SPARQL += "\tGRAPH <" + key + "_" + sparqlHelper.getSchemaString() + "> { ?" + value + " rdf:type :" + key + " }\n";
             } else { //representing the default case 
@@ -866,13 +857,23 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 	    n = 1;
 	    for (String s : joinColumns) {
            // E.g., if s is e.n = d.n
-           //                | This will get the symbol from tableSymbols for the e from e.n      |          | This will get n from e.n |
-	       SPARQL += "\t?" + tableSymbols.get(tablesAliases.get(s.split(" = ")[0].split("\\.")[0])) + " :" + s.split(" = ")[0].split("\\.")[1] + " ?j" + n + " .\n";
-           //                | This will get the symbol from tableSymbols for the d from d.n      |          | This will get n from d.n |
-	       SPARQL += "\t?" + tableSymbols.get(tablesAliases.get(s.split(" = ")[1].split("\\.")[0])) + " :" + s.split(" = ")[1].split("\\.")[1] + " ?j" + n + " .\n";
-	       // So SPARQL will be appended with:     
-	          // ?s1 :n ?j1 .
-	          // ?s2 :n ?j1 .
+           if( ! connection.getConnectionDB().equals("OracleNoSQL")) {
+               // This will get the symbol from tableSymbols for the e from e.n and will get n from e.n
+    	       SPARQL += "\t?" + tableSymbols.get(tablesAliases.get(s.split(" = ")[0].split("\\.")[0])) + " " + NoSQLNameSpacePrefix + ":" + s.split(" = ")[0].split("\\.")[1] + " ?j" + n + " .\n";
+               // This will get the symbol from tableSymbols for the d from d.n and will get n from d.n
+    	       SPARQL += "\t?" + tableSymbols.get(tablesAliases.get(s.split(" = ")[1].split("\\.")[0])) + " " + NoSQLNameSpacePrefix + ":" + s.split(" = ")[1].split("\\.")[1] + " ?j" + n + " .\n";
+    	       // So SPARQL will be appended with:     
+    	          // ?s1 :n ?j1 .
+    	          // ?s2 :n ?j1 .
+           } else {
+               // This will get the symbol from tableSymbols for the e from e.n and will get n from e.n
+               SPARQL += " GRAPH ?gj" + n + " { ?" + tableSymbols.get(tablesAliases.get(s.split(" = ")[0].split("\\.")[0])) + " " + NoSQLNameSpacePrefix + ":" + s.split(" = ")[0].split("\\.")[1] + " ?j" + n + " . } ";
+               // This will get the symbol from tableSymbols for the d from d.n and will get n from d.n
+               SPARQL += " GRAPH ?gj" + (n+1) + " { ?" + tableSymbols.get(tablesAliases.get(s.split(" = ")[1].split("\\.")[0])) + " " + NoSQLNameSpacePrefix + ":" + s.split(" = ")[1].split("\\.")[1] + " ?j" + n + " .  } ";
+               // So SPARQL will be appended with:     
+                  // ?s1 :n ?j1 .
+                  // ?s2 :n ?j1 .
+           }
            n++;
 	    }
 	    
@@ -892,7 +893,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
         }
         if (havingStr.length() > 0)	SPARQL += "\n" + havingStr;
         if (orderbyStr.length() > 0) SPARQL += "\n" + orderbyStr;
-        if(connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += "}\n";
+        if(connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += "";
         else SPARQL += "\n" + "' ,\nSEM_MODELS('" + connection.getModel() + "'), null,\nSEM_ALIASES( SEM_ALIAS('', '" + connection.getNamespace() + "')), null) )";
 		return SPARQL;		
 
@@ -1274,11 +1275,11 @@ SEM_ALIASES( SEM_ALIAS('', 'http://www.example.org/people.owl#')), null) )| END
 			// first half of join 
     					
 			int minlen = Math.min(tblName.length(), 6);
-			joinString += "?" + tblName.substring(0, minlen) + " :" + colname(item) + " ?j" + joinInc + " . ";
+			joinString += "?" + tblName.substring(0, minlen) + " " + NoSQLNameSpacePrefix + ":" + colname(item) + " ?j" + joinInc + " . ";
 			// second half of join
 			tblName = tablename(value);
 			minlen = Math.min(tblName.length(), 6);
-			joinString += "?" + tblName.substring(0, minlen) + " :" + colname(value) + " ?j" + joinInc + " . ";
+			joinString += "?" + tblName.substring(0, minlen) + " " + NoSQLNameSpacePrefix + ":" + colname(value) + " ?j" + joinInc + " . ";
 			joinInc++;
 
 			return joinString;

@@ -320,9 +320,8 @@ public class SPARQLDoer {
             ArrayList<PyObject> rows = new ArrayList<PyObject>();
             rows = connection.getDatabase().OracleNoSQLRunSPARQL(selectStmt);
             for (int i = 1; i < rows.size(); i++) {
-                rowIds.add(String.format("%s", rows.get(i)).replaceAll("[()]", "").replaceAll("'", "").replaceAll(",", ""));
+                rowIds.add(String.format("%s", rows.get(i)).replaceAll("[()]", "").replaceAll("'", "").replaceAll(",", "").replaceAll(connection.getDatabase().getNameSpace(), ""));
             }
-
         } else {
             ResultSet rs = null;
             try {
