@@ -160,6 +160,16 @@ class OracleNoSQLTestCase_SIM_where(unittest.TestCase):
         results = SIM on connOracleRDFNoSQL "FROM EMP RETRIEVE ENAME where deptno = 20"
         assert sorted(results) == [('ADAMS',), ('FORD',), ('JONES',), ('SCOTT',), ('SMITH',), ('ename',)], 'OracleNoSQLTestCase_SIM_where query failed'
 
+class OracleNoSQLTestCase_SQL_project(unittest.TestCase):
+    def runTest(self):
+        results = SQL on connOracleRDFNoSQL "select ename, sal from emp order by ename"
+        assert sorted(results) == [('ADAMS', 1100), ('ALLEN', 1600), ('BLAKE', 2850), ('CLARK', 2450), ('FORD', 3000), ('JAMES', 950), ('JONES', 2975), ('KING', 5000), ('MARTIN', 1250), ('MILLER', 1300), ('SCOTT', 3000), ('SMITH', 800), ('TURNER', 1500), ('WARD', 1250), ('ename', 'sal')], 'OracleNoSQLTestCase_SIM_project query failed'
+
+class OracleNoSQLTestCase_SQL_join(unittest.TestCase):
+    def runTest(self):
+        results = SQL on connOracleRDFNoSQL "select ename, sal, dname, loc from emp e join dept d on (e.deptno=d.deptno)"
+        assert sorted(results) == [('ADAMS', 1100, 'RESEARCH', 'DALLAS'), ('ALLEN', 1600, 'SALES', 'CHICAGO'), ('BLAKE', 2850, 'SALES', 'CHICAGO'), ('CLARK', 2450, 'ACCOUNTING', 'NEW YORK'), ('FORD', 3000, 'RESEARCH', 'DALLAS'), ('JAMES', 950, 'SALES', 'CHICAGO'), ('JONES', 2975, 'RESEARCH', 'DALLAS'), ('KING', 5000, 'ACCOUNTING', 'NEW YORK'), ('MARTIN', 1250, 'SALES', 'CHICAGO'), ('SCOTT', 3000, 'RESEARCH', 'DALLAS'), ('SMITH', 800, 'RESEARCH', 'DALLAS'), ('TURNER', 1500, 'SALES', 'CHICAGO'), ('WARD', 1250, 'SALES', 'CHICAGO'), ('ename', 'sal', 'dname', 'loc')], 'OracleNoSQLTestCase_SIM_join query failed'
+
 class OracleNoSQLTestCase_SPARQL_join(unittest.TestCase):
     def runTest(self):
         results = SPARQL on connOracleRDFNoSQL "select ?ename ?x0_1  where { GRAPH c:emp_SCHEMA { ?indiv rdf:type c:emp } GRAPH c:emp {  ?indiv c:ename ?ename . }  OPTIONAL { GRAPH ?0 { ?indiv c:dept ?x0_0 . } GRAPH ?1 { ?x0_0 c:dname ?x0_1 . }  }  }"
