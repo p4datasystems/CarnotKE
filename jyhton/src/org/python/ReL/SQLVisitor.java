@@ -138,19 +138,22 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
         	this.connectionType = getConnectionType;
 
         	Iterator valsIt = ((ExpressionList)stmt.getItemsList()).getExpressions().iterator();
-        	String id = Integer.toString(SPARQLDoer.getNextGUID(connection));
-        	String subject = id;
-        	String attvalPairs = "DBUNIQUEID" + " := " + id + " ";
+        	//String id = Integer.toString(SPARQLDoer.getNextGUID(connection));
+        	//String subject = id;
+        	// String attvalPairs = "DBUNIQUEID" + " := " + id + " ";
+            String attvalPairs = "";
 
+            String COMMA = "";
         	for (Iterator colsIt = stmt.getColumns().iterator(); colsIt.hasNext(); ) {
-            	String attr = ((Column)colsIt.next()).getColumnName().replaceAll("'", "").replaceAll("\"", "");
+            	String attr = COMMA + ((Column)colsIt.next()).getColumnName().replaceAll("'", "").replaceAll("\"", "");
             	Object attrValue = valsIt.next(); 
             	String valStr = (attrValue.toString().replaceAll("'", "")).replaceAll("\'", "").replaceAll("\"", "");
-            	attvalPairs += attr + " := " + valStr + " ";
+            	attvalPairs += attr + " := \"" + valStr + "\" ";
+                COMMA = ",";
         	}
             	
 			ProcessLanguages processLanguage = new ProcessLanguages(connection);
-			processLanguage.processSIM("INSERT " + stmt.getTable().toString() + " " + attvalPairs);
+			processLanguage.processSIM("INSERT " + stmt.getTable().toString() + " ( " + attvalPairs + ")");
         }
     }
 	
@@ -750,23 +753,23 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 			}
 			else key = allCols.get(n - 1);
             if (tablesAliases.get(key.split("\\.")[0]) == null) {
-                if (connection.getConnectionDB().equals("OracleNoSQL")) {
-                    tmpSparql += " OPTIONAL { ?indiv" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
-                           + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " } ";
-                } else { //representing default case
+                if ( ! connection.getConnectionDB().equals("OracleNoSQL")) {
                     tmpSparql += "\tOPTIONAL { ?s1" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
                            + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " }\n";
-                }
+                } else {
+                    tmpSparql += " OPTIONAL { ?indiv" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
+                           + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " } ";
+                } 
 				nonExistentColumns = true;
 			}
 			else {
-				if (connection.getConnectionDB().equals("OracleNoSQL")) {
-                    tmpSparql += "OPTIONAL { GRAPH ?g" + n + " {?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
-			               + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " } } ";
-                } else { //representing default case
+                if ( ! connection.getConnectionDB().equals("OracleNoSQL")) {
                     tmpSparql += "\tOPTIONAL { ?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
                            + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " }\n";
-                }
+                } else {
+                    tmpSparql += "OPTIONAL { GRAPH ?g" + n + " {?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
+			               + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " } } ";
+                } 
 			}
 	    }		
 
