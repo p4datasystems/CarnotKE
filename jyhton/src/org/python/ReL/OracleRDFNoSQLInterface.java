@@ -85,8 +85,8 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
         if(debug.equals("debug")) System.out.println("In addQuad, stmt is: " + graph + ", " + subject + ", " + predicate + ", " + object);
 
         try  { 
-            Double.parseDouble(object.replaceAll("carnot:", "")); 
-            datasetGraph.add(Node.createURI(graph), Node.createURI(subject), Node.createURI(predicate), Node.createLiteral(object.replaceAll("carnot:", "")));
+            Double.parseDouble(object.replaceAll(nameSpace, "")); 
+            datasetGraph.add(Node.createURI(graph), Node.createURI(subject), Node.createURI(predicate), Node.createLiteral(object.replaceAll(nameSpace, "")));
         } catch(NumberFormatException e)  
         {   
           datasetGraph.add(Node.createURI(graph), Node.createURI(subject), Node.createURI(predicate), Node.createURI(object));
