@@ -17,8 +17,23 @@ import org.python.antlr.base.expr;
 import com.hp.hpl.jena.graph.*;
 import com.hp.hpl.jena.query.*;
 import com.hp.hpl.jena.rdf.model.Model;
-import oracle.rdf.kv.client.jena.*;
 import com.hp.hpl.jena.sparql.core.*;
+import com.hp.hpl.jena.datatypes.BaseDatatype;
+import com.hp.hpl.jena.datatypes.DatatypeFormatException;
+import com.hp.hpl.jena.datatypes.RDFDatatype;
+import com.hp.hpl.jena.datatypes.TypeMapper;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.ResultSetFormatter;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.hp.hpl.jena.vocabulary.RDF;
+
+import oracle.rdf.kv.client.jena.*;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -69,7 +84,13 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
         if( ! object.contains("http://"))    object    = nameSpace + object;
         if(debug.equals("debug")) System.out.println("In addQuad, stmt is: " + graph + ", " + subject + ", " + predicate + ", " + object);
 
-        datasetGraph.add(Node.createURI(graph), Node.createURI(subject), Node.createURI(predicate), Node.createURI(object));
+        try  { 
+            Double.parseDouble(object.replaceAll("carnot:", "")); 
+            datasetGraph.add(Node.createURI(graph), Node.createURI(subject), Node.createURI(predicate), Node.createLiteral(object.replaceAll("carnot:", "")));
+        } catch(NumberFormatException e)  
+        {   
+          datasetGraph.add(Node.createURI(graph), Node.createURI(subject), Node.createURI(predicate), Node.createURI(object));
+        }
     }
 
     @Override
@@ -128,7 +149,7 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
                                            items.add(new PyFloat(Float.parseFloat(item))); 
                                       }
                                   }  
-                                      catch(NumberFormatException e)  
+                                  catch(NumberFormatException e)  
                                   {   
                                       items.add(new PyString(item));  
                                   }
@@ -144,7 +165,7 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
                               if(attrName.equals(attrs.get(num))) {
                                   String item = "";
                                   if(debug.equals("debug")) item = m.group().replaceAll("<literal datatype=", "").replaceAll("</literal>", "");
-                                  else item = m.group().replaceAll("<literal datatype=", "").replaceAll("</literal>", "").replaceAll(nameSpace, "");  
+                                  else item = m.group().replaceAll("<literal datatype=", "").replaceAll("</literal>", "").replaceAll(nameSpace, "").replaceAll("\"http://www.w3.org/2001/XMLSchema#.*\">", "");  
                                   // Literals:                                 
                                   // For numberic data types, see http://www.w3schools.com/xml/schema_dtypes_numeric.asp
                                   // For string data types, see http://www.w3schools.com/xml/schema_dtypes_string.asp

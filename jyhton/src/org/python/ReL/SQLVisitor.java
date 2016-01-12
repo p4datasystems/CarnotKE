@@ -136,7 +136,6 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
     public void doInsert(Insert stmt, String getConnectionType) throws SQLException {//New method signature
         if (stmt.getColumns() != null) {
         	this.connectionType = getConnectionType;
-
         	Iterator valsIt = ((ExpressionList)stmt.getItemsList()).getExpressions().iterator();
         	//String id = Integer.toString(SPARQLDoer.getNextGUID(connection));
         	//String subject = id;
@@ -145,9 +144,14 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 
             String COMMA = "";
         	for (Iterator colsIt = stmt.getColumns().iterator(); colsIt.hasNext(); ) {
-            	String attr = COMMA + ((Column)colsIt.next()).getColumnName().replaceAll("'", "").replaceAll("\"", "");
+                // CAUTION - the following replaceAll statements remove all single and double quates and special characters for the column names and column values.
+            	String attr = COMMA + ((Column)colsIt.next()).getColumnName().replaceAll("'", "").replaceAll("\"", "").replaceAll("[^ -~]+","");
             	Object attrValue = valsIt.next(); 
-            	String valStr = (attrValue.toString().replaceAll("'", "")).replaceAll("\'", "").replaceAll("\"", "");
+            	String valStr = (attrValue.toString().replaceAll("'", "")).replaceAll("\'", "").replaceAll("\"", "").replaceAll("[^ -~]+","");
+                // CAUTION - the following replaceAll statement replaces all TO_DATE statements with the date as a string.
+                if(valStr.toUpperCase().contains("TO_DATE")) {
+                    valStr = valStr.toUpperCase().replaceAll(".*[(]", "").replaceAll(" .*", "");
+                }
             	attvalPairs += attr + " := \"" + valStr + "\" ";
                 COMMA = ",";
         	}
@@ -408,8 +412,8 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 // Get column names to project.
         if(plainSelect.getSelectItems() != null) {
 			//gets the columns that are asked of
-			for(Iterator i=plainSelect.getSelectItems().iterator(); i.hasNext();) {
-				int cnt = 0;
+			for(Iterator i = plainSelect.getSelectItems().iterator(); i.hasNext();) {
+				//int cnt = 0;
 				String columnName = "";
 				SelectItem item = (SelectItem)i.next();
 				item.accept(this);
@@ -1291,9 +1295,8 @@ SEM_ALIASES( SEM_ALIAS('', 'http://www.example.org/people.owl#')), null) )| END
 
 	public String[] getAggregateSelect(String selectSection){
 		String[] result = {"NOT FOUND", ""};
-
 		for(String aggregate: aggregates)
-			if(selectSection.contains(aggregate)){
+			if(selectSection.matches(aggregate + " *[(]")){
 				result[0] = aggregate;
 				break;
 			}
