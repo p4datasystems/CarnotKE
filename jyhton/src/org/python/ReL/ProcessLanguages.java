@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.python.antlr.base.expr;
+import org.python.core.PyObject;
 
 import org.python.ReL.PyRelConnection;
 import org.python.ReL.SPARQLHelper;
@@ -30,7 +31,9 @@ import org.cyphersim.CypherSimTranslator;
 public class ProcessLanguages {
     PyRelConnection conn = null;
     SPARQLHelper sparqlHelper = null; 
+    DatabaseInterface connDatabase;
     String schemaString = null;
+	String NoSQLNameSpacePrefix = "";
     static Boolean parserInitialized = false;
 	static QueryParser parser = null;	
 	String where = "";
@@ -47,6 +50,8 @@ public class ProcessLanguages {
         this.conn = conn;  
         sparqlHelper = new SPARQLHelper(conn);
         schemaString = sparqlHelper.getSchemaString();
+        connDatabase  = conn.getDatabase();
+		NoSQLNameSpacePrefix = connDatabase.getNameSpacePrefix();
     }
 
 //                                                                  ------------------------------------- SIM -------------------------
@@ -62,25 +67,32 @@ public class ProcessLanguages {
 		try { q = parser.getNextQuery(); }
 		catch(Exception e1) { System.out.println(e1.getMessage()); }
 		String sparql = null;
-		// --------------------------------------------------------------------------------- Insert
+		// --------------------------------------------------------------------------------- SIM Insert
 	    // E.G., INSERT INTO onto_DATA VALUES ( 1, SDO_RDF_TRIPLE_S('onto', '#PERSON', 'rdf:type', 'rdfs:Class'));
 		if(q instanceof InsertQuery) {
 			InsertQuery iq = (InsertQuery)q;
 			String instanceID = "";
 			if(conn.getConnectionDB() == "OracleNoSQL") instanceID = String.valueOf(UUID.randomUUID());
-			else {
-				instanceID = SPARQLDoer.getNextAnonNodeForInd(conn);
-				sparqlHelper.insertSchemaQuad("", iq.className, "rdf:type", "rdfs:Class");
-			}
 			for (int i = 0; i < iq.numberOfAssignments(); i++) {
-				if(iq.getAssignment(i)instanceof EvaAssignment) { 
-					// This isn't implemented yet because currently EVAs are constructed in the SIM MODIFY statement.
-				} else if(iq.getAssignment(i)instanceof DvaAssignment) {
-					DvaAssignment dvaAssignment = (DvaAssignment)iq.getAssignment(i);
-					sparqlHelper.insertQuad(iq.className, instanceID, dvaAssignment.AttributeName, (String)dvaAssignment.Value.toString(), false);
+				DvaAssignment dvaAssignment = (DvaAssignment)iq.getAssignment(i);
+				if(conn.getConnectionDB() == "OracleNoSQL") {
+					if(iq.getAssignment(i)instanceof EvaAssignment) { 
+						// This isn't implemented yet because currently EVAs are constructed in the SIM MODIFY statement.
+					} else if(iq.getAssignment(i)instanceof DvaAssignment) {
+			            connDatabase.OracleNoSQLAddQuad(schemaString, iq.className, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://www.w3.org/2000/01/rdf-schema#Class", true);
+			            connDatabase.OracleNoSQLAddQuad(iq.className + "_" + schemaString, dvaAssignment.AttributeName, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://www.w3.org/2002/07/owl#DatatypeProperty", true);
+			            connDatabase.OracleNoSQLAddQuad(iq.className + "_" + schemaString, dvaAssignment.AttributeName, "http://www.w3.org/2000/01/rdf-schema#domain", iq.className, true);
+			            connDatabase.OracleNoSQLAddQuad(iq.className + "_" + schemaString, dvaAssignment.AttributeName, "http://www.w3.org/2000/01/rdf-schema#range", "http://www.w3.org/2001/XMLSchema#string", true);
+			            connDatabase.OracleNoSQLAddQuad(iq.className + "_" + schemaString, instanceID, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", iq.className, true);
+			            connDatabase.OracleNoSQLAddQuad(iq.className, instanceID, dvaAssignment.AttributeName, (String)dvaAssignment.Value.toString(), false);
+					}
+				} else {
+					if(iq.getAssignment(i)instanceof EvaAssignment) { 
+						// This isn't implemented yet because currently EVAs are constructed in the SIM MODIFY statement.
+					} else if(iq.getAssignment(i)instanceof DvaAssignment) sparqlHelper.insertQuad(iq.className, instanceID, dvaAssignment.AttributeName, (String)dvaAssignment.Value.toString(), false);
 				}
 			}
-		// --------------------------------------------------------------------------------- Query
+		// --------------------------------------------------------------------------------- SIM Query
 		} else if(q instanceof RetrieveQuery) {	
 			RetrieveQuery rq = (RetrieveQuery)q;
 			String className = rq.className;
@@ -144,39 +156,72 @@ public class ProcessLanguages {
 					System.out.println(e);
 			}
 			if (conn.getDebug() == "debug") System.out.println(sparql);
-		// --------------------------------------------------------------------------------- Modify
+		// --------------------------------------------------------------------------------- SIM Modify
 		} else if(q instanceof ModifyQuery) {
+// E.g., SIM is: MODIFY LIMIT = ALL emp (dept_members := dept WITH (deptno = 20)) WHERE deptno = 20;
+//                                   ^       ^             ^        ^^^^^^^^^^^         ^^^^^^^^^^^
+//                               className eva_name      eva_class      where1             where
 			ModifyQuery mq = (ModifyQuery)q;
 			String className = mq.className;
-			Map<String, String> attributeValues = new HashMap<String, String>();
-			Map<String, Object> whereAttrValues = new HashMap<String, Object>();
-			// Process EVA assignments.
+			String eva_name = "";
+			String eva_class  = "";
+			int limit = 1000000;		
+	        ArrayList<PyObject> rows = new ArrayList<PyObject>();
+			List<String> subjects = new ArrayList<String>();
+			List<String> eva_subjects = new ArrayList<String>();
+ 
+			sparql = "select ?indiv where { ";
 			for(int i = 0; i < mq.assignmentList.size(); i++) {
 				EvaAssignment evaAssignment = (EvaAssignment)mq.assignmentList.get(i);
-				traverseWhereInorder(evaAssignment.expression.jjtGetChild(i));
-				String evaValue = (evaAssignment.targetClass + " WITH " + where).replaceAll("=", " ").replaceAll("And", " ").replaceAll("  *", " ");
-				attributeValues.put(evaAssignment.getAttributeName(), evaValue);
+				eva_name = evaAssignment.getAttributeName();
+				eva_class = evaAssignment.targetClass;
+				traverseWhereInorder(evaAssignment.expression.jjtGetChild(i)); // This sets the where variable to e.g., deptno = 20
+				String where1 = where.trim();
+				sparql += "GRAPH " + NoSQLNameSpacePrefix + ":" + eva_class + " { ?indiv " + NoSQLNameSpacePrefix + ":" + where1.replaceAll(" *= *", " \"") + "\"^^xsd:string }";
 			}
-			// Process WHERE clause.
+			sparql += " }";
+            if (conn.getDebug() == "debug") System.out.println("\nProcessLanguages SIM Modify, sparql is: \n" + sparql + "\n");
+            rows = conn.getDatabase().OracleNoSQLRunSPARQL(sparql);
+            for (int i = 1; i < rows.size(); i++) {
+                eva_subjects.add(String.format("%s", rows.get(i)).replaceAll("[()]", "").replaceAll("'", "").replaceAll(",", "").replaceAll(conn.getDatabase().getNameSpace(), ""));
+            }
+
+			// Process WHERE clause
 			if (mq.expression != null) {
 				where = "";
 				traverseWhereInorder(mq.expression);
 				where = where.replaceAll("  *", " ").replaceAll("^ ", "").replaceAll(" $", "");
 			}
-			String [] whereTmpArray = where.split(" And "); //temporary
-			for( int j = 0; j < whereTmpArray.length; j++) //temporary
-			{
-				String [] whereTmpArray2 = whereTmpArray[j].split(" = "); //temporary
-				whereAttrValues.put(whereTmpArray2[0], whereTmpArray2[1]);
+			sparql = "select ?indiv where { GRAPH " + NoSQLNameSpacePrefix + ":" + className + " { ?indiv " + NoSQLNameSpacePrefix + ":" + where.replaceAll(" *= *", " \"") + "\"^^xsd:string } }";
+            if (conn.getDebug() == "debug") System.out.println("\nProcessLanguages SIM Modify, sparql is: \n" + sparql + "\n");
+            rows = conn.getDatabase().OracleNoSQLRunSPARQL(sparql);
+            for (int i = 1; i < rows.size(); i++) {
+                subjects.add(String.format("%s", rows.get(i)).replaceAll("[()]", "").replaceAll("'", "").replaceAll(",", "").replaceAll(conn.getDatabase().getNameSpace(), ""));
+            }
+			for (String subject: subjects) {
+				for (String entity: eva_subjects) {
+		            //connDatabase.OracleNoSQLAddQuad(className + "_" + schemaString, eva_name, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://www.w3.org/2002/07/owl#FunctionalProperty", true);
+		            //connDatabase.OracleNoSQLAddQuad(className + "_" + schemaString, eva_name, "http://www.w3.org/2000/01/rdf-schema#domain", className, true);
+		            //connDatabase.OracleNoSQLAddQuad(className + "_" + schemaString, eva_name, "http://www.w3.org/2000/01/rdf-schema#range", eva_class, true);
+		            connDatabase.OracleNoSQLAddQuad(className, subject, eva_name, entity, true);
+				}
 			}
-			// executeModify.
-			SIMHelper simhelper = new SIMHelper(conn);
-			try {
-					simhelper.executeModify(className, attributeValues, whereAttrValues, 1000000);
-				} catch (Exception e) {
-					System.out.println(e);
-			}
-			if (conn.getDebug() == "debug") System.out.println(sparql);
+			sparql = null;
+			if(conn.getConnectionDB() == "OracleNoSQL") {
+/*
+
+		    sparql = null;
+		    } else {
+/*
+// Process Modify on ! OracleRDFNoSQL.
+				SIMHelper simhelper = new SIMHelper(conn);
+				try {
+						simhelper.executeModify(className, attributeValues, whereAttrValues, 1000000);
+					} catch (Exception e) {
+						System.out.println(e);
+				}
+*/
+		    }
 		}
 		return sparql;
 	}
@@ -197,4 +242,17 @@ public class ProcessLanguages {
     	if (conn.getDebug() == "debug") System.out.println("SIM is: " + t.translate(ReLstmt));
 		return t.translate(ReLstmt);
 	}
+
+	private List<String> trimAndSplitOnDelim(String s, String delim) {
+        String r = s.trim();
+        String[] parts = s.split(delim);
+        List<String> parts2 = new ArrayList<String>();
+        for (String part : parts) {
+            part = part.trim();
+            if (part.length() > 0) {
+                parts2.add(part);
+            }
+        }
+        return parts2;
+    }
 }

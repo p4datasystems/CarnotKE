@@ -411,16 +411,19 @@ public class SPARQLDoer {
         if(connection.getConnectionDB().equals("OracleNoSQL")) NoSQLNameSpacePrefix = connection.getDatabase().getNameSpacePrefix();
 		String typeTriple = "";
 		if (className != null) {
-				typeTriple =  " ?indiv rdf:type " + NoSQLNameSpacePrefix + ":" + className + ".\n";
+            if(connection.getConnectionDB().equals("OracleNoSQL")) typeTriple =  " ?indiv rdf:type " + className + ".";
+			else typeTriple =  " ?indiv rdf:type " + ":" + className + ".\n";
 		}
 		String attrValuesQ = "";
 		for (String attr : attrValues.keySet()) {
 			Object val = attrValues.get(attr); 
 			if(val instanceof String){
-						attrValuesQ += "?indiv " + NoSQLNameSpacePrefix + ":" + attr + " " + NoSQLNameSpacePrefix + ":" + ((String)val).replaceAll("'", "") + " .\n";
+                if(connection.getConnectionDB().equals("OracleNoSQL")) attrValuesQ += "?indiv " + NoSQLNameSpacePrefix + ":" + attr + " " + "\"" + ((String)val).replaceAll("'", "") + "\"^^xsd:string" + " .";
+				else attrValuesQ += "?indiv " + ":" + attr + " " + ":" + ((String)val).replaceAll("'", "") + " .\n";
 			}
 			else if(val instanceof Integer){
-				attrValuesQ += "?indiv " + NoSQLNameSpacePrefix + ":" + attr + " " +attrValues.get(attr).toString() + " .\n";
+                if(connection.getConnectionDB().equals("OracleNoSQL")) attrValuesQ += "?indiv " + NoSQLNameSpacePrefix + ":" + attr + " " + "\"" + ((String)val) + "\"^^xsd:integer" + " .";
+				else attrValuesQ += "?indiv " + ":" + attr + " " + attrValues.get(attr).toString() + " .\n";
 			}
 		}
 		String q = formatSPARQL(connection, "indiv", className, typeTriple, className, attrValuesQ);

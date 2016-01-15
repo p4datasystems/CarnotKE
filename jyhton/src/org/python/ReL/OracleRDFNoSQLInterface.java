@@ -76,20 +76,17 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
     public String getNameSpacePrefix() { return nameSpacePrefix; }
 
     @Override
-    public void OracleNoSQLAddQuad(String graph, String subject, String predicate, String object)
+    public void OracleNoSQLAddQuad(String graph, String subject, String predicate, String object, Boolean object_as_uri)
     {
         if( ! graph.contains("http://"))     graph     = nameSpace + graph;
         if( ! subject.contains("http://"))   subject   = nameSpace + subject;
         if( ! predicate.contains("http://")) predicate = nameSpace + predicate;
         if( ! object.contains("http://"))    object    = nameSpace + object;
         if(debug.equals("debug")) System.out.println("In addQuad, stmt is: " + graph + ", " + subject + ", " + predicate + ", " + object);
-
-        try  { 
-            Double.parseDouble(object.replaceAll(nameSpace, "")); 
-            datasetGraph.add(Node.createURI(graph), Node.createURI(subject), Node.createURI(predicate), Node.createLiteral(object.replaceAll(nameSpace, "")));
-        } catch(NumberFormatException e)  
-        {   
-          datasetGraph.add(Node.createURI(graph), Node.createURI(subject), Node.createURI(predicate), Node.createURI(object));
+        if(object_as_uri) datasetGraph.add(Node.createURI(graph), Node.createURI(subject), Node.createURI(predicate), Node.createURI(object));
+        else {
+            if(object.contains("http://"))datasetGraph.add(Node.createURI(graph), Node.createURI(subject), Node.createURI(predicate), Node.createURI(object));
+            else datasetGraph.add(Node.createURI(graph), Node.createURI(subject), Node.createURI(predicate), Node.createLiteral(object.replaceAll(nameSpace, "")));
         }
     }
 
@@ -101,6 +98,7 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
         sparql = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " + 
                  "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "      +
                  "PREFIX owl: <http://www.w3.org/2002/07/owl#> "              +
+                 "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "           +
                  "PREFIX c: <carnot:> "                                       +
                  sparql;
 
@@ -172,7 +170,19 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
                                   // For date data types, see http://www.w3schools.com/xml/schema_dtypes_date.asp
                                   // For misc. data types, see http://www.w3schools.com/xml/schema_dtypes_misc.asp
 
-                                  items.add(new PyString(item));  
+                                  try  { 
+                                      Double.parseDouble(item); 
+                                      try { 
+                                        Integer.parseInt(item);
+                                        items.add(new PyInteger(Integer.parseInt(item))); 
+                                      } catch(NumberFormatException e) { 
+                                           items.add(new PyFloat(Float.parseFloat(item))); 
+                                      }
+                                  }  
+                                  catch(NumberFormatException e)  
+                                  {   
+                                      items.add(new PyString(item));  
+                                  }
                                   num++;
                                   break;
                               }

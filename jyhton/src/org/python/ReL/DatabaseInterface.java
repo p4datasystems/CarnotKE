@@ -44,7 +44,7 @@ public abstract class DatabaseInterface{
     public String getNameSpacePrefix() { return nameSpacePrefix; }
 
     // This will execute OracleNoSQLAddQuad. 
-    public void OracleNoSQLAddQuad(String graph, String subject, String predicate, String object) {
+    public void OracleNoSQLAddQuad(String graph, String subject, String predicate, String object, Boolean object_as_uri) {
         System.out.println("\nThis is the top level OracleNoSQLAddQuad statement in DatabaseInterface and probably should be overridden if it's being called.\n");
     }; 
 

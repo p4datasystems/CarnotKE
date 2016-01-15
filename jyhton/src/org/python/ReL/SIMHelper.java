@@ -61,6 +61,7 @@ public class SIMHelper {
             evaOfChains.add(evaOfChain); // e.g.  ["children", "spouse", "firstname"]
         }
 
+        // Process Class Names
         String colNames = "";
         Map<String, String> colNameToLabelMap = new HashMap<String, String>();
         String qBody = "";
@@ -87,7 +88,7 @@ public class SIMHelper {
 
         // Process WHERE Clause
         for (String whereAttr : whereAttrValues.keySet()) {
-            if(connection.getConnectionDB().equals("OracleNoSQL")) qBody += "   ?indiv " + NoSQLNameSpacePrefix + ":" + whereAttr + " " + NoSQLNameSpacePrefix + ":" + whereAttrValues.get(whereAttr) + " .";
+            if(connection.getConnectionDB().equals("OracleNoSQL")) qBody += " ?indiv " + NoSQLNameSpacePrefix + ":" + whereAttr + "\"" + whereAttrValues.get(whereAttr) + "\"^^xsd:string .";
             else qBody += "	?indiv " + NoSQLNameSpacePrefix + ":" + whereAttr + " " + NoSQLNameSpacePrefix + ":" + whereAttrValues.get(whereAttr) + " .\n";
         }
         if(connection.getConnectionDB().equals("OracleNoSQL")) qBody += " } ";
@@ -113,7 +114,7 @@ public class SIMHelper {
                 String priorVarName = null; // previous var
                 String thisVarName = "?x" + i + "_0";
                 // e.g. lastName == "firstnameOFspouseOFchildren"
-                if(connection.getConnectionDB().equals("OracleNoSQL")) qBody += "GRAPH ?" + i + " { ?indiv " + NoSQLNameSpacePrefix + ":" + evaOfChain.get(0) + " " + thisVarName + " . }";
+                if(connection.getConnectionDB().equals("OracleNoSQL")) qBody += "GRAPH ?g" + i + " { ?indiv " + NoSQLNameSpacePrefix + ":" + evaOfChain.get(0) + " " + thisVarName + " . }";
                 else qBody += "      ?indiv " + NoSQLNameSpacePrefix + ":" + evaOfChain.get(0) + " " + thisVarName + " .\n";
                 for (int j = 1; j < evaOfChain.size(); j++) {
                     priorVarName = "x" + i + "_" + (j - 1);
@@ -126,7 +127,7 @@ public class SIMHelper {
                         colNameToLabelMap.put(thisVarName.toUpperCase(), evaColName.toUpperCase());
                     }
                     projectString += "?" + thisVarName + " ";
-                    if(connection.getConnectionDB().equals("OracleNoSQL")) qBody += " GRAPH ?" + j + " { ?" + priorVarName + " " + NoSQLNameSpacePrefix + ":" + evaOfChain.get(j) + " ?" + thisVarName + " . }";
+                    if(connection.getConnectionDB().equals("OracleNoSQL")) qBody += " GRAPH ?g" + j + " { ?" + priorVarName + " " + NoSQLNameSpacePrefix + ":" + evaOfChain.get(j) + " ?" + thisVarName + " . }";
                     else qBody += "      ?" + priorVarName + " " + NoSQLNameSpacePrefix + ":" + evaOfChain.get(j) + " ?" + thisVarName + " .\n";
                 }
             }
@@ -503,7 +504,7 @@ public class SIMHelper {
         List<String> indivs = SPARQLDoer.getMembersWithAttrValues(connection, className, whereAttrValues);
 
         if (indivs.size() > limit) {
-            throw new SQLException("Limit exceeded. Allowed " + limit + ". Found " + indivs.size() + " inidividuals");
+            throw new SQLException("Limit exceeded. Allowed " + limit + ". Found " + indivs.size() + " individuals");
         }
 
         for (String indiv : indivs) {

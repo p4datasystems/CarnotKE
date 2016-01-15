@@ -47,6 +47,7 @@ public class SPARQLHelper {
     public void insertQuad(String graph, String subject, String predicate, String object, Boolean eva) throws SQLException {
         String connection_DB = connection.getConnectionDB();
         if(connection_DB.equals("OracleNoSQL")) {
+/* I moved this code back into the SIM part of ProcesLanguage.java
             connection.OracleNoSQLAddQuad(schemaString, graph, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://www.w3.org/2000/01/rdf-schema#Class");
             if(eva) {
                 connection.OracleNoSQLAddQuad(graph + "_" + schemaString, predicate, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://www.w3.org/2002/07/owl#FunctionalProperty");
@@ -57,6 +58,7 @@ public class SPARQLHelper {
             connection.OracleNoSQLAddQuad(graph + "_" + schemaString, predicate, "http://www.w3.org/2000/01/rdf-schema#range", "http://www.w3.org/2001/XMLSchema#string");
             connection.OracleNoSQLAddQuad(graph + "_" + schemaString, subject, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", graph);
             connection.OracleNoSQLAddQuad(graph, subject, predicate, object);
+*/
         }
         else if(connection_DB.equals("Oracle")) {
             String graphName = connection.getModel() + ":<" + graph + ">";
@@ -116,7 +118,7 @@ public class SPARQLHelper {
 
         String connection_DB = connection.getConnectionDB();
         if(connection_DB.equals("OracleNoSQL")) {
-            connection.OracleNoSQLAddQuad(graph, subject, predicate, object);
+            connection.OracleNoSQLAddQuad(graph, subject, predicate, object, true);
         }
         else if(connection_DB.equals("Oracle")) {
             String graphName = connection.getModel() + ":<" + graph + "_" + schemaString +">";
@@ -203,6 +205,7 @@ public class SPARQLHelper {
         String connection_DB = connection.getConnectionDB();
         if(connection_DB.equals("OracleNoSQL")) {
             String sparql = "SELECT ?s WHERE { GRAPH " + "c:" + graph + " { ?s " + predicate + " " + object + " } } ";
+            if (connection.getDebug() == "debug") System.out.println("\nSPARQLHelper.getSujects, sparql is: \n" + sparql);
             rows = connection.getDatabase().OracleNoSQLRunSPARQL(sparql);
             for (int i = 1; i < rows.size(); i++) {
                 subjects.add(String.format("%s", rows.get(i)).replaceAll("[()]", "").replaceAll("'", "").replaceAll(",", "").replaceAll(connection.getDatabase().getNameSpace(), ""));

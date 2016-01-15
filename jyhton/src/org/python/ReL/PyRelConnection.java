@@ -151,9 +151,9 @@ public class PyRelConnection extends PyObject {
     }
     
     // This will execute OracleNoSQLAddQuad. 
-    public void OracleNoSQLAddQuad(String graph, String subject, String predicate, String object) 
+    public void OracleNoSQLAddQuad(String graph, String subject, String predicate, String object, Boolean object_as_uri) 
     {
-        database.OracleNoSQLAddQuad(graph, subject, predicate, object);     
+        database.OracleNoSQLAddQuad(graph, subject, predicate, object, object_as_uri);     
     }
 
     // The rest of this code is to provide access to our OORel session information. 
