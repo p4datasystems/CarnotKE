@@ -214,6 +214,7 @@ oracle.jar=C:/workspace/HEAD/for_development/bisdevsrv28/jboss/server/infra/lib/
             <pathelement path="${extlibs.dir}/batches.jar" />
             <pathelement path="${extlibs.dir}/agraph-5.0.jar" />
 
+            <!-- Jars for ReL -->
             <pathelement path="${extlibs.dir}/avro.jar"/>
             <pathelement path="${extlibs.dir}/gwt-servlet.jar"/>
             <pathelement path="${extlibs.dir}/jackson-core-asl.jar"/>
@@ -241,6 +242,7 @@ oracle.jar=C:/workspace/HEAD/for_development/bisdevsrv28/jboss/server/infra/lib/
             <pathelement path="${extlibs.dir}/osdt_core.jar"/>
             <pathelement path="${extlibs.dir}/servlet-api.jar"/>
 
+            <!-- Jars for Oracle RDF NoSQL -->
             <pathelement path="${extlibs.dir}/jena-arq-2.9.4.jar"/>
             <pathelement path="${extlibs.dir}/jena-core-2.7.4.jar"/>
             <pathelement path="${extlibs.dir}/jena-iri-0.9.4.jar"/>
@@ -249,6 +251,11 @@ oracle.jar=C:/workspace/HEAD/for_development/bisdevsrv28/jboss/server/infra/lib/
             <pathelement path="${extlibs.dir}/slf4j-simple-1.7.13.jar"/>
             <pathelement path="${extlibs.dir}/xercesImpl.jar"/>
             <pathelement path="${extlibs.dir}/xml-apis.jar"/>
+
+            <!-- Jars for Entrata -->
+            <pathelement path="${extlibs.dir}/httpclient-4.3.3.jar"/>
+            <pathelement path="${extlibs.dir}/httpcore-4.3.jar"/>
+
         </path>
 
         <available property="informix.present" classname="com.informix.jdbc.IfxDriver" classpath="${informix.jar}" />
@@ -756,6 +763,10 @@ The readme text for the next release will be like:
             <zipfileset src="${extlibs.dir}/slf4j-simple-1.7.13.jar"/>
             <zipfileset src="${extlibs.dir}/xercesImpl.jar"/>
             <zipfileset src="${extlibs.dir}/xml-apis.jar"/>
+
+            <!-- Jar(s) for Entrata -->
+            <zipfileset src="${extlibs.dir}/httpclient-4.3.3.jar"/>
+            <zipfileset src="${extlibs.dir}/httpcore-4.3.jar"/>
 
             <rule pattern="org.apache.xml.**" result="org.python.apache.xml.@1"/>
             <rule pattern="org.apache.xerces.**" result="org.python.apache.xerces.@1"/>

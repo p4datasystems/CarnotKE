@@ -56,19 +56,21 @@ public class ProcessLanguages {
 
 //                                                                  ------------------------------------- SIM -------------------------
     public synchronized String processSIM(String ReLstmt) throws SQLException { 
+
     	String Save_ReLstmt = ReLstmt;
 		ReLstmt += ";";
 		InputStream is = new ByteArrayInputStream(ReLstmt.getBytes());
 		Query q = null;
+        String sparql = null;
 		if( ! parserInitialized) {
 			parser =  new QueryParser(is);
 			parserInitialized = true;
 		} else { parser.ReInit(is); }
 		try { q = parser.getNextQuery(); }
 		catch(Exception e1) { System.out.println(e1.getMessage()); }
-		String sparql = null;
 		// --------------------------------------------------------------------------------- SIM Insert
-	    // E.G., INSERT INTO onto_DATA VALUES ( 1, SDO_RDF_TRIPLE_S('onto', '#PERSON', 'rdf:type', 'rdfs:Class'));
+	    // E.g., SQL: INSERT INTO onto_DATA VALUES ( 1, SDO_RDF_TRIPLE_S('onto', '#PERSON', 'rdf:type', 'rdfs:Class'));
+	    // E.g., SIM: INSERT dept ( DEPTNO := 10 , DNAME := "ACCOUNTING" , LOC := "NEW YORK" );
 		if(q instanceof InsertQuery) {
 			InsertQuery iq = (InsertQuery)q;
 			String instanceID = "";

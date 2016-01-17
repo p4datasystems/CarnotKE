@@ -1830,6 +1830,8 @@ atom
      ->neo4j_stmt
      | sparql_stmt
      ->sparql_stmt
+     | japi_stmt
+     ->japi_stmt
      | conn_stmt
      -> conn_stmt
      | oorel_commit_stmt
@@ -1937,6 +1939,27 @@ neo4j_stmt
                }
           )+
       	-> ^(Neo4j<Tuple>[$neo4j_stmt.start, exprs, $expr::ctype, strings, "Neo4j", conn_name])
+    ;
+
+//============================================================================
+//============================================================================  
+//japi_stmt: JAPI conn ""
+japi_stmt
+@init {
+    ArrayList<String> strings = new ArrayList<String>();
+    ArrayList<expr> exprs   = new ArrayList<expr>();
+    Name conn_name = null;
+}
+    : 
+        JAPI name=NAME
+        {
+            conn_name = actions.makeNameNode($name);
+        } (s += STRING (e = expr[expr_contextType.Load])?
+               { strings.add(actions.extractStrings($s, encoding, unicodeLiterals).toString().replaceAll(";", "")); $s = null;
+                 if(e != null) exprs.add(actions.castExpr($e.tree)); e = null;
+               }
+          )+
+        -> ^(JAPI<Tuple>[$japi_stmt.start, exprs, $expr::ctype, strings, "JAPI", conn_name])
     ;
 
 //============================================================================
@@ -2477,6 +2500,7 @@ PERSISTIT   : 'persist' (' ')+ 'on' (' ')+ ;
 SQL     : 'SQL' (' ')+ 'on' (' ')+ ;
 SIM     : 'SIM' (' ')+ 'on' (' ')+ ;
 Neo4j   : 'Neo4j' (' ')+ 'on' (' ')+ ;
+JAPI   : 'JAPI' (' ')+ 'on' (' ')+ ;
 SPARQL   : 'SPARQL' (' ')+ 'on' (' ')+ ;
 OORELINSERT: 'relInsert' (' ')+ 'on' (' ')+ ;
 OORELCOMMIT: 'relCommit' (' ')+ 'on' (' ')+ ;

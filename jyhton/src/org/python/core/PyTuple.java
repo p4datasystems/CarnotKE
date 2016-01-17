@@ -63,6 +63,22 @@ import com.hp.hpl.jena.sparql.core.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import java.io.InputStream;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.*;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.config.Lookup;
+
 /**
  * A builtin python tuple.
  */
@@ -162,6 +178,82 @@ public class PyTuple extends PySequenceList implements List {
         ReLstmt = ReLstmt.trim();
         if (conn.getDebug() == "debug") System.out.println("ReLstmt is: " + ReLstmt);
 
+        if(ReLmode == "JAPI") {
+            String jsonRequest = "{"                             +
+            "    \"auth\": {"                                    +
+            "        \"type\" : \"basic\","                      +
+            "        \"username\": \"api@myaspenheights.com\","  +
+            "        \"password\": \"Aspen123\""                 +
+            "    },"                                             +
+            "    \"method\": {"                                  +
+            "      \"name\": \"getMitsLeases\","                 +
+            "      \"params\": {"                                +
+            "        \"propertyId\": \"141159\","                +
+            "        \"customerId\": \"14349034\","              +
+            "        \"includeLeaseHistory\": \"0\","            +
+            "        \"leaseStatusTypeIds\": \"1,2,3,4,5,6\","   +
+            "        \"sendUnitSpaces\": \"0\","                 +
+            "        \"includeDemographics\": \"0\","            +
+            "        \"includeOtherIncomeLeases\": \"0\""        +
+            "      }"                                            +
+            "    }"                                              +
+            "}";
+
+            CloseableHttpClient httpClient = null;
+            HttpPost httpPost = null;
+            CloseableHttpResponse response = null;
+
+            String json = "";
+            try {
+
+                httpClient = HttpClients.createDefault();
+                httpPost = new HttpPost("https://aspenheights.entrata.com/api/leases");
+
+                List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+                nvps.add(new BasicNameValuePair("content-type", "application/json"));
+
+                StringEntity input = new StringEntity(jsonRequest);
+                input.setContentType("application/json");
+                httpPost.setEntity(input);
+
+                for (NameValuePair h : nvps)
+                {
+                    httpPost.addHeader(h.getName(), h.getValue());
+                }
+                response = httpClient.execute(httpPost);
+
+                if (response.getStatusLine().getStatusCode() != 200) {
+                    throw new RuntimeException("Failed : HTTP error code : "
+                            + response.getStatusLine().getStatusCode());
+                }
+
+                BufferedReader br = new BufferedReader(new InputStreamReader(
+                        (response.getEntity().getContent())));
+
+                //System.out.println("Output from Server .... \n");
+                String out =  "";
+                while ((out = br.readLine()) != null) {json += out;}
+                //System.out.println(json);
+                rows.add(new PyTuple(new PyString(json)));
+                //a lot of conversion going on here. . .
+                PyObject[] results = listtoarray(rows);
+                //put results in array for this tuple object
+                array = new PyObject[results.length];
+                System.arraycopy(results, 0, array, 0, results.length);
+            } catch (IOException e) {
+
+                e.printStackTrace();
+
+            } finally {
+                try{
+                    response.close();
+                    httpClient.close();
+                }catch(Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+
         if(ReLmode == "SPARQL") {
             rows = conn.getDatabase().OracleNoSQLRunSPARQL(ReLstmt);
             //a lot of conversion going on here. . .
@@ -217,13 +309,15 @@ public class PyTuple extends PySequenceList implements List {
             catch(Exception e1) { System.out.println(e1.getMessage()); }
             if(sparql != null ) {
               String connection_DB = conn.getConnectionDB();
-              if(connection_DB.equals("OracleNoSQL")) {    
+              if(connection_DB.equals("OracleNoSQL")) {  
+/*  
                   rows = conn.getDatabase().OracleNoSQLRunSPARQL(sparql);
                   //a lot of conversion going on here. . .
                   PyObject[] results = listtoarray(rows);
                   //put results in array for this tuple object
                   array = new PyObject[results.length];
                   System.arraycopy(results, 0, array, 0, results.length);
+*/
               } else {
                   ProcessOracleEESQL processOracleEESQL = new ProcessOracleEESQL(conn, relQueryInstancesType, relQueryInstancesTypeNames);
                   try {
