@@ -10,32 +10,53 @@ def processManyToMany(connection, d, name, debug, assignment):
     sep = ""
     sep1 = ""
     for k, v in d.iteritems():
-        assignments = ''
+        assignment_list = ''
         if isinstance(v, dict):
-            processManyToMany(connection, v, k, debug, assignments)
+            processManyToMany(connection, v, k, debug, assignment)
         if isinstance(v, list):
             lists += sep + k
             sep = "; "
             count += 1
             for i, val in enumerate(v):
                 if isinstance(val, dict):
-                    if 'Identification' in val:
-                        if '@attributes' in val.get('Identification'):
-                            if val.get('Identification').get('@attributes').get('IDType'):
-                                assignment += sep1 + val.get('Identification').get('@attributes').get('IDType').replace(" ", "_") + " := " + str(val.get('Identification').get('IDValue'))
-                                sep1 = ", "
-                                assignments += assignment
-                                processManyToMany(connection, val, "?", debug, assignment)
-                        else :
-                            processManyToMany(connection, val, "?", debug, "")
+                    if 'Identification' in val and '@attributes' in val.get('Identification'):
+                        attr = val.get('Identification').get('@attributes').get('IDType').replace(" ", "_")
+                        value = val.get('Identification').get('IDValue')
+                        try :
+                            if isinstance(eval(str(value)), int): value = str(value)
+                        except :
+                            value = '"' + str(value) + '"'
+                        if val.get('Identification').get('@attributes').get('IDType'):
+                            assignment += sep1 + attr + " := " + value
+                            sep1 = ", "
+                            assignment_list += assignment
+                        if '@attributes' in val:
+                            for attr, value in val.get('@attributes').iteritems():
+                                attr = attr.replace(" ", "_")
+                                try :
+                                    if isinstance(eval(str(value.replace(" ", "_"))), int): value = str(value)
+                                except :
+                                    value = '"' + str(value) + '"'
+                                assignment += sep1 + attr + " := " + str(value)
+                                assignment_list += assignment
+                        processManyToMany(connection, val, "?", debug, assignment)
+                    else :
+                        processManyToMany(connection, val, "?", debug, "")
     if debug:
         if count > 0:
-            print "Dictionary has ", count, "list(s):", name, ":", lists, "assignments are:", assignments
-    if count == 2 and ", " in assignments:
-        insert = "SIM on " + str(connection) + ' """INSERT ' + name + " (" + assignments + ');"""'
+            print "Dictionary has ", count, "list(s):", name, ":", lists, "assignment_list is:", assignment_list
+    if count == 2 and ", " in assignment_list:
+        insert = "SIM on " + str(connection) + ' """INSERT ' + name + " (" + assignment_list + ');"""'
         print insert
         eval(insert)
     return count
+
+processManyToMany('connOracleRDFNoSQL', d, "?", True, "")
+
+query = 'SQL on connOracleRDFNoSQL "select * from leaseapplication"'
+print
+print query
+print eval(query)
 
 """
 def processList(d, name, insert):
@@ -69,10 +90,3 @@ def processList(d, name, insert):
         print
         print insert
 """
-
-processManyToMany('connOracleRDFNoSQL', d, "?", False, "")
-
-query = 'SQL on connOracleRDFNoSQL "select * from leaseapplication"'
-print
-print query
-print eval(query)

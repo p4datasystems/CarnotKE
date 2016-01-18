@@ -179,25 +179,7 @@ public class PyTuple extends PySequenceList implements List {
         if (conn.getDebug() == "debug") System.out.println("ReLstmt is: " + ReLstmt);
 
         if(ReLmode == "JAPI") {
-            String jsonRequest = "{"                             +
-            "    \"auth\": {"                                    +
-            "        \"type\" : \"basic\","                      +
-            "        \"username\": \"api@myaspenheights.com\","  +
-            "        \"password\": \"Aspen123\""                 +
-            "    },"                                             +
-            "    \"method\": {"                                  +
-            "      \"name\": \"getMitsLeases\","                 +
-            "      \"params\": {"                                +
-            "        \"propertyId\": \"141159\","                +
-            "        \"customerId\": \"14349034\","              +
-            "        \"includeLeaseHistory\": \"0\","            +
-            "        \"leaseStatusTypeIds\": \"1,2,3,4,5,6\","   +
-            "        \"sendUnitSpaces\": \"0\","                 +
-            "        \"includeDemographics\": \"0\","            +
-            "        \"includeOtherIncomeLeases\": \"0\""        +
-            "      }"                                            +
-            "    }"                                              +
-            "}";
+            String jsonRequest = "{}" ;
 
             CloseableHttpClient httpClient = null;
             HttpPost httpPost = null;
