@@ -157,7 +157,7 @@ public class ProcessLanguages {
 				} catch (Exception e) {
 					System.out.println(e);
 			}
-			if (conn.getDebug() == "debug") System.out.println(sparql);
+			if (conn.getDebug() == "debug") System.out.println("In ProcessesLangauges,sparql is: " + sparql);
 		// --------------------------------------------------------------------------------- SIM Modify
 		} else if(q instanceof ModifyQuery) {
 // E.g., SIM is: MODIFY LIMIT = ALL emp (dept_members := dept WITH (deptno = 20)) WHERE deptno = 20;
