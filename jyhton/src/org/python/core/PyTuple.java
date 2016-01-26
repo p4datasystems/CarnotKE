@@ -179,7 +179,25 @@ public class PyTuple extends PySequenceList implements List {
         if (conn.getDebug() == "debug") System.out.println("ReLstmt is: " + ReLstmt);
 
         if(ReLmode == "JAPI") {
-            String jsonRequest = "{}" ;
+            String jsonRequest = "{"                             +
+            "    \"auth\": {"                                    +
+            "        \"type\" : \"basic\","                      +
+            "        \"username\": \"api@myaspenheights.com\","  +
+            "        \"password\": \"Aspen123\""                 +
+            "    },"                                             +
+            "    \"method\": {"                                  +
+            "      \"name\": \"getMitsLeases\","                 +
+            "      \"params\": {"                                +
+            "        \"propertyId\": \"141159\","                +
+            "        \"customerId\": \"14349034\","              +
+            "        \"includeLeaseHistory\": \"0\","            +
+            "        \"leaseStatusTypeIds\": \"1,2,3,4,5,6\","   +
+            "        \"sendUnitSpaces\": \"0\","                 +
+            "        \"includeDemographics\": \"0\","            +
+            "        \"includeOtherIncomeLeases\": \"0\""        +
+            "      }"                                            +
+            "    }"                                              +
+            "}";
 
             CloseableHttpClient httpClient = null;
             HttpPost httpPost = null;
@@ -292,14 +310,12 @@ public class PyTuple extends PySequenceList implements List {
             if(sparql != null ) {
               String connection_DB = conn.getConnectionDB();
               if(connection_DB.equals("OracleNoSQL")) {  
-/*  
                   rows = conn.getDatabase().OracleNoSQLRunSPARQL(sparql);
                   //a lot of conversion going on here. . .
                   PyObject[] results = listtoarray(rows);
                   //put results in array for this tuple object
                   array = new PyObject[results.length];
                   System.arraycopy(results, 0, array, 0, results.length);
-*/
               } else {
                   ProcessOracleEESQL processOracleEESQL = new ProcessOracleEESQL(conn, relQueryInstancesType, relQueryInstancesTypeNames);
                   try {
