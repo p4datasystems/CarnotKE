@@ -28,6 +28,6 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install ant; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then jdk_switcher use "$CUSTOM_JDK"; fi
   
-install: ant deps
+install: ant
 
 script: ant && ant regrtest-travis
