@@ -67,8 +67,10 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
             graph.close(); 
             
             // Clear dataset
-            System.out.println("\nWRNING: the NoSQL database is being cleared in PyRelConnection!\n");
-            datasetGraph.clearRepository();
+            if(debug.equals("debug")) {
+                System.out.println("\nWARNING: the NoSQL database is being cleared in PyRelConnection!\n");
+                datasetGraph.clearRepository();
+            }
         }
     }
 
