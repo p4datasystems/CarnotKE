@@ -11,5 +11,3 @@ before_install:
   - jdk_switcher use "$CUSTOM_JDK"
   
 install: ant
-
-script: ant && ant regrtest-travis
