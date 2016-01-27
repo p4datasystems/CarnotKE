@@ -7,7 +7,7 @@ env:
     - CUSTOM_JDK="openjdk7"
 
 before_install:
-  - cd jyhton
+  - cd jython
   - jdk_switcher use "$CUSTOM_JDK"
   
 install: ant
