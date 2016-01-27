@@ -10,4 +10,6 @@ before_install:
   - cd jython
   - jdk_switcher use "$CUSTOM_JDK"
   
-install: ant
+# install: ant
+
+script: dist/bin/jython
