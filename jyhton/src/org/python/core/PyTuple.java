@@ -182,8 +182,6 @@ public class PyTuple extends PySequenceList implements List {
             String jsonRequest = "{"                             +
             "    \"auth\": {"                                    +
             "        \"type\" : \"basic\","                      +
-            "        \"username\": \"api@myaspenheights.com\","  +
-            "        \"password\": \"Aspen123\""                 +
             "    },"                                             +
             "    \"method\": {"                                  +
             "      \"name\": \"getMitsLeases\","                 +
