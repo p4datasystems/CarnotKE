@@ -13,7 +13,7 @@ matrix:
 
 before_install:
   - cd jyhton
-  - jdk_switcher use "$CUSTOM_JDK"; fi
+  - jdk_switcher use "$CUSTOM_JDK"
   
 install: ant
 
