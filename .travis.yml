@@ -3,13 +3,8 @@ language: java
 
 env:
   matrix:
-    - CUSTOM_JDK="default"
     - CUSTOM_JDK="oraclejdk7"
     - CUSTOM_JDK="openjdk7"
-
-matrix:
-  exclude:
-       env: CUSTOM_JDK="default"
 
 before_install:
   - cd jyhton
