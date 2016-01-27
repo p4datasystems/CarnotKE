@@ -12,4 +12,6 @@ before_install:
   
 # install: ant
 
+before_script: cd jython
+
 script: dist/bin/jython
