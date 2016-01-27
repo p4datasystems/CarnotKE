@@ -20,4 +20,4 @@ before_install:
 
 # before_script: cd jython
 
-script: dist/bin/jython
+script: dist/bin/jython ReLUnitTests.py
