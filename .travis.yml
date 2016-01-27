@@ -1,6 +1,12 @@
 
 language: java
 
+notifications:
+  email:
+    recipients:
+      - npererar@utexas.edu
+      - npererar@gmail.com
+
 env:
   matrix:
     - CUSTOM_JDK="oraclejdk7"
