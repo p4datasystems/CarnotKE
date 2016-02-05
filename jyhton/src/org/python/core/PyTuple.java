@@ -299,34 +299,44 @@ public class PyTuple extends PySequenceList implements List {
             } else {
                 System.out.println("Connection type must be \"native_mode\", or \"rdf_mode\", not \"" + conn.getConnectionType() + "\"");
             }
-        } else if(ReLmode == "SIM") {
+        }
+        else if(ReLmode == "SIM") {
             if (conn.getDebug() == "debug") System.out.println("PyTuple sim is: " + ReLstmt);
-            ProcessLanguages processLanguage = new ProcessLanguages(conn);
+            ProcessLanguages processLanguage;
             String sparql = null;
-            try { sparql = processLanguage.processSIM(ReLstmt); }
-            catch(Exception e1) { System.out.println(e1.getMessage()); }
-            if(sparql != null ) {
-              String connection_DB = conn.getConnectionDB();
-              if(connection_DB.equals("OracleNoSQL")) {  
-                  rows = conn.getDatabase().OracleNoSQLRunSPARQL(sparql);
-                  //a lot of conversion going on here. . .
-                  PyObject[] results = listtoarray(rows);
-                  //put results in array for this tuple object
-                  array = new PyObject[results.length];
-                  System.arraycopy(results, 0, array, 0, results.length);
-              } else {
-                  ProcessOracleEESQL processOracleEESQL = new ProcessOracleEESQL(conn, relQueryInstancesType, relQueryInstancesTypeNames);
-                  try {
-                      ArrayList<PyObject> rowResults = processOracleEESQL.processSQL(sparql); 
-                      //a lot of conversion going on here. . .
-                      PyObject[] results = listtoarray(rowResults);
-                      //put results in array for this tuple object
-                      array = new PyObject[results.length];
-                      System.arraycopy(results, 0, array, 0, results.length);
-                  } catch (Exception e) {
-                      System.out.println(e);
-                  } 
-              }
+
+            if (conn.getConnectionType() == "native_mode") {
+                processLanguage = new ProcessLanguages(conn, true /*isNative*/);
+                System.out.println("Trying to process the native SIM command!!");
+                processLanguage.processNativeSIM(ReLstmt);
+            }
+            else {
+                processLanguage = new ProcessLanguages(conn);
+                try { sparql = processLanguage.processSIM(ReLstmt); }
+                catch(Exception e1) { System.out.println(e1.getMessage()); }
+                if(sparql != null ) {
+                    String connection_DB = conn.getConnectionDB();
+                    if(connection_DB.equals("OracleNoSQL")) {
+                        rows = conn.getDatabase().OracleNoSQLRunSPARQL(sparql);
+                        //a lot of conversion going on here. . .
+                        PyObject[] results = listtoarray(rows);
+                        //put results in array for this tuple object
+                        array = new PyObject[results.length];
+                        System.arraycopy(results, 0, array, 0, results.length);
+                    } else {
+                        ProcessOracleEESQL processOracleEESQL = new ProcessOracleEESQL(conn, relQueryInstancesType, relQueryInstancesTypeNames);
+                        try {
+                            ArrayList<PyObject> rowResults = processOracleEESQL.processSQL(sparql);
+                            //a lot of conversion going on here. . .
+                            PyObject[] results = listtoarray(rowResults);
+                            //put results in array for this tuple object
+                            array = new PyObject[results.length];
+                            System.arraycopy(results, 0, array, 0, results.length);
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+                    }
+                }
             }
         }
     }
