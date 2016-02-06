@@ -28,7 +28,7 @@ public class Database extends DatabaseInterface {
     private static final String ADMIN_PORT = "5001";
     private static final String HARANGE = "5010,5020";
     private final String[] baseCommands =
-            {"java", "-jar", INSTALLATION_ROOT.getAbsolutePath() + "/lib/kvstore.jar"};
+            {"java", "-jar", INSTALLATION_ROOT.getAbsolutePath() + "/extlibs/kvstore.jar"};
 
     public static KVStore store;
     private static TableAPI tableH;
