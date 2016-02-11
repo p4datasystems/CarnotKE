@@ -224,11 +224,23 @@ public class ProcessLanguages {
 		return sparql;
 	}
 
-	public synchronized void processNativeSIM(String ReLstmt) {
+	public synchronized void processNativeSIM(String ReLstmt) throws Exception {
 
+		boolean DBG = true;
 		Database db = (Database) connDatabase;
+		if (ReLstmt.equalsIgnoreCase("clear database")) {
+			db.clearDatabase();
+			return;
+		}
+		if (ReLstmt.equalsIgnoreCase("stop database")) {
+			db.ultimateCleanUp("Stop database");
+			return;
+		}
 		String Save_ReLstmt = ReLstmt;
-		ReLstmt += ";";
+		ReLstmt = ReLstmt.replaceAll("!", ";");
+//		ReLstmt += ";";
+//		if (DBG)
+//			ReLstmt = "CLASS sim_person ( PERSON_ID:INTEGER, REQUIRED& NAME :STRING& SSNUM :INTEGER& GENDER :STRING& BIRTH_DATE :STRING & ADDRESS :STRING & CITY :STRING & STATE :STRING & ZIP :INTEGER & )&";
 		InputStream is = new ByteArrayInputStream(ReLstmt.getBytes());
 		Query q = null;
 		String sparql = null;
@@ -238,6 +250,10 @@ public class ProcessLanguages {
 		} else { parser.ReInit(is); }
 		try { q = parser.getNextQuery(); }
 		catch(Exception e1) { System.out.println(e1.getMessage()); }
+
+		if (DBG)
+			System.out.println("Statement executed: " + ReLstmt);
+
 		/************* BEGIN WDB CODE DUMP ************************/
 		if(q.getClass() == ClassDef.class || q.getClass() == SubclassDef.class)
 		{
@@ -281,8 +297,9 @@ public class ProcessLanguages {
 				}
 				catch(Exception e)
 				{
-					System.out.println(e.toString() + ": " + e.getMessage());
+					System.out.println("This class already exists: " + cd.name);
 					adapter.abort();
+					return;
 				}
 			}
 			catch(Exception e)

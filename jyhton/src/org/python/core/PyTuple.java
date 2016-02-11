@@ -12,6 +12,7 @@ import java.util.*;
 import java.lang.*;
 import java.lang.reflect.Array;
 
+import org.python.ReL.*;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
 import org.python.expose.ExposedType;
@@ -45,14 +46,6 @@ import batch.util.BatchTransport;
 import batch.json.JSONTransport;
 
 import org.python.util.JenaTutorialExamples;
-
-import org.python.ReL.PyRelConnection;
-import org.python.ReL.SPARQLHelper;
-import org.python.ReL.SIMHelper;
-import org.python.ReL.SQLVisitor;
-import org.python.ReL.ProcessLanguages;
-import org.python.ReL.ProcessOracleEESQL;
-import org.python.ReL.OracleRDFNoSQLInterface;
 
 import com.hp.hpl.jena.graph.*;
 import com.hp.hpl.jena.query.*;
@@ -303,14 +296,20 @@ public class PyTuple extends PySequenceList implements List {
         else if(ReLmode == "SIM") {
             if (conn.getDebug() == "debug") System.out.println("PyTuple sim is: " + ReLstmt);
             ProcessLanguages processLanguage;
-            String sparql = null;
 
             if (conn.getConnectionType() == "native_mode") {
-                processLanguage = new ProcessLanguages(conn, true /*isNative*/);
-                System.out.println("Trying to process the native SIM command!!");
-                processLanguage.processNativeSIM(ReLstmt);
+                try {
+                    processLanguage = new ProcessLanguages(conn, true /*isNative*/);
+                    processLanguage.processNativeSIM(ReLstmt);
+
+                }
+                catch (Exception e) {
+                    // Shut down the connection
+                    ((Database)conn.getDatabase()).ultimateCleanUp(e.getMessage());
+                }
             }
             else {
+                String sparql = null;
                 processLanguage = new ProcessLanguages(conn);
                 try { sparql = processLanguage.processSIM(ReLstmt); }
                 catch(Exception e1) { System.out.println(e1.getMessage()); }

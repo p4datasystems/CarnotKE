@@ -7,15 +7,14 @@ import oracle.kv.table.TableAPI;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 
 /**
  * @author Joshua Hurt
  */
 public class Database extends DatabaseInterface {
-    public static final boolean DBG = false;
+    public static final boolean DBG = true;
     private static final String EOL = "\n";
-    private final File INSTALLATION_ROOT = new File(System.getenv("INSTALLATION_ROOT"));
+    private File INSTALLATION_ROOT;
 
     /* Table Info */
     private static final String CLASSDEF_TABLE_NAME = "ClassDef";
@@ -27,8 +26,7 @@ public class Database extends DatabaseInterface {
     private static final String PORT = "5000";
     private static final String ADMIN_PORT = "5001";
     private static final String HARANGE = "5010,5020";
-    private final String[] baseCommands =
-            {"java", "-jar", INSTALLATION_ROOT.getAbsolutePath() + "/extlibs/kvstore.jar"};
+    private String[] baseCommands;
 
     public static KVStore store;
     private static TableAPI tableH;
@@ -46,16 +44,19 @@ public class Database extends DatabaseInterface {
      * via KVStore API handle.
      */
     public Database() {
-        // instanceRoot == ~/Development/F15D1/WDB-new
-        // storeRoot = instanceRoot/store/SN1ROOT
-        // SN2_ROOT = instanceRoot/store/SN2ROOT
-        // Yup.
         validateInstallationRoot();
-        setupSNDirectories();
-        setupEnvironmentAndCreateNodes();
-        connectToStore();
-        createTable(classTable, CLASSDEF_TABLE_NAME);
-        createTable(objectTable, WDBOBJECT_TABLE_NAME);
+        baseCommands = new String[]{"java", "-jar", INSTALLATION_ROOT.getAbsolutePath() + "/extlibs/kvstore.jar"};
+
+        if (! reconnectToExistingStore()) {
+            setupSNDirectories();
+            setupEnvironmentAndCreateNodes();
+            connectToStore();
+            if (!DBG) {
+                dropTable(classTable);
+                dropTable(objectTable);
+            }
+            createTables();
+        }
     }
 
     public boolean setupEnvironmentAndCreateNodes() {
@@ -125,9 +126,11 @@ public class Database extends DatabaseInterface {
     }
 
     public void validateInstallationRoot() {
-        if (INSTALLATION_ROOT == null) {
-            ultimateCleanUp("Please set INSTALLATION_ROOT environment variable.");
-        }
+        final String serverRoot = System.getenv("INSTALLATION_ROOT");
+        if (serverRoot == null)
+            ultimateCleanUp("Server not started. Please set INSTALLATION_ROOT environment variable.");
+
+        INSTALLATION_ROOT = new File(serverRoot);
         if (!INSTALLATION_ROOT.isDirectory()) {
             ultimateCleanUp(String.format(
                     "Invalid INSTALLATION_ROOT value. '%s' is not a directory!",
@@ -148,14 +151,6 @@ public class Database extends DatabaseInterface {
         if (storeRoot.mkdirs())
             System.out.println(String.format(
                     "Creating Storage Node directory at '%s'", storeRoot.getAbsolutePath()));
-    }
-
-
-    public void clearDB() {
-        Iterator<KeyValueVersion> classKeys = store.storeIterator(Direction.UNORDERED, 10);
-        while (classKeys.hasNext()) {
-            store.delete(classKeys.next().getKey());
-        }
     }
 
 
@@ -211,7 +206,13 @@ public class Database extends DatabaseInterface {
     }
 
 
-    public void dropTable(Table table) {
+    public void clearDatabase() {
+        dropTable(classTable);
+        dropTable(objectTable);
+        createTables();
+
+    }
+    private void dropTable(Table table) {
         if (table == null)
             return;
         String statement =
@@ -251,6 +252,23 @@ public class Database extends DatabaseInterface {
         System.out.println("Connection successful!");
     }
 
+    public boolean reconnectToExistingStore() {
+        // Obtain handles to the running Storage Node
+        try {
+            System.out.println("Trying to connect to an already running store ...");
+            store = KVStoreFactory.getStore
+                    (new KVStoreConfig(STORE_NAME, HOST + ":" + PORT));
+        }
+        catch (FaultException e) {
+            System.out.println("No existing connection found. Creating new one.");
+            return false;
+        }
+        setupSNDirectories();
+        createTables();
+        System.out.println("Connection successful!");
+        return true;
+    }
+
     public void disconnectFromStore() {
         if (store != null)
             store.close();
@@ -264,7 +282,7 @@ public class Database extends DatabaseInterface {
      */
     public void ultimateCleanUp(String reason) {
         disconnectFromStore();
-        // Explicitly run stop
+        // Explicitly run stop if server is running
         kvStoreCommand("stop", "-root", storeRoot.getAbsolutePath());
 
         // Below may not be needed if above works quickly

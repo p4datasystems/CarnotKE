@@ -59,7 +59,7 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
         this.debug = debug;
 
         if(conn_type != "none" ) {
-            this.connection = OracleNoSqlConnection.createInstance("kvstore", "localhost", "5000");
+            this.connection = OracleNoSqlConnection.createInstance("kvstore", "localhost", "9000");
             OracleGraphNoSql graph = new OracleGraphNoSql(connection);
             this.datasetGraph = DatasetGraphNoSql.createFrom(graph);
 

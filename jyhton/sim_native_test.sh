@@ -1,6 +1,13 @@
 #!/bin/bash
-ant clean
-rm -rf dist/
-ant
-ant
-dist/bin/jython -J-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 nativeSIMunitTests.py
+# ant clean
+# rm -rf dist/
+# ant
+# ant
+echo "run this script with 'debug' as an argument to debug on port 5100"
+if [ -z "$1" ]
+  then   
+    dist/bin/jython nativeSIMunitTests.py
+
+  else
+    dist/bin/jython -J-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5100 nativeSIMunitTests.py
+fi
