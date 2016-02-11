@@ -106,8 +106,15 @@ public class PyRelConnection extends PyObject {
             }
         }
         else if (url.contains("OracleNoSQL")) {
-            database = new OracleRDFNoSQLInterface(url, uname, pword, conn_type, debug); 
-            connection_DB = "OracleNoSQL";
+            if (conn_type.equalsIgnoreCase("native_mode")) {
+                database = new Database();
+                connection_DB = "Native_OracleNoSQL";
+            }
+            else {
+                database = new OracleRDFNoSQLInterface(url, uname, pword, conn_type, debug);
+                connection_DB = "OracleNoSQL";
+            }
+
         }
     }
     
@@ -198,7 +205,7 @@ public class PyRelConnection extends PyObject {
     /**
      * Return the DBUNIQUEID of an instance, or -1 if there was no DBUNIQUEID found on that 
      * instance. 
-     * @param inst
+     * @param instance
      */
     private static int getDBUNIQUEID(PyObject instance) {
         ConcurrentMap<Object, PyObject> inst_dict = 
