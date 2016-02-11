@@ -1,8 +1,8 @@
 #!/bin/bash
-# ant clean
-# rm -rf dist/
-# ant
-# ant
+ant clean
+rm -rf dist/
+ant
+ant
 echo "run this script with 'debug' as an argument to debug on port 5100"
 if [ -z "$1" ]
   then   
