@@ -301,7 +301,6 @@ public class PyTuple extends PySequenceList implements List {
                 try {
                     processLanguage = new ProcessLanguages(conn, true /*isNative*/);
                     processLanguage.processNativeSIM(ReLstmt);
-
                 }
                 catch (Exception e) {
                     // Shut down the connection

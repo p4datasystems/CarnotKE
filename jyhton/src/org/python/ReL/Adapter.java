@@ -21,7 +21,6 @@ public class Adapter extends SleepyCatDataAdapter {
     private static final String objectKeyPrefix = "object";
 
     public Adapter(Database db) {
-        // Below super call is a workaround until I fix the wdb.jar in extlibs
         super(null, null);
         this.db = db;
     }
@@ -35,18 +34,10 @@ public class Adapter extends SleepyCatDataAdapter {
     }
 
     /**
-     * Original usage: classesDb.put(String, ClassDef)
-     *
-     * key: String class:classDef.name
+     * key: String class:(classDef.name)
      * value: ClassDef classDef
      */
     public void putClass(ClassDef classDef) {
-        /* *******************************************************
-        * How to serialize object to byte array to be
-        * used as value in key-store DB.
-        * byte[] data = SerializationUtils.serialize(classDef);
-        **********************************************************/
-
         final String keyString = makeClassKey(classDef.name);
         final byte[] data = SerializationUtils.serialize(classDef);
 
@@ -58,19 +49,10 @@ public class Adapter extends SleepyCatDataAdapter {
     }
 
     /**
-     * Original usage: classesDb.get(String)
-     *
-     * key: String class:classDef.name
+     * key: String class:(classDef.name)
      * @return ClassDef or null if not found
      */
     public ClassDef getClass(String className) throws ClassNotFoundException {
-        /* *******************************************************
-        * How to de-serialize object from byte array returned after
-        * using key to get serialized byte[] value from database to
-        * be returned to the user as an object.
-        * ClassDef classDef = (ClassDef) SerializationUtils.deserialize(byte[] data)
-        **********************************************************/
-
         PrimaryKey key = db.getClassTable().createPrimaryKey();
         final String keyString = makeClassKey(className);
         key.put("key", keyString);
@@ -86,27 +68,17 @@ public class Adapter extends SleepyCatDataAdapter {
             db.ultimateCleanUp(String.format(
                     "Null value returned from ClassesDB lookup for class: %s",
                     keyString));
-//            throw new MissingResourceException("Null value returned from ClassesDB lookup",
-//                    className, keyString);
         }
 
         return classDef;
     }
 
     /**
-     * Original usage: objectsDB.put(String, WDBObject)
-     *
-     * key: String object:Uid.toString()
+     * key: String object:(Uid.toString())
      * value: WDBObject object
      * @param wdbObject to serialize and store as value
      */
     public void putObject(WDBObject wdbObject) {
-        /* *******************************************************
-        * How to serialize object to byte array to be
-        * used as value in key-store DB.
-        * byte[] data = SerializationUtils.serialize(classDef);
-        **********************************************************/
-
         final String keyString = makeObjectKey(wdbObject.getUid());
         final byte[] data = SerializationUtils.serialize(wdbObject);
 
@@ -118,22 +90,13 @@ public class Adapter extends SleepyCatDataAdapter {
     }
 
     /**
-     * Original usage: objectsDB.get(String)
-     *
-     * key: String object:Uid.toString()
+     * key: String object:(Uid.toString())
      * value: WDBObject object
      * @param className only used for MissingResourceException
      * @param Uid is the key to retrieve the WDBObject
      * @return WDBObject or throws MissingResourceException
      */
     public WDBObject getObject(String className, Integer Uid) {
-        /* *******************************************************
-        * How to de-serialize object from byte array returned after
-        * using key to get serialized byte[] value from database to
-        * be returned to the user as an object.
-        * WDBObject classDef = (WDBObject) SerializationUtils.deserialize(byte[] data)
-        **********************************************************/
-
         final String keyString = makeObjectKey(Uid);
         PrimaryKey key = db.getObjectTable().createPrimaryKey();
         key.put("key", keyString);

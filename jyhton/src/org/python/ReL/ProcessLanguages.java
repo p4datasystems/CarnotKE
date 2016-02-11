@@ -236,14 +236,9 @@ public class ProcessLanguages {
 			db.ultimateCleanUp("Stop database");
 			return;
 		}
-		String Save_ReLstmt = ReLstmt;
 		ReLstmt = ReLstmt.replaceAll("!", ";");
-//		ReLstmt += ";";
-//		if (DBG)
-//			ReLstmt = "CLASS sim_person ( PERSON_ID:INTEGER, REQUIRED& NAME :STRING& SSNUM :INTEGER& GENDER :STRING& BIRTH_DATE :STRING & ADDRESS :STRING & CITY :STRING & STATE :STRING & ZIP :INTEGER & )&";
 		InputStream is = new ByteArrayInputStream(ReLstmt.getBytes());
 		Query q = null;
-		String sparql = null;
 		if( ! parserInitialized) {
 			parser =  new QueryParser(is);
 			parserInitialized = true;

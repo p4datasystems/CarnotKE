@@ -13,7 +13,6 @@ import java.util.Arrays;
  */
 public class Database extends DatabaseInterface {
     public static final boolean DBG = true;
-    private static final String EOL = "\n";
     private File INSTALLATION_ROOT;
 
     /* Table Info */
@@ -40,8 +39,8 @@ public class Database extends DatabaseInterface {
 
 
     /**
-     * Creates two Storage Nodes (Classes and WDBObjects) and connects to each of them
-     * via KVStore API handle.
+     * Connects to a KVStore on port 5000 if one exists, otherwise
+     * creates a new KVStore.
      */
     public Database() {
         validateInstallationRoot();
@@ -59,8 +58,14 @@ public class Database extends DatabaseInterface {
         }
     }
 
+
+
+    /*******************************************************
+     ************* STORE CONNECTION METHODS ***************************
+     *******************************************************/
+
     public boolean setupEnvironmentAndCreateNodes() {
-        // Initialize Storage Node 1
+        // Initialize Storage Node
         kvStoreCommand("makebootconfig",
                 "-root", storeRoot.getAbsolutePath(),
                 "-port", PORT,
@@ -76,11 +81,10 @@ public class Database extends DatabaseInterface {
 
         kvStoreCommand("start", "-root", storeRoot.getAbsolutePath());
 
-        // Both the database servers needs to be running before we can continue
         final File wdbStoreSetupScript = new File(INSTALLATION_ROOT, "setup_WDB_store.txt");
         if (!wdbStoreSetupScript.exists())
             ultimateCleanUp("Cannot find setup script for storage node.");
-        // Create store named "Classes" on Storage Node 1
+
         // (Yes, I meant 'PORT' and not 'ADMIN_PORT' since we need to connect on the registry port)
         kvStoreCommand("runadmin",
                 "-port", PORT,
@@ -104,14 +108,14 @@ public class Database extends DatabaseInterface {
         try {
             Process utility = pb.start();
         /* The Storage Node Agent (SNA) should run in the background, so don't wait for it.
-         * Save it so we can kill the process (b/c calling stop doesn't work??) when we exit. */
+         * Save it so we can kill the process when we exit. */
             if (command.equalsIgnoreCase("start"))
                 storeProcess = utility;
                 // Don't want to wait for stop
             else if (command.equalsIgnoreCase("stop"))
                 return;
             else {
-                /* Need to setup the Nodes before we can use them
+                /* Need to setup the Node before we can use it
                  * so waitFor() makes us wait for the process to finish. */
                 int status = utility.waitFor();
 
@@ -155,7 +159,7 @@ public class Database extends DatabaseInterface {
 
 
     /*******************************************************
-     * TABLE METHODS
+     ************* TABLE METHODS ***************************
      *******************************************************/
     public void createTables() {
         createTable(classTable, CLASSDEF_TABLE_NAME);
@@ -236,7 +240,7 @@ public class Database extends DatabaseInterface {
     }
 
 
-    public void connectToStore() {
+    private void connectToStore() {
         // Obtain handles to the running Storage Node
         try {
             System.out.println("Trying to connect to the store ...");
@@ -252,7 +256,7 @@ public class Database extends DatabaseInterface {
         System.out.println("Connection successful!");
     }
 
-    public boolean reconnectToExistingStore() {
+    private boolean reconnectToExistingStore() {
         // Obtain handles to the running Storage Node
         try {
             System.out.println("Trying to connect to an already running store ...");
@@ -269,7 +273,7 @@ public class Database extends DatabaseInterface {
         return true;
     }
 
-    public void disconnectFromStore() {
+    private void disconnectFromStore() {
         if (store != null)
             store.close();
     }
