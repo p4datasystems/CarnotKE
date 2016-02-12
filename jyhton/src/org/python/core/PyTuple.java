@@ -299,7 +299,7 @@ public class PyTuple extends PySequenceList implements List {
 
             if (conn.getConnectionType() == "native_mode") {
                 try {
-                    processLanguage = new ProcessLanguages(conn, true /*isNative*/);
+                    processLanguage = new ProcessLanguages(conn);
                     processLanguage.processNativeSIM(ReLstmt);
                 }
                 catch (Exception e) {

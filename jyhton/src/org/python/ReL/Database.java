@@ -1,8 +1,16 @@
 package org.python.ReL;
 
 import oracle.kv.*;
+import oracle.kv.table.PrimaryKey;
+import oracle.kv.table.Row;
 import oracle.kv.table.Table;
 import oracle.kv.table.TableAPI;
+import org.apache.commons.lang3.SerializationUtils;
+import wdb.SleepyCatDataAdapter;
+import wdb.metadata.Adapter;
+import wdb.metadata.ClassDef;
+import wdb.metadata.IndexDef;
+import wdb.metadata.WDBObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -38,6 +46,7 @@ public class Database extends DatabaseInterface {
 
 
 
+
     /**
      * Connects to a KVStore on port 5000 if one exists, otherwise
      * creates a new KVStore.
@@ -46,6 +55,7 @@ public class Database extends DatabaseInterface {
         validateInstallationRoot();
         baseCommands = new String[]{"java", "-jar", INSTALLATION_ROOT.getAbsolutePath() + "/extlibs/kvstore.jar"};
 
+        this.adapter = new OracleNoSQLAdapter(this);
         if (! reconnectToExistingStore()) {
             setupSNDirectories();
             setupEnvironmentAndCreateNodes();
@@ -311,4 +321,124 @@ public class Database extends DatabaseInterface {
     public Table getObjectTable() {
         return objectTable;
     }
+
+
+    /**
+     * OracleNoSQLAdapter is extending SleepyCatDataAdapter AS A WORKAROUND until
+     * I overload the method parameters in ClassDef and WDBObject classes
+     * inside the wdb.jar in the extlibs directory.
+     * @author Joshua Hurt
+     */
+    private class OracleNoSQLAdapter implements Adapter {
+        private Database db;
+        private static final String classKeyPrefix = "class";
+        private static final String objectKeyPrefix = "object";
+
+        public OracleNoSQLAdapter(Database db) {
+            this.db = db;
+        }
+
+        /**
+         * key: String class:(classDef.name)
+         * value: ClassDef classDef
+         */
+        public void putClass(ClassDef classDef) {
+            final String keyString = makeClassKey(classDef.name);
+            final byte[] data = SerializationUtils.serialize(classDef);
+
+            Row row = db.getClassTable().createRow();
+            row.put("key", keyString);
+            row.put("value", data);
+
+            db.getTableHandle().put(row, null, null);
+        }
+
+        /**
+         * key: String class:(classDef.name)
+         * @return ClassDef or null if not found
+         */
+        public ClassDef getClass(String className) throws ClassNotFoundException {
+            PrimaryKey key = db.getClassTable().createPrimaryKey();
+            final String keyString = makeClassKey(className);
+            key.put("key", keyString);
+            Row row = db.getTableHandle().get(key, null);
+
+            if (row == null)
+                throw new ClassNotFoundException(String.format(
+                        "Key '%s' not present in table", keyString));
+            byte[] data = row.get("value").asBinary().get();
+
+            final ClassDef classDef = (ClassDef) SerializationUtils.deserialize(data);
+            if (classDef == null) {
+                db.ultimateCleanUp(String.format(
+                        "Null value returned from ClassesDB lookup for class: %s",
+                        keyString));
+            }
+
+            return classDef;
+        }
+
+        /**
+         * key: String object:(Uid.toString())
+         * value: WDBObject object
+         * @param wdbObject to serialize and store as value
+         */
+        public void putObject(WDBObject wdbObject) {
+            final String keyString = makeObjectKey(wdbObject.getUid());
+            final byte[] data = SerializationUtils.serialize(wdbObject);
+
+            Row row = db.getObjectTable().createRow();
+            row.put("key", keyString);
+            row.put("value", data);
+
+            db.getTableHandle().put(row, null, null);
+        }
+
+        /**
+         * key: String object:(Uid.toString())
+         * value: WDBObject object
+         * @param className only used for MissingResourceException
+         * @param Uid is the key to retrieve the WDBObject
+         * @return WDBObject or throws MissingResourceException
+         */
+        public WDBObject getObject(String className, Integer Uid) {
+            final String keyString = makeObjectKey(Uid);
+            PrimaryKey key = db.getObjectTable().createPrimaryKey();
+            key.put("key", keyString);
+            Row row = db.getTableHandle().get(key, null);
+
+            byte[] data = row.get("value").asBinary().get();
+
+            final WDBObject wdbObject = (WDBObject) SerializationUtils.deserialize(data);
+            if (wdbObject == null) {
+                db.ultimateCleanUp(String.format(
+                        "Null value returned from ClassesDB lookup for class: %s",
+                        keyString));
+            }
+
+            return wdbObject;
+        }
+
+        public ArrayList<WDBObject> getObjects(IndexDef indexDef, String key) {
+            System.out.println("getObjects called in OracleNoSQLAdapter");
+            return null;
+        }
+
+        private String makeClassKey(String className) {
+            return classKeyPrefix + ":" + className;
+        }
+
+        private String makeObjectKey(Integer Uid) {
+            return objectKeyPrefix + ":" + Uid.toString();
+        }
+        public void abort() {
+
+        }
+
+        public void commit() {
+
+        }
+    }
+
+
 }
