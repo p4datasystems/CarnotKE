@@ -6,7 +6,6 @@ import oracle.kv.table.Row;
 import oracle.kv.table.Table;
 import oracle.kv.table.TableAPI;
 import org.apache.commons.lang3.SerializationUtils;
-import wdb.SleepyCatDataAdapter;
 import wdb.metadata.Adapter;
 import wdb.metadata.ClassDef;
 import wdb.metadata.IndexDef;
@@ -19,7 +18,7 @@ import java.util.Arrays;
 /**
  * @author Joshua Hurt
  */
-public class Database extends DatabaseInterface {
+public class OracleNoSQLDatabase extends DatabaseInterface {
     public static final boolean DBG = true;
     private File INSTALLATION_ROOT;
 
@@ -51,7 +50,7 @@ public class Database extends DatabaseInterface {
      * Connects to a KVStore on port 5000 if one exists, otherwise
      * creates a new KVStore.
      */
-    public Database() {
+    public OracleNoSQLDatabase() {
         validateInstallationRoot();
         baseCommands = new String[]{"java", "-jar", INSTALLATION_ROOT.getAbsolutePath() + "/extlibs/kvstore.jar"};
 
@@ -330,11 +329,11 @@ public class Database extends DatabaseInterface {
      * @author Joshua Hurt
      */
     private class OracleNoSQLAdapter implements Adapter {
-        private Database db;
+        private OracleNoSQLDatabase db;
         private static final String classKeyPrefix = "class";
         private static final String objectKeyPrefix = "object";
 
-        public OracleNoSQLAdapter(Database db) {
+        private OracleNoSQLAdapter(OracleNoSQLDatabase db) {
             this.db = db;
         }
 
@@ -439,6 +438,4 @@ public class Database extends DatabaseInterface {
 
         }
     }
-
-
 }

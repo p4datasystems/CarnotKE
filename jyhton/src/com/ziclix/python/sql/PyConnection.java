@@ -274,7 +274,7 @@ public class PyConnection extends PyObject implements ClassDictInit, ContextMana
      * an auto-commit feature, this must be initially off. An interface method may be
      * provided to turn it back on.
      * <p/>
-     * Database modules that do not support transactions should implement this method with
+     * OracleNoSQLDatabase modules that do not support transactions should implement this method with
      * void functionality.
      */
     public void commit() {

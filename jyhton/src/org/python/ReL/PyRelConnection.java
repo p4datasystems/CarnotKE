@@ -26,13 +26,6 @@ import org.python.core.PyStringMap;
 import org.python.core.BuiltinDocs;
 import org.python.core.PyInteger;
 import org.python.core.PyTuple;
-import org.python.ReL.SIMHelper;
-
-import com.hp.hpl.jena.graph.*;
-import com.hp.hpl.jena.query.*;
-import com.hp.hpl.jena.rdf.model.Model;
-import oracle.rdf.kv.client.jena.*;
-import com.hp.hpl.jena.sparql.core.*;
 
 /**
  * A class that is resposible for communicating with a database.
@@ -107,7 +100,7 @@ public class PyRelConnection extends PyObject {
         }
         else if (url.contains("OracleNoSQL")) {
             if (conn_type.equalsIgnoreCase("native_mode")) {
-                database = new Database();
+                database = new OracleNoSQLDatabase();
                 connection_DB = "Native_OracleNoSQL";
             }
             else {

@@ -1,6 +1,5 @@
 package org.python.ReL;
 
-import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 
 import java.util.ArrayList;
@@ -22,14 +21,14 @@ import wdb.parser.Node;
 import wdb.parser.QueryParser;
 
 public class ProcessLanguages {
-    PyRelConnection conn = null;
+    PyRelConnection conn;
 	Adapter adapter;
-    SPARQLHelper sparqlHelper = null; 
+    SPARQLHelper sparqlHelper;
     DatabaseInterface connDatabase;
-    String schemaString = null;
+    String schemaString;
 	String NoSQLNameSpacePrefix = "";
     static Boolean parserInitialized = false;
-	static QueryParser parser = null;
+	static QueryParser parser;
 	String where = "";
 
     /**
@@ -49,11 +48,7 @@ public class ProcessLanguages {
 		NoSQLNameSpacePrefix = connDatabase.getNameSpacePrefix();
     }
 
-//	public ProcessLanguages(Database conn) {
-//		this.connDatabase = conn;
-//		this.adapter = new OracleNoSQLAdapter(conn);
-//	}
-//                                                                  ------------------------------------- SIM -------------------------
+// ------------------------------------- SIM -------------------------
     public synchronized String processSIM(String ReLstmt) throws SQLException {
 
     	String Save_ReLstmt = ReLstmt;
@@ -218,7 +213,7 @@ public class ProcessLanguages {
 
 
 		boolean DBG = true;
-		Database db = (Database) connDatabase;
+		OracleNoSQLDatabase db = (OracleNoSQLDatabase) connDatabase;
 		if (ReLstmt.equalsIgnoreCase("clear database")) {
 			db.clearDatabase();
 			return;
@@ -259,14 +254,14 @@ public class ProcessLanguages {
                     {
                         //Cycles are implicitly checked since getClass will fail for the current defining class
                         ClassDef superClass = adapter.getClass(((SubclassDef)cd).getSuperClass(i));
-//                        if(baseClass == null)
-//                        {
-//                            baseClass = superClass.getBaseClass(adapter);
-//                        }
-//                        else if(!baseClass.name.equals(superClass.getBaseClass(adapter).name))
-//                        {
-//                            throw new Exception("Super classes of class \"" + cd.name + "\" do not share the same base class");
-//                        }
+                        if(baseClass == null)
+                        {
+                            baseClass = superClass.getBaseClass(adapter);
+                        }
+                        else if(!baseClass.name.equals(superClass.getBaseClass(adapter).name))
+                        {
+                            throw new Exception("Super classes of class \"" + cd.name + "\" do not share the same base class");
+                        }
                     }
                 }
 
