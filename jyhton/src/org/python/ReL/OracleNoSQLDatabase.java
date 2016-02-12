@@ -323,9 +323,8 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
 
 
     /**
-     * OracleNoSQLAdapter is extending SleepyCatDataAdapter AS A WORKAROUND until
-     * I overload the method parameters in ClassDef and WDBObject classes
-     * inside the wdb.jar in the extlibs directory.
+     * OracleNoSQLAdapter implements the Adapter interface to ensure it has all the
+     * required methods implemented to be processed in ProcessLanguages.
      * @author Joshua Hurt
      */
     private class OracleNoSQLAdapter implements Adapter {
