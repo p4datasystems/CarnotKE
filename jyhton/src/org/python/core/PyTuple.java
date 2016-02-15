@@ -18,16 +18,9 @@ import org.python.expose.ExposedNew;
 import org.python.expose.ExposedType;
 import org.python.expose.MethodType;
 
-import java.sql.*;
-
 import java.util.concurrent.ConcurrentMap;
 
-import oracle.jdbc.OracleConnection;
-import oracle.jdbc.OracleResultSet;
-import oracle.jdbc.pool.OracleDataSource;
-
 import net.sf.jsqlparser.expression.*;
-import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.*;
 import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.statement.insert.Insert;
@@ -35,42 +28,16 @@ import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.drop.Drop;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
-import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
-import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.ExpressionVisitor;
 
-import batch.EvalService;
-import batch.tcp.TCPClient;
-import batch.util.BatchTransport;
-import batch.json.JSONTransport;
-
-import org.python.util.JenaTutorialExamples;
-
-import com.hp.hpl.jena.graph.*;
-import com.hp.hpl.jena.query.*;
-import com.hp.hpl.jena.rdf.model.Model;
-import oracle.rdf.kv.client.jena.*;
-import com.hp.hpl.jena.sparql.core.*;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import java.io.InputStream;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.*;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.config.Lookup;
 
 /**
  * A builtin python tuple.
@@ -299,12 +266,12 @@ public class PyTuple extends PySequenceList implements List {
 
             if (conn.getConnectionType() == "native_mode") {
                 try {
-                    processLanguage = new ProcessLanguages(conn, true /*isNative*/);
+                    processLanguage = new ProcessLanguages(conn);
                     processLanguage.processNativeSIM(ReLstmt);
                 }
                 catch (Exception e) {
                     // Shut down the connection
-                    ((Database)conn.getDatabase()).ultimateCleanUp(e.getMessage());
+                    ((OracleNoSQLDatabase)conn.getDatabase()).ultimateCleanUp(e.getMessage());
                 }
             }
             else {

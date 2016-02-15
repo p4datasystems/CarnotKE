@@ -11,22 +11,24 @@ import java.util.UUID;
 
 import org.python.core.PyObject;
 
-import wdb.metadata.*;
-import wdb.parser.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.cyphersim.CypherSimTranslator;
+import wdb.metadata.*;
+import wdb.parser.Node;
+import wdb.parser.QueryParser;
 
 public class ProcessLanguages {
-    PyRelConnection conn = null;
-    SPARQLHelper sparqlHelper = null; 
+    PyRelConnection conn;
+	Adapter adapter;
+    SPARQLHelper sparqlHelper;
     DatabaseInterface connDatabase;
-    String schemaString = null;
+    String schemaString;
 	String NoSQLNameSpacePrefix = "";
     static Boolean parserInitialized = false;
-	static QueryParser parser = null;	
+	static QueryParser parser;
 	String where = "";
 
     /**
@@ -42,15 +44,11 @@ public class ProcessLanguages {
         sparqlHelper = new SPARQLHelper(conn);
         schemaString = sparqlHelper.getSchemaString();
         connDatabase  = conn.getDatabase();
+		this.adapter = connDatabase.adapter;
 		NoSQLNameSpacePrefix = connDatabase.getNameSpacePrefix();
     }
 
-	public ProcessLanguages(PyRelConnection conn, Boolean isNative) {
-		this.conn = conn;
-		connDatabase  = conn.getDatabase();
-		NoSQLNameSpacePrefix = connDatabase.getNameSpacePrefix();
-	}
-//                                                                  ------------------------------------- SIM -------------------------
+// ------------------------------------- SIM -------------------------
     public synchronized String processSIM(String ReLstmt) throws SQLException {
 
     	String Save_ReLstmt = ReLstmt;
@@ -206,19 +204,6 @@ public class ProcessLanguages {
 			}
 			sparql = null;
 			if(conn.getConnectionDB() == "OracleNoSQL") {
-/*
-
-		    sparql = null;
-		    } else {
-/*
-// Process Modify on ! OracleRDFNoSQL.
-				SIMHelper simhelper = new SIMHelper(conn);
-				try {
-						simhelper.executeModify(className, attributeValues, whereAttrValues, 1000000);
-					} catch (Exception e) {
-						System.out.println(e);
-				}
-*/
 		    }
 		}
 		return sparql;
@@ -226,8 +211,9 @@ public class ProcessLanguages {
 
 	public synchronized void processNativeSIM(String ReLstmt) throws Exception {
 
+
 		boolean DBG = true;
-		Database db = (Database) connDatabase;
+		OracleNoSQLDatabase db = (OracleNoSQLDatabase) connDatabase;
 		if (ReLstmt.equalsIgnoreCase("clear database")) {
 			db.clearDatabase();
 			return;
@@ -253,261 +239,210 @@ public class ProcessLanguages {
 		if(q.getClass() == ClassDef.class || q.getClass() == SubclassDef.class)
 		{
 			ClassDef cd = (ClassDef)q;
+            try
+            {
+                adapter.getClass(cd.name);
+                //That class already exists;
+                throw new Exception("Class \"" + cd.name + "\" already exists");
+            }
+            catch(ClassNotFoundException cnfe)
+            {
+                if(cd.getClass() == SubclassDef.class)
+                {
+                    ClassDef baseClass = null;
+                    for(int i = 0; i < ((SubclassDef)cd).numberOfSuperClasses(); i++)
+                    {
+                        //Cycles are implicitly checked since getClass will fail for the current defining class
+                        ClassDef superClass = adapter.getClass(((SubclassDef)cd).getSuperClass(i));
+                        if(baseClass == null)
+                        {
+                            baseClass = superClass.getBaseClass(adapter);
+                        }
+                        else if(!baseClass.name.equals(superClass.getBaseClass(adapter).name))
+                        {
+                            throw new Exception("Super classes of class \"" + cd.name + "\" do not share the same base class");
+                        }
+                    }
+                }
 
-			try
-			{
-				Adapter adapter = new Adapter(db);
-
-				try
-				{
-					try
-					{
-						adapter.getClass(cd.name);
-						//That class already exists;
-						throw new Exception("Class \"" + cd.name + "\" already exists");
-					}
-					catch(ClassNotFoundException cnfe)
-					{
-						if(cd.getClass() == SubclassDef.class)
-						{
-							ClassDef baseClass = null;
-							for(int i = 0; i < ((SubclassDef)cd).numberOfSuperClasses(); i++)
-							{
-								//Cycles are implicitly checked since getClass will fail for the current defining class
-								ClassDef superClass = adapter.getClass(((SubclassDef)cd).getSuperClass(i));
-								if(baseClass == null)
-								{
-									baseClass = superClass.getBaseClass(adapter);
-								}
-								else if(!baseClass.name.equals(superClass.getBaseClass(adapter).name))
-								{
-									throw new Exception("Super classes of class \"" + cd.name + "\" do not share the same base class");
-								}
-							}
-						}
-
-						adapter.putClass(cd);
-						adapter.commit();
-					}
-				}
-				catch(Exception e)
-				{
-					System.out.println("This class already exists: " + cd.name);
-					adapter.abort();
-					return;
-				}
-			}
-			catch(Exception e)
-			{
-				System.out.println(e.toString() + ": " + e.getMessage());
-			}
+                adapter.putClass(cd);
+                adapter.commit();
+            }
+            catch(Exception e)
+            {
+                System.out.println("This class already exists: " + cd.name);
+                adapter.abort();
+                return;
+            }
 		}
 
 		if(q.getClass() == ModifyQuery.class)
 		{
 			ModifyQuery mq = (ModifyQuery)q;
-			try
-			{
-				Adapter adapter = new Adapter(db);
-
-				try
-				{
-					ClassDef targetClass = adapter.getClass(mq.className);
-					WDBObject[] targetClassObjs = targetClass.search(mq.expression, adapter);
-					if(mq.limit > -1 && targetClassObjs.length > mq.limit)
-					{
-						throw new Exception("Matching entities exceeds limit of " + mq.limit.toString());
-					}
-					for(int i = 0; i < targetClassObjs.length; i++)
-					{
-						setValues(mq.assignmentList, targetClassObjs[i], adapter);
-					}
-					adapter.commit();
-				}
-				catch(Exception e)
-				{
-					System.out.println(e.toString());
-					adapter.abort();
-				}
-			}
-			catch(Exception e)
-			{
-				System.out.println(e.toString());
-			}
+            try
+            {
+                ClassDef targetClass = adapter.getClass(mq.className);
+                WDBObject[] targetClassObjs = targetClass.search(mq.expression, adapter);
+                if(mq.limit > -1 && targetClassObjs.length > mq.limit)
+                {
+                    throw new Exception("Matching entities exceeds limit of " + mq.limit.toString());
+                }
+                for(int i = 0; i < targetClassObjs.length; i++)
+                {
+                    setValues(mq.assignmentList, targetClassObjs[i], adapter);
+                }
+                adapter.commit();
+            }
+            catch(Exception e)
+            {
+                System.out.println(e.toString());
+                adapter.abort();
+            }
 		}
 
 		if(q.getClass() == InsertQuery.class)
 		{
 			InsertQuery iq = (InsertQuery)q;
+            try
+            {
+                ClassDef targetClass = adapter.getClass(iq.className);
+                WDBObject newObject = null;
 
-			try
-			{
-				Adapter adapter = new Adapter(db);
+                if(iq.fromClassName != null)
+                {
+                    //Inserting from an entity of a superclass...
+                    if(targetClass.getClass() == SubclassDef.class)
+                    {
+                        SubclassDef targetSubClass = (SubclassDef)targetClass;
+                        ClassDef fromClass = adapter.getClass(iq.fromClassName);
+                        if(targetSubClass.isSubclassOf(fromClass.name, adapter))
+                        {
+                            WDBObject[] fromObjects = fromClass.search(iq.expression, adapter);
+                            if(fromObjects.length <= 0)
+                            {
+                                throw new IllegalStateException("Can't find any entities from class \"" + fromClass.name + "\" to extend");
+                            }
+                            for(int i = 0; i < fromObjects.length; i++)
+                            {
+                                newObject = targetSubClass.newInstance(fromObjects[i].getBaseObject(adapter), adapter);
+                                setValues(iq.assignmentList, newObject, adapter);
+                            }
+                        }
+                        else
+                        {
+                            throw new IllegalStateException("Inserted class \"" + targetClass.name + "\" is not a subclass of the from class \"" + iq.fromClassName);
+                        }
+                    }
+                    else
+                    {
+                        throw new IllegalStateException("Can't extend base class \"" + targetClass.name + "\" from class \"" + iq.fromClassName);
+                    }
+                }
+                else
+                {
+                    //Just inserting a new entity
+                    newObject = targetClass.newInstance(null, adapter);
+                    setDefaultValues(targetClass, newObject, adapter);
+                    setValues(iq.assignmentList, newObject, adapter);
+                    checkRequiredValues(targetClass, newObject, adapter);
+                }
 
-				try
-				{
-					ClassDef targetClass = adapter.getClass(iq.className);
-					WDBObject newObject = null;
-
-					if(iq.fromClassName != null)
-					{
-						//Inserting from an entity of a superclass...
-						if(targetClass.getClass() == SubclassDef.class)
-						{
-							SubclassDef targetSubClass = (SubclassDef)targetClass;
-							ClassDef fromClass = adapter.getClass(iq.fromClassName);
-							if(targetSubClass.isSubclassOf(fromClass.name, adapter))
-							{
-								WDBObject[] fromObjects = fromClass.search(iq.expression, adapter);
-								if(fromObjects.length <= 0)
-								{
-									throw new IllegalStateException("Can't find any entities from class \"" + fromClass.name + "\" to extend");
-								}
-								for(int i = 0; i < fromObjects.length; i++)
-								{
-									newObject = targetSubClass.newInstance(fromObjects[i].getBaseObject(adapter), adapter);
-									setValues(iq.assignmentList, newObject, adapter);
-								}
-							}
-							else
-							{
-								throw new IllegalStateException("Inserted class \"" + targetClass.name + "\" is not a subclass of the from class \"" + iq.fromClassName);
-							}
-						}
-						else
-						{
-							throw new IllegalStateException("Can't extend base class \"" + targetClass.name + "\" from class \"" + iq.fromClassName);
-						}
-					}
-					else
-					{
-						//Just inserting a new entity
-						newObject = targetClass.newInstance(null, adapter);
-						setDefaultValues(targetClass, newObject, adapter);
-						setValues(iq.assignmentList, newObject, adapter);
-						checkRequiredValues(targetClass, newObject, adapter);
-					}
-
-					if(newObject != null)
-					{
-						newObject.commit(adapter);
-					}
-					adapter.commit();
-				}
-				catch(Exception e)
-				{
-					System.out.println(e.toString());
-					adapter.abort();
-				}
-			}
-			catch(Exception e)
-			{
-				System.out.println(e.toString());
-			}
+                if(newObject != null)
+                {
+                    newObject.commit(adapter);
+                }
+                adapter.commit();
+            }
+            catch(Exception e)
+            {
+                System.out.println(e.toString());
+                adapter.abort();
+            }
 		}
+
 		if(q.getClass() == IndexDef.class)
 		{
 			IndexDef indexQ = (IndexDef)q;
+            try
+            {
+                ClassDef classDef = adapter.getClass(indexQ.className);
+                classDef.addIndex(indexQ, adapter);
 
-			try
-			{
-				Adapter adapter = new Adapter(db);
-
-				try
-				{
-					ClassDef classDef = adapter.getClass(indexQ.className);
-					classDef.addIndex(indexQ, adapter);
-
-					adapter.commit();
-				}
-				catch(Exception e)
-				{
-					System.out.println(e.toString());
-					adapter.abort();
-				}
-			}
-			catch(Exception e)
-			{
-				System.out.println(e.toString());
-			}
+                adapter.commit();
+            }
+            catch(Exception e)
+            {
+                System.out.println(e.toString());
+                adapter.abort();
+            }
 		}
+
 		if(q.getClass() == RetrieveQuery.class)
 		{
 			//Ok, its a retrieve...
 			RetrieveQuery rq = (RetrieveQuery)q;
+            try
+            {
+                ClassDef targetClass = adapter.getClass(rq.className);
+                WDBObject[] targetClassObjs = targetClass.search(rq.expression, adapter);
+                int i, j;
+                String[][] table;
+                String[][] newtable;
 
-			try
-			{
+                PrintNode node = new PrintNode(0,0);
+                for(j = 0; j < rq.numAttributePaths(); j++)
+                {
+                    targetClass.printAttributeName(node, rq.getAttributePath(j), adapter);
+                }
+                table = node.printRow();
+                for(i = 0; i < targetClassObjs.length; i++)
+                {
+                    node = new PrintNode(0,0);
+                    for(j = 0; j < rq.numAttributePaths(); j++)
+                    {
+                        targetClassObjs[i].PrintAttribute(node, rq.getAttributePath(j), adapter);
+                    }
+                    newtable = joinRows(table, node.printRow());
+                    table = newtable;
+                }
 
-				Adapter adapter = new Adapter(db);
+                adapter.commit();
 
-				try
-				{
-					ClassDef targetClass = adapter.getClass(rq.className);
-					WDBObject[] targetClassObjs = targetClass.search(rq.expression, adapter);
-					int i, j;
-					String[][] table;
-					String[][] newtable;
+                Integer[] columnWidths= new Integer[table[0].length];
 
-					PrintNode node = new PrintNode(0,0);
-					for(j = 0; j < rq.numAttributePaths(); j++)
-					{
-						targetClass.printAttributeName(node, rq.getAttributePath(j), adapter);
-					}
-					table = node.printRow();
-					for(i = 0; i < targetClassObjs.length; i++)
-					{
-						node = new PrintNode(0,0);
-						for(j = 0; j < rq.numAttributePaths(); j++)
-						{
-							targetClassObjs[i].PrintAttribute(node, rq.getAttributePath(j), adapter);
-						}
-						newtable = joinRows(table, node.printRow());
-						table = newtable;
-					}
+                for(i = 0; i < columnWidths.length; i++)
+                {
+                    columnWidths[i] = 0;
+                    for(j = 0; j < table.length; j++)
+                    {
+                        if(i < table[j].length && table[j][i] != null && table[j][i].length() > columnWidths[i])
+                        {
+                            columnWidths[i] = table[j][i].length();
+                        }
+                    }
+                }
 
-					adapter.commit();
-
-					Integer[] columnWidths= new Integer[table[0].length];
-
-					for(i = 0; i < columnWidths.length; i++)
-					{
-						columnWidths[i] = 0;
-						for(j = 0; j < table.length; j++)
-						{
-							if(i < table[j].length && table[j][i] != null && table[j][i].length() > columnWidths[i])
-							{
-								columnWidths[i] = table[j][i].length();
-							}
-						}
-					}
-
-					for(i = 0; i < table.length; i++)
-					{
-						for(j = 0; j < table[0].length; j++)
-						{
-							if(j >= table[i].length || table[i][j] == null)
-							{
-								System.out.format("| %"+columnWidths[j].toString()+"s ", "");
-							}
-							else
-							{
-								System.out.format("| %"+columnWidths[j].toString()+"s ", table[i][j]);
-							}
-						}
-						System.out.format("|%n");
-					}
-				}
-				catch(Exception e)
-				{
-					System.out.println(e.toString());
-					adapter.abort();
-				}
-			}
-			catch(Exception e)
-			{
-				System.out.println(e.toString());
-			}
+                for(i = 0; i < table.length; i++)
+                {
+                    for(j = 0; j < table[0].length; j++)
+                    {
+                        if(j >= table[i].length || table[i][j] == null)
+                        {
+                            System.out.format("| %"+columnWidths[j].toString()+"s ", "");
+                        }
+                        else
+                        {
+                            System.out.format("| %"+columnWidths[j].toString()+"s ", table[i][j]);
+                        }
+                    }
+                    System.out.format("|%n");
+                }
+            }
+            catch(Exception e)
+            {
+                System.out.println(e.toString());
+                adapter.abort();
+            }
 		}
 		/******************* END WDB CODE DUMP *****************/
 	}
