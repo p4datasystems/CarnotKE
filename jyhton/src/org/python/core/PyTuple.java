@@ -303,7 +303,7 @@ public class PyTuple extends PySequenceList implements List {
             if (conn.getDebug() == "debug") System.out.println("PyTuple sim is: " + ReLstmt);
             ProcessLanguages processLanguage = new ProcessLanguages(conn);
             String sparql = null;
-            try { sparql = processLanguage.processSIM(ReLstmt); }
+            try { sparql = processLanguage.processSIMNative(ReLstmt); }
             catch(Exception e1) { System.out.println(e1.getMessage()); }
             if(sparql != null ) {
               String connection_DB = conn.getConnectionDB();

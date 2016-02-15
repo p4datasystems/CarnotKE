@@ -55,7 +55,10 @@ public class ProcessLanguages {
     }
 
 //                                                                  ------------------------------------- SIM -------------------------
-    public synchronized String processSIM(String ReLstmt) throws SQLException { 
+/*    public synchronized String ProcessSIMNative(String ReLstmt) {
+	    return ""; 
+    } 
+*/    public synchronized String processSIM(String ReLstmt) throws SQLException { 
 
     	String Save_ReLstmt = ReLstmt;
 		ReLstmt += ";";
