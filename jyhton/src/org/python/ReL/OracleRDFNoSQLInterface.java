@@ -57,12 +57,9 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
 
         connection = null;
         this.debug = debug;
-	
-/*	if(conn_type == "native_mode") {
-		this.connection = OracleNoSqlConnection.createInstance("kvstore", "localhost", "5000");	
-	}
-	else*/if(conn_type != "none" ) {
-            this.connection = OracleNoSqlConnection.createInstance("kvstore", "localhost", "5000");
+
+        if(conn_type != "none" ) {
+            this.connection = OracleNoSqlConnection.createInstance("kvstore", "localhost", "9000");
             OracleGraphNoSql graph = new OracleGraphNoSql(connection);
             this.datasetGraph = DatasetGraphNoSql.createFrom(graph);
 

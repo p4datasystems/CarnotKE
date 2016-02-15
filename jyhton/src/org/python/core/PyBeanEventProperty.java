@@ -144,7 +144,7 @@ public class PyBeanEventProperty extends PyObject {
     }
 
     private synchronized static Class<?> getAdapterClass(Class<?> c) {
-        String name = "org.python.proxies." + c.getName() + "$Adapter";
+        String name = "org.python.proxies." + c.getName() + "$OracleNoSQLAdapter";
         Class<?> pc = Py.findClass(name);
         if (pc == null) {
             pc = adapterClasses.get(name);

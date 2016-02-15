@@ -47,7 +47,7 @@ public class WDB {
 			db = new SleepyCatDataBase(dbDir.toString());
 			db.openDb("test");
 			
-			System.out.println("WDB Simantic Database Project");
+			System.out.println("WDB Simantic OracleNoSQLDatabase Project");
 			System.out.println("Copyright 2006 University of Texas at Austin");
 			System.out.println("DB Name: " + db.dbName + " DB Path: " + db.fileName);
 			

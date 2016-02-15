@@ -219,7 +219,7 @@ public class SIMHelper {
 
             }
         } catch (Exception e) {
-            System.out.println("Database error ");
+            System.out.println("OracleNoSQLDatabase error ");
         }
     }
     /*
@@ -231,7 +231,7 @@ public class SIMHelper {
         try {
             SPARQLDoer.insertObjectPropQuad(connection, instanceName.toUpperCase().trim(), "rdf:type", className.trim());
         } catch (Exception e) {
-            System.out.println("Database error");
+            System.out.println("OracleNoSQLDatabase error");
         }
     }
     /*
