@@ -8,6 +8,7 @@ sudo: false
 
 before_script:
     - cd jyhton
+    - export INSTALLATION_ROOT="."
     - uname -a
     - printenv
 
