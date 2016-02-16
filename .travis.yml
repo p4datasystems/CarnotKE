@@ -1,0 +1,17 @@
+language: java
+
+jdk:
+    - openjdk7
+    - openjdk8
+
+sudo: false
+
+before_script:
+    - cd jyhton
+    - uname -a
+    - printenv
+
+script:
+    - ant
+    - ant
+    - ./sim_native_tests.sh
