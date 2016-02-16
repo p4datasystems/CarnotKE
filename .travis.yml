@@ -13,6 +13,12 @@ before_script:
     - printenv
 
 script:
+    - pwd
     - ant
     - ant
+
+after_success:
+    - jdk_switcher use oraclejdk8
+
+after_script:
     - dist/bin/jython nativeSIMunitTests.py
