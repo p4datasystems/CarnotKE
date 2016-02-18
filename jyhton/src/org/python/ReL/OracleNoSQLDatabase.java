@@ -296,7 +296,8 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
     public void ultimateCleanUp(String reason) {
         disconnectFromStore();
         // Explicitly run stop if server is running
-        kvStoreCommand("stop", "-root", storeRoot.getAbsolutePath());
+        if (storeRoot != null)
+            kvStoreCommand("stop", "-root", storeRoot.getAbsolutePath());
 
         // Below may not be needed if above works quickly
         if (storeProcess != null)

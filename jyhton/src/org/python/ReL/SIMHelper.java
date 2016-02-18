@@ -35,7 +35,7 @@ public class SIMHelper {
      * Note:  The connection should not be closed within this class, as it will be closed
      * by its parent (invoker).
      *
-     * @param connection
+     * @param conn
      */
     public SIMHelper(PyRelConnection conn) {
         connection = conn; 
@@ -219,7 +219,7 @@ public class SIMHelper {
 
             }
         } catch (Exception e) {
-            System.out.println("OracleNoSQLDatabase error ");
+            System.out.println("Database error ");
         }
     }
     /*
@@ -231,7 +231,7 @@ public class SIMHelper {
         try {
             SPARQLDoer.insertObjectPropQuad(connection, instanceName.toUpperCase().trim(), "rdf:type", className.trim());
         } catch (Exception e) {
-            System.out.println("OracleNoSQLDatabase error");
+            System.out.println("Database error");
         }
     }
     /*

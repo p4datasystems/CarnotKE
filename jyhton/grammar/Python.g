@@ -1912,7 +1912,7 @@ sim_stmt
         {
             conn_name = actions.makeNameNode($name);
         } (s += STRING (e = expr[expr_contextType.Load])?
-               { strings.add(actions.extractStrings($s, encoding, unicodeLiterals).toString().replaceAll(";", "")); $s = null;
+               { strings.add(actions.extractStrings($s, encoding, unicodeLiterals).toString().replaceAll(";", "_^_")); $s = null;
                  if(e != null) exprs.add(actions.castExpr($e.tree)); e = null;
                }
           )+
