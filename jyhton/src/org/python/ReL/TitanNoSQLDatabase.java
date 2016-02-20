@@ -1,11 +1,22 @@
 package org.python.ReL;
-
 import wdb.metadata.Adapter;
 import wdb.metadata.ClassDef;
 import wdb.metadata.IndexDef;
 import wdb.metadata.WDBObject;
 
 import java.util.ArrayList;
+
+import com.thinkaurelius.titan.core.*;
+import com.thinkaurelius.titan.core.attribute.Geoshape;
+import com.thinkaurelius.titan.core.schema.ConsistencyModifier;
+import com.thinkaurelius.titan.core.schema.TitanGraphIndex;
+import com.thinkaurelius.titan.core.schema.TitanManagement;
+import org.apache.tinkerpop.gremlin.process.traversal.Order;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.T;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 /**
  * @author Alvin Deng
