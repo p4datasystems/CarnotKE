@@ -89,7 +89,7 @@ public class PyRelClassDef {
                 SPARQLDoer.insertObjectPropQuad(connection, baseType.getName(), "rdfs:subClassOf",
                                        type.getName());
             } catch (SQLException e) {
-                System.err.println("OracleNoSQLDatabase error");
+                System.err.println("Database error");
                 e.printStackTrace();
             }
             insertType(baseType); 
