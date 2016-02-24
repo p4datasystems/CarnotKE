@@ -239,7 +239,8 @@ public class ProcessLanguages {
 			System.out.println("Statement executed: " + ReLstmt);
 
 		/************* BEGIN WDB CODE DUMP ************************/
-		if(q.getClass() == ClassDef.class || q.getClass() == SubclassDef.class)
+//		if(q.getClass() == ClassDef.class || q.getClass() == SubclassDef.class)
+		if(q instanceof ClassDef)
 		{
 			ClassDef cd = (ClassDef)q;
             try
@@ -303,7 +304,7 @@ public class ProcessLanguages {
             }
 		}
 
-		if(q.getClass() == InsertQuery.class)
+		if(q instanceof InsertQuery)
 		{
 			InsertQuery iq = (InsertQuery)q;
             try
@@ -363,7 +364,7 @@ public class ProcessLanguages {
             }
 		}
 
-		if(q.getClass() == IndexDef.class)
+		if(q instanceof IndexDef)
 		{
 			IndexDef indexQ = (IndexDef)q;
             try
@@ -380,7 +381,7 @@ public class ProcessLanguages {
             }
 		}
 
-		if(q.getClass() == RetrieveQuery.class)
+		if(q instanceof RetrieveQuery)
 		{
 			//Ok, its a retrieve...
 			RetrieveQuery rq = (RetrieveQuery)q;

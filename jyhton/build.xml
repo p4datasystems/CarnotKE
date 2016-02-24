@@ -647,6 +647,7 @@ The readme text for the next release will be like:
         <jarjar destfile="${dist.dir}/${jython.deploy.jar}">
             <zipfileset src="${dist.dir}/${jython.dev.jar}"/>
             <zipfileset src="extlibs/antlr-runtime-3.1.3.jar"/>
+            <zipfileset src="extlibs/antlr-4.5.2.jar"/>
             <rule pattern="org.antlr.runtime.**" result="org.python.antlr.runtime.@1"/>
             <zipfileset src="extlibs/asm-5.0.3.jar"/>
             <zipfileset src="extlibs/asm-commons-5.0.3.jar"/>

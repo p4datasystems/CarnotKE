@@ -341,6 +341,7 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
          * key: String class:(classDef.name)
          * value: ClassDef classDef
          */
+        @Override
         public void putClass(ClassDef classDef) {
             final String keyString = makeClassKey(classDef.name);
             final byte[] data = SerializationUtils.serialize(classDef);
@@ -356,6 +357,7 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
          * key: String class:(classDef.name)
          * @return ClassDef or null if not found
          */
+        @Override
         public ClassDef getClass(String className) throws ClassNotFoundException {
             PrimaryKey key = db.getClassTable().createPrimaryKey();
             final String keyString = makeClassKey(className);
@@ -382,6 +384,7 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
          * value: WDBObject object
          * @param wdbObject to serialize and store as value
          */
+        @Override
         public void putObject(WDBObject wdbObject) {
             final String keyString = makeObjectKey(wdbObject.getUid());
             final byte[] data = SerializationUtils.serialize(wdbObject);
@@ -400,6 +403,7 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
          * @param Uid is the key to retrieve the WDBObject
          * @return WDBObject or throws MissingResourceException
          */
+        @Override
         public WDBObject getObject(String className, Integer Uid) {
             final String keyString = makeObjectKey(Uid);
             PrimaryKey key = db.getObjectTable().createPrimaryKey();
@@ -418,6 +422,7 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
             return wdbObject;
         }
 
+        @Override
         public ArrayList<WDBObject> getObjects(IndexDef indexDef, String key) {
             System.out.println("getObjects called in OracleNoSQLAdapter");
             return null;
@@ -430,10 +435,13 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
         private String makeObjectKey(Integer Uid) {
             return objectKeyPrefix + ":" + Uid.toString();
         }
+
+        @Override
         public void abort() {
 
         }
 
+        @Override
         public void commit() {
 
         }

@@ -34,6 +34,10 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 import oracle.rdf.kv.client.jena.*;
+import wdb.metadata.Adapter;
+import wdb.metadata.ClassDef;
+import wdb.metadata.IndexDef;
+import wdb.metadata.WDBObject;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,7 +63,7 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
         this.debug = debug;
 
         if(conn_type != "none" ) {
-            this.connection = OracleNoSqlConnection.createInstance("kvstore", "localhost", "9000");
+            this.connection = OracleNoSqlConnection.createInstance("mystore", "localhost", "5000");
             OracleGraphNoSql graph = new OracleGraphNoSql(connection);
             this.datasetGraph = DatasetGraphNoSql.createFrom(graph);
 
@@ -225,5 +229,49 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
             iter++;
         }
         return results;
+    }
+
+
+    private class OracleRDFNoSQLAdapter implements Adapter {
+        private OracleRDFNoSQLInterface db;
+
+        private OracleRDFNoSQLAdapter(OracleRDFNoSQLInterface db) {
+            this.db = db;
+        }
+
+        @Override
+        public void putClass(ClassDef classDef) {
+
+        }
+
+        @Override
+        public ClassDef getClass(String s) throws ClassNotFoundException {
+            return null;
+        }
+
+        @Override
+        public void putObject(WDBObject wdbObject) {
+
+        }
+
+        @Override
+        public WDBObject getObject(String s, Integer integer) {
+            return null;
+        }
+
+        @Override
+        public ArrayList<WDBObject> getObjects(IndexDef indexDef, String s) {
+            return null;
+        }
+
+        @Override
+        public void commit() {
+
+        }
+
+        @Override
+        public void abort() {
+
+        }
     }
 }
