@@ -253,6 +253,9 @@ oracle.jar=C:/workspace/HEAD/for_development/bisdevsrv28/jboss/server/infra/lib/
             <pathelement path="${extlibs.dir}/xercesImpl.jar"/>
             <pathelement path="${extlibs.dir}/xml-apis.jar"/>
 
+            <!-- TitanDB Support -->
+            <pathelement path="${extlibs.dir}/titan-1.0.0-hadoop1/lib/*.jar"/>
+
             <!-- Jars for Entrata -->
             <pathelement path="${extlibs.dir}/httpclient-4.3.3.jar"/>
             <pathelement path="${extlibs.dir}/httpcore-4.3.jar"/>
