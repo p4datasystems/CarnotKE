@@ -211,18 +211,21 @@ public class ProcessLanguages {
 
 	public synchronized void processNativeSIM(String ReLstmt) throws Exception {
 
-
 		boolean DBG = true;
-		OracleNoSQLDatabase db = (OracleNoSQLDatabase) connDatabase;
-		if (ReLstmt.equalsIgnoreCase("clear database")) {
-			db.clearDatabase();
-			return;
+		ReLstmt = ReLstmt.replaceAll("\\_\\^\\_", ";");
+
+		if (DBG) {
+			if (ReLstmt.equalsIgnoreCase("clear database")) {
+                OracleNoSQLDatabase db = (OracleNoSQLDatabase) connDatabase;
+                db.clearDatabase();
+                return;
+			}
+			if (ReLstmt.equalsIgnoreCase("stop database")) {
+				OracleNoSQLDatabase db = (OracleNoSQLDatabase) connDatabase;
+				db.ultimateCleanUp("Cleaning up from test.");
+				return;
+			}
 		}
-		if (ReLstmt.equalsIgnoreCase("stop database")) {
-			db.ultimateCleanUp("Stop database");
-			return;
-		}
-		ReLstmt = ReLstmt.replaceAll("!", ";");
 		InputStream is = new ByteArrayInputStream(ReLstmt.getBytes());
 		Query q = null;
 		if( ! parserInitialized) {

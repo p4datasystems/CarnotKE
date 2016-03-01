@@ -1,0 +1,22 @@
+language: java
+
+jdk:
+    - openjdk7
+
+sudo: false
+
+before_script:
+    - cd jyhton
+    - export INSTALLATION_ROOT="."
+    - uname -a
+    - printenv
+
+script:
+    - pwd
+    - ant
+
+after_success:
+    - jdk_switcher use oraclejdk8
+
+after_script:
+    - dist/bin/jython nativeSIMunitTests.py
