@@ -108,6 +108,15 @@ public class PyRelConnection extends PyObject {
                 connection_DB = "OracleNoSQL";
             }
 
+        } else if (url.contains("TitanNoSQL")) {
+            if (conn_type.equalsIgnoreCase("native_mode")) {
+                database = new TitanNoSQLDatabase();
+                connection_DB = "Native_OracleNoSQL";
+            }
+            else {
+                database = new OracleRDFNoSQLInterface(url, uname, pword, conn_type, debug);
+                connection_DB = "OracleNoSQL";
+            }
         }
     }
     
