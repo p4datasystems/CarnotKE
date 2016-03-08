@@ -183,7 +183,7 @@ class OOReLTestCase(unittest.TestCase):
             A = 0
             B = 0
             def __init__(self):
-                self.A = "" 
+                self.A = ""
                 self.B = 0
 
         item = TEST()
@@ -191,10 +191,10 @@ class OOReLTestCase(unittest.TestCase):
         item.B = 540
         relInsert on global_conn item
         relCommit on global_conn
-                
+
         results = SQL on global_conn "select * from TEST"
 
-        # SQL on global_conn """ DELETE * FROM TEST"""   
+        # SQL on global_conn """ DELETE * FROM TEST"""
         # results = SQL on global_conn """ SELECT TEST.A, TEST.B FROM TEST """
 
         assert False, 'OOReL needs work'

@@ -59,7 +59,7 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
         this.debug = debug;
 
         if(conn_type != "none" ) {
-            this.connection = OracleNoSqlConnection.createInstance("kvstore", "Phils-MacBook-Pro.local", "5000");
+            this.connection = OracleNoSqlConnection.createInstance("kvstore", "localhost", "9000");
             OracleGraphNoSql graph = new OracleGraphNoSql(connection);
             this.datasetGraph = DatasetGraphNoSql.createFrom(graph);
 
@@ -67,8 +67,10 @@ public class OracleRDFNoSQLInterface extends DatabaseInterface {
             graph.close(); 
             
             // Clear dataset
-            System.out.println("\nWRNING: the NoSQL database is being cleared in PyRelConnection!\n");
-            datasetGraph.clearRepository();
+            if(debug.equals("debug")) {
+                System.out.println("\nWARNING: the NoSQL database is being cleared in PyRelConnection!\n");
+                datasetGraph.clearRepository();
+            }
         }
     }
 

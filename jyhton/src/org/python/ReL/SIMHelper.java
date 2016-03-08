@@ -35,7 +35,7 @@ public class SIMHelper {
      * Note:  The connection should not be closed within this class, as it will be closed
      * by its parent (invoker).
      *
-     * @param connection
+     * @param conn
      */
     public SIMHelper(PyRelConnection conn) {
         connection = conn; 

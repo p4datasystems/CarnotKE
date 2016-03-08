@@ -10,6 +10,7 @@ import java.io.*;
 import java.util.*;
 import java.lang.*;
 import java.lang.reflect.Array;
+import wdb.metadata.Adapter;
 
 import org.python.core.*;
 import org.python.antlr.base.expr;
@@ -24,9 +25,10 @@ import java.sql.SQLException;
  * be able to implement database's other than oracle someday.
  */
 
-public abstract class DatabaseInterface{
+public abstract class DatabaseInterface {
     private String nameSpace = "nameSpace should be overridden.";
     private String nameSpacePrefix = "nameSpacePrefix should be overridden.";
+    public Adapter adapter;
 
     // This will just execute the statement. 
     public void executeStatement(String stmt) throws SQLException {
