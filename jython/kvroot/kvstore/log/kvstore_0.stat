@@ -2632,3 +2632,17 @@ PS MarkSweep
 	count=2
 	time=80
 
+2016-03-08 09:04:02.980 UTC INFO [kvstore] rg1-rn1 (09:03:00.871 UTC -> 09:04:00.871 UTC)
+Replication State: MASTER
+2016-03-08 09:04:02.980 UTC INFO [kvstore] rg1-rn1 (09:03:00.871 UTC -> 09:04:00.871 UTC)
+Memory
+	freeMemory=211954784
+	maxMemory=1883242496
+	totalMemory=259522560
+PS Scavenge
+	count=14
+	time=147
+PS MarkSweep
+	count=3
+	time=233
+
