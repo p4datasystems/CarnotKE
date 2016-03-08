@@ -8,8 +8,8 @@ notifications:
 
 env:
   matrix:
-    - CUSTOM_JDK="oraclejdk7"
-    - CUSTOM_JDK="openjdk7"
+    - CUSTOM_JDK="oraclejdk8"
+    - CUSTOM_JDK="openjdk8"
 
 before_install:
   - cd jython
@@ -23,4 +23,4 @@ script:
    - cd kv-3.5.2/lib
    - java -jar kvstore.jar kvlite
    - cd ../../
-   - dist/bin/jython ReLUnitTests.py
+   - dist/bin/jython SPARQLUnitTests.py
