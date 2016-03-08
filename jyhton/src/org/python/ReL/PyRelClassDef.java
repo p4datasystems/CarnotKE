@@ -1,22 +1,11 @@
 package org.python.ReL;
 
-import java.sql.SQLException;
-
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentMap;
-
+import org.python.core.*;
 import org.python.expose.ExposedType;
 
-import org.python.core.PyObject;
-import org.python.core.PyType;
-import org.python.core.PyObjectDerived;
-import org.python.core.PyStringMap;
-import org.python.core.PyString;
-import org.python.core.PyBoolean;
-import org.python.core.PyInteger;
-import org.python.core.BuiltinDocs;
-import org.python.ReL.SIMHelper;
-import org.python.ReL.PyRelConnection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * A PyRelClassDef is resposible for populating class types, and their base types

@@ -1,5 +1,7 @@
 .idea
 jyhton/.hg
+jyhton/build
+jyhton/dist
 ./.hg
 STORE
 db

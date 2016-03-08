@@ -1,19 +1,10 @@
 package org.python.ReL;
 
-import java.sql.SQLException;
-
+import org.python.core.BuiltinDocs;
+import org.python.core.PyObject;
 import org.python.expose.ExposedType;
 
-import org.python.core.PyObject;
-import org.python.core.PyType;
-import org.python.core.PyObjectDerived;
-import org.python.core.PyStringMap;
-import org.python.core.PyString;
-import org.python.core.PyBoolean;
-import org.python.core.PyInteger;
-import org.python.core.BuiltinDocs;
-import org.python.ReL.SIMHelper;
-import org.python.ReL.PyRelConnection;
+import java.sql.SQLException;
 
 /**
  * A class that is responsible for executing an insert of a python class instance into the database.

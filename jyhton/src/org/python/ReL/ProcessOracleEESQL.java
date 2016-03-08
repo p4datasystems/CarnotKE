@@ -2,36 +2,15 @@ package org.python.ReL;
 
 import org.python.core.*;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-
-import java.io.*;
 import java.util.*;
 import java.lang.*;
-import java.lang.reflect.Array;
 
-import org.python.expose.ExposedMethod;
-import org.python.expose.ExposedNew;
-import org.python.expose.ExposedType;
-import org.python.expose.MethodType;
 
 import java.sql.*;
 
 import java.util.concurrent.ConcurrentMap;
 
-import oracle.jdbc.OracleConnection;
-import oracle.jdbc.OracleResultSet;
-import oracle.jdbc.pool.OracleDataSource;
-
-import org.python.ReL.PyRelConnection;
-import org.python.ReL.SIMHelper;
-import org.python.ReL.SQLVisitor;
-import org.python.ReL.ProcessLanguages;
-import org.python.ReL.OracleRDFNoSQLInterface;
-import org.python.ReL.PyRelConnection;
 
 public class ProcessOracleEESQL {
     PyRelConnection conn = null;

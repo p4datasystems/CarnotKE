@@ -1,44 +1,18 @@
 package org.python.ReL;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-
-import java.io.*;
-import java.util.*;
-import java.lang.*;
-import java.lang.reflect.Array;
-
-import org.python.core.*;
-import org.python.antlr.base.expr;
-
-import com.hp.hpl.jena.graph.*;
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.*;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.sparql.core.*;
-import com.hp.hpl.jena.datatypes.BaseDatatype;
-import com.hp.hpl.jena.datatypes.DatatypeFormatException;
-import com.hp.hpl.jena.datatypes.RDFDatatype;
-import com.hp.hpl.jena.datatypes.TypeMapper;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFormatter;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.vocabulary.RDF;
-
-import oracle.rdf.kv.client.jena.*;
+import com.hp.hpl.jena.sparql.core.DatasetImpl;
+import oracle.rdf.kv.client.jena.DatasetGraphNoSql;
+import oracle.rdf.kv.client.jena.OracleGraphNoSql;
+import oracle.rdf.kv.client.jena.OracleNoSqlConnection;
+import org.python.core.*;
 import wdb.metadata.Adapter;
 import wdb.metadata.ClassDef;
 import wdb.metadata.IndexDef;
 import wdb.metadata.WDBObject;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

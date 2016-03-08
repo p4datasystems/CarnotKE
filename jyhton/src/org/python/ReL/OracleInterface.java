@@ -1,12 +1,16 @@
 package org.python.ReL;
 
+import wdb.metadata.Adapter;
+import wdb.metadata.ClassDef;
+import wdb.metadata.IndexDef;
+import wdb.metadata.WDBObject;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.io.*;
-import java.sql.*;
+import java.util.ArrayList;
 
 /**
  * A class that is used to interface with the oracle database.
@@ -20,9 +24,10 @@ public class OracleInterface extends DatabaseInterface {
     private Statement createStatement; 
     private ResultSet rs;
     private String debug;
-     
+
     public OracleInterface(String url, String uname, String passw, String conn_type, String debug) {
         super();
+        this.adapter = new OracleInterfaceAdapter(this);
         try
         {
             Class.forName("oracle.jdbc.OracleDriver");
@@ -91,5 +96,50 @@ public class OracleInterface extends DatabaseInterface {
             System.out.println("exception: " + e.getMessage());
         }
         return rs;
+    }
+
+    private class OracleInterfaceAdapter implements Adapter {
+        private OracleInterface db;
+
+        private OracleInterfaceAdapter(OracleInterface db) {
+            this.db = db;
+        }
+
+
+        @Override
+        public void putClass(ClassDef classDef) {
+
+        }
+
+        @Override
+        public ClassDef getClass(String s) throws ClassNotFoundException {
+            ClassDef classDef = new ClassDef(s, "Created on the fly via RDF");
+            return classDef;
+        }
+
+        @Override
+        public void putObject(WDBObject wdbObject) {
+
+        }
+
+        @Override
+        public WDBObject getObject(String s, Integer integer) {
+            return null;
+        }
+
+        @Override
+        public ArrayList<WDBObject> getObjects(IndexDef indexDef, String s) {
+            return null;
+        }
+
+        @Override
+        public void commit() {
+
+        }
+
+        @Override
+        public void abort() {
+
+        }
     }
 }
