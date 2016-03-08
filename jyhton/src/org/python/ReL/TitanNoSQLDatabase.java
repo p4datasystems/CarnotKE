@@ -1,25 +1,16 @@
 package org.python.ReL;
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
-import wdb.metadata.Adapter;
-import wdb.metadata.ClassDef;
-import wdb.metadata.IndexDef;
-import wdb.metadata.WDBObject;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
+import com.thinkaurelius.titan.core.schema.TitanManagement;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.*;
+import wdb.metadata.*;
+import wdb.parser.*;
 
 import com.thinkaurelius.titan.core.*;
-import com.thinkaurelius.titan.core.attribute.Geoshape;
-import com.thinkaurelius.titan.core.schema.ConsistencyModifier;
-import com.thinkaurelius.titan.core.schema.TitanGraphIndex;
-import com.thinkaurelius.titan.core.schema.TitanManagement;
-import org.apache.tinkerpop.gremlin.process.traversal.Order;
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
-import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.apache.tinkerpop.gremlin.structure.T;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import wdb.parser.QueryParser;
+
 
 /**
  * @author Alvin Deng
@@ -50,6 +41,7 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
             mg.buildIndex("byClassDef", Vertex.class).addKey(name).indexOnly(classLabel).buildCompositeIndex();
         }
         mg.commit();
+
 
         titanTransaction = titanGraph.newTransaction();
         if (initGraph) {
@@ -381,6 +373,22 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         return getSubclass(g, classDef.id(), targetClassName) != null;
     }
 
+    private static void printUpdateQueryResults(int newVertexCount, int[] edgeCounts) {
+        // edgeCounts[0] = num replaced, edgeCounts[1] = num inserted, edgeCounts[2] = num removed
+        if (newVertexCount != 0) {
+            System.out.printf("%d vertices inserted.\n", newVertexCount);
+        }
+        if (edgeCounts[0] != 0) {
+            System.out.printf("%d edges replaced.\n", edgeCounts[0]);
+        }
+        if (edgeCounts[1] != 0) {
+            System.out.printf("%d edges inserted.\n", edgeCounts[1]);
+        }
+        if (edgeCounts[2] != 0) {
+            System.out.printf("%d edges removed.\n", edgeCounts[2]);
+        }
+    }
+
     private static void checkAssignmentType(UpdateQuery query, String name, Vertex attrVertex, DvaAssignment dvaAssignment) {
         String type = (String) attrVertex.property("data_type").value();
         switch (type) {
@@ -434,7 +442,113 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
         @Override
         public void putClass(ClassDef classDef) {
+            GraphTraversalSource g = titanGraph.traversal();
+            try {
+                classDef.name = classDef.name.toLowerCase();
+                if (lookupClass(g, classDef.name) != null) {
+                    throwException("Class %s already exists!\n", classDef.name);
+                }
+                TitanVertex newClass = titanTransaction.addVertex(T.label, "classDef", "name", classDef.name);
+                if (classDef.comment != null) {
+                    newClass.property("comment", classDef.comment);
+                }
+                for (int i = 0; i < classDef.numberOfAttributes(); i++) {
+                    Attribute attr = classDef.getAttribute(i);
+                    attr.name = attr.name.toLowerCase();
+                    TitanVertex attrVertex = titanTransaction.addVertex(T.label, "attribute", "name", attr.name);
+                    if (attr.comment != null) {
+                        attrVertex.property("comment", attr.comment);
+                    }
 
+                    boolean required = attr.required != null && attr.required;
+                    Edge attrEdge = newClass.addEdge("has", attrVertex);
+                    if (required) {
+                        attrEdge.property("required", true);
+                    }
+
+                    if (attr instanceof DVA) {
+                        attrEdge.property("isDVA", true);
+                        DVA dva = (DVA) attr;
+                        attrVertex.property("data_type", dva.type.toLowerCase());
+                        if (dva.initialValue != null) {
+                            attrVertex.property("default_value", dva.initialValue);
+                        }
+                    } else if (attr instanceof EVA) {
+                        EVA eva = (EVA) attr;
+                        eva.baseClassName = eva.baseClassName.toLowerCase();
+                        eva.inverseEVA = eva.inverseEVA.toLowerCase();
+                        Vertex targetClass = lookupClass(g, eva.baseClassName);
+                        if (targetClass == null) {
+                            throwException("Class %s cannot create a relationship with %s because %2$s does not exist!",
+                                    classDef.name, eva.baseClassName);
+                        }
+                        attrVertex.property("class", eva.baseClassName, "isSV", eva.cardinality.equals(EVA.SINGLEVALUED));
+                        TitanVertex inverseVertex = titanTransaction.addVertex(T.label, "attribute",
+                                "name", eva.inverseEVA, "class", classDef.name, "isSV", true);
+                        if (attr.comment != null) {
+                            inverseVertex.property("comment", attr.comment);
+                        }
+                        Edge inverseEdge = targetClass.addEdge("has", inverseVertex);
+                        if (required) {
+                            inverseEdge.property("required", true);
+                        }
+                        attrVertex.addEdge("inverse", inverseVertex);
+                        inverseVertex.addEdge("inverse", attrVertex);
+                        if (eva.distinct != null) {
+                            attrVertex.property("distinct", eva.distinct);
+                        }
+                        if (eva.max != null) {
+                            attrVertex.property("max", eva.max);
+                        }
+                    } else {
+                        throwException("Attribute %s is not a DVA or an EVA!", attr);
+                    }
+                }
+
+                if (classDef instanceof SubclassDef) {
+                    SubclassDef scd = (SubclassDef) classDef;
+                    for (int i = 0; i < scd.numberOfSuperClasses(); i++) {
+                        String superClassName = scd.getSuperClass(i);
+                        if (superClassName.equals(classDef.name)) {
+                            throwException("Class %s cannot subclass itself!", classDef.name);
+                        }
+                        Vertex superClass = lookupClass(g, superClassName);
+                        if (superClass != null) {
+                            superClass.addEdge("superclasses", newClass);
+                            newClass.addEdge("subclasses", superClass);
+
+                            // copy attributes from superclass
+                            GraphTraversal<Vertex, Edge> superAttributes = g.V(superClass.id()).outE("has");
+                            while (superAttributes.hasNext()) {
+                                Edge edge = superAttributes.next();
+                                Edge e = newClass.addEdge("has", edge.inVertex());
+                                if (edge.property("isDVA").isPresent()) {
+                                    e.property("isDVA", true);
+                                }
+                                if (edge.property("required").isPresent()) {
+                                    e.property("required", true);
+                                }
+                            }
+                        } else {
+                            throwException("Class %s subclasses the non-existent %s class!",
+                                    classDef.name, superClassName);
+                        }
+                    }
+                } else {
+                    GraphTraversal<Vertex, Vertex> traversal = g.V().hasLabel("classDef").has("name", "root node");
+                    Vertex root = traversal.next();
+                    newClass.addEdge("subclasses", root);
+                    root.addEdge("superclasses", newClass);
+                }
+
+                titanTransaction.commit();
+                System.out.printf("Class %s defined\n", classDef.name);
+
+                System.out.println(lookupClass(titanGraph.traversal(), classDef.name));
+            } catch (RuntimeException e) {
+                titanTransaction.rollback();
+                throw e;
+            }
         }
 
         @Override
@@ -445,7 +559,51 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         /* InsertQuery */
         @Override
         public void putObject(WDBObject wdbObject) {
+            InsertQuery iq = (InsertQuery) query;
+            GraphTraversalSource g = titanGraph.traversal();
+            try {
+                int newVertexCount = 0, edgeCounts[];
+                Vertex classDef = lookupClass(g, iq.className);
+                if (classDef == null) {
+                    throwException("Cannot insert into class %s because it does not exist!", iq.fromClassName);
+                }
+                if (iq.fromClassName == null) {
+                    // just inserting a new entity
+                    Vertex entity = titanTransaction.addVertex(T.label, "entity", "class", iq.className);
+                    newVertexCount++;
+                    // make the entity an instance of the class
+                    classDef.addEdge("instance", entity);
 
+                    edgeCounts = doInsert(iq, g, classDef, entity);
+                } else {
+                    // inserting a subclass into an existing superclass
+                    Vertex superclassDef = lookupClass(g, iq.fromClassName);
+                    if (superclassDef == null) {
+                        throwException("Cannot extend into class %s because it does not exist!", iq.fromClassName);
+                    }
+                    if (!isSubclass(g, superclassDef, iq.className)) {
+                        throwException("Cannot extend class %s to class %s because %2$s is not a subclass of %1$s!",
+                                iq.fromClassName, iq.className);
+                    }
+                    edgeCounts = new int[3];
+                    for (Vertex instance : getInstances(g, superclassDef, iq.expression)) {
+                        g.V(instance.id()).inE("instance").next().remove();
+                        classDef.addEdge("instance", instance);
+                        int[] counts = doInsert(iq, g, classDef, instance);
+                        for (int i = 0; i < 3; i++) {
+                            edgeCounts[i] += counts[i];
+                        }
+                    }
+                }
+
+                printUpdateQueryResults(newVertexCount, edgeCounts);
+                titanTransaction.commit();
+                System.out.println("Insert complete");
+            } catch(RuntimeException e) {
+                System.err.println("Insert failed! Rolling back changes.");
+                titanTransaction.rollback();
+                throw e;
+            }
         }
 
         /* RetrieveQuery */
