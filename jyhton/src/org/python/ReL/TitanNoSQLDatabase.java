@@ -553,7 +553,23 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
         @Override
         public ClassDef getClass(String s) throws ClassNotFoundException {
-            return null;
+            GraphTraversalSource g = titanGraph.traversal();
+            Vertex currentVertex = lookupClass(g, s);
+            if (currentVertex == null)
+                return null;
+            ClassDef currentClassDef = new ClassDef();
+            currentClassDef.name = currentVertex.value("name").toString();
+            currentClassDef.comment = currentVertex.value("comment").toString();
+            Iterator<Edge> edgesIterator = currentVertex.edges(Direction.OUT, "has");
+            while (edgesIterator.hasNext()) {
+                Edge currentEdge = edgesIterator.next();
+                Vertex propertyVertex = currentEdge.outVertex();
+                Attribute newAttribute = new Attribute();
+                newAttribute.name = propertyVertex.value("name");
+                newAttribute.comment = propertyVertex.value("comment");
+                currentClassDef.addAttribute(newAttribute);
+            }
+            return currentClassDef;
         }
 
         /* InsertQuery */
