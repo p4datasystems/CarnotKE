@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 2. Security Configuration</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="prev" href="introduction_security.html" title="Chapter 1. Introducing Oracle NoSQL Database Security" />
+    <link rel="next" href="security_cli.html" title="Configuring Security with Makebootconfig" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 2. Security Configuration</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="introduction_security.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="security_cli.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="security_config"></a>Chapter 2. Security Configuration</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="security_config.html#security_usage">Security Configuration Overview</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="security_cli.html">Configuring Security with Makebootconfig</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="security_command.html">Configuring Security with Securityconfig</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="security_command.html#create_security">Creating the security configuration</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="security_command.html#add_security">Adding the security configuration</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="security_command.html#remove_security">Removing the security configuration</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="security_command.html#merge_security">Merging truststore configuration</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+        </dl>
+      </div>
+      <p> 
+        This chapter describes how to use either the
+            <code class="literal">makebootconfig</code> or
+            <code class="literal">securityconfig</code> tool to perform the security
+        configuration of your store. If you are installing a store with security
+        for the first time, you can skip ahead to the next chapter <a class="xref" href="secure_installation.html" title="Chapter 3. Performing a Secure Oracle NoSQL Database Installation">Performing a Secure Oracle NoSQL Database Installation</a>.
+    </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p> 
+            For simpler use cases (lab environments) it is possible to
+            perform a basic installation of your store by explicitly opting out
+            of security on the command line. If you do this, your store loses
+            all the security features described in this book. For more
+            information see <a class="xref" href="security_cli.html" title="Configuring Security with Makebootconfig">Configuring Security with Makebootconfig</a>. 
+        </p>
+      </div>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="security_usage"></a>Security Configuration Overview</h2>
+            </div>
+          </div>
+        </div>
+        <p> 
+            To set up security, you need to create an initial security
+            configuration. To do this, run <code class="literal">securityconfig</code>
+            before, after or as part of the <code class="literal">makebootconfig</code>
+            process before starting the SNA on an initial node. You should not
+            create a security configuration at each node. Instead, you should
+            distribute the initial security configuration across all the Storage
+            Nodes in your store. If the stores do not share a common security
+            configuration they will be unable to communicate with one another. 
+        </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p> 
+                The <code class="literal">makebootconfig</code> utility embeds the
+                functionality of <code class="literal">securityconfig</code> tool. 
+            </p>
+        </div>
+        <p> 
+            This tool creates a set of security files based on the standard
+            configuration. It is possible to perform the same tasks manually,
+            and advanced security configuration might require manual setup, but
+            using this tool helps to ensure a consistent setup. For more
+            information on the manual setup, see <a class="xref" href="appendix_keytool.html" title="Appendix A. SSL keystore generation">SSL keystore generation</a>. 
+        </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+                It is possible to modify the security configuration after it
+                is created in order to use a non-standard configuration. It is
+                recommended that you use a standard configuration. 
+            </p>
+        </div>
+        <p> 
+            Those security files are generated, by default, within a
+            directory named "security". In a secure configuration, the bootstrap
+            configuration file for a Storage Node includes a reference to that
+            directory, which must be within the KVROOT directory for the Storage
+            Node. The security directory contains: 
+        </p>
+        <pre class="programlisting">security/security.xml
+security/store.keys
+security/store.trust
+security/store.passwd  (CE or EE installations)
+security/store.wallet  (EE installations only) 
+security/store.wallet/cwallet.sso (EE installations only)
+security/client.security
+security/client.trust </pre>
+        <p> 
+            where: 
+        </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                    <code class="literal">security.xml</code>
+                </p>
+              <p> 
+                    A configuration file that tells the Oracle NoSQL Database server how to
+                    apply security.
+                </p>
+            </li>
+            <li>
+              <p>
+                    <code class="literal">store.keys</code>
+                </p>
+              <p>
+                    A Java keystore file containing one or more SSL/TLS key
+                    pairs. This keystore is protected by a keystore password,
+                    which is recorded in an accompanying password store. The
+                    password store may be either an Oracle Wallet or a
+                    FileStore. The password is stored under the alias "keystore"
+                    in the password store. This file should be accessible only
+                    by the Oracle NoSQL Database server processes, and not to Oracle NoSQL Database clients.
+                </p>
+            </li>
+            <li>
+              <p>
+                    <code class="literal">store.trust</code>
+                </p>
+              <p> 
+                    A Java truststore file, which is a keystore file that
+                    contains only public certificates, and no private keys.
+                </p>
+            </li>
+            <li>
+              <p>
+                    <code class="literal">store.passwd</code> (CE or EE installations)
+                </p>
+              <p> 
+                    A password file that acts as the password store for a
+                    Community Edition (CE) installation. It contains secret
+                    information that should be known only to the server
+                    processes. Make sure the password file is readable and
+                    writable only by the Oracle NoSQL Database server. The file should not be
+                    copied to client machines. </p>
+              <p> For Enterprise Edition (EE) installations, Oracle Wallet
+                    usage is preferred over the password file option. 
+                </p>
+            </li>
+            <li>
+              <p>
+                    <code class="literal">store.wallet</code> (EE installations only)
+                </p>
+              <p>
+                    An Oracle Wallet directory that acts as the password
+                    store for an Enterprise Edition (EE) installation. It
+                    contains secret information that should be known only to the
+                    server processes. Make sure the directory and its contents
+                    are readable and writable only by the NoSQL DB server. The
+                    file should not be copied to client machines. 
+                </p>
+            </li>
+            <li>
+              <p>
+                    <code class="literal">cwallet.sso</code> (EE installations only) 
+                </p>
+              <p> The wallet password storage file.
+                </p>
+            </li>
+            <li>
+              <p>
+                    <code class="literal">client.security</code>
+                </p>
+              <p>
+                    A security configuration file that captures the
+                    communication transport properties for connecting clients to
+                    KVStore.
+                </p>
+              <p> 
+                    The generated client.security file should be copied to
+                    and used by Oracle NoSQL Database clients when connecting to the KVStore.
+                </p>
+            </li>
+            <li>
+              <p>
+                    <code class="literal">client.trust</code>
+                </p>
+              <p> 
+                    A truststore file used by clients is generated. 
+                </p>
+              <p> 
+                    The generated client.trust file should be copied to and
+                    used by Oracle NoSQL Database clients when connecting to the KVStore.
+                </p>
+            </li>
+          </ul>
+        </div>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p> 
+                In a multi-host store environment, the security directory and
+                all files contained in it should be copied to each server that
+                will host a Storage Node. 
+            </p>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="introduction_security.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="security_cli.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 1. Introducing Oracle NoSQL Database Security </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Configuring Security with Makebootconfig</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

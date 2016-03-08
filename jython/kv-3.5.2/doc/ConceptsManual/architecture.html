@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Architecture</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Concepts Manual" />
+    <link rel="up" href="introduction.html" title="Chapter 1. Introduction to Oracle NoSQL Database" />
+    <link rel="prev" href="introduction.html" title="Chapter 1. Introduction to Oracle NoSQL Database" />
+    <link rel="next" href="datamodels.html" title="Data Models" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Architecture</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="introduction.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 1. Introduction to Oracle NoSQL Database </th>
+          <td width="20%" align="right"> <a accesskey="n" href="datamodels.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="architecture"></a>Architecture</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="architecture.html#repnode-group">Replication Nodes and
+                Shards</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="architecture.html#replicationfactor">Replication Factor</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="architecture.html#partitions">Partitions</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="architecture.html#data-centers">Zones</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="architecture.html#topologies">Topologies</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p> 
+            The KVStore is a collection of Storage Nodes which host a
+            set of Replication Nodes. Data is spread across the Replication
+            Nodes. Given a traditional three-tier web architecture, the
+            KVStore either takes the place of your back-end database, or
+            runs alongside it. 
+        </p>
+      <p> 
+            The store contains multiple Storage Nodes. A
+                <span class="emphasis"><em>Storage Node</em></span> is a physical (or
+            virtual) machine with its own local storage. The machine is
+            intended to be commodity hardware. It should be, but is not
+            required to be, identical to all other Storage Nodes within the
+            store. </p>
+      <p> 
+            The following illustration depicts the typical architecture
+            used by an application that makes use of Oracle NoSQL Database: 
+        </p>
+      <div class="mediaobject">
+        <img src="KVStoreArchitecture.jpg" alt="NoSQL Database Store Architecture" />
+      </div>
+      <p> 
+            Every Storage Node hosts one or more Replication Nodes as
+            determined by its <span class="emphasis"><em>capacity</em></span>. The capacity
+            of a Storage Node serves as a rough measure of the hardware
+            resources associated with it. A store can consist of Storage
+            Nodes of different capacities. Oracle NoSQL Database will ensure that a
+            Storage Node is assigned a load that is proportional to its
+            capacity. A Replication Node in turn contains at least one and
+            typically many partitions. Also, each Storage Node contains
+            monitoring software that ensures the Replication Nodes which it
+            hosts are running and are otherwise healthy. 
+        </p>
+      <p>
+            For more information on how to associate capacity with a
+            Storage Node and know the best way to balance the number of
+            Storage Nodes and Replication Nodes, see <em class="citetitle">Oracle NoSQL Database
+                Administrator's Guide</em>. 
+        </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="repnode-group"></a>Replication Nodes and
+                Shards</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                At a very high level, a <span class="emphasis"><em>Replication
+                    Node</em></span> can be thought of as a single database
+                which contains key-value pairs.
+            </p>
+        <p> 
+                Replication Nodes are organized into
+                    <span class="emphasis"><em>shards</em></span>. A shard contains a single
+                Replication Node, called the <span class="emphasis"><em>master</em></span>
+                node, which is responsible for performing database writes,
+                as well as one or more read-only
+                    <span class="emphasis"><em>replicas</em></span>. The
+                    <span class="emphasis"><em>master</em></span> node copies all writes to
+                the replicas. These replicas are used to service read-only
+                operations. Although there can be only one master node at
+                any given time, any of the members of the shard (with the
+                exception of nodes in a secondary zone as described below)
+                are capable of becoming a <span class="emphasis"><em>master</em></span> node.
+                In other words, each shard uses a single master/multiple
+                replica strategy to improve read throughput and
+                availability. 
+            </p>
+        <p> 
+                The following illustration shows how the KVStore is
+                divided up into shards: 
+            </p>
+        <div class="mediaobject">
+          <img src="RepGroups.jpg" alt="NoSQL Database shards" />
+        </div>
+        <p> 
+                Note that if the machine hosting the master should fail
+                in any way, then the master automatically fails over to one
+                of the other nodes in the shard. That is, one of the
+                replica nodes is automatically promoted to master. 
+            </p>
+        <p> 
+                Production KVStores should contain multiple shards. At
+                installation time you provide information that allows
+                Oracle NoSQL Database to automatically decide how many shards the store
+                should contain. The more shards that your store contains,
+                the better your write performance is because the store
+                contains more nodes that are responsible for servicing
+                write requests. 
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="replicationfactor"></a>Replication Factor</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                The number of nodes belonging to a shard is called its
+                    <span class="emphasis"><em>Replication Factor</em></span>. The larger a
+                shard's Replication Factor, the faster its read throughput
+                (because there are more machines to service the read
+                requests) but the slower its write performance (because
+                there are more machines to which writes must be copied). 
+            </p>
+        <p>
+                Once you set the Replication Factor for each zone in the
+                store, Oracle NoSQL Database makes sure the appropriate number of
+                Replication Nodes are created for each shard residing in
+                each zone making up your store. The number of copies, or
+                replicas, maintained in a zone is called the <span class="emphasis"><em>Zone
+                    Replication Factor</em></span>. The total number of
+                replicas in all Primary zones is called the
+                    <span class="emphasis"><em>Primary Replication Factor</em></span>, and
+                the total number in all Secondary zones is called the
+                    <span class="emphasis"><em>Secondary Replication Factor</em></span>. For
+                all zones in the store, the total number of replicas across
+                the entire store is called the <span class="emphasis"><em>Store Replication
+                    Factor</em></span>. 
+            </p>
+        <p> 
+                For additional information on how to identify the
+                    <span class="emphasis"><em>Primary Replication Factor</em></span> and its
+                implications, as well on multiple zones and replication
+                factors see the <em class="citetitle">Oracle NoSQL Database Administrator's
+                    Guide</em>. 
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="partitions"></a>Partitions</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                Each shard contains one or more
+                    <span class="emphasis"><em>partitions</em></span>. Table rows (or
+                key-value pairs) in the store are accessed by the data's
+                key. Keys, in turn, are assigned to a partition. Once a key
+                is placed in a partition, it cannot be moved to a different
+                partition. Oracle NoSQL Database spreads records evenly across all
+                available partitions by hashing each record's key.
+            </p>
+        <p>
+                As part of your planning activities, you must decide how
+                many partitions your store should have. Note that this is
+                not configurable after the store has been installed. 
+            </p>
+        <p> 
+                It is possible to expand and change the number of
+                Storage Nodes in use by the store. When this happens, the
+                store can be reconfigured to take advantage of the new
+                resources by adding new shards. When this happens,
+                partitions are balanced between new and old shards by
+                redistributing partitions from one shard to another. For
+                this reason, it is desirable to have enough partitions so
+                as to allow fine-grained reconfiguration of the store. Note
+                that there is a minimal performance cost for having a large
+                number of partitions. As a rough rule of thumb, there
+                should be at least 10 to 20 partitions per shard, and the
+                number of partitions should be evenly divisible by the
+                number of shards. Since the number of partitions cannot be
+                changed after the initial deployment, you should consider
+                the maximum future size of the store when specifying the
+                number of partitions.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="data-centers"></a>Zones</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                A zone is a physical location that supports good network
+                connectivity among the Storage Nodes deployed in it and has
+                some level of physical separation from other zones. A zone
+                generally includes redundant or backup power supplies,
+                redundant data communications connections, environmental
+                controls (for example: air conditioning, fire suppression)
+                and security devices. A zone may represent an actual
+                physical data center building, but could also represent a
+                floor, room, pod, or rack, depending on the particular
+                deployment. Oracle recommends you install and configure
+                your store across multiple zones to guard against systemic
+                failures affecting an entire physical location, such as a
+                large scale power or network outage. 
+            </p>
+        <p> 
+                Multiple zones provide fault isolation and increase the
+                availability of your data in the event of a single zone
+                failure. 
+            </p>
+        <p> 
+                Zones come in two types. <span class="emphasis"><em>Primary</em></span>
+                zones contain nodes which can serve as masters or replicas.
+                Zones are created as primary zones by default.
+                    <span class="emphasis"><em>Secondary</em></span> zones contain nodes
+                which can only serve as replicas. Secondary zones can be
+                used to make a copy of the data available at a distant
+                location, or to maintain an extra copy of the data to
+                increase redundancy or read capacity. 
+            </p>
+        <p> 
+                You can use the command line interface to create and
+                deploy one or more <code class="literal">zones</code>. Each
+                    <code class="literal">zone</code> hosts the deployed storage
+                nodes. For additional information on zones and how to
+                create them see the <em class="citetitle">Oracle NoSQL Database Administrator's
+                    Guide</em>. 
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="topologies"></a>Topologies</h3>
+            </div>
+          </div>
+        </div>
+        <p> 
+                A <span class="emphasis"><em>topology</em></span> is the collection of
+                zones, storage nodes, replication nodes and administration
+                services that make up a NoSQL DB store. A deployed store
+                has one topology that describes its state at a given time. 
+            </p>
+        <p>
+                After initial deployment, the topology is laid out so as
+                to minimize the possibility of a single point of failure
+                for any given shard. This means that while a Storage Node
+                might host more than one Replication Node, those
+                Replication Nodes will never be from the same shard. This
+                improves the chances of the shard continuing to be
+                available for reads and writes even in the face of a
+                hardware failure that takes down the host machine. 
+            </p>
+        <p> 
+                Topologies can be changed to achieve different
+                performance characteristics, or in reaction to changes in
+                the number or characteristics of the Storage Nodes.
+                Changing and deploying a topology is an iterative process.
+                For information on how to use the command line interface to
+                create, transform, view, validate and preview a topology,
+                see the <em class="citetitle">Oracle NoSQL Database Administrator's
+                    Guide</em>. 
+            </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="introduction.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="introduction.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="datamodels.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 1. Introduction to Oracle NoSQL Database  </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Data Models</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Row Data</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="primaryshardkeys.html" title="Chapter 4. Primary and Shard Key Design" />
+    <link rel="prev" href="primaryshardkeys.html" title="Chapter 4. Primary and Shard Key Design" />
+    <link rel="next" href="storewrites.html" title="Chapter 5. Writing and Deleting Table Rows" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Row Data</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="primaryshardkeys.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 4. Primary and Shard Key Design</th>
+          <td width="20%" align="right"> <a accesskey="n" href="storewrites.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="rowdata"></a>Row Data</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+          There are no restrictions on the size of your rows, or the amount
+          of data that you store in a field. However,
+          you should consider your store's performance when deciding how
+          large you are willing to allow your individual tables and rows to become.
+          As is the case with any data storage scheme, the larger your
+          rows, the longer it takes to read the information from storage,
+          and to write the information to storage.  
+      </p>
+      <p>
+          On the other hand, every table row carries with it some amount of
+          overhead. Also, as the number of your rows grows very large,
+          search times may be adversely affected. As a result, choosing to
+          use a large number of tables, each of which use rows with just a
+          small handful of fields, can also harm your store's performance.
+      </p>
+      <p>
+          Therefore, when designing your tables' content, you must find the
+          appropriate balance between a small number of tables, each of
+          which uses very large rows; and a large number of tables, each of
+          which uses very small rows. You should also consider how
+          frequently any given piece of information will be accessed. 
+      </p>
+      <p>
+          For example, suppose your table contains information about users,
+          where each user is identified by their first and last names
+          (surname and familiar name). There is a set of information that
+          you want to maintain about each user.  Some of this information
+          is small in size, and some of it is large. Some of it you expect
+          will be frequently accessed, while other information is
+          infrequently accessed.
+      </p>
+      <p>
+          Small properties are:
+      </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                  name
+              </p>
+          </li>
+          <li>
+            <p>
+                  gender
+              </p>
+          </li>
+          <li>
+            <p>
+                  address
+              </p>
+          </li>
+          <li>
+            <p>
+                  phone number
+              </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+          Large properties are:
+      </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    image file
+              </p>
+          </li>
+          <li>
+            <p>
+                  public key 1
+              </p>
+          </li>
+          <li>
+            <p>
+                  public key 2
+              </p>
+          </li>
+          <li>
+            <p>
+                  recorded voice greeting
+              </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+          There are several possible ways you can organize this data. How
+          you should do it depends on your data access patterns.
+      </p>
+      <p>
+          For example, suppose your application requires you to read and
+          write all of the properties identified above every time you
+          access a row. (This is unlikely, but it does represent the
+          simplest case.) In that event, you might create a single table
+          with rows containing fields for each of the properties you
+          maintain for the users in your application.
+      </p>
+      <p>
+          However, the chances are good that your application will not
+          require you to access <span class="emphasis"><em>all</em></span> of a user's
+          properties every time you access his information. While it is
+          possible that you will always need to read all of the properties
+          every time you perform a user look up, it is likely that on
+          updates you will operate only on some properties.
+      </p>
+      <p>
+          Given this, it is useful to consider how frequently data will be
+          accessed, and its size. Large, infrequently accessed properties
+          should be placed in tables other than that used by the frequently accessed
+          properties. 
+      </p>
+      <p>
+         For example, for the properties identified above, suppose the
+         application requires: 
+      </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                  all of the small properties to always be used whenever
+                  the user's record is accessed.
+              </p>
+          </li>
+          <li>
+            <p>
+                  all of the large properties to be read for simple user
+                  look ups.
+              </p>
+          </li>
+          <li>
+            <p>
+                  on user information updates, the public keys are always
+                  updated (written) at the same time.
+              </p>
+          </li>
+          <li>
+            <p>
+                  The image file and recorded voice greeting can be updated
+                  independently of everything else.
+              </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+          In this case, you might store user properties using 
+          a table and a child table.
+          The parent table holds rows containing all the small
+          properties, plus public keys. The child table contains the
+          image file and voice greeting.
+      </p>
+      <pre class="programlisting">CREATE TABLE userInfo (
+    surname STRING,
+    familiarName STRING,
+    gender ENUM (male,female),
+    street STRING,
+    city STRING,
+    state STRING,
+    zipcode STRING,
+    userPhone STRING,
+    publickey1 BINARY,
+    publickey2 BINARY,
+    PRIMARY KEY (SHARD(surname), familiarName)
+)</pre>
+      <pre class="programlisting">CREATE TABLE userInfo.largeProps (
+    propType STRING,
+    voiceGreeting BINARY,
+    imageFile BINARY,
+    PRIMARY KEY (propType)
+)</pre>
+      <p>
+          Because the parent table contains all the data that is accessed
+          whenever user data is accessed, you can update that data all at
+          once using a single atomic operation. At the same time, you avoid
+          retrieving the big data values whenever you retrieve a row by
+          splitting the image data and voice greeting into a child table.
+      </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+              You might want to consider using the Key/Value API for the
+              image data and voice greeting. By doing that, you can use the
+              Oracle NoSQL Database large object interface, which is optimized for large
+              object support. See the <em class="citetitle">Oracle NoSQL Database Getting Started with the Key/Value API</em>
+              guide for information on working with large objects. Note
+              that if you use the large object interface, you can store
+              references to the large objects (which are just strings) in
+              your tables.
+          </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="primaryshardkeys.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="primaryshardkeys.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="storewrites.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 4. Primary and Shard Key Design </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 5. Writing and Deleting Table Rows</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

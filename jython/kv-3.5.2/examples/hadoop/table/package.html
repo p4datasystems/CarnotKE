@@ -1,0 +1,1795 @@
+<html>
+<head></head>
+<body>
+<em>The Table API MapReduce Cookbook</em>: example code for a MapReduce job, 
+along with supporting code and scripts, that can be run against data written 
+via the Oracle NoSQL Database Table API.
+
+<a name="introduction_hadoop"/>
+<h3>Introduction</h3>
+
+Prior to the introduction of the
+<a href="../../../javadoc/oracle/kv/table/package-summary.html"><b><em>Table API</em></b></a>
+to Oracle NoSQL Database, in order to run a Hadoop MapReduce job against data in an 
+Oracle NoSQL Database <em>KVStore</em>, one would employ the interfaces and classes 
+that integrate the Oracle NoSQL Database key/value API (the 
+<a href="../../../javadoc/oracle/kv/table/package-summary.html"><b><em>KV API</em></b></a>)
+with Hadoop MapReduce as described <a href="../package-summary.html"><b>here</b></a>.
+With the addition of the Table API it became necessary to specify new interfaces
+and classes that would allow Hadoop MapReduce jobs to be run against so-called 
+<em>table data</em>; that is, against data written to a KVStore via the Table API 
+rather than the KV API. The information presented below describes how to run such a 
+Hadoop MapReduce job against table data in a given KVStore. In addition to describing 
+the core interfaces and classes involved in this process, this document also walks through 
+the example currently provided with the Oracle NoSQL Database software distribution; 
+which demonstrates how to use the <em>Table API Hadoop integration classes</em> 
+with Hadoop MapReduce.
+
+<a name="prerequisites_hadoop"/>
+<h3>Prerequisites</h3>
+
+Before attempting to execute the example that demonstrates the concepts
+presented in this document, you should first satisfy the following 
+prerequisites:
+
+<ul>
+  <li>Become familiar with 
+       <a href="https://en.wikipedia.org/wiki/Apache_Hadoop"><b><code>Apache Hadoop</code></b></a>, 
+       <a href="https://en.wikipedia.org/wiki/MapReduce"><b><code>MapReduce</code></b></a>, 
+       and its programming model; that is, become familiar with how to write and deploy 
+       a MapReduce job.
+  <li>Deploy a Hadoop cluster with 3 <em>DataNodes</em> running on 
+       machines with host names, <em>dn-host-1</em>, <em>dn-host-2</em>, 
+       and <em>dn-host-3</em>.
+  <li>Become familiar with Oracle NoSQL Database and then install, start,
+       and configure an Oracle NoSQL Database 
+       &mdash; with <b>&lt;KVHOME&gt;</b> equal to <code>/opt/ondb/kv</code> &mdash;
+       that is network reachable from the nodes of the Hadoop cluster.
+  <li>Deploy a KVStore 
+       &mdash; named <em>example-store</em>, with <b>&lt;KVROOT&gt;</b> equal to <code>/opt/ondb/example-store</code> &mdash; 
+       to 3 machines (real or virtual) with host names, <em>kv-host-1</em>,
+       <em>kv-host-2</em>, and <em>kv-host-3</em>;  where an admin service,
+       listening on port <em>5000</em>, is deployed on each host.
+  <li>Become familiar with the Oracle NoSQL Database Security model and
+       be able to configure the deployed store for secure access (optional).
+  <li>If the deployed store is configured for secure access, become familiar 
+       with the Oracle NoSQL Database Administrative CLI, start it, and
+       securely connect to the KVStore's admin service; and then create a 
+       KVStore user named <em>example-user</em> along with the appropriate 
+       security artifacts (<em>login file</em>, <em>trust file</em>, and 
+       either <em>password file</em> or <em>Oracle Wallet</em> [Enterprise 
+       Edition only]).
+  <li>Be able to compile and execute a Java program, and package it and 
+       any associated resources in a JAR file.
+  <li>Install the Hadoop JAR files required to compile the example program
+       so that they are available for inclusion in the example program's 
+       classpath (see below).
+</ul>
+
+Using specific values for items such as the <code>&lt;KVHOME&gt;</code>
+and <code>&lt;KVROOT&gt;</code> environment variables, the store name, 
+host names, and admin port described above should allow you to more easily 
+follow the example that is presented. Combined with the information contained 
+in the <em>Oracle NoSQL Database Getting Started Guide</em>, as well as the 
+<em>Oracle NoSQL Database Admin Guide</em> and <em>Oracle NoSQL Database Security Guide</em>, 
+you should then be able to generalize and extend the example to your own 
+particular development scenario; substituting the values specific to the 
+given environment where necessary. 
+<p>
+Detailed instructions for deploying a non-secure KVStore are provided in 
+<a href="#appendix_a_nonsecure_ondb_store"><b><code>Appendix A</code></b></a>.
+Similarly, <a href="#appendix_b_secure_ondb_store"><b><code>Appendix B</code></b></a> 
+provides instructions for deploying a KVStore configured for security.
+
+<a name="primer_hadoop"/>
+<h3>A Brief Hadoop Primer</h3>
+
+Hadoop can be thought of as consisting of two primary components:
+
+<ul>
+  <li>The 
+       <a href="https://en.wikipedia.org/wiki/Apache_Hadoop#HDFS"><b><code>Hadoop Distributed File System</code></b></a>
+       (referred to as, <em>HDFS</em>).
+  <li>The 
+       <a href="https://en.wikipedia.org/wiki/MapReduce"><b><code>MapReduce</code></b></a>
+       programming model; which consists of a <em>Map Phase</em> 
+       that includes a mapping step and a <em>shuffle-and-sort</em> step 
+       that together perform filtering and sorting, and a <em>Reduce Phase</em> 
+       that performs a summary operation on the mapped and sorted results.
+</ul>
+
+The various Hadoop distributions that are available (for example,
+<a href="http://www.cloudera.com/content/cloudera/en/home.html"><b><code>Cloudera</code></b></a> 
+or 
+<a href="http://hortonworks.com"><b><code>Hortonworks</code></b></a>)  
+each provide an infrastructure which orchestrates the MapReduce 
+processing that is performed. It does this by marshalling the distributed 
+servers that run the various tasks in parallel, by managing all communications 
+and data transfers between the various parts of the system, and by providing for 
+redundancy and fault tolerance.
+<p>
+In addition, the Hadoop infrastructure provides a number of interactive 
+tools &mdash; such as a command line interface (the <em>Hadoop CLI</em>) &mdash; that 
+provide access to the data stored in HDFS. But the typical way application 
+developers read, write, and process data stored in HDFS is via MapReduce jobs; 
+which are programs that adhere to the Hadoop MapReduce programming model. 
+For more detailed information on Hadoop HDFS and MapReduce, consult the 
+<a href="http://hadoop.apache.org/docs/r1.2.1/mapred_tutorial.html"><b>Hadoop MapReduce tutorial</b></a>.
+<p>
+As indicated above, with the introduction of the Table API, a new set of 
+interfaces and classes that satisfy the Hadoop MapReduce programming model 
+have been provided which support writing MapReduce jobs that can be run against 
+table data contained in a KVStore. These new classes are located in the 
+<a href="../../../javadoc/oracle/kv/hadoop/table/package-summary.html"><b><code>oracle.kv.hadoop.table</code></b></a>
+package, and consist of the following types:
+<p>
+
+<a name="primer_hadoop_classes"/>
+<ul>
+  <li>A subclass of the Hadoop class, 
+       <a href="http://hadoop.apache.org/docs/stable/api/org/apache/hadoop/mapreduce/InputFormat.html"><b><code>org.apache.hadoop.mapreduce.InputFormat</code></b></a>,
+       which specifies how the associated MapReduce job reads its input data (using a Hadoop 
+       <a href="http://hadoop.apache.org/docs/stable/api/org/apache/hadoop/mapreduce/RecordReader.html"><b><code>RecordReader</code></b></a>),
+       and splits up the input data into logical sections, each referred to as an 
+       <a href="http://hadoop.apache.org/docs/stable/api/org/apache/hadoop/mapreduce/InputSplit.html"><b><code>InputSplit</code></b></a>.
+  <li>A subclass of the Hadoop class, 
+       <a href="http://hadoop.apache.org/docs/stable/api/org/apache/hadoop/mapreduce/OutputFormat.html"><b><code>org.apache.hadoop.mapreduce.OutputFormat</code></b></a>,
+       which specifies how the associated MapReduce job writes its output data (using a Hadoop
+       <a href="http://hadoop.apache.org/docs/stable/api/org/apache/hadoop/mapreduce/RecordWriter.html"><b><code>RecordWriter</code></b></a>).
+  <li>A subclass of the Hadoop class, 
+       <a href="http://hadoop.apache.org/docs/stable/api/org/apache/hadoop/mapreduce/RecordReader.html"><b><code>org.apache.hadoop.mapreduce.RecordReader</code></b></a>,
+       which specifies how the mapped keys and values are located and retrieved 
+       during MapReduce processing.
+  <li>A subclass of the Hadoop class, 
+       <a href="http://hadoop.apache.org/docs/stable/api/org/apache/hadoop/mapreduce/InputSplit.html"><b><code>org.apache.hadoop.mapreduce.InputSplit</code></b></a>,
+       which represents the data to be processed by an individual MapReduce 
+       <b><em>Mapper</em></b> (one Mapper per 
+       <a href="http://hadoop.apache.org/docs/stable/api/org/apache/hadoop/mapreduce/InputSplit.html"><b><code>InputSplit</code></b></a>).
+</ul>
+
+As described below, it is through the specific implementation of the 
+<a href="http://hadoop.apache.org/docs/stable/api/org/apache/hadoop/mapreduce/InputFormat.html"><b><code>InputFormat</code></b></a>
+class provided in the Oracle NoSQL Database distribution that the Hadoop MapReduce 
+infrastructure obtains access to a given KVStore and the desired table data 
+that the store contains.
+
+<h3>The Oracle NoSQL Database Table API Hadoop MapReduce Integration Classes</h3>
+
+When writing a MapReduce job to process data stored in an Oracle NoSQL 
+Database table, you should employ the following classes: 
+
+<ul>
+  <li> <a href="../../../javadoc/oracle/kv/hadoop/table/TableInputFormat.html"><b><code>oracle.kv.hadoop.table.TableInputFormat</code></b></a>
+  <li> <a href="../../../javadoc/oracle/kv/hadoop/table/TableInputSplit.html"><b><code>oracle.kv.hadoop.table.TableInputSplit</code></b></a>
+  <li> <a href="../../../javadoc/oracle/kv/hadoop/table/TableRecordReader.html"><b><code>oracle.kv.hadoop.table.TableRecordReader</code></b></a>
+</ul>
+
+For more detail about the semantics of the classes listed above, 
+refer to the javadoc of each respective class.
+<p>
+Currently, Oracle NoSQL Database does not define a subclass of the Hadoop 
+<a href="http://hadoop.apache.org/docs/stable/api/org/apache/hadoop/mapreduce/OutputFormat.html"><b><code>OutputFormat</code></b></a>
+class. This means that it is <b><em>not</em></b> currently possible to 
+write data <em>from</em> a MapReduce job <em>into</em> a KVStore. 
+That is, from within a MapReduce job, you can only retrieve data from 
+a desired KVStore table and process that data.
+
+<a name="count_table_rows_example"/>
+<h3>The CountTableRows Example</h3>
+
+The <code>hadoop.table</code> example package is contained in the following
+location within your Oracle NoSQL Database distribution:
+
+<pre>
+  /opt/ondb/kv/examples/
+      hadoop/table/
+        CountTableRows.java
+        LoadVehicleTable.java
+        KVSecurityCreation.java
+        KVSecurityUtil.java
+</pre>
+
+In order to run the <code>CountTableRows</code> example MapReduce job, a
+KVStore &mdash; either secure or non-secure &mdash; must first be deployed,
+and a table must be created and populated with data. Thus, before attempting 
+to execute <code>CountTableRows</code>, either deploy a non-secure KVStore 
+using the steps outlined in 
+<a href="#appendix_a_nonsecure_ondb_store"><b><code>Appendix A</code></b></a>,
+or start a KVStore configured for security using the steps presented in 
+<a href="#appendix_b_secure_ondb_store"><b><code>Appendix B</code></b></a>. 
+<p>
+
+Once a KVStore has been deployed as described in either 
+<a href="#appendix_a_nonsecure_ondb_store"><b><code>Appendix A</code></b></a>, 
+or 
+<a href="#appendix_b_secure_ondb_store"><b><code>Appendix B</code></b></a>, 
+the standalone Java program <code>LoadVehicleTable</code> can be run 
+against either type of store to create a table with the name and schema 
+expected by <code>CountTableRows</code>, and populate it with rows of 
+data consistent with the table's schema. Once the table is created and 
+populated with example data, <code>CountTableRows</code> can then be 
+executed to run a MapReduce job that counts the number of rows of data 
+in the table.
+<p>
+
+In addition to the <code>LoadVehicleTable</code> program, the example package also contains the 
+classes <code>KVSecurityCreation</code> and <code>KVSecurityUtil</code>; which 
+are provided to support running <code>CountTableRows</code> against a secure 
+KVStore. The standalone Java program <code>KVSecurityCreation</code> is provided 
+as a convenience, and can be run to create (or delete) a password file or Oracle 
+Wallet &mdash; along with associated client side and server side login files &mdash; 
+that <code>CountTableRows</code> will need to interact with a secure store. And the 
+<code>KVSecurityUtil</code> class provides convenient utility methods that 
+<code>CountTableRows</code> uses to create and process the various security 
+artifacts it uses for secure access.
+<p>
+
+The next sections explain how to compile and execute <code>LoadVehicleTable</code> 
+to create and populate the required example table in the deployed store; how to 
+compile and execute <code>KVSecurityCreation</code> to create or delete any 
+security credentials that may be needed by <code>CountTableRows</code>; and 
+finally, how to compile, build (JAR), and then execute the <code>CountTableRows</code> 
+MapReduce job on the Hadoop cluster that was deployed for this example.
+
+<a name="schema_vehicle_table"/>
+<h4>Schema for the Example Table 'vehicleTable'</h4> 
+
+To execute the <code>CountTableRows</code> MapReduce job, a table named 
+<em>vehicleTable</em> &mdash; having the schema shown in the table below &mdash; must 
+be created in the KVStore that was deployed for this example; where the data types 
+specified in the schema are defined by the Oracle NoSQL Database Table API (see 
+<a href="../../../javadoc/oracle/kv/table/FieldDef.Type.html"><b><code>oracle.kv.table.FieldDef.Type</code></b></a>) .
+<p>
+
+<table border="1" style="width:50%;border-collapse:collapse">
+  <caption>'vehicleTable' Schema</caption>
+  <tr>
+    <th>Field Name</th>
+    <th>Field Type</th>
+  </tr>
+  <tr>
+    <td align="center">type</td>
+    <td align="center">STRING</td>
+  </tr>
+  <tr>
+    <td align="center">make</td>
+    <td align="center">STRING</td>
+  </tr>
+  <tr>
+    <td align="center">model</td>
+    <td align="center">STRING</td>
+  </tr>
+  <tr>
+    <td align="center">class</td>
+    <td align="center">STRING</td>
+  </tr>
+  <tr>
+    <td align="center">color</td>
+    <td align="center">STRING</td>
+  </tr>
+  <tr>
+    <td align="center">price</td>
+    <td align="center">DOUBLE</td>
+  </tr>
+  <tr>
+    <td align="center">count</td>
+    <td align="center">INTEGER</td>
+  </tr>
+  <tr>
+    <th colspan="5">Primary Key Field Names</th>
+  </tr>
+  <tr>
+    <td align="center">type</td>
+    <td align="center">make</td>
+    <td align="center">model</td>
+    <td align="center">class</td>
+    <td align="center">color</td>
+  </tr>
+  <tr>
+    <th colspan="3">Shard Key Field Names</th>
+  </tr>
+  <tr>
+    <td align="center">type</td>
+    <td align="center">make</td>
+    <td align="center">model</td>
+  </tr>
+</table>
+<p>
+
+Thus, <em>vehicleTable</em> consists of rows representing a particular vehicle a dealer 
+might have in stock for purchase. Each such row contains fields specifying the "type" of 
+vehicle (for example, <em>car</em>, <em>truck</em>, <em>SUV</em>, etc.), 
+the "make" of the vehicle (<em>Ford</em>, <em>GM</em>, <em>Chrysler</em>, etc.), 
+the "model" (<em>Explorer</em>, <em>Camaro</em>, <em>Lebaron</em>, etc.), 
+the vehicle "class" (<em>4WheelDrive</em>, <em>FrontWheelDrive</em>, etc.), 
+"color", "price", and finally the number of vehicles in stock (the "count").
+<p>
+
+Although you can enter individual commands in the admin CLI to create a table with the above 
+schema, the preferred approach is to employ the 
+<a href="http://docs.oracle.com/cd/NOSQL/html/GettingStartedGuideTables/ddl_overview.html"><b><code>Oracle NoSQL Database Data Definition Language (<em>DDL</em>)</code></b></a> to create the desired table. One way to 
+accomplish this is to follow the instructions presented in the next sections to compile 
+and execute the <code>LoadVehicleTable</code> program; which populates the desired 
+table after using the <em>DDL</em> to create it.
+
+<a name="create_populate_vehicle_table"/>
+<h4>Create and Populate 'vehicleTable' with Example Data</h4> 
+
+After the KVStore 
+&mdash; either 
+<a href="#appendix_a_nonsecure_ondb_store"><b><code>non-secure</code></b></a> 
+or 
+<a href="#appendix_b_secure_ondb_store"><b><code>secure</code></b></a> 
+&mdash; 
+has been deployed, 
+the <code>LoadVehicleTable</code> program that is supplied with the example as 
+a convenience can be executed to create and populate the table named <em>vehicleTable</em>.
+Before executing <code>LoadVehicleTable</code> though, that program must first 
+be compiled. To do this, type the following command from the OS command line:
+
+<pre>
+  &gt; cd /opt/ondb/kv
+  &gt; javac -classpath lib/kvstore.jar:examples examples/hadoop/table/LoadVehicleTable.java
+</pre>
+
+which should produce the file: 
+
+<pre>
+  /opt/ondb/kv/examples/hadoop/table/LoadVehicleTable.class
+</pre>
+
+<p>
+<a name="create_populate_vehicle_table_non_secure"/>
+<b><em>&mdash; Creating and Populating 'vehicleTable' with Example Data in a <strong style="color: green;">Non-Secure</strong> KVStore &mdash;</em></b>
+<p>
+
+To execute <code>LoadVehicleTable</code> to create and then populate the 
+table named <em>vehicleTable</em> with example data in a KVStore configured 
+for <em>non-secure</em> access, type the following at the command line of a 
+node that has network connectivity with a node running the admin service 
+(for example, <em>kv-host-1</em> itself):
+
+<pre>
+  &gt; cd /opt/ondb/kv
+  &gt; java -classpath lib/kvstore.jar:examples hadoop.table.LoadVehicleTable \
+             -store example-store -host kv-host-1 -port 5000 -nops 79 [-delete]
+</pre>
+
+where the parameters <code>-store</code>, <code>-host</code>, <code>-port</code>,
+and <code>-nops</code> are required. 
+<p>
+
+In the example command line above, the argument <code>-nops 79</code> specifies 
+that 79 rows be written to the <em>vehicleTable</em>. If more or less 
+than that number of rows is desired, then the value of the <code>-nops</code> 
+parameter should be changed.
+<p>
+
+If <code>LoadVehicleTable</code> is executed a second time and the 
+optional <code>-delete</code> parameter is specified, then all rows added by
+any previous executions of <code>LoadVehicleTable</code> are deleted from the
+table prior to adding the new rows. Otherwise, all pre-existing rows are left
+in place, and the number of rows in the table will be increased by the specified
+<code>-nops</code> number of new rows.
+<p>
+
+<a name="create_populate_vehicle_table_secure"/>
+<b><em>&mdash; Creating and Populating 'vehicleTable' with Example Data in a <strong style="color: red;">Secure</strong> KVStore &mdash;</em></b>
+<p>
+
+To execute <code>LoadVehicleTable</code> against a <em>secure</em> KVStore deployed 
+and provisioned with a non-administrative user employing the steps presented in 
+<a href="#appendix_b_step_4_generate_non_admin_user"><b><code>Appendix B</code></b></a>, 
+an additonal parameter must be added to the command line above. That is, type the following:
+
+<pre>
+  &gt; cd /opt/ondb/kv
+  &gt; javac -classpath lib/kvclient.jar:LoadVehicleTable examples/hadoop/table/LoadVehicleTable.java
+  &gt; <strong style="color: purple;">cp /opt/ondb/example-store/security/client.trust /tmp</strong>
+  &gt; java -classpath lib/kvstore.jar:examples hadoop.table.LoadVehicleTable \
+             -store example-store -host kv-host-1 -port 5000 -nops 79 \
+             <strong style="color: red;">-security /tmp/example-user-client-pwdfile.login</strong>
+             [-delete]
+</pre>
+
+<a name="single_login_properties_security_parameter_explanation"/>
+where the single additonal <code>-security</code> parameter specifies the 
+location of the <em>login properties</em> file (associated with a password file 
+rather than an Oracle Wallet) for the given user (the <em>alias</em>); and 
+all other parameters are as described for the non-secure case.
+<p>
+
+To understand the <code>-security</code> parameter for this example, 
+recall from <a href="#appendix_b_secure_ondb_store"><b><code>Appendix B</code></b></a> 
+that a non-administrative user named <em>example-user</em> was created, and 
+password file based credential files (prefixed with that user name) were generated 
+for that user and placed under the <code>/tmp</code> system directory. That is, 
+the example login and password files generated in 
+<a href="#appendix_b_secure_ondb_store"><b><code>Appendix B</code></b></a> are:
+
+<pre>
+  /tmp
+    <strong style="color: purple;">client.trust</strong>
+    example-user-client-pwdfile.login
+    example-user-server.login
+    example-user.passwd
+</pre>
+
+Note that for this example, the user credential files must be co-located; where it  
+doesn't matter which directory they are located in, as long as they all reside in the 
+same directory accessible by the user. It is for this reason that the shared trust file 
+(<em>client.trust</em>) is copied into <code>/tmp</code> above. Co-locating  
+<em>client.trust</em> and <em>example-user.passwd</em> with the login file 
+(<em>example-user-client-pwdfile.login</em>) allows relative paths to be used for the 
+values of the <code>oracle.kv.ssl.trustStore</code> and <code>oracle.kv.auth.pwdfile.file</code>
+system properties that are specified in the login file (or <code>oracle.kv.auth.wallet.dir</code>
+if a wallet is used to store the user password). If those files are not co-located 
+with the login file, then absolute paths must be used for those properties.
+<p>
+
+At this point, the <em>vehicleTable</em> created in the specified KVStore (non-secure or secure) 
+should be populated with the desired example data. And the <code>CountTableRows</code> example 
+MapReduce job can be run to count the number of rows in that table.
+
+<a name="compile_build_count_table_rows"/>
+<h4>Compile and Build the CountTableRows Example Program</h4> 
+
+After the example <em>vehicleTable</em> has been created and populated, but before 
+the example MapReduce job can be executed, the <code>CountTableRows</code> program 
+must first be compiled and built for deployment to the Hadoop infrastructure. 
+In order to compile the <code>CountTableRows</code> program, a number of Hadoop 
+JAR files must be installed and available in the build environment for inclusion 
+in the program classpath. Those JAR files are:
+<ul>
+  <li>commons-logging-<b><em>&lt;version&gt;</em></b>.jar
+  <li>hadoop-common-<b><em>&lt;version&gt;</em></b>.jar
+  <li>hadoop-mapreduce-client-core-<b><em>&lt;version&gt;</em></b>.jar
+  <li>hadoop-annotations-<b><em>&lt;version&gt;</em></b>.jar
+</ul>
+
+where the <b><em>&lt;version&gt;</em></b> token represents the particular version number
+of the corresponding JAR file contained in the Hadoop distribution installed
+in the build environment.
+<p>
+
+For example, suppose that the <b>2.3.0</b> version of Hadoop that is 
+delivered via the <b>5.1.0</b> package provided by 
+<a href="http://www.cloudera.com/content/cloudera/en/home.html"><b><code>Cloudera</code></b></a> 
+(<b><em>cdh</em></b>) is installed under the &lt;HADOOPROOT&gt;
+base directory. And suppose that the classes from that version of Hadoop
+use the <b>1.1.3</b> version of <code>commons-logging</code>. Then, 
+to compile the <code>CountTableRows</code> program, type the following 
+at the command line (with the <code>&lt;HADOOPROOT&gt;</code> token 
+replaced with the appropriate directory path for your system):
+
+<pre>
+  &gt; cd /opt/ondb/kv
+  &gt; javac -classpath &lt;HADOOPROOT&gt;/hadoop/share/hadoop/common/lib/commons-logging-1.1.3.jar: \
+                     &lt;HADOOPROOT&gt;/hadoop/share/hadoop/common/hadoop-common-2.3.0-cdh5.1.0.jar: \
+                     &lt;HADOOPROOT&gt;/hadoop/share/hadoop/mapreduce2/hadoop-mapreduce-client-core-2.3.0-cdh5.1.0.jar: \
+                     &lt;HADOOPROOT&gt;/hadoop/share/hadoop/common/lib/hadoop-annotations-2.3.0-cdh5.1.0.jar: \
+                     lib/kvclient.jar:examples \
+       examples/hadoop/table/CountTableRows.java
+</pre>
+
+which produces the following files:
+
+<pre>
+  /opt/ondb/kv/examples/hadoop/table/
+        CountTableRows.class
+        CountTableRows$Map.class
+        CountTableRows$Reduce.class
+</pre>
+
+If your specific environment has a different, compatible Hadoop distribution installed, 
+then simply replace the versions referenced in the example command line above with the 
+specific versions that are installed.
+<p>
+
+If you will be running <code>CountTableRows</code> against a <em>non-secure</em> 
+KVStore, then this is all you need; and the resulting class files should be placed in a 
+JAR file so that the program can be deployed to the example Hadoop cluster. For example, 
+to create a JAR file containing the class files needed to run <code>CountTableRows</code> 
+against a <b><em>non</em></b>-secure KVStore like that deployed in 
+<a href="#appendix_a_secure_ondb_store"><b><code>Appendix A</code></b></a>,
+do the following: 
+
+<pre>
+  &gt; cd /opt/ondb/kv/examples
+  &gt; jar cvf CountTableRows.jar hadoop/table/CountTableRows*.class
+</pre>
+
+which should produce the file <code>CountTableRows.jar</code> in the 
+<code>/opt/ondb/kv/examples</code> directory, with contents that look like: 
+
+<pre>
+     0 Fri Feb 20 12:53:24 PST 2015 META-INF/
+    68 Fri Feb 20 12:53:24 PST 2015 META-INF/MANIFEST.MF
+  3842 Fri Feb 20 12:49:16 PST 2015 hadoop/table/CountTableRows.class
+  2623 Fri Feb 20 12:49:16 PST 2015 hadoop/table/CountTableRows$Map.class
+  3842 Fri Feb 20 12:49:16 PST 2015 hadoop/table/CountTableRows$Reduce.class
+</pre>
+
+Note that when the command above is used to generate <code>CountTableRows.jar</code>, 
+the utility class <code>KVSecurityUtil</code> (see below) will not be included in the 
+resulting JAR file. Since <code>CountTablesRows</code> does not use that utility class 
+in the non-secure case, including it in the JAR file is optional.
+
+<p>
+<a name="secure_kvclient_build"/>
+<b><em>&mdash; Building the Example for a Secure Environment &mdash;</em></b>
+<p>
+
+If you will be running <code>CountTableRows</code> against a <em>secure</em> 
+KVStore such as that deployed in 
+<a href="#appendix_b_secure_ondb_store"><b><code>Appendix B</code></b></a>,
+then in addition to compiling <code>CountTableRows</code> as described above, 
+additional security related artifacts need to be generated and included in 
+the build; where the additional artifacts include not only compiled class files, 
+but security credential files as well.
+<p>
+
+To support the secure version of <code>CountTableRows</code>, the utilitity class 
+<code>KVSecurityUtil</code> and the standalone program <code>KVSecurityCreation</code> 
+should also be compiled. That is,
+
+<pre>
+  &gt; cd /opt/ondb/kv
+  &gt; <strong style="color: red;">javac -classpath lib/kvstore.jar:examples examples/hadoop/table/KVSecurityCreation.java</strong>
+  &gt; <strong style="color: red;">javac -classpath lib/kvstore.jar:examples examples/hadoop/table/KVSecurityUtil.java</strong>
+  &gt; javac -classpath &lt;HADOOPROOT&gt;/hadoop/share/hadoop/common/lib/commons-logging-1.1.3.jar: \
+                     &lt;HADOOPROOT&gt;/hadoop/share/hadoop/common/hadoop-common-2.3.0-cdh5.1.0.jar: \
+                     &lt;HADOOPROOT&gt;/hadoop/share/hadoop/mapreduce2/hadoop-mapreduce-client-core-2.3.0-cdh5.1.0.jar: \
+                     &lt;HADOOPROOT&gt;/hadoop/share/hadoop/common/lib/hadoop-annotations-2.3.0-cdh5.1.0.jar: \
+                     lib/kvclient.jar:examples \
+       examples/hadoop/table/CountTableRows.java
+</pre>
+
+which produces the files:
+
+<pre>
+  /opt/ondb/kv/examples/hadoop/table/
+        CountTableRows.class
+        CountTableRows$Map.class
+        CountTableRows$Reduce.class
+        <strong style="color: red;">KVSecurityUtil.class</strong>
+        <strong style="color: red;">KVSecurityCreation.class</strong>
+</pre>
+
+Unlike the non-secure case, the build artifacts needed to deploy <code>CountTableRows</code> 
+in a secure environment include more than just a single JAR file containing the generated class 
+files. For the secure case, it will be important to package some artifacts for deployment to the 
+<em>client side</em> of the application that communicates with the KVStore; whereas other artifacts 
+will need to be packaged for deployment to the <em>server side</em>. Although there are different 
+ways to achieve this "separation of concerns" when deploying a given application, 
+<a href="#appendix_c_secure_kvclient_packaging_model"><b><code>Appendix C</code></b></a>
+presents one particular model you can use to package and deploy the artifacts of an application 
+(such as <code>CountTableRows</code>) that will interact with a secure KVStore. With this in mind, 
+the sections below related to executing <code>CountTableRows</code> against a secure KVStore 
+each assume that the application has been built and packaged according to the instructions presented in 
+<a href="#appendix_c_secure_kvclient_packaging_model"><b><code>Appendix C</code></b></a>.
+<p>
+
+<a name="executing_count_table_rows"/>
+<h4>Executing the CountTableRows Example</h4> 
+
+If you will be running <code>CountTableRows</code> against a <em>non-secure</em> KVStore 
+deployed in the manner described in <a href="#appendix_a_secure_ondb_store"><b><code>Appendix A</code></b></a>, 
+and have compiled and built <code>CountTableRows</code> in the manner presented 
+in the <a href="#compile_build_count_table_rows"><b><code>previous section</code></b></a>,
+then the MapReduce job initiated by <code>CountTableRows</code> can be deployed 
+and executed by typing the following at the command line of the Hadoop cluster's 
+access node (where line breaks are used only for <em>readability</em>): 
+
+<pre>
+  &gt; cd /opt/ondb/kv
+  &gt; hadoop jar examples/CountTableRows.jar \
+               hadoop.table.CountTableRows \
+               -libjars /opt/ondb/kv/lib/kvclient.jar \
+               example-store \
+               kv-host-1:5000 \
+               vehicleTable \
+               /user/example-user/CountTableRows/vehicleTable/&lt;000N&gt;
+</pre>
+
+where the <code>hadoop</code> command interpreter's <code>-libjars</code> argument 
+is used to include the third party library <code>kvclient.jar</code> in the classpath 
+of each MapReduce task executing on the cluster's DataNodes; so that those tasks can 
+access classes such as, 
+<a href="../../../javadoc/oracle/kv/hadoop/table/TableInputSplit.html"><b><code>TableInputSplit</code></b></a> 
+and 
+<a href="../../../javadoc/oracle/kv/hadoop/table/TableRecordReader.html"><b><code>TableRecordReader</code></b></a>.
+<p>
+
+Note that in the last argument, the <code>example-user</code> directory 
+component corresponds to a directory under the HDFS <code>/user</code> top-level 
+directory, and typically corresponds to the user who has initiated the MapReduce job. 
+This directory is usually created in HDFS by the Hadoop cluster administrator. 
+Additionally, the <b>&lt;000N&gt;</b> token in that argument represents a string 
+such as <code>0000</code>, <code>0001</code>, <code>0002</code>, etc. 
+Although any string can be used for this token, using a different number for 
+"N" on each execution of the job makes it easier to keep track of results when 
+multiple executions of the job occur. 
+
+<p>
+<a name="executing_count_table_rows_secure"/>
+<b><em>&mdash; Executing CountTableRows Against a <strong style="color: red;">Secure</strong> KVStore &mdash;</em></b>
+<p>
+
+If you will be running <code>CountTableRows</code> against a <em>secure</em> 
+KVStore deployed in the manner presented in  
+<a href="#appendix_b_secure_ondb_store"><b><code>Appendix B</code></b></a>,
+and if you have compiled, built, and packaged <code>CountTableRows</code> and all 
+the necessary artifacts in the manner described in 
+<a href="#appendix_c_secure_packaging"><b><code>Appendix C</code></b></a>,
+then <code>CountTableRows</code> can be run against the secure KVStore by typing the 
+following at the command line of the Hadoop cluster's access node (where line breaks are 
+used only for <em>readability</em>): 
+
+<pre>
+  &gt; export=HADOOP_CLASSPATH $HADOOP_CLASSPATH:/opt/ondb/kv/lib/kvclient.jar:<strong style="color: purple;">/opt/ondb/kv/examples/CountTableRows-pwdServer.jar</strong>
+  &gt; cd /opt/ondb/kv
+  &gt; hadoop jar <strong style="color: red;">examples/CountTableRows-pwdClient.jar</strong> \
+               hadoop.table.CountTableRows \
+               -libjars /opt/ondb/kv/lib/kvclient.jar,<strong style="color: purple;">/opt/ondb/kv/examples/CountTableRows-pwdServer.jar</strong> \
+               example-store \
+               kv-host-1:5000 \
+               vehicleTable \
+               /user/example-user/CountTableRows/vehicleTable/&lt;000N&gt; \
+               <strong style="color: red;">example-user-client-pwdfile.login</strong> \
+               <strong style="color: purple;">example-user-server.login</strong>
+</pre>
+
+where the mechanism used for storing the user password is a <em>password file</em>; 
+and the client side artifacts are highlighted in red, and the server side artifacts are 
+highlighted in purple.
+<p>
+
+Similarly, if the mechanism used for storing the user password is an <em>Oracle Wallet</em> 
+(available only with the Oracle NoSQL Database Enterprise Edition), you would type 
+the following at the access node's command line:
+
+<pre>
+  &gt; export=HADOOP_CLASSPATH $HADOOP_CLASSPATH:/opt/ondb/kv/lib/kvclient.jar:<strong style="color: purple;">/opt/ondb/kv/examples/CountTableRows-walletServer.jar</strong>
+  &gt; cd /opt/ondb/kv
+  &gt; hadoop jar <strong style="color: red;">examples/CountTableRows-walletClient.jar</strong> \
+               hadoop.table.CountTableRows \
+               -libjars /opt/ondb/kv/lib/kvclient.jar,<strong style="color: purple;">/opt/ondb/kv/examples/CountTableRows-walletServer.jar</strong> \
+               example-store \
+               kv-host-1:5000 \
+               vehicleTable \
+               /user/example-user/CountTableRows/vehicleTable/&lt;000N&gt; \
+               <strong style="color: red;">example-user-client-wallet.login</strong> \
+               <strong style="color: purple;">example-user-server.login</strong>
+</pre>
+
+In both cases above &mdash; password file and Oracle Wallet &mdash; notice the 
+additional JAR file (<code>CountTableRows-pwdServer.jar</code> or 
+<code>CountTableRows-walletServer.jar</code>) specified for both the 
+<code>HADOOP_CLASSPATH</code> environment variable and <code>-libjars</code> 
+paramenter. For a detailed explanation of the use and purpose of that <em>server side</em> 
+JAR file, as well as a description of the <em>client side</em> JAR file and the two 
+additional arguments at the end of the command line, refer to 
+<a href="#appendix_c_secure_kvclient_packaging_model"><b><code>Appendix C</code></b></a>; 
+specifically, the section on 
+<a href="#appendix_c_secure_kvclient_packaging_model"><b><code>packaging</code></b></a> 
+for a secure KVStore.
+<p>
+
+Whether running against a secure or non-secure store, as the job runs, assuming no errors, 
+the output from the job will look like the following:
+
+<pre>
+  ...
+  2014-12-04 08:59:47,996 INFO  [main] mapreduce.Job (Job.java:monitorAndPrintJob(1344)) - Running job: job_1409172332346_0024
+  2014-12-04 08:59:54,107 INFO  [main] mapreduce.Job (Job.java:monitorAndPrintJob(1372)) -  map 0% reduce 0%
+  2014-12-04 09:00:16,148 INFO  [main] mapreduce.Job (Job.java:monitorAndPrintJob(1372)) -  map 7% reduce 0%
+  2014-12-04 09:00:17,368 INFO  [main] mapreduce.Job (Job.java:monitorAndPrintJob(1372)) -  map 26% reduce 0%
+  2014-12-04 09:00:18,596 INFO  [main] mapreduce.Job (Job.java:monitorAndPrintJob(1372)) -  map 56% reduce 0%
+  2014-12-04 09:00:19,824 INFO  [main] mapreduce.Job (Job.java:monitorAndPrintJob(1372)) -  map 100% reduce 0%
+  2014-12-04 09:00:23,487 INFO  [main] mapreduce.Job (Job.java:monitorAndPrintJob(1372)) -  map 100% reduce 100%
+  2014-12-04 09:00:23,921 INFO  [main] mapreduce.Job (Job.java:monitorAndPrintJob(1383)) - Job job_1409172332346_0024 completed successfully
+  2014-12-04 09:00:24,117 INFO  [main] mapreduce.Job (Job.java:monitorAndPrintJob(1390)) - Counters: 49
+	File System Counters
+		FILE: Number of bytes read=2771
+		FILE: Number of bytes written=644463
+		FILE: Number of read operations=0
+		FILE: Number of large read operations=0
+		FILE: Number of write operations=0
+		HDFS: Number of bytes read=2660
+		HDFS: Number of bytes written=32
+		HDFS: Number of read operations=15
+		HDFS: Number of large read operations=0
+		HDFS: Number of write operations=2
+	Job Counters 
+		Launched map tasks=6
+		Launched reduce tasks=1
+		Rack-local map tasks=6
+		Total time spent by all maps in occupied slots (ms)=136868
+		Total time spent by all reduces in occupied slots (ms)=2103
+		Total time spent by all map tasks (ms)=136868
+		Total time spent by all reduce tasks (ms)=2103
+		Total vcore-seconds taken by all map tasks=136868
+		Total vcore-seconds taken by all reduce tasks=2103
+		Total megabyte-seconds taken by all map tasks=140152832
+		Total megabyte-seconds taken by all reduce tasks=2153472
+	Map-Reduce Framework
+		Map input records=79
+		Map output records=79
+		Map output bytes=2607
+		Map output materialized bytes=2801
+		Input split bytes=2660
+		Combine input records=0
+		Combine output records=0
+		Reduce input groups=1
+		Reduce shuffle bytes=2801
+		Reduce input records=79
+		Reduce output records=1
+		Spilled Records=158
+		Shuffled Maps =6
+		Failed Shuffles=0
+		Merged Map outputs=6
+		GC time elapsed (ms)=549
+		CPU time spent (ms)=9460
+		Physical memory (bytes) snapshot=1888358400
+		Virtual memory (bytes) snapshot=6424895488
+		Total committed heap usage (bytes)=1409286144
+	Shuffle Errors
+		BAD_ID=0
+		CONNECTION=0
+		IO_ERROR=0
+		WRONG_LENGTH=0
+		WRONG_MAP=0
+		WRONG_REDUCE=0
+	File Input Format Counters 
+		Bytes Read=0
+	File Output Format Counters 
+		Bytes Written=32
+</pre>
+
+To see the results of the job 
+&mdash; to verify that the program actually counted the correct number of rows in the table &mdash; 
+use the Hadoop CLI to display the contents of the MapReduce results file located in HDFS. 
+To do this, type the following at the command line of the Hadoop cluster's access node: 
+
+<pre>
+  &gt; hadoop fs -cat /user/example-user/CountTableRows/vehicleTable/&lt;000N&gt;/part-r-00000
+</pre>
+
+where <code>example-user</code> and the <code>&lt;000N&gt;</code> token should 
+be replaced with the values you used when the job was run; appropriate to your particular 
+system. Assuming the table was populated with 79 rows, if the job was successful, then 
+the output should look like the following:
+
+<pre>
+  /type/make/model/class/color	79
+</pre>
+
+where <code>/type/make/model/class/color</code> are the names of the fields making up the 
+<a href="../../../javadoc/oracle/kv/table/PrimaryKey.html"><b><code>PrimaryKey</code></b></a> 
+of the <code>vehicleTable</code>; and <code>79</code> is the number of rows in the table.
+
+<a name="appendix_a_nonsecure_ondb_store"/>
+<h3>Appendix A: Deploying & Configuring a Non-Secure Oracle NoSQL Database Store</h3>
+
+The <em>Oracle NoSQL Database Getting Started Guide</em>, as well as the 
+<em>Oracle NoSQL Database Admin Guide</em>, each present a number of different ways 
+to deploy and configure a KVStore that does not require secure access. For 
+convenience, this section describes one particular set of steps you can 
+take to deploy and configure such a store. Whether you prefer the technique 
+presented here or one of the other techniques presented in the <em>Getting Started</em>
+documents, a non-secure KVStore must be deployed and configured in order to 
+run the example presented in the sections above in a non-secure environment.
+
+For each of the steps presented in the sub-sections below, assume the following: 
+<ul>
+  <li>The Oracle NoSQL Database distribution is installed under the directory <code>/opt/ondb/kv</code>.
+  <li>A store named <em>example-store</em> will be deployed to three hosts.
+  <li>The hosts are named, <em>kv-host-1</em>, <em>kv-host-2</em>, and <em>kv-host-3</em> respectively.
+  <li>An  admin service, listening on port <em>5000</em>, is deployed on each of the three hosts.
+  <li>The contents of the shards managed by the store will be located under the <em>storage directory</em> <code>/disk1/shard</code> for host <em>kv-host-1</em>, <code>/disk2/shard</code> for host <em>kv-host-2</em>, and <code>/disk3/shard</code> for host <em>kv-host-3</em>.
+</ul> 
+
+where the values used in the assumptions above should be replaced with comparable 
+values specific to your particular environment.
+
+<a name="appendix_a_step_1"/>
+<h4>Step 1: Generate Configuration Files for each Storage Node (SN) of the Non-Secure KVStore</h4>
+
+Login to each host &mdash; <em>kv-host-1</em>, <em>kv-host-2</em>, 
+<em>kv-host-3</em> &mdash; and, from each respective command line, 
+type commands like those shown below. That is, from <em>kv-host-1</em>, type:
+
+<pre>
+  &gt; java -jar /opt/ondb/kv/lib/kvstore.jar makebootconfig \
+         -root /opt/ondb/example-store \
+         -config config.xml \
+         -port 5000 \
+         -admin 5001 \
+         -host kv-host-1 \
+         -harange 5002,5005 \
+         -num_cpus 0 \
+         -memory_mb 0 \
+         -capacity 3 \
+         -storagedir /disk1/shard
+</pre>
+
+Then from <em>kv-host-2</em>, type:
+
+<pre>
+  &gt; java -jar /opt/ondb/kv/lib/kvstore.jar makebootconfig \
+         -root /opt/ondb/example-store \
+         -config config.xml \
+         -port 5000 \
+         -admin 5001 \
+         -host kv-host-2 \
+         -harange 5002,5005 \
+         -num_cpus 0 \
+         -memory_mb 0 \
+         -capacity 3 \
+         -storagedir /disk2/shard
+</pre>
+
+And finally from <em>kv-host-3</em>, type:
+
+<pre>
+  &gt; java -jar /opt/ondb/kv/lib/kvstore.jar makebootconfig \
+         -root /opt/ondb/example-store \
+         -config config.xml \
+         -port 5000 \
+         -admin 5001 \
+         -host kv-host-3 \
+         -harange 5002,5005 \
+         -num_cpus 0 \
+         -memory_mb 0 \
+         -capacity 3 \
+         -storagedir /disk3/shard
+</pre>
+
+<a name="appendix_a_step_2"/>
+<h4>Step 2: Start Each Storage Node Agent (SNA) of the Non-Secure KVStore</h4>
+
+Login to each host and from the command line, type the following:
+
+<pre>
+  &gt; nohup java -jar /opt/ondb/kv/lib/kvstore.jar start -root /opt/ondb/example-store -config config.xml &
+</pre>
+
+which will start both an SNA and an <em>admin service</em> on the 
+associated host.
+
+<a name="appendix_a_step_3"/>
+<h4>Step 3: Configure and Deploy the Store</h4>
+
+From the command line of a host that has network connectivity to the 
+admin services started above (for example, from <em>kv-host-1</em> itself), 
+type the following command to enter the command line interface (CLI) to the 
+store's admin:
+
+<pre>
+  &gt; java -jar /opt/ondb/kv/lib/kvstore.jar runadmin -host kv-host-1 -port 5000
+  kv-&gt; 
+</pre>
+
+Next, deploy the store by entering the following commands &mdash; either in succession, 
+from the CLI prompt; or from a script, using the CLI command '<code>load -file &lt;flnm&gt;</code>'.
+
+<pre>
+  configure -name kvstore-db
+  plan deploy-zone -name zn1 -rf 3 -wait
+
+  plan deploy-sn -znname zn1 -host kv-host-1 -port 5000 -wait
+  plan deploy-admin -sn 1 -port 5001 -wait
+  pool create -name snpool
+  pool join -name snpool -sn sn1
+
+  plan deploy-sn -znname zn1 -host kv-host-2 -port 5000 -wait
+  plan deploy-admin -sn 2 -port 5001 -wait
+  pool join -name snpool -sn sn2
+
+  plan deploy-sn -znname zn1 -host kv-host-3 -port 5000 -wait
+  plan deploy-admin -sn 3 -port 5001 -wait
+  pool join -name snpool -sn sn3
+
+  change-policy -params "loggingConfigProps=oracle.kv.level=INFO;"
+
+  topology create -name store-layout -pool snpool -partitions 300
+  plan deploy-topology -name store-layout -plan-name store-deploy-plan -wait
+</pre>
+
+<a name="appendix_b_secure_ondb_store"/>
+<h3>Appendix B: Deploying & Configuring a Secure Oracle NoSQL Database Store</h3>
+
+The <em>Oracle NoSQL Database Security Guide</em> presents a number of 
+different ways to deploy and configure a KVStore for secure access. For 
+convenience, this section describes one particular set of steps you can 
+take to deploy and configure such a store. Whether you prefer the technique 
+presented here or one of the other techniques presented in the 
+<em>Oracle NoSQL Database Security Guide</em>, a secure KVStore must be deployed 
+and configured in order to run the example presented in the sections above 
+in a secure environment.
+
+For each of the steps presented in the sub-sections below, assume the following: 
+<ul>
+  <li>The Oracle NoSQL Database distribution is installed under the directory <code>/opt/ondb/kv</code>.
+  <li>A store named <em>example-store</em> will be deployed to three hosts.
+  <li>The hosts are named, <em>kv-host-1</em>, <em>kv-host-2</em>, and <em>kv-host-3</em> respectively.
+  <li>An  admin service, listening on port <em>5000</em>, is deployed on each of the three hosts.
+  <li>The contents of the shards managed by the store will be located under the <em>storage directory</em> <code>/disk1/shard</code> for host <em>kv-host-1</em>, <code>/disk2/shard</code> for host <em>kv-host-2</em>, and <code>/disk3/shard</code> for host <em>kv-host-3</em>.
+  <li>For convenience, the mechanism (<em>password manager</em>) the store will use to store and retrieve passwords needed for access to keystores etc. will be a <em>password file</em> (available in both the Community Edition and the Enterprise Edition) rather than an <em>Oracle Wallet</em> (available in only the Enterprise Edition).
+  <li>For simplicity, all passwords will be set to <code>123456</code> (must be at least 6 characters).
+  <li>The name of the user is <code>example-user</code>.
+</ul> 
+
+where the values used in the assumptions above should be replaced with comparable 
+values specific to your particular environment.
+
+<a name="appendix_b_step_1"/>
+<h4>Step 1: Generate Configuration Files for each Storage Node (SN) of the Secure KVStore</h4>
+
+Login to the first host (<em>kv-host-1</em>) and type the following from the command line:
+
+<pre>
+  &gt; java -jar /opt/ondb/kv/lib/kvstore.jar makebootconfig \
+         -root /opt/ondb/example-store \
+         -config config.xml \
+         -port 5000 \
+         -admin 5001 \
+         -host kv-host-1 \
+         -harange 5002,5005 \
+         -num_cpus 0 \
+         -memory_mb 0 \
+         -capacity 3 \
+         -storagedir /disk1/shard \
+         <strong style="color: red;">-store-security configure \</strong>
+         <strong style="color: red;">-pwdmgr pwdfile</strong>
+
+  Enter a password for the Java KeyStore:123456&lt;RETURN&gt;
+  Re-enter the KeyStore password for verification:123456&lt;RETURN&gt;
+
+  Created files
+      /opt/ondb/example-store/security/store.trust
+      /opt/ondb/example-store/security/store.keys
+      /opt/ondb/example-store/security/store.passwd
+      /opt/ondb/example-store/security/client.trust
+      /opt/ondb/example-store/security/security.xml
+      /opt/ondb/example-store/security/client.security
+</pre>
+
+Note the value of the <code>-store-security</code> parameter for 
+<em>kv-host-1</em> is <code>configure</code>.
+
+After executing the command above, use a utility such as <code>scp</code> 
+to copy the resulting security directory to the other SN hosts; that is, 
+<em>kv-host-2</em> and <em>kv-host-3</em>. For example, 
+
+<pre>
+  &gt; scp -r /opt/ondb/example-store/security example-user@kv-host-2:/opt/ondb/example-store
+  &gt; scp -r /opt/ondb/example-store/security example-user@kv-host-3:/opt/ondb/example-store
+
+    store.trust         100%  508     0.5KB/s   00:00    
+    store.keys          100% 1215     1.2KB/s   00:00    
+    store.passwd        100%   39     0.0KB/s   00:00    
+    client.trust        100%  508     0.5KB/s   00:00    
+    security.xml        100% 2216     2.2KB/s   00:00    
+    client.security     100%  255     0.3KB/s   00:00    
+</pre>
+
+After generating and distributing the security configuration files by 
+executing the commands shown above from the first SN host (<em>kv-host-1</em>), 
+login to each of the remaining SN hosts and <em>enable</em> security by 
+typing the commands shown below from the respective host's command line.
+
+That is, from <em>kv-host-2</em>, type the following:
+
+<pre>
+  &gt; java -jar /opt/ondb/kv/lib/kvstore.jar makebootconfig \
+         -root /opt/ondb/example-store \
+         -config config.xml \
+         -port 5000 \
+         -admin 5001 \
+         -host kv-host-2 \
+         -harange 5002,5005 \
+         -num_cpus 0 \
+         -memory_mb 0 \
+         -capacity 3 \
+         -storagedir /disk2/shard \
+         <strong style="color: red;">-store-security</strong> <strong style="color: purple;">enable \</strong>
+         <strong style="color: red;">-pwdmgr pwdfile</strong>
+</pre>
+
+And then from <em>kv-host-3</em>, type:
+
+<pre>
+  &gt; java -jar /opt/ondb/kv/lib/kvstore.jar makebootconfig \
+         -root /opt/ondb/example-store \
+         -config config.xml \
+         -port 5000 \
+         -admin 5001 \
+         -host kv-host-3 \
+         -harange 5002,5005 \
+         -num_cpus 0 \
+         -memory_mb 0 \
+         -capacity 3 \
+         -storagedir /disk3/shard \
+         <strong style="color: red;">-store-security</strong> <strong style="color: purple;">enable \</strong>
+         <strong style="color: red;">-pwdmgr pwdfile</strong>
+</pre>
+
+For both commands above, note the value of the <code>-store-security</code> parameter 
+is <code>enable</code> rather than <code>configure</code>; as was used 
+with the first host.
+
+<a name="appendix_b_step_2"/>
+<h4>Step 2: Start Each Storage Node Agent (SNA) of the Secure KVStore</h4>
+
+Login to each host and from the command line, type the following:
+
+<pre>
+  &gt; nohup java -jar /opt/ondb/kv/lib/kvstore.jar start -root /opt/ondb/example-store -config config.xml &
+</pre>
+
+which will start both an SNA and an <em>admin service</em> on the 
+associated host.
+
+<a name="appendix_b_step_3"/>
+<h4>Step 3: Configure & Deploy the Store with an Admin User</h4>
+
+From the command line of a host that has network connectivity to the 
+admin services started above (for example, from <em>kv-host-1</em> itself), 
+type the following command to enter the command line interface (CLI) to the 
+store's admin:
+
+<pre>
+  &gt; java -jar /opt/ondb/kv/lib/kvstore.jar runadmin \
+         -host kv-host-1 \
+         -port 5000 \
+         -security /opt/ondb/example-store/security/client.security
+
+  Logged in admin as anonymous
+  kv-&gt; 
+</pre>
+
+Next, deploy the store by entering the following commands &mdash; either in succession, 
+from the CLI prompt; or from a script, using the CLI command '<code>load -file &lt;flnm&gt;</code>'.
+
+<pre>
+  configure -name kvstore-db
+  plan deploy-zone -name zn1 -rf 3 -wait
+
+  plan deploy-sn -znname zn1 -host kv-host-1 -port 5000 -wait
+  plan deploy-admin -sn 1 -port 5001 -wait
+  pool create -name snpool
+  pool join -name snpool -sn sn1
+
+  plan deploy-sn -znname zn1 -host kv-host-2 -port 5000 -wait
+  plan deploy-admin -sn 2 -port 5001 -wait
+  pool join -name snpool -sn sn2
+
+  plan deploy-sn -znname zn1 -host kv-host-3 -port 5000 -wait
+  plan deploy-admin -sn 3 -port 5001 -wait
+  pool join -name snpool -sn sn3
+
+  change-policy -params "loggingConfigProps=oracle.kv.level=INFO;"
+
+  topology create -name store-layout -pool snpool -partitions 300
+  plan deploy-topology -name store-layout -plan-name store-deploy-plan -wait
+</pre>
+
+After configuring the store and deploying the topology as shown 
+above, create a user named <code>root</code>, having administrative 
+privileges. To do this, type the following command at the CLI prompt:
+
+<pre>
+  plan create-user -name root -admin -wait
+
+  Enter the new password: 123456&lt;RETURN&gt;
+  Re-enter the new password: 123456&lt;RETURN&gt;
+</pre>
+
+<a name="appendix_b_step_4"/>
+<h4>Step 4: Generate <em>Root</em> User and Regular User with Credentials</h4>
+
+The previous sections in the body of this document describe how to create and populate 
+a table with data and how to execute the provided example to demonstrate running against 
+table data contained in a <em>secure</em> Oracle NoSQL Database store. But before 
+creating and populating that table and running the example, an administrative user 
+&mdash; named <em>root</em> for the purposes of this document &mdash; must be created, 
+along with the necessary security credentials. This must be done so that the store 
+can be administered if necessary.
+<p>
+
+In addition to creating the <em>root</em> user, a non-administrative user should also
+be created, along with the necessary credentials. This second user is created and provisioned 
+to demonstrate how an application can be run against a table using only the minimum required 
+privileges; as opposed to full, "root" privileges.
+
+<p>
+<a name="appendix_b_step_4_generate_root_and_credentials"/>
+<b><em>&mdash; Generate "Root" User and Credentials &mdash;</em></b>
+<p>
+
+To generate the <em>root</em> user along with the necessary security credentials, login 
+to one of the hosts running the admin service (<em>kv-host-1</em> for example) and type 
+the following commands at the command line:
+
+<pre>
+  &gt; java -jar /opt/ondb/kv/lib/kvstore.jar securityconfig pwdfile create \
+             -file /opt/ondb/example-store/security/root.passwd
+
+  Created
+
+  &gt; java -jar /opt/ondb/kv/lib/kvstore.jar securityconfig pwdfile secret \
+             -file /opt/ondb/example-store/security/root.passwd -set -alias root
+
+  Enter the secret value to store: 123456&lt;RETURN&gt;
+  Re-enter the secret value for verification: 123456&lt;RETURN&gt;
+  Secret created
+  OK
+
+  &gt; cp /opt/ondb/example-store/security/client.security /opt/ondb/example-store/security/root.login
+
+  &gt; echo oracle.kv.auth.username=root &gt;&gt; /opt/ondb/example-store/security/root.login
+  &gt; echo oracle.kv.auth.pwdfile.file=/opt/ondb/example-store/security/root.passwd &gt;&gt; /opt/ondb/example-store/security/root.login
+</pre>
+
+Note that the contents of the <code>client.security</code> properties file are copied 
+to the file named <code>root.login</code>. The contents of that file are used when a 
+client that wishes to connect to the secure KVStore started above must authenticate as 
+the user named <em>root</em>. For the purposes of this document, this authentication 
+process will be referred to as <em>logging in</em> to the KVStore; and thus, the properties 
+file is referred to as a <em>login</em> file (or <em>login properties</em> file). For 
+convenience, the system properties <code>oracle.kv.auth.username</code> and 
+<code>oracle.kv.auth.pwdfile.file</code> are inserted into <code>root.login</code>; 
+which allows one to connect to the store as the <em>root</em> user without having to 
+specify those properties on the command line.
+
+<p>
+<a name="appendix_b_step_4_generate_non_admin_user"/>
+<b><em>&mdash; Generate Non-Administrative User with Privileges &mdash;</em></b>
+<p>
+
+To create the non-administrative user, along with the necessary credentials, first login to 
+the admin CLI by typing the following at the command line of a node that has network 
+connectivity with the admin service:
+
+<pre>
+  &gt; java -jar /opt/ondb/kv/lib/kvstore.jar runadmin \
+             -host kv-host-1 \
+             -port 5000 \
+             -security /opt/ondb/example-store/security/root.login
+
+  Logged in admin as root
+  kv-&gt; 
+</pre>
+
+Next, create a custom <b><em>role</em></b> (named <em>readwritemodifytables</em> 
+for example) consisting of the privileges a user would need to create and populate 
+a table. After creating the necessary role, create a user named <em>example-user</em> 
+and then grant the new role to that user. To do this, enter the following commands 
+&mdash; either in succession, from the CLI prompt; or from a script, using the CLI 
+command '<code>load -file &lt;flnm&gt;</code>'.
+
+<pre>
+  execute 'CREATE ROLE readwritemodifytables'
+  execute 'GRANT SYSDBA TO readwritemodifytables'
+  execute 'GRANT READ_ANY TO readwritemodifytables'
+  execute 'GRANT WRITE_ANY TO readwritemodifytables'
+  execute 'CREATE USER example-user IDENTIFIED BY \"123456\"'
+  execute 'GRANT readwritemodifytables TO USER example-user'
+</pre>
+
+Note that the name of the user created above is not required to be the same as the 
+OS user name under which the example is executed. The name above and its associated 
+credentials are registered with the KVStore for the purposes of authenticating to 
+the store, and so can be any value you wish to use.
+
+<p>
+<a name="appendix_b_step_4_generate_non_admin_user_credentials"/>
+<b><em>&mdash; Generate Non-Administrative User Credentials &mdash;</em></b>
+<p>
+
+Once the KVStore user <em>example-user</em> and its password have been created, 
+the <code>KVSecurityCreation</code> convenience program can be used to generate 
+the public and private credentials needed by that user to connect to the KVStore. 
+To do this, login to one of the hosts running the admin service 
+(<em>kv-host-1</em> for example) and type the following at the command line:
+
+<pre>
+  &gt; cd /opt/ondb/kv
+  &gt; javac -classpath lib/kvstore.jar:examples examples/hadoop/table/KVSecurityCreation.java
+</pre>
+
+which produces the following files: 
+
+<pre>
+  /opt/ondb/kv/examples/hadoop/table/
+        KVSecurityUtil.class
+        KVSecurityCreation.class
+</pre>
+
+Once <code>KVSecurityCreation</code> has been compiled, it can be executed to 
+generate the desired credential artifacts. If you want to store the password in 
+a clear text password file, then type the following at the command line:
+
+<pre>
+  &gt; cd /opt/ondb/kv
+  &gt; java -classpath lib/kvstore.jar:examples hadoop.table.KVSecurityCreation -pwdfile example-user.passwd -set -alias example-user
+
+  May 04, 2015 11:23:32 AM hadoop.table.KVSecurityUtil removeDir
+  INFO: removed file [/tmp/example-user.passwd]
+  May 04, 2015 11:23:32 AM hadoop.table.KVSecurityUtil removeDir
+  INFO: removed file [/tmp/example-user-client-pwdfile.login]
+  created login properties file [/tmp/example-user-client-pwdfile.login]
+  created login properties file [/tmp/example-user-server.login]
+  created credentials store [/tmp/example-user.passwd]
+  Enter the secret value to store: 123456&lt;RETURN&gt;
+  Re-enter the secret value for verification: 123456&lt;RETURN&gt;
+  Secret created
+</pre>
+
+On the other hand, if you are using an Oracle Wallet (Enterprise Edition only) 
+to store the user's password, then type the following:
+
+<pre>
+  &gt; cd /opt/ondb/kv
+  &gt; java -classpath lib/kvstore.jar:examples hadoop.table.KVSecurityCreation -wallet example-user-wallet.dir -set -alias example-user
+
+  May 04, 2015 11:30:54 AM hadoop.table.KVSecurityUtil removeDir
+  INFO: removed file [/tmp/example-user-wallet.dir/cwallet.sso]
+  May 04, 2015 11:30:55 AM hadoop.table.KVSecurityUtil removeDir
+  INFO: removed directory [/tmp/example-user-wallet.dir]
+  May 04, 2015 11:30:55 AM hadoop.table.KVSecurityUtil removeDir
+  INFO: removed file [/tmp/example-user-client-wallet.login]
+  created login properties file [/tmp/example-user-client-wallet.login]
+  created login properties file [/tmp/example-user-server.login]
+  created credentials store [/tmp/example-user-wallet.dir]
+  Enter the secret value to store: 123456&lt;RETURN&gt;
+  Re-enter the secret value for verification: 123456&lt;RETURN&gt;
+  Secret created
+</pre>
+
+Compare the artifacts generated when a password file is specified with the
+artifacts generated when a wallet is specified. When a password file is specified,
+you should see the following files:
+
+<pre>
+  /tmp
+    example-user-client-pwdfile.login
+    example-user-server.login
+    example-user.passwd
+</pre>
+
+And when wallet storage is specified, you should see:
+
+<pre>
+  /tmp
+    example-user-client-wallet.login
+    example-user-server.login
+    /example-user-wallet.dir
+      cwallet.sso
+</pre>
+
+Note that because this is an example for demonstration purposes, the credential
+files generated by <code>KVSecurityCreation</code> are placed in the system's
+<code>/tmp</code> directory. For your own applications, you may want to 
+place the credential files you generate in a more permanent location.
+<p>
+
+Note also that for both cases &mdash; password or wallet &mdash; two login properties 
+files are generated; one for client side connections, and one for server side connections. 
+The only difference between the client side login file and the server side login file is 
+that the client side login file specifies the <code>username</code> (the <em>alias</em>)
+along with the <em>location</em> of the user's password 
+&mdash; specified by either the <code>oracle.kv.auth.pwdfile</code> or <code>oracle.kv.auth.wallet.dir</code> property. 
+Although optional, the reason for using two login files is to avoid passing private security 
+information to the server side; as explained in more detail in 
+<a href="#appendix_c_secure_kvclient_packaging_model"><b><code>Appendix C</code></b></a>.
+Additionally, observe that the server side login file (<code>example-user-server.login</code>) 
+is identical for both cases. This is because whether a password file or a wallet is used to 
+store the password, both use the same publicly visible communication transport information.
+<p>
+
+At this point, the KVStore has been deployed, configured for secure access, and provisioned 
+with the necessary users and credentials; so that the table can be created and populated, and 
+the example can be executed by a user whose password is stored either in a clear text password 
+file or an Oracle Wallet (Enterprise Edition only) to demonstrate running against table data 
+contained in a secure Oracle NoSQL Database store.
+<p>
+
+A final, important point to note is that the storage mechanism used for the example application's 
+user password (password file or Oracle Wallet) <em><b>does not depend on</b></em> the password 
+storage mechanism used by the KVStore with which that application will communicate. That is, although 
+<a href="#appendix_b_secure_ondb_store"><b><code>Appendix B</code></b></a> 
+(for convenience) deployed a secure KVStore using a password file rather than a wallet, 
+the fact that the KVStore placed the passwords it manages in a password file does not 
+prevent the developer/deployer of a client of that store from storing the client's 
+user password in an Oracle Wallet; or vice-versa. You should therefore view the use of 
+an Oracle Wallet or a password file by any client application as simply a "safe" place 
+(for some value of "safe") where the user password can be stored; which can be accessed 
+by only the user who owns the wallet or password file. This means that the choice of 
+password storage mechanism is at the discretion of the application developer/deployer; 
+no matter what mechanism is used by the KVStore itself.
+
+<p>
+<a name="appendix_c_secure_kvclient_packaging_model"/>
+<h3>Appendix C: A Model for Building and Packaging a Secure KVStore Client</h3>
+<p>
+
+With respect to running a MapReduce job against data contained in a secure KVStore, 
+a particularly important issue to address is related to the communication of user 
+credentials to the tasks run on each of the DataNodes on which the Hadoop 
+infrastructure executes the job. Recall from above that when using the  
+<a href="https://en.wikipedia.org/wiki/MapReduce"><b><code>MapReduce</code></b></a> 
+programming model defined by 
+<a href="https://en.wikipedia.org/wiki/Apache_Hadoop"><b><code>Apache Hadoop</code></b></a> 
+the tasks executed by a MapReduce job each act as a client of the KVStore. Thus, 
+if the store is configured for secure access, in order to retrieve the desired data 
+from the store, each task must have access to the credentials of the user associated 
+with that data. As described in the <em>Oracle NoSQL Database Security Guide</em>, the 
+typical mechanism for providing the necessary credentials to a client of a secure store 
+is to <b><em>manually install</em></b> the credentials on the client's local file system; 
+for example, by employing a utility such as <code>scp</code>. Although that mechanism 
+is practical for most clients of a secure KVStore, it is extremely impractical for a 
+MapReduce job. This is because a MapReduce job consists of multiple tasks running in 
+parallel, in separate address spaces, each with a separate file system that is generally 
+not under the control of the user. Assuming then, that write access is granted by the 
+Hadoop administrator (a problem in and of itself), this means that manual installation 
+of the client credentials for every possible user known to the KVStore would need to 
+occur on the file system of each of the multiple nodes in the Hadoop cluster; something 
+that may be very difficult to achieve.
+<p>
+To address this issue, the sections below present a model that developers and deployers 
+can employ to facilitate the communication of each user's credentials to a given MapReduce 
+job from the <em>client side</em> of the job; that is, from the address space controlled 
+by the job's client process, owned by the user. As described below, this model will consist 
+of two primary components: a programming model for executing MapReduce jobs that retrieve 
+and process data contained in tables located in a secure KVStore; and a set of 
+"best practices" for building, packaging, and deploying those jobs. Although there is 
+nothing preventing a user from manually installing the necessary security credentials 
+on all nodes in a given cluster, doing so is not only impractical, but may result in 
+various security vulnerabilitites. Combining this programming model with the deployment 
+best practices that are presented will help developers and deployers not only avoid the 
+need to manually pre-install credentials on the DataNodes of the Hadoop cluster, but will 
+also prevent the sort of security vulnerabilities that can occur with manual installation.
+
+<a name="appendix_c_programming_model"/>
+<h4>The Programming Model for MapReduce and Oracle NoSQL Database Security</h4>
+
+Recall that when executing a MapReduce job, the client application uses mechanisms 
+provided by the Hadoop infrastructure to <em>initiate</em> the job from a node (referred to 
+as the Hadoop cluster's <em>access node</em>) that has network access to the node running the 
+Hadoop cluster's <code>ResourceManager</code>. If the job will be run against a secure KVStore, 
+then prior to initiating the job, the client must initialize the job's 
+<a href="../../../javadoc/oracle/kv/hadoop/table/TableInputFormat.html"><b><code>TableInputFormat</code></b></a> 
+with the following three pieces of information:
+
+<ul>
+  <li>The name of the file that specifies the transport properties the client will use when 
+       connecting to the store; which, for the purposes of this document, will be referred 
+       to as the <b><em>login properties file</em></b> (or <b><em>login file</em></b>).
+  <li>The <a href="../../../javadoc/oracle/kv/PasswordCredentials.html"><b><code>PasswordCredentials</code></b></a>
+       containing the username and password the client will present to the store during authentication.
+  <li>The name of the file containing the public keys and/or certificates needed for authentication; 
+       which, for the purposes of this document, will be referred to as, the <b><em>client trust file</b></em> 
+       (or <b><em>trust file</b></em>). 
+</ul>
+
+To perform this initialization, the MapReduce client application 
+&mdash; <code>CountTableRows</code> in this case &mdash; invokes the <code>setKVSecurity</code> 
+method defined in 
+<a href="../../../javadoc/oracle/kv/hadoop/table/TableInputFormat.html"><b><code>TableInputFormat</code></b></a>. 
+Once this initialization has been performed and the job has been initiated, the job uses that 
+<a href="../../../javadoc/oracle/kv/hadoop/table/TableInputFormat.html"><b><code>TableInputFormat</code></b></a>
+to create and assign a
+<a href="../../../javadoc/oracle/kv/hadoop/table/TableInputSplit.html"><b><code>TableInputSplit</code></b></a> 
+(a <em>split</em>) to each of the <code>Mapper</code> tasks that will run on one of the DataNodes 
+in the cluster. The 
+<a href="../../../javadoc/oracle/kv/hadoop/table/TableInputFormat.html"><b><code>TableInputFormat</code></b></a>
+needs the information initialized by the <code>setKVSecurity</code> method for two reasons: 
+
+<ol>
+  <li>To connect to the secure store from the access node and retrieve the information needed to 
+       create the splits.
+  <li>To initialize each split with that same security information, so that each such split can 
+       connect to the secure store from its DataNode host and retrieve the particular table data 
+       the split will process.
+</ol>
+
+In addition to requiring that the MapReduce application use the mechanism just described to 
+initialize and configure the job's 
+<a href="../../../javadoc/oracle/kv/hadoop/table/TableInputFormat.html"><b><code>TableInputFormat</code></b></a> 
+(and thus, it splits) with the information listed above, the model also requires that the 
+public and private security credentials referenced by that information be communicated to the 
+<a href="../../../javadoc/oracle/kv/hadoop/table/TableInputFormat.html"><b><code>TableInputFormat</code></b></a>, 
+as well as the splits, in a secure fashion. How this is achieved depends on whether that 
+information is being communicated to the 
+<a href="../../../javadoc/oracle/kv/hadoop/table/TableInputFormat.html"><b><code>TableInputFormat</code></b></a> 
+on the client side of the application, or to the splits on the server side. 
+<p>
+
+<a name="appendix_c_communicating_credentials_splits"/>
+<b><em>&mdash; Communicating Security Credentials to the Splits &mdash;</em></b>
+<p>
+
+To facilitate communication of the user's security credentials to the splits distributed 
+to each of the DataNodes of the cluster, the model separates <em>public</em> security 
+information from the <em>private</em> information (the username and password), and then 
+stores the private information as part of each split's internal state, rather than on the 
+local file system of each associated DataNode; which may be vulnerable or difficult/impossible 
+to secure. For communication of the <em>public contents</em> of the login and trust files 
+to each such split, the model supports an (optional) mechanism that allows the application 
+to communicate that information as Java <em>resources</em> that each split retrieves from 
+the classpath of the split's Java VM. This avoids the need to manually transfer the contents 
+of those files to each DataNode's local file system, and also avoids the potential security 
+vulnerabilities that can result from manual installation on those nodes. Note that when 
+an application wishes to employ this mechanism, it will typically include the necessary 
+information in a JAR file that is specified to the MapReduce job via the <code>-libjars</code> 
+hadoop command line directive. 
+<p>
+The intent of the mechanism just described is to allow applications to exploit the Hadoop 
+infrastructure to automatically distribute the public login and trust information to each of 
+the job's splits via a JAR file added to the classpath on each remote DataNode. But it is important 
+to note that although this mechanism is used to distribute the application's <em>public</em> 
+credentials, it must not be used to distribute any of the private information related to 
+authentication; specifically, the username and password. This is important because a JAR 
+file that is distributed to the DataNodes in the manner described may be cached on the associated 
+DataNode's local file system; which might expose a vulnerability. As a result, private 
+authentication information is only communicated as part of each split's internal state.
+<p>
+The separation of public and private credentials supported by this model not only 
+prevents caching the private credentials on each DataNode, but also facilitates the ability 
+to guarantee the confidentiality of that information; via whatever external third party 
+secure communication mechanism the current Hadoop implementation happens to employ.
+This capability is also important to support the execution of Hive queries against a 
+secure store.
+
+<p>
+<a name="appendix_c_communicating_credentials_to_input_format"/>
+<b><em>&mdash; Communicating Security Credentials to the TableInputFormat &mdash;</em></b>
+<p>
+
+With respect to the job's 
+<a href="../../../javadoc/oracle/kv/hadoop/table/TableInputFormat.html"><b><code>TableInputFormat</code></b></a>, 
+the programming model supports different options for communicating the user's security information. 
+This is because the 
+<a href="../../../javadoc/oracle/kv/hadoop/table/TableInputFormat.html"><b><code>TableInputFormat</code></b></a> 
+operates only on the access node, on the client side of the job; which means that there is 
+only one file system that needs to be secured. Additionally, unlike the splits, the 
+<a href="../../../javadoc/oracle/kv/hadoop/table/TableInputFormat.html"><b><code>TableInputFormat</code></b></a> 
+is not sent on the wire. Thus, as long as only the user is granted read privileges,
+both the public and private security information can be installed on the access node's 
+file system without fear of compromise. For this case, the application would typically 
+use system properties (on the command line) to specify the fully-qualified paths to the 
+login, trust, and password files (or Oracle Wallet); which the 
+<a href="../../../javadoc/oracle/kv/hadoop/table/TableInputFormat.html"><b><code>TableInputFormat</code></b></a> 
+would then read from the local file system, retrieving the necessary public and private  
+security information. 
+<p>
+A second option for communicating the user's security credentials to the 
+<a href="../../../javadoc/oracle/kv/hadoop/table/TableInputFormat.html"><b><code>TableInputFormat</code></b></a> 
+is to include the public and private information as resources in the client side 
+classpath of the Java VM in which the 
+<a href="../../../javadoc/oracle/kv/hadoop/table/TableInputFormat.html"><b><code>TableInputFormat</code></b></a> 
+runs. This is the option employed by the example presented in this document, and is 
+similar to what was described above for the splits. This option demonstrates how an 
+application's build model can be exploited to simplify not only the applications's 
+command line, but also the deployment of secure MapReduce jobs in general. As was the 
+case with the splits, applications will typically communicate the necessary security 
+information as Java resources by including that information in a JAR file. But rather 
+than using the <code>-libjars</code> hadoop command line directive to specify the 
+JAR file to the server side of the MapReduce job, in this case, because the 
+<a href="../../../javadoc/oracle/kv/hadoop/table/TableInputFormat.html"><b><code>TableInputFormat</code></b></a> 
+operates on only the client side access node, the JAR file would simply be added to 
+the <code>HADOOP_CLASSPATH</code> environment variable.
+
+<a name="appendix_c_best_practices_packaging"/>
+<h4>Best Practices: MapReduce Application Packaging for Oracle NoSQL Database Security</h4>
+
+To help users achieve the sort of separation of public and private security information 
+described in previous sections, a set of (optional) best practices related to packaging 
+the client application and its necessary artifacts is presented in this section; and are 
+employed by the example featured in this document. Although the use of these packaging 
+practices is optional, you are encouraged to employ them when working with any 
+MapReduce jobs of your own that will interact with a KVStore configured for secure
+access.
+<p>
+
+Rather than manually installing the necessary security artifacts (login file, trust file, 
+password file or Oracle Wallet) on each DataNode in the cluster, user's should instead 
+install those artifacts only on the cluster's single access node; the node from which 
+the client application is executed. The client application can then retrieve each artifact 
+from the local environment, repackage the necessary information, and then employ mechanisms 
+provided by the Hadoop infrastructure to transfer that information to the appropriate 
+components of the MapReduce job that will be executed. 
+<p>
+
+For example, as described in the previous section, your client application can be designed 
+to retrieve the username and location of the password from the command line, a configuration 
+file, or a resource in the client classpath; where the location of the user's password is 
+a locally installed password file or Oracle Wallet (Enterprise Edition only) that can only 
+be read by the user. After retrieving the username from the command line and the password 
+from the specified location, the client uses that information to create the user's 
+<a href="../../../javadoc/oracle/kv/PasswordCredentials.html"><b><code>PasswordCredentials</code></b></a>,
+which are transferred to each MapReduce task via the splits that are created by the job's 
+<a href="../../../javadoc/oracle/kv/hadoop/table/TableInputFormat.html"><b><code>TableInputFormat</code></b></a>. 
+Using this model, the user's 
+<a href="../../../javadoc/oracle/kv/PasswordCredentials.html"><b><code>PasswordCredentials</code></b></a>,
+are never written to the file systems of the cluster's DataNodes. They are only held in each 
+task's memory. As a result, the integrity and confidentiality of those credentials only 
+needs to be provided when on the wire; which can be achieved by using whatever external 
+third party secure communication mechanism the current Hadoop implementation happens 
+to employ.
+<p>
+
+With respect to the transfer of the public login and trust artifacts, the client application 
+can exploit the mechanisms provided by the Hadoop infrastructure to automatically transfer 
+classpath (JAR) artifacts to the job's tasks. As demonstrated by the <code>CountTableRows</code> 
+example presented in the body of this document, the client application's build process can be 
+designed to separate the application's class files from its public security artifacts. 
+Specifically, the application's class files (and optionally, the public and private credentials) 
+can be placed in a local (to the access node) JAR file for inclusion in the classpath of the 
+client itself; while only the public security artifacts (the public login properties and client 
+trust information) are placed in a separate JAR file that can be added to the 
+<code>-libjars</code> specification of the hadoop command line for inclusion in the classpath 
+of each MapReduce task. 
+
+<p>
+<a name="appendix_c_non_secure_packaging_review"/>
+<b><em>&mdash; Review: Application Packaging for the <strong style="color: green;">Non-Secure</strong> Case &mdash;</em></b>
+<p>
+
+To understand how the packaging model discussed here can be employed when executing an 
+application against a secure KVStore, it may be helpful to first review how the 
+<code>CountTableRows</code> example is executed against a non-secure store. Recall from 
+the previous sections, for the non-secure case, the following command was executed 
+to produce a JAR file containing only the class files needed by <code>CountTableRows</code>.
+
+<pre>
+  &gt; cd /opt/ondb/kv/examples
+  &gt; jar cvf CountTableRows.jar hadoop/table/CountTableRows*.class
+</pre>
+
+which produces the file <code>CountTableRows.jar</code>, whose contents look like: 
+
+<pre>
+     0 Fri Feb 20 12:53:24 PST 2015 META-INF/
+    68 Fri Feb 20 12:53:24 PST 2015 META-INF/MANIFEST.MF
+  3842 Fri Feb 20 12:49:16 PST 2015 hadoop/table/CountTableRows.class
+  2623 Fri Feb 20 12:49:16 PST 2015 hadoop/table/CountTableRows$Map.class
+  3842 Fri Feb 20 12:49:16 PST 2015 hadoop/table/CountTableRows$Reduce.class
+</pre>
+
+Then the following commands can be used to execute the <code>CountTableRows</code> 
+example MapReduce job against a <b><em>non</em></b>-secure KVStore:
+<pre>
+  &gt; export=HADOOP_CLASSPATH $HADOOP_CLASSPATH:/opt/ondb/kv/lib/kvclient.jar
+  &gt; cd /opt/ondb/kv 
+  &gt; hadoop jar examples/non_secure_CountTableRows.jar hadoop.table.CountTableRows \
+                   -libjars /opt/ondb/kv/lib/kvclient.jar \
+                   example-store \
+                   kv-host-1:5000 \
+                   vehicleTable \
+                   /user/example-user/CountTableRows/vehicleTable/0001
+</pre>
+
+Note that there are three classpaths that must be set when a MapReduce job is 
+executed. First, the <code>jar</code> specification to the <code>hadoop</code> command interpreter 
+makes the class files of the main program (<code>CountTableRows</code> in this case) 
+accessible to the hadoop launcher mechanism; so that the program can be loaded and 
+executed. Next, the <code>HADOOP_CLASSPATH</code> environment variable must be 
+set to include any third party libraries that the program or the Hadoop framework 
+(running on the local access node) may need to load. For the example above, 
+<code>kvclient.jar</code> is added to <code>HADOOP_CLASSPATH</code> so 
+that the Hadoop framework's job initiation mechanism on the access node can access 
+<a href="../../../javadoc/oracle/kv/hadoop/table/TableInputFormat.html"><b><code>TableInputFormat</code></b></a> 
+and its related classes. 
+<p>
+
+Finally, the <code>hadoop</code> command interpreter's <code>-libjars</code> argument is 
+used to include any third party libraries in the classpath of each MapReduce task 
+executing on the cluster's DataNodes. Again, for the case above, <code>kvclient.jar</code> 
+is specified in <code>-libjars</code> so that each MapReduce task can access 
+classes such as, 
+<a href="../../../javadoc/oracle/kv/hadoop/table/TableInputSplit.html"><b><code>TableInputSplit</code></b></a> 
+and 
+<a href="../../../javadoc/oracle/kv/hadoop/table/TableRecordReader.html"><b><code>TableRecordReader</code></b></a>.
+<p>
+
+<a name="appendix_c_secure_packaging"/>
+<b><em>&mdash; Application Packaging for the <strong style="color: red;">Secure</strong> Case &mdash;</em></b>
+<p>
+
+Compare the non-secure case above with what would be done to run the 
+<code>CountTableRows</code> MapReduce job against a <em>secure</em> KVStore. For 
+the secure case, <b><em>two</em></b> JAR files are built; one for the classpath on 
+the client side, and one for the classpaths of the DataNodes on the server side. The 
+first JAR file will be added to the client side classpath and includes not only the 
+class files for the application but also the public and private credentials the 
+client will need to interact with the secure KVStore; where including the public and 
+private credentials in the client side JAR file avoids the inconvenience of having to 
+specify that information on the command line. The second JAR file will be added 
+(via the <code>-libjars</code> argument) to the DataNode classpaths on the server 
+side, and will include only the user's <em>public</em> credentials.
+<p>
+
+As described in
+<a href="#appendix_b_step_4_generate_non_admin_user_credentials"><b><code>Appendix B</code></b></a>, 
+the user's password can be stored in either a clear text password file or an Oracle
+Wallet. As a result, how the first JAR is generated is dependent on whether a password file 
+is used or a wallet. For example, assuming that a password file is used and the 
+user's security artifacts are generated using the <code>KVSecurityCreation</code> 
+program in the manner presented in 
+<a href="#appendix_b_step_4_generate_non_admin_user_credentials"><b><code>Appendix B</code></b></a>, 
+to generate both the client side and server side JAR files for the <code>CountTableRows</code> 
+example application, type the following:
+
+<pre>
+  &gt; cd /opt/ondb/kv/examples
+  &gt; jar cvf CountTableRows-pwdClient.jar hadoop/table/CountTableRows*.class hadoop/table/KVSecurityUtil*.class
+
+  &gt; cd /opt/ondb/example-store/security
+  &gt; jar uvf /opt/ondb/kv/examples/CountTableRows-pwdClient.jar <strong style="color: red;">client.trust</strong>
+
+  &gt; cd /tmp
+  &gt; jar uvf /opt/ondb/kv/examples/CountTableRows-pwdClient.jar <strong style="color: red;">example-user-client-pwdfile.login</strong>
+  &gt; jar uvf /opt/ondb/kv/examples/CountTableRows-pwdClient.jar <strong style="color: red;">example-user.passwd</strong>
+
+  &gt; cd /opt/ondb/example-store/security
+  &gt; jar cvf /opt/ondb/kv/examples/CountTableRows-pwdServer.jar <strong style="color: purple;">client.trust</strong>
+
+  &gt; cd /tmp
+  &gt; jar uvf /opt/ondb/kv/examples/CountTableRows-pwdServer.jar <strong style="color: purple;">example-user-server.login</strong>
+</pre>
+
+which produces the <b><em>client side</em></b> JAR file named <code>CountTableRows-pwdClient.jar</code>, 
+with contents that look like:
+
+<pre>
+     0 Mon May 04 13:01:04 PDT 2015 META-INF/
+    68 Mon May 04 13:01:04 PDT 2015 META-INF/MANIFEST.MF
+  3650 Mon May 04 13:00:52 PDT 2015 hadoop/table/CountTableRows.class
+  2623 Mon May 04 13:00:52 PDT 2015 hadoop/table/CountTableRows$Map.class
+   437 Mon May 04 13:00:52 PDT 2015 hadoop/table/CountTableRows$Reduce.class
+  6628 Mon May 04 13:00:52 PDT 2015 hadoop/table/KVSecurityUtil.class
+   508 Wed Apr 22 12:23:32 PDT 2015 <strong style="color: red;">client.trust</strong>
+   322 Mon May 04 11:23:32 PDT 2015 <strong style="color: red;">example-user-client-pwdfile.login</strong>
+    34 Mon May 04 11:23:38 PDT 2015 <strong style="color: red;">example-user.passwd</strong>
+</pre>
+
+and produces the <b><em>server side</em></b> JAR file named <code>CountTableRows-pwdServer.jar</code>, 
+with contents that look like:
+
+<pre>
+     0 Mon May 04 13:01:04 PDT 2015 META-INF/
+    68 Mon May 04 13:01:04 PDT 2015 META-INF/MANIFEST.MF
+   508 Wed Apr 22 12:23:32 PDT 2015 <strong style="color: purple;">client.trust</strong>
+   255 Mon May 04 11:30:54 PDT 2015 <strong style="color: purple;">example-user-server.login</strong>
+</pre>
+
+Alternatively, if <code>KVSecurityCreation</code> was used to generate wallet based 
+artifacts for <code>CountTableRows</code>, then the client side and server side 
+JAR files would be generated by typing:
+
+<pre>
+  &gt; cd /opt/ondb/kv/examples
+  &gt; jar cvf CountTableRows-walletClient.jar hadoop/table/CountTableRows*.class hadoop/table/KVSecurityUtil*.class
+
+  &gt; cd /opt/ondb/example-store/security
+  &gt; jar uvf /opt/ondb/kv/examples/CountTableRows-walletClient.jar <strong style="color: red;">client.trust</strong>
+    
+  &gt; cd /tmp
+  &gt; jar uvf /opt/ondb/kv/examples/CountTableRows-walletClient.jar <strong style="color: red;">example-user-client-wallet.login</strong>
+  &gt; jar uvf /opt/ondb/kv/examples/CountTableRows-walletClient.jar <strong style="color: red;">example-user-wallet.dir</strong>
+
+  &gt; cd /opt/ondb/example-store/security
+  &gt; jar cvf /opt/ondb/kv/examples/CountTableRows-walletServer.jar <strong style="color: purple;">client.trust</strong>
+    
+  &gt; cd /tmp
+  &gt; jar uvf /opt/ondb/kv/examples/CountTableRows-walletServer.jar <strong style="color: purple;">example-user-server.login</strong>
+</pre>
+
+each with contents identical or analogous to the contents of the JAR files for
+the password case. That is,
+
+<pre>
+     0 Mon May 04 13:22:36 PDT 2015 META-INF/
+    68 Mon May 04 13:22:36 PDT 2015 META-INF/MANIFEST.MF
+  3650 Mon May 04 13:00:52 PDT 2015 hadoop/table/CountTableRows.class
+  2623 Mon May 04 13:00:52 PDT 2015 hadoop/table/CountTableRows$Map.class
+   437 Mon May 04 13:00:52 PDT 2015 hadoop/table/CountTableRows$Reduce.class
+  6628 Mon May 04 13:00:52 PDT 2015 hadoop/table/KVSecurityUtil.class
+   508 Wed Apr 22 12:23:32 PDT 2015 <strong style="color: red;">client.trust</strong>
+   324 Mon May 04 11:30:54 PDT 2015 <strong style="color: red;">example-user-client-wallet.login</strong>
+     0 Mon May 04 11:30:54 PDT 2015 <strong style="color: red;">example-user-wallet.dir/</strong>
+  3677 Mon May 04 11:31:00 PDT 2015 <strong style="color: red;">example-user-wallet.dir/cwallet.sso</strong>
+</pre>
+
+and 
+
+<pre>
+     0 Mon May 04 13:01:04 PDT 2015 META-INF/
+    68 Mon May 04 13:01:04 PDT 2015 META-INF/MANIFEST.MF
+   508 Wed Apr 22 12:23:32 PDT 2015 <strong style="color: purple;">client.trust</strong>
+   255 Mon May 04 11:30:54 PDT 2015 <strong style="color: purple;">example-user-server.login</strong>
+</pre>
+
+<p>
+
+Finally, in a fashion similar to that described for the non-secure case above, to 
+execute the <code>CountTableRows</code> MapReduce job &mdash; using a password file &mdash; 
+against a <b><em>secure</em></b> KVStore, you would type the following:
+
+<pre>
+  &gt; export=HADOOP_CLASSPATH $HADOOP_CLASSPATH:/opt/ondb/kv/lib/kvclient.jar:<strong style="color: purple;">/opt/ondb/kv/examples/CountTableRows-pwdServer.jar</strong>
+  &gt; cd /opt/ondb/kv
+  &gt; hadoop jar <strong style="color: red;">examples/CountTableRows-pwdClient.jar</strong> \
+               hadoop.table.CountTableRows \
+               -libjars /opt/ondb/kv/lib/kvclient.jar,<strong style="color: purple;">/opt/ondb/kv/examples/CountTableRows-pwdServer.jar</strong> \
+               example-store \
+               kv-host-1:5000 \
+               vehicleTable \
+               /user/example-user/CountTableRows/vehicleTable/0001 \
+               <strong style="color: red;">example-user-client-pwdfile.login \</strong>
+               <strong style="color: purple;">example-user-server.login</strong>
+</pre>
+
+Similarly, if the application stores its password in an Oracle Wallet, then you 
+would type:
+
+<pre>
+  &gt; export=HADOOP_CLASSPATH $HADOOP_CLASSPATH:/opt/ondb/kv/lib/kvclient.jar:<strong style="color: purple;">/opt/ondb/kv/examples/CountTableRows-walletServer.jar</strong>
+  &gt; cd /opt/ondb/kv
+  &gt; hadoop jar <strong style="color: red;">examples/CountTableRows-walletClient.jar</strong> \
+               hadoop.table.CountTableRows \
+               -libjars /opt/ondb/kv/lib/kvclient.jar,<strong style="color: purple;">/opt/ondb/kv/examples/CountTableRows-walletServer.jar</strong> \
+               example-store \
+               kv-host-1:5000 \
+               vehicleTable \
+               /user/example-user/CountTableRows/vehicleTable/0001 \
+               <strong style="color: red;">example-user-client-wallet.login \</strong>
+               <strong style="color: purple;">example-user-server.login</strong>
+</pre>
+
+When comparing the command lines above with the command line used for the non-secure
+case, you should notice that <code>HADOOP_CLASSPATH</code> and <code>-libjars</code>
+both have been augmented with the JAR file that contains only the <em>public</em> 
+login and trust credentials (<code>CountTableRows-pwdServer.jar</code> or 
+<code>CountTableRows-walletServer.jar</code>); whereas the <em>local</em> classpath 
+of the client side of the application is augmented &mdash; via the <code>jar</code> directive &mdash; 
+with the JAR file that includes both the public and private credentials (<code>CountTableRows-pwdClient.jar</code> 
+or <code>CountTableRows-walletClient.jar</code>). The only other difference with the
+non-secure case is the two additional arguments at the end of the argument list;
+<code>example-user-client-pwdfile.login</code> (or <code>example-user-client-wallet.login</code>) 
+and <code>example-user-server.login</code>. The values of those arguments specify, respectively, 
+the <em>names</em> of the client side and server side login files; which will be retrieved as 
+resources from the corresponding JAR file.
+<p>
+
+Observe that when you package and execute your MapReduce application in a manner like 
+that shown in the example above, there is no need to specify the username or password file 
+(or wallet) on the command line; as that information is included as part of the client side 
+JAR file. Additionally, the server side JAR file that is transferred from the access node 
+to the job's DataNodes does not include that private information; which is important because 
+that transferred JAR file will be cached in the file system of each of those DataNodes. 
+
+<p>
+<a name="appendix_c_secure_packaging_summary"/>
+<b><em>&mdash; Summary &mdash;</em></b>
+<p>
+
+As the example above demonstrates, the <a href="#appendix_c_programming_model"><b><code>programming model</code></b></a> 
+for MapReduce and Oracle NoSQL Database Security supports (even encourages) the 
+best practices presented in this section for building, packaging, and deploying 
+any given MapReduce job that employs the Oracle NoSQL Database Table API to retrieve
+and process data in a given KVStore &mdash; either secure or non-secure. As a result, 
+simply generating separate JAR files &mdash; a set of JAR files for the secure case, 
+and one for the non-secure case &mdash; allows deployers to conveniently run the job 
+with or without security.
+<p>
+
+Note that this model for separating public and private user credentials will play 
+an important role when executing Hive queries against table data in a secure KVStore. 
+
+</body>
+</html>

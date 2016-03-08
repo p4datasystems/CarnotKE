@@ -1,0 +1,8 @@
+{
+    "type": "record",
+    "name": "LoginSession",
+    "namespace": "schema",
+    "fields": [
+        {"name": "sessionDuration", "type": "int", "default": 0}
+    ]
+}

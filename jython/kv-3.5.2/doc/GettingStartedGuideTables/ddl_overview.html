@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Appendix A. Table Data Definition Language Overview</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="prev" href="sequence-exec.html" title="Executing a Sequence" />
+    <link rel="next" href="ddlcomments.html" title="DDL Comments" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Appendix A. Table Data Definition Language Overview</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="sequence-exec.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="ddlcomments.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="appendix" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="ddl_overview"></a>Appendix A. Table Data Definition Language Overview</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+        Before you can write data to tables in the store, you must
+        provide a definition of the tables you want to use. This
+        definition includes information such as the table's name, the
+        name of its various rows and the data type contained in those
+        rows, identification of the primary and (optional) shard keys,
+        and so forth. To perform these definitions, Oracle NoSQL Database provides a
+        Data Definition Language (DDL) that you use to form table and
+        index statements. These statements can be used to:
+    </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                Define tables and sub-tables.
+            </p>
+          </li>
+          <li>
+            <p>
+                Modify table definitions.
+            </p>
+          </li>
+          <li>
+            <p>
+                Delete table definitions.
+            </p>
+          </li>
+          <li>
+            <p>
+                Define indexes.
+            </p>
+          </li>
+          <li>
+            <p>
+                Delete index definitions.
+            </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+        Table and index statements take the form of ordinary strings, which are
+        then transmitted to the Oracle NoSQL Database store using the appropriate
+        method or function. For example, to define a simple user table,
+        the table statement might look like this:
+    </p>
+      <pre class="programlisting">CREATE TABLE Users (
+    id INTEGER,
+    firstName STRING,
+    lastName STRING,
+    PRIMARY KEY (id)
+) </pre>
+      <p>
+        For information on how to transmit these statements to the
+        store, see  <a class="xref" href="tablesapi.html" title="Chapter 3. Introducing Oracle NoSQL Database Tables and Indexes">Introducing Oracle NoSQL Database Tables and Indexes</a>.
+    </p>
+      <p>
+        For overview information on primary and shard
+        keys, see <a class="xref" href="primaryshardkeys.html" title="Chapter 4. Primary and Shard Key Design">Primary and Shard Key Design</a>.
+    </p>
+      <p>
+        For overview information on indexes, see 
+        <a class="xref" href="createindex.html" title="Creating Indexes">Creating Indexes</a>.
+    </p>
+      <p>
+        The remainder of this appendix describes in detail the DDL
+        statements that you use to manipulate table and index definitions
+        in the store.
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="nameconstraints"></a>Name Constraints</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+            The following sections use all uppercase to identify DDL
+            keywords (such as STRING, CHECK, CREATE TABLE, and so on).
+            However, these keywords are actually case-insensitive and can
+            be entered as lower-case.
+        </p>
+        <p>
+            The DDL keywords shown here are reserved and cannot be used as
+            table, index or field names.
+        </p>
+        <p>
+            Table, index and field names are case-preserving, but
+            case-insensitive. So you can, for example, create a field named
+            <code class="literal">MY_NAME</code>, and later reference it as
+            <code class="literal">my_name</code> without error. However, whenever the
+            field name is displayed, it will display as
+            <code class="literal">MY_NAME</code>.
+        </p>
+        <p>
+            Table and index names are limited to 32 characters. Field names
+            can be 64 characters. All table, index and field names are
+            restricted to alphanumeric characters, plus underscore ("_").
+            All names must start with a letter.
+         </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="sequence-exec.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ddlcomments.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Executing a Sequence </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> DDL Comments</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

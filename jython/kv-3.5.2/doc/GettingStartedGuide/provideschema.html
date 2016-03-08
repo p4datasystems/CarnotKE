@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Managing Avro Schema in the Store</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="avroschemas.html" title="Chapter 6. Avro Schemas" />
+    <link rel="prev" href="schemaevolution.html" title="Schema Evolution" />
+    <link rel="next" href="avrobindings.html" title="Chapter 7. Avro Bindings" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Managing Avro Schema in the Store</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="schemaevolution.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Avro Schemas</th>
+          <td width="20%" align="right"> <a accesskey="n" href="avrobindings.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="provideschema"></a>Managing Avro Schema in the Store</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="provideschema.html#schema-add-to-store">Adding Schema</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="provideschema.html#change-schema-in-store">Changing Schema</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="provideschema.html#disable-schema-in-store">Disabling and Enabling Schema</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="provideschema.html#show-schema-in-store">Showing Schema</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+            This section describes how to add, change, disable and enable,
+            and show the Avro schema in your store.
+        </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="schema-add-to-store"></a>Adding Schema</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                Avro schema is defined in a flat-text file, and then added to
+                the store using the command line interface. For example,
+                suppose you have schema defined in a file called
+                <code class="literal">my_schema.avsc</code>. Then (assuming your store is
+                running) you start your command line interface and add the
+                schema like this:
+            </p>
+        <pre class="programlisting">&gt; java -Xmx256m -Xms256m \
+-jar &lt;kvhome&gt;/lib/kvstore.jar runadmin -port &lt;port&gt; -host &lt;host&gt;
+kv-&gt; ddl add-schema -file my_schema.avsc</pre>
+        <p>
+                Note that when adding schema to the store, some error
+                checking is performed to ensure that the schema is
+                correctly formed. Errors are problems that must be
+                addressed before the schema can be added to the store.
+                Warnings are problems that should be addressed, but are not
+                so serious that the CLI refuses to add the schema.
+                However, to add schema with Warnings, you must use the 
+                <code class="literal">-force</code> switch.
+            </p>
+        <p>
+                As of this release, the only Error that can be produced is
+                if a field's default value does not conform to the field's
+                type. That is, if the schema provides an integer as the
+                default value where a string is required.
+            </p>
+        <p>
+                As of this release, the only Warning that can be produced
+                is if the schema does not provide a default value for every
+                field in the schema. Default values are required if you
+                ever want to change (evolve) the schema. But in all other
+                cases, the lack of a default value does no harm.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="change-schema-in-store"></a>Changing Schema</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                To change (evolve) existing schema, use the <code class="literal">-evolve</code>
+                flag:
+            </p>
+        <pre class="programlisting">kv-&gt; ddl add-schema -file my_schema.avsc -evolve </pre>
+        <p>
+                Note that when changing schema in the store, some error
+                checking is performed to ensure that schema evolution can
+                be performed correctly. This error checking consists of
+                comparing the new schema to all currently enabled versions
+                of that schema.
+            </p>
+        <p>
+                This error checking can result in either Errors or
+                Warnings.  Errors are fatal problems that must be addressed
+                before the modified schema can be added to the store.
+                Errors represent situations where data written with an old
+                version of the schema cannot be read by clients using a new
+                version of the schema.
+            </p>
+        <p>
+                Possible errors are:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                        A field is added without a default value.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        The size of a fixed type is changed.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        An enum symbol is removed.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        A union type is removed or, equivalently, a union
+                        type is changed to a non-union type and the new
+                        type is not the sole type in the old union.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        A change to a field's type (specifically to a
+                        different type name) is considered an error except
+                        when it is a type promotion, as defined by the Avro
+                        spec. And even a type promotion is a warning; see
+                        below.  Another exception is changing from a
+                        non-union to a union; see below.
+                    </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+                Warnings are problems that can be avoided using a
+                two-phase upgrade process. In a two-phase upgrade, all
+                clients begin using the schema only for reading in phase I
+                (the old schema is still used for writing), and then use
+                the new schema for both reading and writing in phase II.
+                Phase II may not be begun until phase I is complete; that
+                is, no client may use the new schema for writing until all
+                clients are using it for reading.
+            </p>
+        <p>
+                Possible Warnings are:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                        A field is deleted in the new schema when it does
+                        not contain a default value in the old schema.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        An enum symbol is added.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        A union type is added or, equivalently, a non-union
+                        type is changed to a union that includes the
+                        original type and additional types.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        A field's type is promoted, as defined by the Avro
+                        spec.  Type promotions are: int to long, float or
+                        double; long to float or double; float to double.
+                    </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="disable-schema-in-store"></a>Disabling and Enabling Schema</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                You cannot delete schema, but you can disable it:
+            </p>
+        <pre class="programlisting">kv-&gt; ddl disable-schema -name avro.MyInfo.1 </pre>
+        <p>
+                To enable schema that has been disabled:
+            </p>
+        <pre class="programlisting">kv-&gt; ddl enable-schema -name avro.MyInfo.1 </pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="show-schema-in-store"></a>Showing Schema</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                To see all the schemas currently enabled in your store:
+            </p>
+        <pre class="programlisting">kv-&gt; show schemas </pre>
+        <p>
+                To see all schemas, including those which are currently
+                disabled:
+            </p>
+        <pre class="programlisting">kv-&gt; show schemas -disabled</pre>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="schemaevolution.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="avroschemas.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="avrobindings.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Schema Evolution </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 7. Avro Bindings</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

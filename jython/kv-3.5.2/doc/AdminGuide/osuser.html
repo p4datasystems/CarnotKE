@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>OS User Limits</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="machine-tuning.html" title="Appendix C. Tuning" />
+    <link rel="prev" href="linuxcachepagetuning.html" title="Linux Page Cache Tuning" />
+    <link rel="next" href="networkconfig.html" title="Linux Network Configuration Settings" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">OS User Limits</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="linuxcachepagetuning.html">Prev</a> </td>
+          <th width="60%" align="center">Appendix C. Tuning</th>
+          <td width="20%" align="right"> <a accesskey="n" href="networkconfig.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="osuser"></a>OS User Limits</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="osuser.html#fdlimits">File Descriptor Limits</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="osuser.html#processthread">Process and Thread Limits</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+           When running a large Oracle NoSQL Database store, the default OS
+           limits may be insufficient. The following sections list
+           limits that are worth reviewing.
+       </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="fdlimits"></a>File Descriptor Limits</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+               Use <code class="literal">ulimit -n</code> to determine the
+               maximum number of files that can be opened by a user.
+               The number of open file descriptors may need to be
+               increased if the defaults are too low. It's worth
+               keeping in mind that each open network connection
+               also consumes a file descriptor. Machines running
+               clients as well as machines running RNs may need to
+               increase this limit for large stores with 100s of
+               nodes.
+           </p>
+        <p>
+               Add entries like the ones below in
+               <code class="filename">/etc/security/limits.conf</code> to
+               change the file descriptor limits:
+           </p>
+        <pre class="programlisting">$username soft nofile 10240
+$username hard nofile 10240</pre>
+        <p>
+                where <code class="literal">$username</code>
+                is the username under which the Oracle NoSQL Database software runs.
+            </p>
+        <p>
+                Note that machines hosting multiple replication
+                nodes; that is, machines configured with a capacity
+                &gt; 1; will need larger limits than what is
+                identified here.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="processthread"></a>Process and Thread Limits</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+               Use <code class="literal">ulimit -u</code> to determine the
+               maximum number of processes (threads are counted as
+               processes under Linux) that the user is allowed to
+               create. Machines running clients as well as machines
+               running RNs may need to increase this limit to
+               accommodate large numbers of concurrent requests.
+           </p>
+        <p>
+               Add entries like the ones below in
+               <code class="filename">/etc/security/limits.conf</code> to
+               change the thread limits:
+           </p>
+        <pre class="programlisting">$username soft nproc 8192
+$username hard nproc 8192 </pre>
+        <p>
+                where <code class="literal">$username</code>
+                is the username under which the Oracle NoSQL Database software runs.
+            </p>
+        <p>
+                Note that machines hosting multiple replication
+                nodes; that is, machines configured with a capacity
+                &gt; 1; will need larger limits than what is
+                identified here.
+            </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="linuxcachepagetuning.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="machine-tuning.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="networkconfig.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Linux Page Cache Tuning </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Linux Network Configuration Settings</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

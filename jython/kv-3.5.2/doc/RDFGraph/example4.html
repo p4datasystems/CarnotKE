@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Example4.java: Query family relationships on a named graph</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="quickstart.html" title="Chapter 8. Quick Start for the RDF Graph Feature" />
+    <link rel="prev" href="example2b.html" title="Concurrent RDF data loading" />
+    <link rel="next" href="example5.html" title="Example5.java: SPARQL query with JOIN_METHOD" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center"> Example4.java: Query family relationships on a named graph</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="example2b.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 8. Quick Start for the RDF Graph Feature</th>
+          <td width="20%" align="right"> <a accesskey="n" href="example5.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="example4"></a> Example4.java: Query family relationships on a named graph</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            This example specifies that John loves Mary
+            (included in the default graph), and it selects and
+            displays the subject and object in each fatherOf
+            relationship (as JSON output). Example4b.java in the RDF
+            Graph feature describes the same exercise using a named
+            graph. 
+        </p>
+      <pre class="programlisting">import com.hp.hpl.jena.graph.*;
+import com.hp.hpl.jena.query.*;
+import com.hp.hpl.jena.rdf.model.Model;
+import oracle.rdf.kv.client.jena.*;
+
+public class Example4
+{
+  
+  public static void main(String[] args) throws Exception
+  {
+    
+String szStoreName  = args[0];
+String szHostName   = args[1];
+String szHostPort   = args[2];
+    
+System.out.println("Create Oracle NoSQL connection");
+OracleNoSqlConnection conn 
+     = OracleNoSqlConnection.createInstance(szStoreName,
+                                            szHostName, 
+                                            szHostPort);
+    
+System.out.println("Create Oracle NoSQL model");
+Model model = OracleModelNoSql.createOracleDefaultModelNoSql(conn);
+    
+System.out.println("Clear model");
+model.removeAll();
+    
+    
+System.out.println("Add triples");
+model.getGraph().add(
+           Triple.create(Node.createURI("http://example.com/John"),
+                         Node.createURI("http://example.com/loves"),
+                         Node.createURI("http://example.com/Mary")));
+    
+    
+String queryString  =
+              " select ?person1 ?person2 "                   +
+              " where "                                      +
+              " { ?person1 &lt;http://example.com/loves&gt; ?person2 }";
+    
+System.out.println("Execute query " + queryString);
+
+Query query = QueryFactory.create(queryString);
+QueryExecution qexec = QueryExecutionFactory.create(query, model);
+    
+try {
+      ResultSet results = qexec.execSelect();
+      ResultSetFormatter.outputAsJSON(System.out, results);
+    }
+    
+finally {
+      qexec.close();
+    }
+    
+model.close();
+conn.dispose();   
+  }
+}
+</pre>
+      <p> 
+            The following are the commands to compile and run
+            this, as well as the expected output of the java
+            command. 
+        </p>
+      <pre class="programlisting">javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar:./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar:./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example4.java
+
+javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar:./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar:./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example4b &lt;store_name&gt; \
+&lt;host_name&gt; &lt;host_port&gt;
+        
+Execute query select ?person1 ?person2 where { ?person1
+&lt;http://example.com/loves&gt; ?person2 }
+
+{
+  "head": {
+    "vars": [ "person1" , "person2" ]
+  } ,
+  "results": {
+    "bindings": [
+      {
+        "person1": { "type": "uri" , "value": "http://example.com/John" } ,
+        "person2": { "type": "uri" , "value": "http://example.com/Mary" }
+      }
+    ]
+  }
+}</pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="example2b.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="quickstart.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="example5.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top"> Concurrent RDF data loading </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top">  Example5.java: SPARQL query with JOIN_METHOD</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

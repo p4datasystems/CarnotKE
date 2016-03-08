@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Build an Ontology Model using Jena OntModel APIs</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="quickstart.html" title="Chapter 8. Quick Start for the RDF Graph Feature" />
+    <link rel="prev" href="example16b.html" title="Example16b. Generate Data sampling for the dataset in the Oracle NoSQL Database" />
+    <link rel="next" href="sparql.html" title="Chapter 9. SPARQL Gateway for XML-based Tools" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Build an Ontology Model using Jena OntModel APIs</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="example16b.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 8. Quick Start for the RDF Graph Feature</th>
+          <td width="20%" align="right"> <a accesskey="n" href="sparql.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="example17"></a>Build an Ontology Model using Jena OntModel APIs</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            This example describes how to use OWL_MEM_RULE_INF to
+            build an OntologyModel on top of an OracleModelNoSql
+            instance. The inference results are added to an in-memory
+            Jena Model.
+        </p>
+      <pre class="programlisting">import java.io.PrintStream;
+import java.util.Iterator;
+import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntModelSpec; 
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.graph.*; 
+import oracle.rdf.kv.client.jena.*;
+
+public class ExampleOntModel
+{
+
+  public static void main(String[] szArgs) throws Exception
+  {
+
+PrintStream psOut = System.out;
+
+psOut.println("start");
+String szStoreName = szArgs[0];
+String szHostName  = szArgs[1];
+String szHostPort  = szArgs[2];
+
+// Create a connection to the Oracle NoSQL Database
+OracleNoSqlConnection conn
+                   = OracleNoSqlConnection.createInstance(szStoreName,
+                                                          szHostName,
+                                                          szHostPort);
+
+// Create an OracleGraphNoSql object to handle the default graph
+// and use it to create a Jena Model object.
+Node graphNode = Node.createURI("http://example.org/graph1");
+OracleGraphNoSql graph = new OracleNamedGraphNoSql(graphNode, conn);
+Model model = 
+      OracleModelNoSql.createOracleModelNoSql(graphNode, conn);
+
+// Clear model
+model.removeAll();
+
+Node sub = Node.createURI("http://sub/a");
+Node pred = Node.createURI("http://pred/a");
+Node obj = Node.createURI("http://obj/a");
+
+// Add few axioms
+
+Triple triple = Triple.create(sub, pred, obj);
+graph.add(triple);
+
+graph.add(Triple.create(pred, 
+       Node.createURI("http://www.w3.org/2000/01/rdf-schema#domain"),
+       Node.createURI("http://C")));
+
+graph.add(Triple.create(pred, 
+   Node.createURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+   Node.createURI("http://www.w3.org/2002/07/owl#ObjectProperty")));
+
+    {
+// read it out
+     Iterator it = GraphUtil.findAll(graph);
+      
+     while (it.hasNext()) {
+    psOut.println("triple " + it.next().toString());
+    }
+}
+
+// Create an OntModel instance
+OntModel om = 
+         ModelFactory.createOntologyModel(
+                                    OntModelSpec.OWL_MEM_RULE_INF,
+                                    model);
+
+Model modelInMem = ModelFactory.createDefaultModel();
+modelInMem.add(om);
+
+    {
+      Iterator it = GraphUtil.findAll(modelInMem.getGraph());
+      while (it.hasNext()) {
+        psOut.println("triple from OntModel " + it.next().toString());
+      }
+    }
+model.close();
+conn.close();
+  }
+}</pre>
+      <p>
+            The following are the commands to compile and run
+            this example, as well as the expected output of the java
+            command.
+        </p>
+      <pre class="programlisting">javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar:./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar:./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example17.java
+
+javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar:./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar:./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example17 &lt;store_name&gt; \
+&lt;host_name&gt; &lt;host_port&gt;
+
+triple from OntModel http://sub/a @owl:sameAs http://sub/a
+triple from OntModel http://sub/a @rdf:type rdfs:Resource
+triple from OntModel http://sub/a @rdf:type owl:Thing
+triple from OntModel http://sub/a @rdf:type http://C
+triple from OntModel http://sub/a @http://pred/a http://obj/a</pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="example16b.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="quickstart.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="sparql.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Example16b. Generate Data sampling for the dataset in the Oracle NoSQL Database </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 9. SPARQL Gateway for XML-based
+        Tools</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

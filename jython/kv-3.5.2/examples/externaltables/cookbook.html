@@ -1,0 +1,257 @@
+<h3>Using Oracle External Tables To Access Oracle NoSQL Database Data</h3>
+<hr>
+<p>
+This guide walks you through the use of Oracle External Tables to read
+data from an Oracle NoSQL Database into an Oracle Database. The end
+result is that you can query (read) NoSQL Database data while
+accessing Oracle Database.
+<p>
+This document only provides an example walk-through of this feature. For a
+more complete description of using External Tables to read an Oracle NoSQL
+Database, see the
+<a href="../../javadoc/oracle/kv/exttab/package-summary.html#package_description">
+    Package oracle.kv.exttab Description.
+</a>
+<h4>Assumptions</h4>
+<p>
+This guide assumes:
+<ul>
+<li>You have an Oracle Database instance running and accessible.</li>
+<li>You have <code>sysdba</code> privileges on that instance.</li>
+<li>You are familiar with Oracle Database External Table concepts.</li>
+<li>You are able to compile and execute a Java program.</li>
+<li>You have an Oracle NoSQL Database running (either the single-process
+"lite" version or a multi-node cluster).</li>
+<li>You are familiar with the NoSQL Database Java API.</li>
+</ul>
+<h4>Introduction</h4>
+<p>
+
+The Oracle Database External Table feature allows a user to create a table
+that reads data from one or more sources which are external to the Oracle
+Database. These external sources are usually one or more flat text files,
+but in this case you will be using an Oracle NoSQL Database as the external
+data source. The NoSQL database is read with the aid of a preprocessor
+utility.
+
+<p>
+
+To use this feature, you define an External Table with one or more Location
+Files and the <code>nosql_stream</code> utility specified as the External
+Table <code>PREPROCESSOR</code>. After the External Table is declared to
+Oracle, but prior to invoking a <code>SELECT</code> command, the user runs
+a NoSQL Database "publish" utility, passing it several parameters:
+<ul>
+<li>Connection information for both the Oracle Database and Oracle NoSQL
+Database instances.</li>
+<li>The name of the Oracle Database External Table.</li>
+<li>Selection information about which records in the ONDB to process.</li>
+<li>(optionally) The name of a Formatter class to be used for converting
+the K/V pairs from the NoSQL record format to the External Table
+format.</li>
+</ul>
+<p>
+The publish utility then writes this information into the External Table
+Location File(s).  Note that you only have to run the publish utility once.
+After that, you only need to run the publish utility again if you want to
+change the way the NoSQL Database is accessed (for example, using a
+different key prefix, or if you change the port or the rep nodes where you
+access the database).
+<p>
+Once the publish utility has been run, you can query the External Table in
+the same way as you would query any other Oracle database table.
+
+<h4>Define An External Table</h4>
+Perform the following steps to create an External Table:
+<ul>
+<li>Create directory objects in Oracle where the External Table location files
+will reside and the NoSQL Database <code>exttab/bin</code> directory where
+the <code>nosql_stream</code> script can be found.
+<p>
+<b>NOTE:</b> Consult with your Oracle DBA regarding the appropriate
+             locations and permissions for these directories. It may be
+             desireable from a security point of view to copy the
+             <code>nosql_stream</code> script from the
+             <code>&lt;KVHOME&gt;/exttab/bin/</code> directory to some other
+             location.
+
+<pre>
+sqlplus / as sysdba
+SQL> CREATE DIRECTORY ext_tab AS '&lt;exttab_pathname&gt;';
+SQL> CREATE DIRECTORY nosql_bin_dir AS '&lt;bin_pathname&gt;';
+</pre>
+<code>exttab_pathname</code> is the directory containing the Location File(s)
+for the External Table. This directory does not require a large amount
+of storage as the Location Files will only ever hold a small amount of
+configuration data. <code>bin_pathname</code> refers to the
+<code>exttab/bin/</code>
+directory of the NoSQL Database installation.
+<p>
+<li>Grant appropriate permissions to Oracle users needing access to
+the External Table. In this example, the user accessing the NoSQL
+Database data with an External Table is <code>nosqluser</code>.
+<pre>
+sqlplus / as sysdba
+SQL> CREATE USER nosqluser IDENTIFIED BY password;
+SQL> GRANT CREATE SESSION TO nosqluser;
+SQL> GRANT EXECUTE ON SYS.UTL_FILE TO nosqluser;
+SQL> GRANT READ, WRITE ON DIRECTORY ext_tab TO nosqluser;
+SQL> GRANT READ, EXECUTE ON DIRECTORY nosql_bin_dir TO nosqluser;
+SQL> GRANT CREATE TABLE TO nosqluser;
+</pre>
+<p>
+<li>Define the External Table.
+<p>
+You should do this as the user who will be accessing the External
+Table, not as <code>sysdba</code>. In this example, create the table
+as <code>nosqluser</code>.
+<pre>
+
+SQL> CONNECT nosqluser/password
+SQL> CREATE TABLE nosql_data (email VARCHAR2(30),
+  2                           gender CHAR(1),
+  3                           address VARCHAR2(40),
+  4                           phone VARCHAR2(20))
+  5      ORGANIZATION EXTERNAL
+  6          (type oracle_loader
+  7           default directory ext_tab
+  8           access parameters (records delimited by newline
+  9           preprocessor nosql_bin_dir:'nosql_stream'
+ 10           fields terminated by '|' missing field values are null)
+ 11      LOCATION ('nosql.dat'))
+ 12      REJECT LIMIT UNLIMITED
+ 13      PARALLEL;
+
+Table created.
+
+SQL>
+</pre>
+For more information on External Tables and the parameters, see
+<a href="http://docs.oracle.com/cd/B10500_01/server.920/a96652/ch12.htm#1001165">External
+    Tables Access Parameters</a>.
+</ul>
+<h4>Create Some Sample Data In NoSQL Database</h4>
+<ul>
+<li>Compile the <code>LoadCookbookData</code> program in the
+<code>&lt;KVHOME&gt;/examples/externaltables</code> directory:
+<pre>
+cd &LT;KVHOME&GT;
+javac -classpath lib/kvstore.jar:examples examples/externaltables/*.java
+</pre>
+<p>
+If you are using the Table API, use the <code>LoadCookbookData</code>
+program in the
+<code>&lt;KVHOME&gt;/examples/externaltables/table</code> directory. See
+the comments in that example for information on how to define the required
+table in the store.
+<p>
+<li>Run the LoadCookbookData program to load some data into the KV Store:
+<pre>
+java -classpath lib/kvclient.jar:examples externaltables.LoadCookbookData \
+     -store &lt;storename&gt; -host &lt;hostname&gt; -port &lt;port&gt; -nops 10
+</pre>
+<p>
+or
+<pre>
+java -classpath lib/kvclient.jar:examples externaltables.table.LoadCookbookData \
+     -store &lt;storename&gt; -host &lt;hostname&gt; -port &lt;port&gt; -nops 10
+</pre>
+<code>-nops</code> specifies the number of records to create. A small
+number is all that is necessary in order to demonstrate access from
+External Tables. Optionally, you can pass <code>-delete</code> if you
+want to delete <i>all</i> previously created data in your Oracle NoSQL
+Database Store.
+</ul>
+<h4>Edit The Configuration File</h4>
+
+Make a copy of the configuration file in
+<code>&lt;KVHOME&gt;/examples/externaltables/config.xml</code> or
+<code>&lt;KVHOME&gt;/examples/externaltables/config.table.xml</code>
+and edit your site-specific values for the
+<ul>
+    <li><code>oracle.kv.exttab.connection.url</code>,
+    <li><code>oracle.kv.exttab.connection.user</code>,
+    <li><code>oracle.kv.exttab.connection.wallet_location</code> (optional),
+    <li><code>oracle.kv.kvstore</code>, and
+    <li><code>oracle.kv.hosts</code> 
+</ul>
+properties based on your Oracle Database and Oracle NoSQL Database installations.
+<p>
+In addition, if you are using the Table API, you also
+need to specify the name of the Oracle NoSQL Database table from which
+you want to load data into Oracle External Table. The site-specific value
+for the table name is specified in the <code>oracle.kv.table</code>
+property.
+
+<h4>Publish The Configuration</h4>
+Run the <code>oracle.kv.exttab.Publish</code> utility to publish the
+configuration to the External Table Location files.
+<pre>
+cd &lt;KVHOME&gt;
+java -classpath lib/kvstore.jar:$ORACLE_HOME/jdbc/lib/ojdbc6.jar \
+     oracle.kv.exttab.Publish \
+     -config <i>&lt;pathname-to-edited-copy-of-config.xml&gt;</i> -publish
+</pre>
+If you are using the Oracle wallet as an external password store, then you
+should also include <code>$ORACLE_HOME/jlib/oraclepki.jar</code> in your
+classpath. If the process executes successfully, there will be no output. If you
+have read access to the Location file(s), you can verify the Publish
+operation by looking inside one to see if the configuration XML is
+written there. You will see that two additional properties have been
+added to the XML:
+<code>oracle.kv.exttab.totalExternalTableFiles</code> and
+<code>oracle.kv.exttab.externalTableFileNumber</code>. Optionally, you can
+specify the <code>-verbose</code> argument to the Publish utility to see more
+verbose (i.e. debugging) output.
+<h4>Test The <code>nosql_stream</code> Script</h4>
+<ul>
+<li>Edit the <code>&lt;KVHOME&gt;/exttab/bin/nosql_stream</code> script to
+have the correct
+values for <code>PATH</code>, <code>KVHOME</code>, and <code>CLASSPATH</code>
+when the script is run in the execution environment of the Oracle Database
+server. For this example, <code>CLASSPATH</code> should include the
+<code>KVHOME/examples</code> directory (in addition to the kvstore.jar).
+<li>Test the <code>nosql_stream</code> script by running it in a shell:
+<pre>
+$ &lt;KVHOME&gt;/exttab/bin/nosql_stream &lt;exttab_pathname&gt;/nosql.dat
+</pre>
+<p>
+where <code>&lt;exttab_pathname&gt;</code> is the path of the LOCATION
+files specified earlier in the <code>CREATE DIRECTORY</code> command.  You
+should see output similar to the following:
+<pre>
+user6@example.com|F|#6 Example St, Example Town, AZ|666.666.6666
+user1@example.com|M|#1 Example St, Example Town, AZ|111.111.1111
+user9@example.com|M|#9 Example St, Example Town, AZ|999.999.9999
+user0@example.com|F|#0 Example St, Example Town, AZ|000.000.0000
+user7@example.com|M|#7 Example St, Example Town, AZ|777.777.7777
+user8@example.com|F|#8 Example St, Example Town, AZ|888.888.8888
+user5@example.com|M|#5 Example St, Example Town, AZ|555.555.5555
+user2@example.com|F|#2 Example St, Example Town, AZ|222.222.2222
+user4@example.com|F|#4 Example St, Example Town, AZ|444.444.4444
+user3@example.com|M|#3 Example St, Example Town, AZ|333.333.3333
+</pre>
+</ul>
+<h4>Use The External Table To Read Data From NoSQL Database</h4>
+Using <code>sqlplus</code> (as <code>nosqluser</code> or whatever user you
+created the external table with), perform a <code>SELECT</code> on the
+<code>nosql_data</code> External Table.
+<pre>
+SQL> select * from nosql_data;
+
+EMAIL                          G ADDRESS
+------------------------------ - ----------------------------------------
+PHONE
+--------------------
+user6@example.com              F #6 Example St, Example Town, AZ
+666.666.6666
+
+user1@example.com              M #1 Example St, Example Town, AZ
+111.111.1111
+
+user9@example.com              M #9 Example St, Example Town, AZ
+999.999.9999
+...
+SQL>
+</pre>
+

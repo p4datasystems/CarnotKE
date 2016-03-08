@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 10. Security Policies</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="prev" href="managing_roles.html" title="Managing Roles, Privileges and Users" />
+    <link rel="next" href="audit.html" title="Chapter 11. Audit Logging" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 10. Security Policies</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="managing_roles.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="audit.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="security_policies"></a>Chapter 10. Security Policies</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="security_policies.html#policy-modification">Security Policy Modifications</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p> 
+        The following default policies in Oracle NoSQL Database may be used to tailor system behavior
+        to meet your security requirements:
+    </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                Login sessions have a limited duration of validity.
+                After that duration has passed, the session needs
+                re-authentication. 
+            </p>
+          </li>
+          <li>
+            <p>
+                Session login errors are tracked at the component
+                level. Access to an account for a single client host
+                is temporarily disabled if too many failed logins
+                occur at that component within a configurable time
+                duration. 
+            </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p> 
+                    Both of these behaviors can be customized by
+                    modifying the values of their respective security
+                    parameters. For more information, see the
+                    following section.
+                </p>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="policy-modification"></a>Security Policy Modifications</h2>
+            </div>
+          </div>
+        </div>
+        <p> 
+            You can use the <code class="literal">plan
+            change-parameters</code> command in order to change
+            a security policy in the system: 
+        </p>
+        <pre class="programlisting">plan change-parameters -security &lt;id&gt;...</pre>
+        <p>
+            Security parameters are applied implicitly and
+            uniformly across all SNs, RNs and Admins. 
+        </p>
+        <p> 
+            The following security parameters can be set:
+        </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p> 
+                    sessionTimeout=&lt;Long TimeUnit&gt;
+                </p>
+              <p>
+                    Specifies the length of time for which a login
+                    session is valid, unless extended. The default
+                    value is 24 hours. 
+                </p>
+            </li>
+            <li>
+              <p> 
+                    sessionExtendAllowed=&lt;Boolean&gt;
+                </p>
+              <p> 
+                    Indicates whether session extensions should be
+                    granted. Default value is true.
+                </p>
+            </li>
+            <li>
+              <p>
+                    accountErrorLockoutThresholdInterval=&lt;Long
+                    TimeUnit&gt; 
+                </p>
+              <p>
+                    Specifies the time period over which login
+                    error counts are tracked for account lockout
+                    monitoring. The default value is 10 minutes.
+                </p>
+            </li>
+            <li>
+              <p>
+                    accountErrorLockoutThresholdCount=&lt;Integer&gt; 
+                </p>
+              <p>
+                    Number of invalid login attempts for a user
+                    account from a particular host address over the
+                    tracking period needed to trigger an automatic
+                    account lockout for a host. The default value is
+                    10 attempts. 
+                </p>
+            </li>
+            <li>
+              <p>
+                    accountErrorLockoutTimeout=&lt;Long
+                    TimeUnit&gt;
+                </p>
+              <p>
+                    Time duration for which an account will be
+                    locked out once a lockout has been triggered. The
+                    default value is 30 minutes. 
+                </p>
+            </li>
+            <li>
+              <p>
+                    loginCacheTimeout=&lt;Long TimeUnit&gt;
+                </p>
+              <p> 
+                    Time duration for which KVStore components
+                    cache login information locally to avoid the need
+                    to query other servers for login validation on
+                    every request. The default value is 5 minutes.
+                </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="managing_roles.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="audit.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Managing Roles, Privileges and Users </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 11. Audit Logging</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

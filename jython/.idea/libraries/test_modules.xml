@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="test_modules">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/tests/modjy/lib_python_folder/test_modules.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

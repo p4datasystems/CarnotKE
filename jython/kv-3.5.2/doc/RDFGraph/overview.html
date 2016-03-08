@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 1. RDF Graph for NoSQL Database Overview</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="prev" href="preface.html" title="Preface" />
+    <link rel="next" href="datamodeling.html" title="Semantic Data Modeling" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 1. RDF Graph for NoSQL Database Overview </th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="preface.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="datamodeling.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="overview"></a>Chapter 1. RDF Graph for NoSQL Database Overview </h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="overview.html#intro-rdf">Introduction to the RDF Graph Feature</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="datamodeling.html">Semantic Data Modeling</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="datamodeling.html#namedgraphs">Named Graphs</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="semanticdata.html">Semantic Data in the Database</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="Loading.html">Loading</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="inferencing.html">Inferencing</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="inferencing.html#inferencing-rdfgraph">Inferencing with the RDF Graph Feature</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+        </dl>
+      </div>
+      <p> 
+        This chapter describes the support in Oracle NoSQL Database
+        for semantic technologies, specifically the Worldwide Web
+        Consortium (W3C) Resource Description Framework (RDF), SPARQL
+        query language, and a subset of the Web Ontology Language
+        (OWL). These capabilities are a feature referred to as the 
+        <span class="emphasis"><em>RDF Graph feature for Oracle NoSQL Database Enterprise
+            Edition</em></span>.
+    </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+            RDF Graph for Oracle NoSQL Database will be deprecated in the
+            near future.
+        </p>
+      </div>
+      <p>
+        This chapter assumes that you are familiar with the major concepts
+        associated with RDF and OWL, such as 
+        <code class="literal">{subject, predicate, object}</code>
+        triples, URIs, blank nodes, plain and typed literals, and
+        ontologies. It also assumes that you are familiar with the overall
+        capabilities and use of the Apache Jena Java framework. This chapter
+        does not explain these concepts in detail, but focuses instead on
+        how the concepts are implemented in Oracle NoSQL Database. 
+    </p>
+      <p>
+        For an excellent explanation of RDF concepts, see the World
+        Wide Web Consortium (W3C) RDF Primer at
+        <a class="ulink" href="http://www.w3.org/TR/rdf-primer/" target="_top">http://www.w3.org/TR/rdf-primer/</a>.
+    </p>
+      <p> 
+        For information about OWL, see the OWL Web Ontology
+        Language Reference at 
+        <a class="ulink" href="http://www.w3.org/TR/owl-ref/" target="_top">http://www.w3.org/TR/owl-ref/</a>. 
+    </p>
+      <p> 
+        The RDF Graph feature provides a Java-based interface to
+        store and query semantic data in the Oracle NoSQL Database.
+        This is done by implementing the well-known Apache Jena Graph,
+        Model, and DatasetGraph APIs. (Apache Jena is an open source
+        framework. For license and copyright conditions, see 
+        <a class="ulink" href="http://www.apache.org/licenses/" target="_top">http://www.apache.org/licenses/</a>.
+    </p>
+      <p> 
+        The Apache Jena Graph and Model APIs are used to manage
+        graph data, also referred as triples. The DatasetGraph APIs
+        are used to manage named graph data, also referred to as
+        quads. 
+    </p>
+      <p> 
+        The RDF Graph feature supports creating a SPARQL end point web 
+        service using Apache Jena Joseki, an open source SPARQL server that
+        supports the SPARQL protocol and SPARQL queries. Apache Jena, Apache
+        Jena ARQ and Apache Jena Joseki are included with the RDF Graph 
+        feature as described in 
+        <a class="xref" href="prerequisite.html" title="Appendix A. Prerequisite Software">Prerequisite Software</a>.
+    </p>
+      <p> 
+        For information about the Apache Jena framework, see 
+        <a class="ulink" href="http://jena.apache.org/" target="_top">http://jena.apache.org/</a>, especially the Apache Jena
+        Documentation page. 
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="intro-rdf"></a>Introduction to the RDF Graph Feature</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+            Oracle NoSQL Database enables you to store semantic
+            data and ontologies, to query semantic data and to use
+            inferencing to expand the power of querying on
+            semantic data. The following figure shows how these capabilities
+            interact. 
+        </p>
+        <p>
+            The following illustration shows the relationship between NoSQL 
+            Database and the RDF Graph client running in a Web server:
+        </p>
+        <div class="mediaobject">
+          <img src="relationNoSQLDBandRDFclient.jpg" alt="Relationship between NoSQL DB and RDF Graph" />
+        </div>
+        <p> 
+            As shown in the previous figure, the database contains
+            semantic data and ontologies (RDF/OWL models), as well
+            as traditional key-value data. To load RDF data, bulk
+            loading is the most efficient approach, although you
+            can load data incrementally using an Apache Jena API.
+        </p>
+        <p> 
+            You can query semantic data and ontologies. You can expand the
+            power of queries on semantic data by using inferencing, which
+            uses rules in rulebases. Inferencing enables you to make
+            logical deductions based on the data and the rules. For
+            information about using rules and rulebases for inferencing,
+            see <a class="xref" href="inference.html" title="Chapter 7. Inference on an RDF Graph">Inference on an RDF Graph</a>.
+        </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="preface.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="datamodeling.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Preface </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Semantic Data Modeling</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Guidelines for Deploying Secure Applications</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="security_guidelines.html" title="Chapter 12. Keeping Oracle NoSQL Database Secure" />
+    <link rel="prev" href="security_guidelines.html" title="Chapter 12. Keeping Oracle NoSQL Database Secure" />
+    <link rel="next" href="guide_ssl.html" title="Guidelines for Securing the SSL protocol" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Guidelines for Deploying Secure Applications</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="security_guidelines.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 12. Keeping Oracle NoSQL Database Secure</th>
+          <td width="20%" align="right"> <a accesskey="n" href="guide_ssl.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="guide_deploy"></a>Guidelines for Deploying Secure Applications</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+            Follow these guidelines when deploying your Oracle NoSQL Database and if the
+            properties include <code class="literal">oracle.kv.auth.wallet.dir</code> in
+            order to use Oracle wallet to hold a user password:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p> 
+                    Include the <code class="literal">kvstore-ee.jar</code> file in the
+                    application classpath. 
+                </p>
+          </li>
+          <li>
+            <p>
+                    The <code class="literal">kvstore-ee.jar, oraclepki.jar,
+                        osdt_cert.jar, osdt_core.jar</code> files should all
+                    be made available on the application machine. 
+                </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p> 
+                        kvstore-ee references the other files, so they do not
+                        need to be included in the classpath explicitly. 
+                    </p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="security_guidelines.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="security_guidelines.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="guide_ssl.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 12. Keeping Oracle NoSQL Database Secure </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Guidelines for Securing the SSL protocol</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

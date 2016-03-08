@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Using multiGet()</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="tableget.html" title="Chapter 6. Reading Table Rows" />
+    <link rel="prev" href="singleget.html" title="Retrieving a Single Row" />
+    <link rel="next" href="tableiterator.html" title="Iterating over Table Rows" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Using multiGet()</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="singleget.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Reading Table Rows</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tableiterator.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="multiget"></a>Using multiGet()</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            <code class="methodname">TableAPI.multiGet()</code>
+            
+            
+            allows you to retrieve multiple rows at once, so long as they
+            all share the same shard keys. You must specify a full set of
+            shard keys to this method. 
+        </p>
+      <p>
+            Use 
+            <code class="methodname">TableAPI.multiGet()</code>
+            
+            
+            only if your retrieval set will fit entirely in memory.
+        </p>
+      <p>
+            For example, suppose you have a table that stores information
+            about products, which is designed like this:
+        </p>
+      <pre class="programlisting">CREATE TABLE myTable (
+    itemType STRING,
+    itemCategory STRING,
+    itemClass STRING,
+    itemColor STRING,
+    itemSize STRING,
+    price FLOAT,
+    inventoryCount INTEGER,
+    PRIMARY KEY (SHARD(itemType, itemCategory, itemClass), itemColor,
+    itemSize)
+) </pre>
+      <p>
+            With tables containing data like this:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    Row 1:
+                </p>
+            <table class="simplelist" border="0" summary="Simple list">
+              <tr>
+                <td>itemType: Hats</td>
+              </tr>
+              <tr>
+                <td>itemCategory: baseball</td>
+              </tr>
+              <tr>
+                <td>itemClass: longbill</td>
+              </tr>
+              <tr>
+                <td>itemColor: red</td>
+              </tr>
+              <tr>
+                <td>itemSize: small</td>
+              </tr>
+              <tr>
+                <td>price: 12.07</td>
+              </tr>
+              <tr>
+                <td>inventoryCount: 127</td>
+              </tr>
+            </table>
+          </li>
+          <li>
+            <p>
+                    Row 2:
+                </p>
+            <table class="simplelist" border="0" summary="Simple list">
+              <tr>
+                <td>itemType: Hats</td>
+              </tr>
+              <tr>
+                <td>itemCategory: baseball</td>
+              </tr>
+              <tr>
+                <td>itemClass: longbill</td>
+              </tr>
+              <tr>
+                <td>itemColor: red</td>
+              </tr>
+              <tr>
+                <td>itemSize: medium</td>
+              </tr>
+              <tr>
+                <td>price: 13.07</td>
+              </tr>
+              <tr>
+                <td>inventoryCount: 201</td>
+              </tr>
+            </table>
+          </li>
+          <li>
+            <p>
+                    Row 3:
+                </p>
+            <table class="simplelist" border="0" summary="Simple list">
+              <tr>
+                <td>itemType: Hats</td>
+              </tr>
+              <tr>
+                <td>itemCategory: baseball</td>
+              </tr>
+              <tr>
+                <td>itemClass: longbill</td>
+              </tr>
+              <tr>
+                <td>itemColor: red</td>
+              </tr>
+              <tr>
+                <td>itemSize: large</td>
+              </tr>
+              <tr>
+                <td>price: 14.07</td>
+              </tr>
+              <tr>
+                <td>inventoryCount: 39</td>
+              </tr>
+            </table>
+          </li>
+        </ul>
+      </div>
+      <p>
+            In this case, you can retrieve all of the rows
+            with their 
+            <code class="literal">itemType</code> field set to <code class="literal">Hats</code>
+            and their <code class="literal">itemCategory</code> field set to
+            <code class="literal">baseball</code>.
+            Notice that this represents a partial primary key, because
+            <code class="literal">itemClass</code>, <code class="literal">itemColor</code>  
+            and <code class="literal">itemSize</code> are not used for this query. 
+        </p>
+      <a id="multiget-1"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import java.util.List;
+import java.util.Iterator;
+import oracle.kv.ConsistencyException;
+import oracle.kv.KVStore;
+import oracle.kv.RequestTimeoutException;
+import oracle.kv.table.PrimaryKey;
+import oracle.kv.table.Row;
+import oracle.kv.table.Table;
+import oracle.kv.table.TableAPI;
+
+...
+
+// KVStore handle creation is omitted for brevity
+
+...
+
+TableAPI tableH = kvstore.getTableAPI();
+
+// The name you give to getTable() must be identical
+// to the name that you gave the table when you created
+// the table using the CREATE TABLE DDL statement.
+Table myTable = tableH.getTable("myTable");
+
+// Construct the PrimaryKey. In this case, we are
+// using a partial primary key.
+PrimaryKey key = myTable.createPrimaryKey();
+key.put("itemType", "Hats");
+key.put("itemCategory", "baseball");
+key.put("itemClass", "longbill");
+
+List&lt;Row&gt; myRows = null;
+
+try {
+    myRows = tableH.multiGet(key, null, null);
+} catch (ConsistencyException ce) {
+    // The consistency guarantee was not met
+} catch (RequestTimeoutException re) {
+    // The operation was not completed within the
+    // timeout value
+} </pre>
+      <p>
+            You can then iterate over the resulting list
+            as follows:
+        </p>
+      <a id="multiget-2"></a>
+      <pre class="programlisting">
+for (Row theRow: myRows) {
+    String itemType = theRow.get("itemType").asString().get();
+    String itemCategory = theRow.get("itemCategory").asString().get();
+    String itemClass = theRow.get("itemClass").asString().get();
+    String itemColor = theRow.get("itemColor").asString().get();
+    String itemSize = theRow.get("itemSize").asString().get();
+    Float price = theRow.get("price").asFloat().get();
+    Integer price = theRow.get("itemCount").asInteger().get();
+} </pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="singleget.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="tableget.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tableiterator.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Retrieving a Single Row </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Iterating over Table Rows</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

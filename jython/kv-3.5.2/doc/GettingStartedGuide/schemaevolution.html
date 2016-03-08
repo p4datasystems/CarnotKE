@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Schema Evolution</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="avroschemas.html" title="Chapter 6. Avro Schemas" />
+    <link rel="prev" href="avro-useschema.html" title="Using Avro Schemas" />
+    <link rel="next" href="provideschema.html" title="Managing Avro Schema in the Store" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Schema Evolution</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="avro-useschema.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Avro Schemas</th>
+          <td width="20%" align="right"> <a accesskey="n" href="provideschema.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="schemaevolution"></a>Schema Evolution</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="schemaevolution.html#changeschema-rules">Rules for Changing Schema</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="schemaevolution.html#writerreaderschema">Writer and Reader Schema</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="schemaevolution.html#schemaevolutionhow">How Schema Evolution Works</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+            <span class="emphasis"><em>Schema evolution</em></span> is the term used for how
+            the store behaves when Avro schema is changed after data has
+            been written to the store using an older version of that
+            schema. To change an existing schema, you update the schema
+            as stored in its flat-text file, then add the new schema to the
+            store using the <code class="literal">ddl add-schema</code> command with
+            the <code class="literal">-evolve</code> flag.
+        </p>
+      <p>
+            For example, if a middle name property is added to the FullName
+            schema, it might be stored in a file named
+            <code class="literal">schema2.avsc</code>, and then added to the store
+            using the <code class="literal">ddl add-schema</code> command.
+        </p>
+      <p>
+            Note that when you change schema, the new field must be given a
+            default value. This prevents errors when clients using an old
+            version of the schema create new values that will be missing
+            the new field:
+        </p>
+      <pre class="programlisting">{
+   "type": "record",
+   "namespace": "com.example",
+   "name": "FullName",
+   "fields": [
+     { "name": "first", "type": "string" },
+     <strong class="userinput"><code>{ "name": "middle", "type": "string", "default": "" },</code></strong>
+     { "name": "last", "type": "string" }
+   ]
+ }</pre>
+      <p>
+            These are the modifications you can safely
+            perform to your schema without any concerns:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    A field with a default value is added.
+                </p>
+          </li>
+          <li>
+            <p>
+                    A field that was previously defined with a default
+                    value is removed.
+                </p>
+          </li>
+          <li>
+            <p>
+                    A field's doc attribute is changed, added or
+                    removed.
+                </p>
+          </li>
+          <li>
+            <p>
+                    A field's order attribute is changed, added or
+                    removed.
+                </p>
+          </li>
+          <li>
+            <p>
+                    A field's default value is added, or changed.
+                </p>
+          </li>
+          <li>
+            <p>
+                    Field or type aliases are added, or removed.
+                </p>
+          </li>
+          <li>
+            <p>
+                    A non-union type may be changed to a union that
+                    contains only the original type, or vice-versa.
+                </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+            Beyond these kind of changes, there are unsafe changes that you
+            can do which will either cause the schema to be rejected when
+            you attempt to add it to the store, or which can be performed
+            so long as you are careful about how you go about upgrading
+            clients which use the schema. These type of issues are
+            identified when you try to modify (evolve) schema that is
+            currently enabled in the store. See
+            <a class="xref" href="provideschema.html#change-schema-in-store" title="Changing Schema">Changing Schema</a>
+            for details.
+        </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="changeschema-rules"></a>Rules for Changing Schema</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                There are a few rules you need to remember if you are
+                modifying schema that is already in use in your store:
+            </p>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p>
+                        For best results, always provide a default value
+                        for the fields in your schema. This makes it
+                        possible to delete fields later on if you decide it
+                        is necessary. <span class="emphasis"><em>If you do not provide a
+                            default value for a field, you cannot delete
+                            that field from your schema.</em></span>
+                    </p>
+            </li>
+            <li>
+              <p>
+                        You cannot change a field's data type. If you have
+                        decided that a field should be some data type other
+                        than what it was originally created using, then add
+                        a whole new field to your schema that uses the
+                        appropriate data type.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        When adding a field to your schema, you must
+                        provide a default value for the field.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        You cannot rename an existing field. However, if
+                        you want to access the field by some name other
+                        than what it was originally created using, add and
+                        use aliases for the field.
+                    </p>
+            </li>
+          </ol>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="writerreaderschema"></a>Writer and Reader Schema</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                When a schema is changed, multiple versions of the schema will
+                exist and be maintained by the store. The version of the schema
+                used to serialize a value, before writing it to the store, is
+                called the <span class="emphasis"><em>writer schema</em></span>. The writer
+                schema is specified by the application when creating a binding.
+                It is associated with the value when calling the binding's
+                <code class="methodname">AvroBinding.toValue()</code> method to
+                serialize the data. This writer schema is associated internally
+                with every stored value.
+            </p>
+        <p>
+                The <span class="emphasis"><em>reader schema</em></span> is used to
+                deserialize a value after reading it from the store. Like
+                the writer schema, the reader schema is specified by the
+                client application when creating a binding. It is used to
+                deserialize the data when calling the binding's
+                <code class="methodname">AvroBinding.toObject()</code> method,
+                after reading a value from the store.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="schemaevolutionhow"></a>How Schema Evolution Works</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                Schema evolution is the automatic transformation of Avro
+                schema. This transformation is between the version of the
+                schema that the client is using (its local copy), and what
+                is currently contained in the store.  When the local copy
+                of the schema is not identical to the schema used to write the
+                value (that is, when the reader schema is different from
+                the writer schema), this data transformation is performed.
+                When the reader schema matches the schema used to write the
+                value, no transformation is necessary.
+            </p>
+        <p>
+                Schema evolution is applied only during deserialization.
+                If the reader schema is different from the value's writer
+                schema, then the value is automatically modified during
+                deserialization to conform to the reader schema. To do
+                this, default values are used.
+            </p>
+        <p>
+                There are two cases to consider when using schema
+                evolution: when you add a field and when you delete a
+                field. Schema evolution takes care of both scenarios, so
+                long as you originally assigned default values to the
+                fields that were deleted, and assigned default values to
+                the fields that were added.
+            </p>
+        <div class="sect3" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h4 class="title"><a id="schemaevo-add"></a>Adding Fields</h4>
+              </div>
+            </div>
+          </div>
+          <p>
+                    Suppose you had the following schema:
+                </p>
+          <pre class="programlisting">{
+    "type" : "record",
+    "name" : "userInfo",
+    "namespace" : "my.example",
+    "fields" : [{"name" : "name", "type" : "string", "default" : ""}]
+} </pre>
+          <p>
+                    In version 2 of the schema, you add a field:
+                </p>
+          <pre class="programlisting">{
+    "type" : "record",
+    "name" : "userInfo",
+    "namespace" : "my.example",
+    "fields" : [{"name" : "name", "type" : "string", "default" : ""},
+                {"name" : "age", "type" : "int" , "default" : -1}]
+                
+} </pre>
+          <p>
+                    In this scenario, a client that is using the new schema
+                    can deserialize a value that uses the old schema, even
+                    though the age field will be missing from the value.
+                    Upon deserialization, the value retrieved from the
+                    store will be automatically transformed such that the
+                    age field is contained in the value. The age field will
+                    be set to the default value, which is -1 in this case.
+                </p>
+          <p>
+                    The reverse also works. A client that is using the old
+                    version of the schema attempts can deserialize a value
+                    that was written using the new version of the schema.
+                    In this case, the value retrieved from the store
+                    contains the age field, which from the client
+                    perspective is unexpected. So upon deserialization the
+                    age field is automatically removed from the retrieved
+                    object.
+                </p>
+          <p>
+                    This has ramifications if you change your schema, and
+                    then have clients concurrently running that are using
+                    different schema versions. This scenario is not unusual
+                    in a large, distributed system of the type that Oracle NoSQL Database
+                    supports. 
+                </p>
+          <p>
+                    In this scenario, you might see fields revert to their
+                    default value, even though no client has explicitly
+                    touched those fields. This can happen in the following
+                    way:
+                </p>
+          <div class="orderedlist">
+            <ol type="1">
+              <li>
+                <p>
+                            Client v.2 creates a my.example.userInfo
+                            record, and sets the age field to 38. Then it
+                            writes that value to the store. Client v.2 is
+                            using schema version 2.
+                        </p>
+              </li>
+              <li>
+                <p>
+                            Client v.1 reads the record. It is using
+                            version 1 of the schema, so the age field is
+                            automatically removed from the value during
+                            deserialization.
+                        </p>
+                <p>
+                            Client v.1 modifies the name field and then
+                            writes the record back to the store. When it
+                            does this, the age field is missing from the
+                            value that it writes to the store.
+                        </p>
+              </li>
+              <li>
+                <p>
+                            Client v.2 reads the record again. Because the
+                            age field is missing from the record (because
+                            Client v.1 last wrote it), the age field is set
+                            to the default value, which is -1. This means
+                            that the value of the age field has reverted to
+                            the default, even though no client explicitly
+                            modified it.
+                        </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div class="sect3" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h4 class="title"><a id="schemaevo-delete"></a>Deleting Fields</h4>
+              </div>
+            </div>
+          </div>
+          <p>
+                    Field deletion works largely the same way as field
+                    addition, with the same concern for field values
+                    automatically reverting to the default. Suppose you had
+                    the following trivial schema:
+                </p>
+          <pre class="programlisting">{
+    "type" : "record",
+    "name" : "userInfo",
+    "namespace" : "my.example",
+    "fields" : [{"name" : "name", "type" : "string", "default" : ""},
+                {"name" : "age", "type" : "int" , "default" : -1}]
+                
+} </pre>
+          <p>
+                    In version 2 of the schema, you delete the age field:
+                </p>
+          <pre class="programlisting">{
+    "type" : "record",
+    "name" : "userInfo",
+    "namespace" : "my.example",
+    "fields" : [{"name" : "name", "type" : "string", "default" : ""}]
+} </pre>
+          <p>
+                    In this scenario, a client that is using the new schema
+                    can deserialize a value that uses the old schema, even
+                    though the age field is contained in that value. In
+                    this case, the age field is silently removed from the
+                    value during deserialization.
+                </p>
+          <p>
+                    Further, a client that is using the old
+                    version of the schema attempts can deserialize a value that
+                    uses the new version of the schema. In this case, the value
+                    retrieved from the store does not contain the age
+                    field. So upon deserialization, the age field is
+                    automatically inserted into the schema (because the
+                    reader schema requires it) and the default value is
+                    used for the newly inserted field.
+                </p>
+          <p>
+                    As with adding fields, this has ramifications if you
+                    change your schema, and then have clients concurrently
+                    running that are using different schema versions. 
+                </p>
+          <div class="orderedlist">
+            <ol type="1">
+              <li>
+                <p>
+                            Client v.1 creates a my.example.userInfo
+                            record, and sets the age field to 38. Then it
+                            writes that value to the store. Client v.1 is
+                            using schema version 1.
+                        </p>
+              </li>
+              <li>
+                <p>
+                            Client v.2 reads the record. It is using
+                            version 2 of the schema, so it is not expecting
+                            the age field. As a result, the age field is
+                            automatically stripped from the value during
+                            deserialization.
+                        </p>
+                <p>
+                            Client v.2 modifies the name field and then
+                            writes the record back to the store. When it
+                            does this, the age field is missing from the
+                            value that it writes to the store.
+                        </p>
+              </li>
+              <li>
+                <p>
+                            Client v.1 reads the record again. Because the
+                            age field is missing from the record (because
+                            Client v.2 last wrote it), the age field is
+                            automatically inserted into the value, using
+                            the default of -1. This means that the value of
+                            the age field has reverted to the default, even
+                            though no client explicitly modified it.
+                        </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="avro-useschema.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="avroschemas.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="provideschema.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Using Avro Schemas </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Managing Avro Schema in the Store</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

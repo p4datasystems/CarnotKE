@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Connection Pooling</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="connect.html" title="Chapter 3. Connect to NoSQL Database" />
+    <link rel="prev" href="connect.html" title="Chapter 3. Connect to NoSQL Database" />
+    <link rel="next" href="load.html" title="Chapter 4. Load an RDF Graph" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Connection Pooling</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="connect.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 3. Connect to NoSQL Database</th>
+          <td width="20%" align="right"> <a accesskey="n" href="load.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="probing"></a>Connection Pooling</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            Oracle NoSQL Database Connection Pooling is provided
+            through the RDF Graph feature OraclePoolNoSql class. Once
+            this class is initialized, it can return
+            OracleNoSqlConnection objects out of its pool of available
+            connections. These objects are essentially wrappers to
+            Oracle NoSQL Database connections. After dispose is called
+            on the OracleNoSqlConnection object, instead of being
+            closed the connection is actually returned to the pool.
+            More information about using OraclePoolNoSql can be found
+            in the API reference information (Javadoc). 
+        </p>
+      <p> 
+            The following example sets up an OraclePoolNoSql object
+            with three initial connections.
+        </p>
+      <pre class="programlisting">public static void main(String[] args) throws Exception
+{
+String szStoreName = args[0];
+String szHostName = args[1];
+String szHostPort = args[2];
+String szModelName = args[3]; 
+    
+// Property of the pool: wait if no connection is available at request.
+boolean bWaitIfBusy = true;
+    
+System.out.println("Creating OracleNoSQL pool");    
+OracleNoSqlPool pool = 
+                 OracleNoSqlPool.createInstance(szStoreName,
+                                                szHostName,
+                                                szHostPort, 
+                                                3, // pool size
+                                                bWaitIfBusy, 
+                                                true);  // lazyInit
+System.out.println("Done creating OracleNoSql pool");
+    
+// grab an Oracle NoSQL connection and do something
+System.out.println("Get a connection from the pool");
+OracleNoSqlConnection conn = pool.getResource();
+    
+OracleModelNoSql model =                  
+           OracleModelNoSql.createOracleModelNoSql(szModelName, conn);
+    
+System.out.println("Clear model");
+model.removeAll();
+    
+model.getGraph().add(Triple.create(Node.createURI("u:John"),
+                                   Node.createURI("u:cousinOf"),
+                                   Node.createURI("u:Jackie")));
+model.close();
+    
+//return connection back to the pool 
+conn.dispose();
+    
+// grab another Oracle NoSQL connection and do something
+System.out.println("Get a connection from the pool");
+conn = pool.getResource();
+    
+String queryString = "select ?x ?y ?z WHERE {?x ?y ?z}";
+    
+System.out.println("Execute query " + queryString);
+    
+Query query = QueryFactory.create(queryString) ;
+QueryExecution qexec = QueryExecutionFactory.create(query, model);
+    
+try {
+      ResultSet results = qexec.execSelect();
+      ResultSetFormatter.out(System.out, results, query);
+    }
+    
+finally {
+      qexec.close();
+    } 
+    
+model.close();
+
+//return connection back to the pool 
+    conn.dispose();
+
+// Close pool. 
+// This will close all resources even if they have not been freed up
+   System.out.println("Close pool, this will close all resources");
+   pool.close();
+
+}</pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="connect.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="connect.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="load.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 3. Connect to NoSQL Database </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 4. Load an RDF Graph</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Durability</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Concepts Manual" />
+    <link rel="up" href="introduction.html" title="Chapter 1. Introduction to Oracle NoSQL Database" />
+    <link rel="prev" href="consistency.html" title="Consistency" />
+    <link rel="next" href="admin-cli.html" title="Administration" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Durability</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="consistency.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 1. Introduction to Oracle NoSQL Database </th>
+          <td width="20%" align="right"> <a accesskey="n" href="admin-cli.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="durability"></a>Durability</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="durability.html#quorum">Quorum</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p> 
+                Oracle NoSQL Database provides a range of durability policies that
+                specify what guarantees the system makes after a crash. At
+                one extreme, applications can request that write requests
+                block until the record has been written to stable storage
+                on all copies. This has obvious performance and
+                availability implications, but ensures that if the
+                application successfully writes data, that data will
+                persist and can be recovered even if all the copies become
+                temporarily unavailable due to multiple simultaneous
+                failures. At the other extreme, applications can request
+                that write operations return as soon as the system has
+                recorded the existence of the write, even if the data is
+                not persistent anywhere. Such a policy provides the best
+                write performance, but provides no durability guarantees.
+            </p>
+      <p> 
+                The following illustration depicts the range of
+                durability policies that can be used by an application that
+                makes use of Oracle NoSQL Database: 
+            </p>
+      <div class="mediaobject">
+        <img src="durability.jpg" alt="Durability policies" />
+      </div>
+      <p> 
+                By specifying when the database writes records to disk
+                and what fraction of the copies of the record must be
+                persistent (none, all, or a simple majority), applications
+                can enforce a wide range of durability policies. 
+            </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="quorum"></a>Quorum</h3>
+            </div>
+          </div>
+        </div>
+        <p> 
+                    Operations that modify data in Oracle NoSQL Database require that at
+                    least a simple majority of primary nodes be available 
+                    to form a quorum in the shard that stores the specified key.
+                </p>
+        <p> 
+                    Quorum is the minimum number of primary nodes
+                    required in a shard, or in the set of admin nodes, to
+                    permit electing a master to support write operations.
+                    The quorum is the minimum number of nodes that
+                    represents a majority of the primary nodes in the
+                    group. 
+                </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p> 
+                        Secondary nodes are not counted when computing
+                        the quorum. 
+                    </p>
+        </div>
+        <p> 
+                    Consider the following example using a store with
+                    four zones. Zones 1, 2, and 3 are primary zones with
+                    replication factor 1, and zone 4 is a secondary zone
+                    with replication factor 1. The number of primary nodes
+                    in each shard is 3, which is the sum of the replication
+                    factors for the primary zones. In a group of 3 nodes, 2
+                    is the smallest number of nodes that represent a
+                    majority, so the quorum is 2. The secondary nodes in
+                    zone 4 have no impact on the quorum. 
+                </p>
+        <p> 
+                    In general, to compute the quorum, first determine
+                    the primary replication factor, which is the sum of the
+                    replication factors of all primary zones. The quorum is
+                    one greater than half of the primary replication
+                    factor, rounding down when computing the half. 
+                </p>
+        <p> 
+                    For example, for primary replication factor of 1,
+                    the quorum is 1. For primary replication factor of 5
+                    the quorum is 3. For primary replication factor of 6,
+                    the quorum is 4. 
+                </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="consistency.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="introduction.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="admin-cli.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Consistency </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Administration</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

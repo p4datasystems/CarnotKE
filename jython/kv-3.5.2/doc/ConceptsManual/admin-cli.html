@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Administration</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Concepts Manual" />
+    <link rel="up" href="introduction.html" title="Chapter 1. Introduction to Oracle NoSQL Database" />
+    <link rel="prev" href="durability.html" title="Durability" />
+    <link rel="next" href="monitoring.html" title="Monitoring" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Administration</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="durability.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 1. Introduction to Oracle NoSQL Database </th>
+          <td width="20%" align="right"> <a accesskey="n" href="monitoring.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="admin-cli"></a>Administration</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="admin-cli.html#kvlite">KVLite</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="admin-cli.html#cli-history">The Administration Command Line Interface history</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+            The Administration command line interface (CLI) is the
+            primary tool used to manage your store. It is used to
+            configure, deploy, and change store components. It can also be
+            used to verify the system, check service status, check for
+            critical events and browse the store-wide log file.
+            Alternatively, you can use a browser-based graphical user
+            interface to do read-only monitoring. (Described in the next
+            section.)
+        </p>
+      <p> 
+            The CLI can also be used to get, put, and delete store
+            records or tables, retrieve schema, and display general
+            information about the store. It can also be used to diagnose
+            problems or potential problems in the system, fix actual
+            problems by adding, removing or modifying store data and/or
+            verify that the store has data. It is particularly well-suited
+            for a developer who is creating an Oracle NoSQL Database application, and who
+            needs to either populate a store a with a small number of
+            records so as to have data to develop against, or to examine
+            the store's state as part of development debugging activities. 
+        </p>
+      <p>
+            The command line interface is accessed using the following
+            command:
+            </p>
+      <pre class="programlisting">java -Xmx256m -Xms256m -jar KVHOME/lib/kvstore.jar runadmin</pre>
+      <p>
+        </p>
+      <p>
+            </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3> 
+                To avoid using too much heap space, you should specify
+                -Xmx and -Xms flags for Java when running administrative
+                and utility commands.
+            </div>
+      <p>
+        </p>
+      <p> 
+            For a complete listing of all the commands available to you
+            in the CLI as well as its usage, see the <em class="citetitle">Oracle NoSQL Database
+                Administrator's Guide</em>.
+        </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="kvlite"></a>KVLite</h3>
+            </div>
+          </div>
+        </div>
+        <p> 
+                KVLite is a simplified version of Oracle NoSQL Database. It provides a
+                single-node store that is not replicated. It runs in a
+                single process without requiring any administrative
+                interface. You configure, start, and stop KVLite using a
+                command line interface. 
+            </p>
+        <p> 
+                KVLite is intended for use by application developers who
+                need to unit test their Oracle NoSQL Database application. It is not
+                intended for production deployment, or for performance
+                measurements. 
+            </p>
+        <p> KVLite is installed when you install KVStore. It is
+                available in the <code class="literal">kvstore.jar</code> file in the
+                    <code class="literal">lib</code> directory of your Oracle NoSQL Database
+                distribution. 
+            </p>
+        <p> 
+                Note that KVLite cannot be configured as a secure store.
+            </p>
+        <p> 
+                For more information on KVLite, see either
+                    <em class="citetitle">Oracle NoSQL Database Getting Started with the Table API</em> or
+                    <em class="citetitle">Oracle NoSQL Database Getting Started with the Key/Value API</em>. 
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="cli-history"></a>The Administration Command Line Interface history</h3>
+            </div>
+          </div>
+        </div>
+        <p> 
+                By default Oracle NoSQL Database uses the Java Jline library to support
+                saveable command line history in the CLI. If you want to
+                disable this feature, the following Java property should be
+                set while running runadmin: 
+            </p>
+        <pre class="programlisting">java -Doracle.kv.shell.jline.disable=true -jar KVHOME/kvstore.jar \
+runadmin -host &lt;hostname&gt; -port &lt;portname&gt; </pre>
+        <p> 
+                Command line history is saved to a file so that it is
+                available after restart. By default, Oracle NoSQL Database attempts to
+                save the history in a
+                KVHOME/.jlineoracle.kv.impl.admin.client.CommandShell.history
+                file, which is created and opened automatically. The
+                default history saved is 500 lines. 
+            </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3> 
+                If the history file cannot be opened, it will fail
+                silently and the CLI will run without saved history. 
+            </div>
+        <p> 
+                The default history file path can be overridden by
+                setting the
+                    <code class="literal">oracle.kv.shell.history.file="path"</code>
+                Java property.
+            </p>
+        <p> 
+                The default number of lines to save to the file can be
+                modified by setting the
+                    <code class="literal">oracle.kv.shell.history.size=&lt;int_value&gt;</code>
+                Java property.
+            </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="durability.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="introduction.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="monitoring.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Durability </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Monitoring</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

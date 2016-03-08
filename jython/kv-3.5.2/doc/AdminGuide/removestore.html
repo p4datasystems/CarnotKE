@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Removing an Oracle NoSQL Database Deployment</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="procedures.html" title="Chapter 6. Administrative Procedures" />
+    <link rel="prev" href="setstoreparams.html" title="Setting Store Parameters" />
+    <link rel="next" href="fixhaportrange.html" title="Fixing Incorrect Storage Node HA Port Ranges" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Removing an Oracle NoSQL Database Deployment</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="setstoreparams.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Administrative Procedures</th>
+          <td width="20%" align="right"> <a accesskey="n" href="fixhaportrange.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="removestore"></a>Removing an Oracle NoSQL Database Deployment</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+          There are no scripts or tools available to completely remove a
+          Oracle NoSQL Database installation from your hardware. However, the procedure is
+          simple. On each node (machine) comprising your store:
+        </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                    Shut down the Storage Node:
+                </p>
+            <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar stop -root KVROOT</pre>
+            <p>
+                    Note that if an Admin process is running on the machine,
+                    this command also stops that process.
+                </p>
+          </li>
+          <li>
+            <p>
+                    Physically remove the entire contents of KVROOT:
+                </p>
+            <pre class="programlisting">&gt; rm -rf KVROOT</pre>
+          </li>
+        </ol>
+      </div>
+      <p>
+            Once you have performed this procedure on every machine
+            comprising your store, you have completely removed the Oracle NoSQL Database
+            deployment from your hardware.
+        </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="setstoreparams.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="procedures.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="fixhaportrange.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Setting Store Parameters </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Fixing Incorrect Storage Node HA Port Ranges</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,660 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Getting Started with Oracle NoSQL Database Key/Value API</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="next" href="preface.html" title="Preface" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Getting Started with Oracle NoSQL Database Key/Value API</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="preface.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="book" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h1 class="title"><a id="id588594"></a>Getting Started with Oracle NoSQL Database Key/Value API</h1>
+          </div>
+          <div>
+            <div class="legalnotice">
+              <a id="id1418744"></a>
+              <p class="legalnotice-title">
+                <b>Legal Notice</b>
+              </p>
+              <span>
+        <p>
+            Copyright © 2011, 2012, 2013, 2014, 2015 Oracle and/or its affiliates. All rights
+            reserved.
+        </p>
+        <p>
+            This software and related documentation are provided under a
+            license agreement containing restrictions on use and disclosure
+            and are protected by intellectual property laws. Except as
+            expressly permitted in your license agreement or allowed by
+            law, you may not use, copy, reproduce, translate, broadcast,
+            modify, license, transmit, distribute, exhibit, perform,
+            publish, or display any part, in any form, or by any means.
+            Reverse engineering, disassembly, or decompilation of this
+            software, unless required by law for interoperability, is
+            prohibited.
+        </p>
+        <p>
+            The information contained herein is subject to change without
+            notice and is not warranted to be error-free. If you find any
+            errors, please report them to us in writing.
+        </p>
+        
+        <p>
+            If this is software or related documentation that is delivered
+            to the U.S. Government or anyone licensing it on behalf of the
+            U.S. Government, the following notice is applicable:
+        </p>
+        <p>
+            U.S. GOVERNMENT END USERS: Oracle programs, including any
+            operating system, integrated software, any programs installed
+            on the hardware, and/or documentation, delivered to U.S.
+            Government end users are "commercial computer software"
+            pursuant to the applicable Federal Acquisition Regulation and
+            agency-specific supplemental regulations. As such, use,
+            duplication, disclosure, modification, and adaptation of the
+            programs, including any operating system, integrated software,
+            any programs installed on the hardware, and/or documentation,
+            shall be subject to license terms and license restrictions
+            applicable to the programs. No other rights are granted to the
+            U.S. Government.
+        </p>
+        <p>
+            This software or hardware is developed for general use in a
+            variety of information management applications. It is not
+            developed or intended for use in any inherently dangerous
+            applications, including applications that may create a risk of
+            personal injury. If you use this software or hardware in
+            dangerous applications, then you shall be responsible to take
+            all appropriate fail-safe, backup, redundancy, and other
+            measures to ensure its safe use. Oracle Corporation and its
+            affiliates disclaim any liability for any damages caused by use
+            of this software or hardware in dangerous applications.
+        </p>
+        <p>
+            Oracle and Java are registered trademarks of Oracle and/or its
+            affiliates. Other names may be trademarks of their respective
+            owners.
+        </p>
+        <p>
+            Intel and Intel Xeon are trademarks or registered trademarks of
+            Intel Corporation. All SPARC trademarks are used under license
+            and are trademarks or registered trademarks of SPARC
+            International, Inc. AMD, Opteron, the AMD logo, and the AMD
+            Opteron logo are trademarks or registered trademarks of
+            Advanced Micro Devices. UNIX is a registered trademark of The
+            Open Group.
+        </p>
+        <p>
+            This software or hardware and documentation may provide access
+            to or information on content, products, and services from third
+            parties. Oracle Corporation and its affiliates are not
+            responsible for and expressly disclaim all warranties of any
+            kind with respect to third-party content, products, and
+            services. Oracle Corporation and its affiliates will not be
+            responsible for any loss, costs, or damages incurred due to
+            your access to or use of third-party content, products, or
+            services.
+        </p>
+    </span>
+            </div>
+          </div>
+          <div>
+            <p class="pubdate">12/3/2015</p>
+          </div>
+        </div>
+        <hr />
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="preface">
+              <a href="preface.html">Preface</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="preface.html#conventions">Conventions Used in This Book</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="kvapi.html">1. Developing for Oracle NoSQL Database</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="kvapi.html#kvstorehandle">The KVStore Handle</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="sect2">
+                      <a href="kvapi.html#kvstoreconfig">The KVStoreConfig Class</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+              <dt>
+                <span class="sect1">
+                  <a href="authentication.html">Using the Authentication APIs</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="sect2">
+                      <a href="authentication.html#configuressl">Configuring SSL</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="authentication.html#logincreds">Authentication using LoginCredentials</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="authentication.html#loginrenew">Renewing Expired Login Credentials</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="authentication.html#kerberoslogin">Authentication using Kerberos</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="authentication.html#kerberosloginjaas">Authentication using Kerberos and JAAS</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="authentication.html#accessdenied">Unauthorized Access</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="kvlite-usage.html">2. Introduction to Oracle KVLite</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="kvlite-usage.html#startkvlite">Starting KVLite</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="stopkvlite.html">Stopping and Restarting KVLite</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="verifykvlite.html">Verifying the Installation</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="clpoptions.html">kvlite Utility Command Line Parameter Options</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="schema.html">3. Record Design Considerations</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="schema.html#keys">Keys</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="sect2">
+                      <a href="schema.html#keycomponent">What is a Key Component?</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+              <dt>
+                <span class="sect1">
+                  <a href="values.html">Values</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="storewrites.html">4. Writing and Deleting Records</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="storewrites.html#writeexceptions">Write Exceptions</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="recordput.html">Writing Records to the Store</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="sect2">
+                      <a href="recordput.html#putOtherForms">Other put Operations</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+              <dt>
+                <span class="sect1">
+                  <a href="recorddelete.html">Deleting Records from the Store</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="sect2">
+                      <a href="recorddelete.html#multidelete">Using multiDelete()</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="recordget.html">5. Reading Records</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="recordget.html#readexceptions">Read Exceptions</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="singleget.html">Retrieving a Single Record</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="multiget.html">Using multiGet()</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="multigetiterator.html">Using multiGetIterator()</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="storeiterator.html">Using storeIterator()</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="readsubranges.html">Specifying Subranges</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="parallelscan.html">Parallel Scans</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="bulkget.html">Bulk Get Operations</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="avroschemas.html">6. Avro Schemas</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="avroschemas.html#avro-creatingschemas">Creating Avro Schemas</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="sect2">
+                      <a href="avroschemas.html#avro-record-definitions">Avro Schema Definitions</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="avroschemas.html#avro-primitivedatatypes">Primitive Data Types</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="avroschemas.html#avro-complexdatatypes">Complex Data Types</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+              <dt>
+                <span class="sect1">
+                  <a href="avro-useschema.html">Using Avro Schemas</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="schemaevolution.html">Schema Evolution</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="sect2">
+                      <a href="schemaevolution.html#changeschema-rules">Rules for Changing Schema</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="schemaevolution.html#writerreaderschema">Writer and Reader Schema</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="schemaevolution.html#schemaevolutionhow">How Schema Evolution Works</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+              <dt>
+                <span class="sect1">
+                  <a href="provideschema.html">Managing Avro Schema in the Store</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="sect2">
+                      <a href="provideschema.html#schema-add-to-store">Adding Schema</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="provideschema.html#change-schema-in-store">Changing Schema</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="provideschema.html#disable-schema-in-store">Disabling and Enabling Schema</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="provideschema.html#show-schema-in-store">Showing Schema</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="avrobindings.html">7. Avro Bindings</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="avrobindings.html#avrobindings-overview">Avro Bindings Overview</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="genericbinding-overview.html">Generic Binding</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="sect2">
+                      <a href="genericbinding-overview.html#generic-single">Using a Single Generic Schema Binding</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="genericbinding-overview.html#generic-multi">Using Multiple Generic Schema Bindings</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="genericbinding-overview.html#generic-embed-record">Using Embedded Records</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="genericbinding-overview.html#avro-generic-dynamicschema">Managing Generic Schemas Dynamically</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+              <dt>
+                <span class="sect1">
+                  <a href="specificbinding-overview.html">Specific Binding</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="sect2">
+                      <a href="specificbinding-overview.html#avro-specific-generate">Generating Specific Avro Classes</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="specificbinding-overview.html#avro-specific-using">Using Avro-specific Bindings</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="specificbinding-overview.html#avro-multispecific">Using Multiple Avro-specific Bindings</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+              <dt>
+                <span class="sect1">
+                  <a href="jsonbinding-overview.html">JSON Bindings</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="sect2">
+                      <a href="jsonbinding-overview.html#avro-jsonbinding-using">Using Avro JSON Bindings</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="jsonbinding-overview.html#avro-json-binding-with-record">Using a JSON Binding with a JSON Record</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="multikey.html">8. Key Ranges and Depth for Multi-Key Operations</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="multikey.html#subranges">Specifying Subranges</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="depth.html">Specifying Depth</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="versions.html">9. Using Versions</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="chapter">
+              <a href="consistency.html">10. Consistency Guarantees</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="consistency.html#consistency-specify">Specifying Consistency Policies</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="consistency-pre.html">Using Simple Consistency</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="consistency-time.html">Using Time-Based Consistency</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="consistency-version.html">Using Version-Based Consistency</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="durability.html">11. Durability Guarantees</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="durability.html#durability-ack">Setting Acknowledgment-Based Durability Policies</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="durability-sync.html">Setting Synchronization-Based Durability Policies</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="durability-set.html">Setting Durability Guarantees</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="multiop.html">12. Executing a Sequence of Operations</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="multiop.html#sequence-errors">Sequence Errors</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="sequence-create.html">Creating a Sequence</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="sequence-exec.html">Executing a Sequence</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="appendix">
+              <a href="thirdpartylicenses.html">A. Third Party Licenses</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="preface.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top"> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right" valign="top"> Preface</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

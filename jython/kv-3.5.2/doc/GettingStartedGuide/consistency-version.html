@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Using Version-Based Consistency</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="consistency.html" title="Chapter 10. Consistency Guarantees" />
+    <link rel="prev" href="consistency-time.html" title="Using Time-Based Consistency" />
+    <link rel="next" href="durability.html" title="Chapter 11. Durability Guarantees" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Using Version-Based Consistency</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="consistency-time.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 10. Consistency Guarantees</th>
+          <td width="20%" align="right"> <a accesskey="n" href="durability.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="consistency-version"></a>Using Version-Based Consistency</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+              Version-based consistency is used on a per-operation basis.
+              It ensures that a read performed on a replica is at least as
+              current as some previous write performed on the master.
+          </p>
+      <p>
+              An example of how this might be used is a web application
+              that collects some information from a customer (such as her
+              name). It then customizes all subsequent pages presented to
+              the customer with her name. The storage of the customer's
+              name is a write operation that can only be performed by the
+              master node, while subsequent page creation is performed as a
+              read-only operation that can occur at any node in the store.
+          </p>
+      <p>
+              Use of this consistency policy might require that version
+              information be transferred between processes in your
+              application. 
+          </p>
+      <p>
+              To create a version-based consistency policy,
+              <span>
+                  use the <code class="classname">Consistency.Version</code> class.
+              </span>
+              
+              
+              
+              When you do this, you must provide the following information:
+          </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                      <code class="literal">version</code>
+                      
+                  </p>
+            <p>
+                      The <code class="classname">Version</code> that the read must
+                      match.
+                  </p>
+          </li>
+          <li>
+            <p>
+                      <code class="literal">timeout</code>
+                      
+                  </p>
+            <p>
+                      <span>
+                            A <code class="literal">long</code> 
+                      </span>
+                      
+                      that describes how long the replica is permitted to
+                      wait in an attempt to meet the version requirement.
+                      That is, if the replica cannot immediately meet the
+                      version requirement, then it will wait this amount of
+                      time to see if it is updated with the required data
+                      from the master. If the replica cannot meet the
+                      requirement within the timeout period, a
+                      <code class="classname">ConsistencyException</code> is
+                      thrown.
+                  </p>
+          </li>
+          <li>
+            <p>
+                      <code class="literal">timeoutUnit</code>
+                  </p>
+            <p>
+                      A <code class="classname">TimeUnit</code> that identifies the
+                      units used by <code class="literal">timeout</code>.
+                      For example: <code class="literal">TimeUnit.SECONDS</code>.
+                  </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+              For example, the following code performs a store
+              write, collects the version information, then uses it to
+              construct a version-based consistency policy.
+              <span>
+                  In this example, assume we are using a generic Avro binding
+                  to store some person information.
+              </span>
+          </p>
+      <a id="consist-4"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.Key;
+import oracle.kv.Value;
+import oracle.kv.Version;
+import java.util.ArrayList;
+
+import org.apache.avro.Schema;
+import oracle.kv.avro.GenericAvroBinding;
+import oracle.kv.avro.GenericRecord;
+
+...
+
+ArrayList&lt;String&gt; majorComponents = new ArrayList&lt;String&gt;();
+
+...
+
+// Define the major path components for the key
+majorComponents.add("Smith");
+majorComponents.add("Bob");
+
+// Create the key
+Key myKey = Key.createKey(majorComponents);
+
+...
+
+// Binding and schema creation omitted
+
+...
+
+final GenericRecord person = new GenericData.Record(personSchema);
+person.put("ID", 100011);
+person.put("FamiliarName", "Bob");
+person.put("Surname", "Smith");
+person.put("PrimaryPhone", "408 555 5555");
+
+Value myValue = binding.toValue(person);
+
+// Now put the record. Note that we do not show the creation of the
+// kvstore handle here.
+
+Version matchVersion = kvstore.put(myKey, myValue); </pre>
+      <p>
+        At some other point in this application's code, or perhaps in
+        another application entirely, we use the
+        <code class="literal">matchVersion</code> captured above to create a
+        version-based consistency policy.
+    </p>
+      <a id="consist-5"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.Consistency;
+import oracle.kv.ConsistencyException;
+import oracle.kv.Key;
+import oracle.kv.Value;
+import oracle.kv.ValueVersion;
+import oracle.kv.Version;
+
+import org.apache.avro.Schema;
+import oracle.kv.avro.GenericAvroBinding;
+import oracle.kv.avro.GenericRecord;
+
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+...
+
+ArrayList&lt;String&gt; majorComponents = new ArrayList&lt;String&gt;();
+
+...
+
+// Define the major path components for the key
+majorComponents.add("Smith");
+majorComponents.add("Bob");
+
+// Create the key
+Key myKey = Key.createKey(majorComponents);
+
+// Create the consistency policy using the 
+// Version object we captured, above.
+Consistency.Version versionConsistency = 
+        new Consistency.Version(matchVersion,
+                                200,
+                                TimeUnit.NANOSECONDS);
+
+// Now retrieve the record. Note that we do not show the creation of 
+// the kvstore handle here.
+
+try {
+    ValueVersion vv = kvstore.get(myKey,
+                        versionConsistency,
+                        0,     // Timeout parameter. 
+                               // 0 means use the default.
+                        null); // Timeout units. Null because
+                               // the Timeout is 0. 
+
+    // Deserialize with our generic avro binding
+    // (creation of this binding is not shown).
+
+    final GenericRecord member = binding.toObject(vv.getValue());
+
+    // Do work with the generic record here.
+} catch (ConsistencyException ce) {
+    // The consistency guarantee was not met
+} </pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="consistency-time.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="consistency.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="durability.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Using Time-Based Consistency </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 11. Durability Guarantees</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

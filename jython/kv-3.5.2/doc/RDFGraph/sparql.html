@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 9. SPARQL Gateway for XML-based Tools</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="prev" href="example17.html" title="Build an Ontology Model using Jena OntModel APIs" />
+    <link rel="next" href="install-configure.html" title="Installing and Configuring SPARQL Gateway" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 9. SPARQL Gateway for XML-based
+        Tools</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="example17.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="install-configure.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="sparql"></a>Chapter 9. SPARQL Gateway for XML-based
+        Tools</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="sparql.html#sparql-features">SPARQL Gateway Features and
+            Benefits Overview</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="install-configure.html">Installing and Configuring SPARQL Gateway</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="install-configure.html#download-rdf">Download the RDF Graph .zip File</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="install-configure.html#deploy-sparql">Deploy SPARQL Gateway in WebLogic Server</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="install-configure.html#proxy-settings">Modify Proxy Settings</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="install-configure.html#sparql-group">Add and Configure the SparqlGatewayAdminGroup Group</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="sparql-gateway.html">Using SPARQL Gateway with RDF Data</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="sparql-gateway.html#storing-queries">Storing SPARQL Queries and XSL Transformations</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="sparql-gateway.html#specifying-timeout">Specifying a Timeout Value</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="sparql-gateway.html#specifying-effort">Specifying Best Effort Query Execution</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="sparql-gateway.html#content-type">Specifying a Content Type Other Than text/xml</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="customizing-xslt.html">Customizing the Default XSLT File</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="sparql-wi.html">Using the SPARQL Gateway Graphical Web Interface</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="sparql-wi.html#mainpage">Main Page (index.html)</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="sparql-wi.html#navigation"> Navigation and Browsing Page (browse.jsp)</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="sparql-wi.html#xslt-manage">XSLT Management Page (xslt.jsp)</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="sparql-wi.html#sparql-manage"> SPARQL Management Page (sparql.jsp)</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="gateway-datasource.html"> Using SPARQL Gateway as an XML Data Source to OBIEE</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p> 
+        SPARQL Gateway is a J2EE web application that is
+        included with the RDF Graph feature and is designed to make
+        semantic data easily available to applications that support
+        XML data sources, including Oracle Business Intelligence
+        Enterprise Edition (OBIEE).
+    </p>
+      <p>
+        SPARQL Gateway manages SPARQL queries and XSLT operations,
+        executes SPARQL queries against any arbitrary
+        standard-compliant SPARQL endpoints, and performs necessary
+        XSL transformations before passing the response back to
+        applications. Applications can then consume semantic data as
+        if it is coming from an existing data source. 
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="sparql-features"></a>SPARQL Gateway Features and
+            Benefits Overview</h2>
+            </div>
+          </div>
+        </div>
+        <p> 
+            SPARQL Gateway handles several challenges in exposing
+            semantic data to a non-semantic application:
+        </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p> 
+                    RDF syntax, SPARQL query syntax and SPARQL
+                    protocol must be understood. 
+                </p>
+            </li>
+            <li>
+              <p> 
+                    The SPARQL query response syntax must be
+                    understood. 
+                </p>
+            </li>
+            <li>
+              <p>
+                    A transformation must convert a SPARQL query
+                    response to something that the application can
+                    consume.
+                </p>
+            </li>
+          </ul>
+        </div>
+        <p> 
+            To address these challenges, SPARQL Gateway manages
+            SPARQL queries and XSLT operations, executes SPARQL
+            queries against any arbitrary standard-compliant SPARQL
+            endpoints, and performs necessary XSL transformations
+            before passing the response back to applications.
+            Applications can then consume semantic data as if it is
+            coming from an existing data source. 
+        </p>
+        <p> 
+            Different triple stores or quad stores often have
+            different capabilities. With the RDF Graph SPARQL Gateway, you get
+            certain highly desirable capabilities, such as the ability to set
+            a timeout on a long running query and the ability to get
+            partial results from a complex query in a given amount of
+            time. Waiting indefinitely for a query to finish is a
+            challenge for end users, as is an application with a
+            response time constraint. SPARQL Gateway provides both
+            timeout and best effort query functions on top of a SPARQL
+            endpoint. This effectively removes some uncertainty from
+            consuming semantic data through SPARQL query executions.
+            (See 
+            <a class="xref" href="sparql-gateway.html#specifying-timeout" title="Specifying a Timeout Value">Specifying a Timeout Value</a>
+            and
+            <a class="xref" href="sparql-gateway.html#specifying-effort" title="Specifying Best Effort Query Execution">Specifying Best Effort Query Execution</a>
+            for more information.)
+        </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="example17.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="install-configure.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Build an Ontology Model using Jena OntModel APIs </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Installing and Configuring SPARQL Gateway</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

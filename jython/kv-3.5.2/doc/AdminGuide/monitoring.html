@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Monitoring the Store</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="procedures.html" title="Chapter 6. Administrative Procedures" />
+    <link rel="prev" href="verifyingthestore.html" title="Verifying the Store" />
+    <link rel="next" href="setstoreparams.html" title="Setting Store Parameters" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Monitoring the Store</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="verifyingthestore.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Administrative Procedures</th>
+          <td width="20%" align="right"> <a accesskey="n" href="setstoreparams.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="monitoring"></a>Monitoring the Store</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="monitoring.html#monitorevents">Events</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+          Information about the performance and availability of your store
+          can be obtained both from a server side and client side
+          perspective:
+      </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                  Your Oracle NoSQL Database applications can obtain performance
+                  statistics using the 
+                  <code class="classname">oracle.kv.KVStore.getStats()</code>
+                  class. This provides a client side view of
+                   the complete round trip performance for Oracle NoSQL Database operations.
+              </p>
+          </li>
+          <li>
+            <p>
+                  Oracle NoSQL Database automatically captures Replication Node performance 
+                  statistics into a log file that can easily be imported and 
+                  analyzed with spreadsheet software. Statistics are tracked,
+                  logged and written at a user specified interval to a CSV file (
+                  <code class="literal">je.stat.csv</code>)
+                  in the Environment directory. The logging occurs per-Environment
+                  when the Environment is opened in read/write mode.
+              </p>
+            <p>
+                  Configuration parameters control the size and number of rotating 
+                  log files used (similar to java logging, see  
+                  <a class="ulink" href="http://docs.oracle.com/javase/7/docs/api/java/util/logging/FileHandler.html" target="_top"> 
+                  java.util.logging.FileHandler).</a>
+                  For a rotating set of files, as each file reaches a given size limit, it 
+                  is closed, rotated out, and a new file is opened. Successively older files
+                  are named by adding "0", "1", "2", etc. into the file name. The format is
+                  <code class="literal">je.stat[version number].csv</code>
+              </p>
+          </li>
+          <li>
+            <p>
+                  The Oracle NoSQL Database administrative service collects and aggregates
+                  status information, alerts, and performance statistics
+                  components that are generated in the store. This provides
+                  a detailed, server side view of behavior and
+                  performance of the Oracle NoSQL Database server.
+              </p>
+          </li>
+          <li>
+            <p>
+                  Each Oracle NoSQL Database Storage Node maintains detailed logs of trace
+                  information from the services that are housed on that
+                  node. The administrative service presents an aggregated,
+                  store-wide view of these component logs, but the logs are
+                  nevertheless available on each Storage Node in the event
+                  that the administrative service is somehow not available,
+                  or if it is more convenient to examine the individual
+                  logs.
+              </p>
+          </li>
+          <li>
+            <p>
+                  Oracle NoSQL Database allows Java Management Extensions (JMX) or Simple
+                  Network Management Protocol (SNMP) agents to be optionally
+                  available for monitoring. The SNMP and JMX interfaces allow
+                  you to poll the Storage Nodes for information about the storage
+                  node and about any replication nodes that are hosted on 
+                  the Storage Node. See 
+                  <a class="xref" href="standardized-monitoring.html" title="Chapter 8.  Standardized Monitoring Interfaces">
+      Standardized Monitoring Interfaces
+   </a> 
+                  for more information.
+              </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+          In addition to the logging mechanisms noted above, you can also
+          view the current health of the store using the Admin Console. This
+          information is viewable on the Topology pane. It shows you
+          what services are currently unavailable. Problematic services are
+          highlighted in red. Two lines at the top of the pane summarize
+          the number of available and unavailable services.
+      </p>
+      <p>
+          Finally, you can monitor the status of the store by verifying it
+          from within the CLI. See 
+          <a class="xref" href="verifyingthestore.html" title="Verifying the Store">Verifying the Store</a>
+          for more information. You can also use the CLI to examine events.
+      </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="monitorevents"></a>Events</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+              Events are special messages that inform you of the
+              state of your system. As events are generated, they are
+              routed through the monitoring system so that you can see
+              them. There are four types of events that the store reports:
+            </p>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p>
+                      State Change events are issued when a service starts
+                      up or shuts down.
+                  </p>
+            </li>
+            <li>
+              <p>
+                      Performance events report statistics about the
+                      performance of various services.
+                  </p>
+            </li>
+            <li>
+              <p>
+                      Log events are records produced by the various
+                      system components to provide trace information about
+                      debugging. These records are produced by the standard
+                      <code class="classname">java.util.logging</code> package.
+                  </p>
+            </li>
+            <li>
+              <p>
+                      Plan Change events record the progress of plans as
+                      they execute, are interrupted, fail or are canceled.
+                  </p>
+            </li>
+          </ol>
+        </div>
+        <p>
+                Note that some events are considered critical. These events are
+                recorded in the administration service's database, and can be
+                retrieved and viewed using the CLI or the Admin Console.
+            </p>
+        <div class="sect3" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h4 class="title"><a id="otherevents"></a>Other Events</h4>
+              </div>
+            </div>
+          </div>
+          <p>
+                    Plan Change events cannot be directly viewed through
+                    Oracle NoSQL Database's administrative interfaces.
+                    However, State Change events, Performance events,
+                    and Log events are recorded using the
+                    EventRecorder facility internal to the Admin.  Only events
+                    that are considered "critical" are recorded, and the
+                    criteria for being designated as such vary with the type of
+                    the event.  All state change events are considered
+                    critical, but only SEVERE log events are.  Performance
+                    events are considered critical if the reported performance
+                    is below a certain threshold.
+                </p>
+          <p>
+                    All such events can be viewed in the CLI using the 
+                    <code class="literal">show events</code> and 
+                    <code class="literal">show event</code> commands.
+                </p>
+          <p>
+                    Use the CLI <code class="literal">show events</code> command with
+                    no arguments to see all the unexpired events in the
+                    database. You can bound the range of events that are
+                    displayed using the <code class="literal">-from</code> and
+                    <code class="literal">-to</code> arguments. You can filter
+                    events by type or id as well, using either the
+                    <code class="literal">-type</code> or 
+                    the <code class="literal">-id</code> arguments respectively.
+                </p>
+          <p>
+                    For example, this is a fragment of the output from the
+                    <code class="literal">show events</code> command:
+                </p>
+          <pre class="programlisting">kv-&gt; show events
+idarpdfbS STAT 2015-08-13 22:18:39.287 UTC sn1 RUNNING sev1
+idarpeg0S STAT 2015-08-13 22:18:40.608 UTC sn2 RUNNING sev1
+idarphmuS STAT 2015-08-13 22:18:44.742 UTC rg1-rn1 RUNNING sev1
+idarpjLLS STAT 2015-08-13 22:18:47.289 UTC rg1-rn2 RUNNING sev1
+idartfcuS STAT 2015-08-13 22:21:48.414 UTC rg1-rn2 UNREACHABLE sev2 
+                                                   (reported by admin1) </pre>
+          <p>
+                    This shows four service state change events (sev1)
+                    and one UNREACHABLE (sev2) log event. The tags at the
+                    beginning of each line are individual event record identifiers. 
+                    If you want to see detailed information for a particular event,
+                    you can use the "show event" command, which takes as its argument an
+                    event record identifier:
+                </p>
+          <pre class="programlisting">kv-&gt; show event -id idartfcuS
+idartfcuS STAT 2015-08-13 22:21:48.414 UTC rg1-rn2 UNREACHABLE sev2 
+                                                   (reported by admin1) </pre>
+          <p>
+                    and so on, for a complete stack trace.
+                </p>
+          <p>
+                    Events expire from the system after a set period, which
+                    defaults to thirty days.  
+                </p>
+          <p>
+                    The Sev1 flag is associated with the following service status change events:
+                    STARTING, WAITING_FOR_DEPLOY, RUNNING, STOPPING and STOPPED. Sev2
+                    is associated with the ERROR_RESTARTING, ERROR_NO_RESTART and UNREACHABLE
+                    service status change events.
+                </p>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="verifyingthestore.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="procedures.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="setstoreparams.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Verifying the Store </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Setting Store Parameters</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

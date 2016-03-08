@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Retrieving a Single Row</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="tableget.html" title="Chapter 6. Reading Table Rows" />
+    <link rel="prev" href="tableget.html" title="Chapter 6. Reading Table Rows" />
+    <link rel="next" href="multiget.html" title="Using multiGet()" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Retrieving a Single Row</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tableget.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Reading Table Rows</th>
+          <td width="20%" align="right"> <a accesskey="n" href="multiget.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="singleget"></a>Retrieving a Single Row</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="singleget.html#getChild">Retrieve a Child Table</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+          To retrieve a single row from the store:
+      </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                  Construct a handle for the table from which you want to
+                  read. You do this by retrieving a
+                  <code class="classname">TableAPI</code> class instance using
+                  <code class="methodname">KVStore.getTableAPI()</code>. You then
+                  use that instance to retrieve the desired table handle
+                  using <code class="methodname">TableAPI.getTable()</code>. This
+                  returns a <code class="classname">Table</code> class instance.
+              </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+                      <code class="methodname">TableAPI.getTable()</code> is an
+                      expensive call that requires server side access. From a
+                      performance point of view, it is a mistake to call this
+                      method whenever you need a table handle. Instead, call
+                      this method for all relevant tables in the set up section
+                      of your code, and then reuse those handles throughout
+                      your application.
+                  </p>
+            </div>
+          </li>
+          <li>
+            <p>
+                  Use the <code class="classname">Table</code> instance
+                  retrieved in the previous step to create a
+                  <code class="classname">PrimaryKey</code> class instance. In
+                  this case, the key you create must be the entire
+                  primary key.
+              </p>
+          </li>
+          <li>
+            <p>
+                  Retrieve the row using <code class="methodname">TableAPI.get()</code>.
+                  This performs a store read operation.
+              </p>
+          </li>
+          <li>
+            <p>
+                  Retrieve individual fields from the row using the
+                  <code class="methodname">Row.get()</code> method.
+              </p>
+          </li>
+        </ol>
+      </div>
+      <p>
+          For example, in <a class="xref" href="rowput.html" title="Writing Rows to a Table in the Store">Writing Rows to a Table in the Store</a>
+          we showed a trivial example of storing a table row to the store.
+          The following trivial example shows how to retrieve that row.
+      </p>
+      <a id="singleget-1"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+import oracle.kv.KVStore;
+import oracle.kv.table.PrimaryKey;
+import oracle.kv.table.Row;
+import oracle.kv.table.Table;
+import oracle.kv.table.TableAPI;
+
+...
+
+// KVStore handle creation is omitted for brevity
+
+...
+
+TableAPI tableH = kvstore.getTableAPI();
+
+// The name you give to getTable() must be identical
+// to the name that you gave the table when you created
+// the table using the CREATE TABLE DDL statement.
+Table myTable = tableH.getTable("myTable");
+
+// Construct the PrimaryKey. This is driven by your table
+// design, which designated one or more fields as 
+// being part of the table's primary key. In this
+// case, we have a single field primary key, which is the
+// 'item' field. Specifically, we want to retrieve the
+// row where the 'item' field contains 'Bolts'.
+PrimaryKey key = myTable.createPrimaryKey();
+key.put("item", "Bolts");
+
+// Retrieve the row. This performs a store read operation.
+// Exception handling is skipped for this trivial example.
+Row row = tableH.get(key, null);
+
+// Now retrieve the individual fields from the row.
+String item = row.get("item").asString().get();
+String description = row.get("description").asString().get();
+Integer count = row.get("count").asInteger().get();
+Double percentage = row.get("percentage").asDouble().get(); </pre>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="getChild"></a>Retrieve a Child Table</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                In <a class="xref" href="rowput.html#writechildtable" title="Writing Rows to a Child Table">Writing Rows to a Child Table</a>
+                we showed how to populate a child table with data. To
+                retrieve that data, you must specify the primary key used
+                for the parent table row, as well as the primary key for
+                the child table row. For example:
+            </p>
+        <a id="singlegetchild-1"></a>
+        <pre class="programlisting">package kvstore.basicExample;
+
+import oracle.kv.KVStore;
+import oracle.kv.table.PrimaryKey;
+import oracle.kv.table.Row;
+import oracle.kv.table.Table;
+import oracle.kv.table.TableAPI;
+
+...
+
+// KVStore handle creation is omitted for brevity
+
+...
+
+TableAPI tableH = kvstore.getTableAPI();
+
+// We omit retrieval of the parent table because it is not required.
+Table myChildTable = tableH.getTable("myInventory.itemDetails");
+
+// Construct the PrimaryKey. This key must contain the primary key
+// from the parent table row, as well as the primary key from the 
+// child table row that you want to retrieve.
+PrimaryKey key = myChildTable.createPrimaryKey();
+key.put("itemCategory", "Bolts");
+key.put("itemSKU", "1392610");
+
+// Retrieve the row. This performs a store read operation.
+// Exception handling is skipped for this trivial example.
+Row row = tableH.get(key, null);
+
+// Now retrieve the individual fields from the row.
+String description = row.get("itemDescription").asString().get();
+Float price = row.get("price").asFloat().get();
+Integer invCount = row.get("inventoryCount").asInteger().get(); </pre>
+        <p>
+                For information on how to iterate over nested tables, see
+                <a class="xref" href="childparenttableiter.html" title="Iterating with Nested Tables">Iterating with Nested Tables</a>.
+            </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tableget.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="tableget.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="multiget.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 6. Reading Table Rows </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Using multiGet()</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

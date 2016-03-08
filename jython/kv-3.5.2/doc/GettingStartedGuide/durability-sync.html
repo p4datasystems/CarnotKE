@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Setting Synchronization-Based Durability Policies</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="durability.html" title="Chapter 11. Durability Guarantees" />
+    <link rel="prev" href="durability.html" title="Chapter 11. Durability Guarantees" />
+    <link rel="next" href="durability-set.html" title="Setting Durability Guarantees" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Setting Synchronization-Based Durability Policies</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="durability.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 11. Durability Guarantees</th>
+          <td width="20%" align="right"> <a accesskey="n" href="durability-set.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="durability-sync"></a>Setting Synchronization-Based Durability Policies</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+              Whenever a node performs a write operation, the node must
+              know whether it should wait for the data to be written to
+              stable storage before successfully returning from the
+              operation.
+          </p>
+      <p>
+              As a part of performing a write operation, the data
+              modification is first made to an in-memory cache. It is then
+              written to the filesystem's data buffers. And, finally, the
+              contents of the data buffers are synchronized to stable
+              storage (typically, a hard drive).
+          </p>
+      <p>
+              You can control how much of this process the master node will
+              wait to complete before it returns from the write operation
+              with a normal status. There are three different levels of
+              synchronization durability that you can require:
+          </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                      NO_SYNC
+                  </p>
+            <p>
+                      The data is written to the host's in-memory cache,
+                      but the master node does not wait for the data
+                      to be written to the file system's data buffers, or for the
+                      data to be physically transferred to stable storage.
+                      This is the fastest, but least durable, synchronization policy.
+                  </p>
+          </li>
+          <li>
+            <p>
+                      WRITE_NO_SYNC 
+                  </p>
+            <p>
+                      The data is written to the in-memory cache, and then
+                      written to the file system's data buffers, but the
+                      data is not necessarily transferred to stable storage
+                      before the operation completes normally.
+                  </p>
+          </li>
+          <li>
+            <p>
+                      SYNC
+                  </p>
+            <p>
+                      The data is written to the in-memory cache, then
+                      transferred to the file system's data buffers, and
+                      then synchronized to stable storage before the write
+                      operation completes normally. This is the slowest,
+                      but most durable, synchronization policy.
+                  </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+              Notice that in all cases, the data is eventually written to
+              stable storage (assuming some failure does not occur to
+              prevent it). The only question is, how much of this process
+              will be completed before the write operation returns and your
+              application can proceed to its next operation.
+          </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="durability.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="durability.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="durability-set.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 11. Durability Guarantees </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Setting Durability Guarantees</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

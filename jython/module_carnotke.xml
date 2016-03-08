@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_carnotke" default="compile.module.carnotke">
+  <dirname property="module.carnotke.basedir" file="${ant.file.module_carnotke}"/>
+  
+  <property name="module.jdk.home.carnotke" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.carnotke" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.carnotke" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.carnotke" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="carnotke.output.dir" value="${module.carnotke.basedir}/out/production/CarnotKE"/>
+  <property name="carnotke.testoutput.dir" value="${module.carnotke.basedir}/out/test/CarnotKE"/>
+  
+  <path id="carnotke.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="carnotke.module.production.classpath">
+    <path refid="${module.jdk.classpath.carnotke}"/>
+  </path>
+  
+  <path id="carnotke.runtime.production.module.classpath">
+    <pathelement location="${carnotke.output.dir}"/>
+  </path>
+  
+  <path id="carnotke.module.classpath">
+    <path refid="${module.jdk.classpath.carnotke}"/>
+    <pathelement location="${carnotke.output.dir}"/>
+  </path>
+  
+  <path id="carnotke.runtime.module.classpath">
+    <pathelement location="${carnotke.testoutput.dir}"/>
+    <pathelement location="${carnotke.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.carnotke">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.carnotke">
+    <patternset refid="excluded.from.module.carnotke"/>
+  </patternset>
+  
+  <path id="carnotke.module.sourcepath">
+    <dirset dir="${module.carnotke.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.carnotke" depends="compile.module.carnotke.production,compile.module.carnotke.tests" description="Compile module CarnotKE"/>
+  
+  <target name="compile.module.carnotke.production" depends="register.custom.compilers" description="Compile module CarnotKE; production classes">
+    <mkdir dir="${carnotke.output.dir}"/>
+    <javac2 destdir="${carnotke.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.carnotke}/javac">
+      <compilerarg line="${compiler.args.carnotke}"/>
+      <bootclasspath refid="carnotke.module.bootclasspath"/>
+      <classpath refid="carnotke.module.production.classpath"/>
+      <src refid="carnotke.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.carnotke"/>
+    </javac2>
+    
+    <copy todir="${carnotke.output.dir}">
+      <fileset dir="${module.carnotke.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.carnotke.tests" depends="register.custom.compilers,compile.module.carnotke.production" description="compile module CarnotKE; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.carnotke" description="cleanup module">
+    <delete dir="${carnotke.output.dir}"/>
+    <delete dir="${carnotke.testoutput.dir}"/>
+  </target>
+</project>

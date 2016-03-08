@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 5. Query RDF Graphs</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="prev" href="load.html" title="Chapter 4. Load an RDF Graph" />
+    <link rel="next" href="syntax-bnodes.html" title="Syntax Involving Bnodes (Blank Nodes)" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 5. Query RDF Graphs</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="load.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="syntax-bnodes.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="query"></a>Chapter 5. Query RDF Graphs</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="query.html#functions-sparql">Functions Supported in SPARQL Queries</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="syntax-bnodes.html">Syntax Involving Bnodes (Blank Nodes)</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="jsonsupport.html">JavaScript Object Notation (JSON) Format Support</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="bestpractices.html">Best Practices</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="bestpractices.html#queryoptions">Additional Query Options</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="bestpractices.html#joinmethod">JOIN_METHOD option</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="bestpractices.html#federatedquery">SPARQL 1.1 federated query SERVICE Clause</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="bestpractices.html#datasampling">Data sampling</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="bestpractices.html#queryhints">Query hints</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+        </dl>
+      </div>
+      <p> 
+        The RDF Graph feature has native support for World Wide Web
+        Consortium (W3C) standards. SPARQL is a query language
+        designed specifically for graph pattern matching queries, and
+        RDF and OWL are standards for representing and defining graph
+        data. Oracle NoSQL Database stores RDF data as an array of bytes. 
+        It supports non-ASCII characters to accommodate a wide range of 
+        international characters. 
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="functions-sparql"></a>Functions Supported in SPARQL Queries</h2>
+            </div>
+          </div>
+        </div>
+        <p> 
+        SPARQL queries can use functions in the function
+        library of the Apache Jena ARQ query engine. These queries are
+        executed in the middle tier.
+    </p>
+        <p>
+        The following examples use the upper-case and namespace
+        functions. In these examples, the prefix <span class="emphasis"><em>fn</em></span> is 
+        <a class="ulink" href="http://www.w3.org/2005/xpath-functions/#" target="_top">http://www.w3.org/2005/xpath-functions/#</a>
+        and the prefix <span class="emphasis"><em>afn</em></span> 
+        is <a class="ulink" href="http://jena.hpl.hp.com/ARQ/function#" target="_top">http://jena.hpl.hp.com/ARQ/function#</a>.
+    </p>
+        <pre class="programlisting">PREFIX dc:  &lt;http://purl.org/dc/elements/1.1/&gt;
+PREFIX fn:  &lt;http://www.w3.org/2005/xpath-functions/#&gt;
+PREFIX afn: &lt;http://jena.hpl.hp.com/ARQ/function#&gt;
+SELECT (fn:upper-case(?object) as ?object1)
+WHERE { ?subject dc:title ?object }
+
+PREFIX fn: &lt;http://www.w3.org/2005/xpath-functions/#&gt;
+PREFIX afn: &lt;http://jena.hpl.hp.com/ARQ/function#&gt;
+SELECT ?subject (afn:namespace(?object) as ?object1)
+WHERE { 
+?subject &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; 
+?object } </pre>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="load.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="syntax-bnodes.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 4. Load an RDF Graph </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Syntax Involving Bnodes (Blank Nodes)</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

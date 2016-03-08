@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 2. Setup RDF Graph</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="prev" href="inferencing.html" title="Inferencing" />
+    <link rel="next" href="setup-sparql.html" title="Setup the SPARQL Service" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 2. Setup RDF Graph</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="inferencing.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="setup-sparql.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="setup"></a>Chapter 2. Setup RDF Graph</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="setup.html#setup-env">Setup the System Environment</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="setup-sparql.html">Setup the SPARQL Service</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="setup-sparql.html#deploy">Deploy joseki.war</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="setup-sparql.html#tomcat">Use Apache Tomcat</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="setup-sparql.html#weblogic">Use Oracle WebLogic Server</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="setup-sparql.html#nosqlconnection">Configuring an Oracle NoSQL Database connection in the SPARQL service</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="setup-sparql.html#sparqlservice">Configuring the SPARQL Service:
+             Oracle NoSQL Database</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+        </dl>
+      </div>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="setup-env"></a>Setup the System Environment</h2>
+            </div>
+          </div>
+        </div>
+        <p> 
+            To use the RDF Graph feature, you must first ensure
+            that the system environment has the necessary software.
+            Please refer to 
+            <a class="xref" href="prerequisite.html" title="Appendix A. Prerequisite Software">Prerequisite Software</a> 
+            for the prerequisite software list. 
+        </p>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p>
+                    Download the RDF Graph feature
+                    (rdf_graph_for_nosql_database.zip) from 
+                    Oracle's Software Delivery Cloud,
+                    and unzip it
+                    into a temporary directory, such as (on a Linux
+                    system) <code class="literal">/tmp/jena_adapter</code>. (If this temporary
+                    directory does not already exist, create it before
+                    the unzip operation.)
+                </p>
+              <p>
+                    See <a class="xref" href="prerequisite.html" title="Appendix A. Prerequisite Software">Prerequisite Software</a>
+                    for complete download instructions.
+                </p>
+            </li>
+            <li>
+              <p> 
+                    The RDF Graph feature directories and files
+                    have the following structure: 
+                </p>
+              <pre class="programlisting">jar/ 
+    jar/sdordfnosqlclient.jar
+javadoc/ 
+	javadoc/javadoc.zip
+joseki/ 
+    joseki/index.html 
+	joseki/application.xml 
+	joseki/update.html 
+	joseki/xml-to-html.xsl 
+	joseki/joseki-config.ttl
+web/ 
+	web/web.xml
+war/
+	war/joseki.war
+examples/ 
+    examples/Examples1.java 
+    examples/Examples1b.java 
+    examples/Examples1c.java 
+    examples/Examples1d.java 
+    examples/Examples2.java 
+    examples/Examples2b.java 
+    examples/Examples3.java 
+    examples/Examples4.java 
+    examples/Examples4b.java 
+    examples/Examples5.java 
+    examples/Examples5b.java 
+    examples/Examples5c.java 
+    examples/Examples5d.java 
+    examples/Examples5e.java 
+    examples/Examples5f.java 
+    examples/Examples5g.java 
+    examples/Examples5h.java 
+    examples/Examples6.java
+    examples/Examples7.java 
+    examples/Examples8.java 
+    examples/Examples9.java
+    examples/Examples10.java 
+    examples/Examples11.java 
+    examples/Examples12.java 
+    examples/Examples13.java 
+    examples/Examples14.java 
+    examples/Examples15.java 
+    examples/Examples16.java
+    examples/Examples16b.java
+    examples/Examples17.java
+    examples/example.nt</pre>
+            </li>
+            <li>
+              <p>
+                   The structure of directories and file should
+                   also include the following lines:
+                </p>
+              <pre class="programlisting">examples/family.rdf</pre>
+              <pre class="programlisting">sparqlgateway/</pre>
+              <pre class="programlisting">sparqlgateway.war</pre>
+              <p>
+                    Copy kvclient.jar into &lt;Jena_DIR&gt;/lib
+                    (Linux) or &lt;Jena_DIR&gt;\lib (Windows).
+                    (kvclient.jar is included in $KVHOME/lib or
+                    $KVHOME/lib). 
+                </p>
+            </li>
+            <li>
+              <p>
+                    If the JAVA_HOME environment variable does not
+                    already refer to the JDK 1.6 (update 25 or later)
+                    installation, define it accordingly. For example:
+                </p>
+              <pre class="programlisting">setenv JAVA_HOME /usr/local/packages/jdk16_u25/</pre>
+            </li>
+            <li>
+              <p> 
+                    If the SPARQL service to support the SPARQL
+                    protocol is not set up, set it up as explained in
+                    <a class="xref" href="setup-sparql.html" title="Setup the SPARQL Service">Setup the SPARQL Service</a>.
+                </p>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="inferencing.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="setup-sparql.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Inferencing </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Setup the SPARQL Service</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

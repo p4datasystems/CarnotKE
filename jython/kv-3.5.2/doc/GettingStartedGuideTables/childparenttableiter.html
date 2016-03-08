@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Iterating with Nested Tables</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="tableget.html" title="Chapter 6. Reading Table Rows" />
+    <link rel="prev" href="readfieldranges.html" title="Specifying Field Ranges" />
+    <link rel="next" href="indexread.html" title="Reading Indexes" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Iterating with Nested Tables</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="readfieldranges.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Reading Table Rows</th>
+          <td width="20%" align="right"> <a accesskey="n" href="indexread.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="childparenttableiter"></a>Iterating with Nested Tables</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            When you are iterating over a table, or performing a multi-get
+            operation, by default only rows are retrieved from the table on
+            which you are operating. However, you can use
+
+            <code class="classname">MultiRowOptions</code> 
+            
+            to specify that parent and child tables are to be retrieved as
+            well.
+        </p>
+      <p>
+            When you do this, parent tables are retrieved first,
+            then the table you are operating on, then child tables. In
+            other words, the tables' hierarchical order is observed. 
+        </p>
+      <p>
+            The parent and child tables retrieved are identified
+            by specifying a <code class="classname">List</code> of
+            <code class="classname">Table</code> objects to the 
+            <code class="literal">ancestors</code> and <code class="literal">children</code>
+            parameters on the class constructor. You can also specify these
+            using the
+            <code class="methodname">MultiRowOptions.setIncludedChildTables()</code>
+            or
+            <code class="methodname">MultiRowOptions.setIncludedParentTables()</code>
+            methods.
+        </p>
+      <p>
+            When operating on rows retrieved from multiple tables, it is
+            your responsibility to determine which table the row belongs
+            to.
+        </p>
+      <p>
+            For example, suppose you create a table with a child and
+            grandchild table like this:
+        </p>
+      <pre class="programlisting">CREATE TABLE prodTable (
+    prodType STRING,
+    typeDescription STRING,
+    PRIMARY KEY (prodType)
+) </pre>
+      <pre class="programlisting">CREATE TABLE prodTable.prodCategory (
+    categoryName STRING,
+    categoryDescription STRING,
+    PRIMARY KEY (categoryName)
+) </pre>
+      <pre class="programlisting">CREATE TABLE prodTable.prodCategory.item (
+    itemSKU STRING,
+    itemDescription STRING,
+    itemPrice FLOAT,
+    vendorUID STRING,
+    inventoryCount INTEGER,
+    PRIMARY KEY (itemSKU)
+) </pre>
+      <p>
+            With tables containing data like this:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    Row 1:
+                </p>
+            <table class="simplelist" border="0" summary="Simple list">
+              <tr>
+                <td>prodType: Hardware</td>
+              </tr>
+              <tr>
+                <td>typeDescription: Equipment, tools and parts</td>
+              </tr>
+            </table>
+            <div class="itemizedlist">
+              <ul type="circle">
+                <li>
+                  <p>
+                            Row 1.1:
+                        </p>
+                  <table class="simplelist" border="0" summary="Simple list">
+                    <tr>
+                      <td>categoryName: Bolts</td>
+                    </tr>
+                    <tr>
+                      <td>categoryDescription: Metric &amp; US Sizes</td>
+                    </tr>
+                  </table>
+                  <div class="itemizedlist">
+                    <ul type="square">
+                      <li>
+                        <p>
+                                    Row 1.1.1:
+                                </p>
+                        <table class="simplelist" border="0" summary="Simple list">
+                          <tr>
+                            <td>itemSKU: 1392610</td>
+                          </tr>
+                          <tr>
+                            <td>itemDescription: 1/4-20 x 1/2 Grade 8 Hex</td>
+                          </tr>
+                          <tr>
+                            <td>itemPrice: 11.99</td>
+                          </tr>
+                          <tr>
+                            <td>vendorUID: A8LN99</td>
+                          </tr>
+                          <tr>
+                            <td>inventoryCount: 1457</td>
+                          </tr>
+                        </table>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <p>
+                    Row 2:
+                </p>
+            <table class="simplelist" border="0" summary="Simple list">
+              <tr>
+                <td>prodType: Tools</td>
+              </tr>
+              <tr>
+                <td>typeDescription: Hand and power tools</td>
+              </tr>
+            </table>
+            <div class="itemizedlist">
+              <ul type="circle">
+                <li>
+                  <p>
+                            Row 2.1:
+                        </p>
+                  <table class="simplelist" border="0" summary="Simple list">
+                    <tr>
+                      <td>categoryName: Handtools</td>
+                    </tr>
+                    <tr>
+                      <td>categoryDescription: Hammers, screwdrivers, saws</td>
+                    </tr>
+                  </table>
+                  <div class="itemizedlist">
+                    <ul type="square">
+                      <li>
+                        <p>
+                                    Row 2.1.1:
+                                </p>
+                        <table class="simplelist" border="0" summary="Simple list">
+                          <tr>
+                            <td>itemSKU: 1582178</td>
+                          </tr>
+                          <tr>
+                            <td>itemDescription: Acme 20 ounce claw hammer</td>
+                          </tr>
+                          <tr>
+                            <td>itemPrice: 24.98</td>
+                          </tr>
+                          <tr>
+                            <td>vendorUID: D6BQ27</td>
+                          </tr>
+                          <tr>
+                            <td>inventoryCount: 249</td>
+                          </tr>
+                        </table>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <p>
+            In this case, you can display all of the data contained in
+            these tables in the following way.
+        </p>
+      <p>
+            Start by getting all our table handles:
+        </p>
+      <pre class="programlisting">package kvstore.tableExample;
+
+import java.util.Arrays;
+
+import oracle.kv.KVStore;
+import oracle.kv.KVStoreConfig;
+import oracle.kv.KVStoreFactory;
+
+import oracle.kv.table.PrimaryKey;
+import oracle.kv.table.Row;
+import oracle.kv.table.Table;
+import oracle.kv.table.TableAPI;
+
+import oracle.kv.table.TableIterator;
+import oracle.kv.table.MultiRowOptions;
+
+...
+
+private static Table prodTable;
+private static Table categoryTable;
+private static Table itemTable;
+
+private static TableAPI tableH;
+
+...
+
+// KVStore handle creation is omitted for brevity
+
+...
+
+tableH = kvstore.getTableAPI();
+prodTable = tableH.getTable("prodTable");
+categoryTable = tableH.getTable("prodTable.prodCategory");
+itemTable = tableH.getTable("prodTable.prodCategory.item"); </pre>
+      <p>
+            Now we need the <code class="classname">PrimaryKey</code> and the
+            <code class="classname">MultiRowOptions</code> that we will use to
+            iterate over the top-level table. Because we want all the rows
+            in the top-level table, we create an empty
+            <code class="classname">PrimaryKey</code>.
+        </p>
+      <p>
+            The <code class="classname">MultiRowOptions</code> identifies the two
+            child tables in the constructor's <code class="literal">child</code>
+            parameter. This causes the iteration to return all the rows
+            from the top-level table, as well as all the rows from the
+            nested children tables.
+        </p>
+      <pre class="programlisting">// Construct a primary key
+PrimaryKey key = prodTable.createPrimaryKey();
+
+// Get a MultiRowOptions and tell it to look at both the child
+// tables
+MultiRowOptions mro = new MultiRowOptions(null, null,
+        Arrays.asList(categoryTable, itemTable));</pre>
+      <p>
+            Now we perform the iteration:
+        </p>
+      <pre class="programlisting">// Get the table iterator
+// Exception handling is omitted, but in production code
+// ConsistencyException, RequestTimeException, and FaultException
+// would have to be handled.
+TableIterator&lt;Row&gt; iter = tableH.tableIterator(key, mro, null);
+try {
+    while (iter.hasNext()) {
+        Row row = iter.next();
+        displayRow(row);
+    } 
+} finally {
+    if (iter != null) {
+        iter.close(); 
+    }
+}        </pre>
+      <p>
+            Our <code class="methodname">displayRow()</code> method is used to
+            determine which table a row belongs to, and then display it in
+            the appropriate way.
+        </p>
+      <pre class="programlisting">private static void displayRow(Row row) {
+    // Display the row depending on which table it belongs to
+    if (row.getTable().equals(prodTable)) {
+        displayProdTableRow(row);
+    } else if (row.getTable().equals(categoryTable)) {
+        displayCategoryTableRow(row);
+    } else {
+        displayItemTableRow(row);
+    }
+} </pre>
+      <p>
+            Finally, we just need the methods used to display each row.
+            These are trivial, but in a more sophisticated application they
+            could be used to do more complex things, such as construct HTML
+            pages or write XSL-FO for the purposes of generating PDF copies
+            of a report.
+        </p>
+      <pre class="programlisting">private static void displayProdTableRow(Row row) {
+    System.out.println("\nType: " + 
+        row.get("prodType").asString().get());
+    System.out.println("Description: " + 
+        row.get("typeDescription").asString().get());
+}
+
+private static void displayCategoryTableRow(Row row) {
+    System.out.println("\tCategory: " + 
+        row.get("categoryName").asString().get());
+    System.out.println("\tDescription: " + 
+        row.get("categoryDescription").asString().get());
+}
+
+private static void displayItemTableRow(Row row) {
+    System.out.println("\t\tSKU: " + 
+        row.get("itemSKU").asString().get());
+    System.out.println("\t\tDescription: " + 
+        row.get("itemDescription").asString().get());
+    System.out.println("\t\tPrice: " + 
+        row.get("itemPrice").asFloat().get());
+    System.out.println("\t\tVendorUID: " + 
+        row.get("vendorUID").asString().get());
+    System.out.println("\t\tInventory count: " + 
+        row.get("inventoryCount").asInteger().get());
+    System.out.println("\n");
+} </pre>
+      <p>
+            Note that the retrieval order remains the top-most ancestor to
+            the lowest child, even if you retrieve by lowest child. For
+            example, you can retrieve all the Bolts, and all of their
+            parent tables, like this:
+        </p>
+      <pre class="programlisting">// Get all the table handles
+prodTable = tableH.getTable("prodTable");
+categoryTable = tableH.getTable("prodTable.prodCategory");
+itemTable = tableH.getTable("prodTable.prodCategory.item");
+
+// Construct a primary key
+PrimaryKey key = itemTable.createPrimaryKey();
+key.put("prodType", "Hardware");
+key.put("categoryName", "Bolts");
+
+// Get a MultiRowOptions and tell it to look at both the ancestor
+// tables
+MultiRowOptions mro = new MultiRowOptions(null,
+        Arrays.asList(prodTable, categoryTable), null);
+
+// Get the table iterator
+// Exception handling is omitted, but in production code
+// ConsistencyException, RequestTimeException, and FaultException
+// would have to be handled.
+TableIterator&lt;Row&gt; iter = tableH.tableIterator(key, mro, null);
+try {
+    while (iter.hasNext()) {
+        Row row = iter.next();
+        displayRow(row);
+    }
+} finally {
+    if (iter != null) {
+        iter.close(); 
+    }
+}        </pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="readfieldranges.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="tableget.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="indexread.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Specifying Field Ranges </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Reading Indexes</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

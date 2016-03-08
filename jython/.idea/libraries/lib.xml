@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Neo4j/WDB/build/dist/lib/wdb.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Neo4j/WDB/build/dist/lib/je.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

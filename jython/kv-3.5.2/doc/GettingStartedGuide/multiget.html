@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Using multiGet()</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="recordget.html" title="Chapter 5. Reading Records" />
+    <link rel="prev" href="singleget.html" title="Retrieving a Single Record" />
+    <link rel="next" href="multigetiterator.html" title="Using multiGetIterator()" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Using multiGet()</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="singleget.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 5. Reading Records</th>
+          <td width="20%" align="right"> <a accesskey="n" href="multigetiterator.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="multiget"></a>Using multiGet()</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            <code class="methodname">KVStore.multiGet()</code>
+            allows you to retrieve multiple records at once, so long as they all
+            share the same major path components. The major path components
+            that you provide must represent a <span class="emphasis"><em>complete</em></span>
+            set of components.
+        </p>
+      <p>
+            Use <code class="methodname">KVStore.multiGet()</code> only if your
+            retrieval set will fit entirely in memory.
+        </p>
+      <p>
+            For example, suppose you use the following keys:
+        </p>
+      <pre class="programlisting">/Hats/-/baseball
+/Hats/-/baseball/longbill
+/Hats/-/baseball/longbill/blue
+/Hats/-/baseball/longbill/red
+/Hats/-/baseball/shortbill
+/Hats/-/baseball/shortbill/blue
+/Hats/-/baseball/shortbill/red
+/Hats/-/western
+/Hats/-/western/felt
+/Hats/-/western/felt/black
+/Hats/-/western/felt/gray
+/Hat/-/swestern/leather
+/Hat/-/swestern/leather/black
+/Hat/-/swestern/leather/gray</pre>
+      <p>
+            Then you can retrieve all of the records that use the major key
+            component <code class="literal">Hats</code> as follows:
+        </p>
+      <a id="multiget-1"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.ConsistencyException;
+import oracle.kv.Key;
+import oracle.kv.RequestTimeoutException;
+import oracle.kv.Value;
+import oracle.kv.ValueVersion;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.SortedMap;
+import java.util.Map;
+
+...
+
+ArrayList&lt;String&gt; majorComponents = new ArrayList&lt;String&gt;();
+
+...
+
+// Define the major and minor path components for the key
+majorComponents.add("Hats");
+
+// Create the retrieval key
+Key myKey = Key.createKey(majorComponents);
+
+// Now retrieve the records. Note that we do not show the creation of 
+// the kvstore handle here.
+
+SortedMap&lt;Key, ValueVersion&gt; myRecords = null;
+
+try {
+    myRecords = kvstore.multiGet(myKey, null, null);
+} catch (ConsistencyException ce) {
+    // The consistency guarantee was not met
+} catch (RequestTimeoutException re) {
+    // The operation was not completed within the 
+    // timeout value
+} </pre>
+      <p>
+            You can then iterate over the resulting sorted map 
+            as follows:
+        </p>
+      <a id="multiget-2"></a>
+      <pre class="programlisting">for (Map.Entry&lt;Key, ValueVersion&gt; entry : myRecords.entrySet()) {
+    ValueVersion vv = entry.getValue();
+    Value v = vv.getValue();
+    // Do some work with the Value here
+} </pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="singleget.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="recordget.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="multigetiterator.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Retrieving a Single Record </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Using multiGetIterator()</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

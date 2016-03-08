@@ -1,0 +1,658 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Setup the SPARQL Service</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="setup.html" title="Chapter 2. Setup RDF Graph" />
+    <link rel="prev" href="setup.html" title="Chapter 2. Setup RDF Graph" />
+    <link rel="next" href="connect.html" title="Chapter 3. Connect to NoSQL Database" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Setup the SPARQL Service</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="setup.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 2. Setup RDF Graph</th>
+          <td width="20%" align="right"> <a accesskey="n" href="connect.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="setup-sparql"></a>Setup the SPARQL Service</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="setup-sparql.html#deploy">Deploy joseki.war</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="setup-sparql.html#tomcat">Use Apache Tomcat</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="setup-sparql.html#weblogic">Use Oracle WebLogic Server</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="setup-sparql.html#nosqlconnection">Configuring an Oracle NoSQL Database connection in the SPARQL service</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="setup-sparql.html#sparqlservice">Configuring the SPARQL Service:
+             Oracle NoSQL Database</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+            Setting up a SPARQL endpoint using the RDF Graph
+            feature involves creating and deploying a Web Application
+            Archive (WAR) file into a server J2EE container. The RDF
+            Graph feature supports Apache Jena Joseki, an open source
+            SPARQL server that supports the SPARQL protocol and SPARQL
+            queries to create this web application archive.
+        </p>
+      <p> 
+            The following sections explain how to set up a SPARQL
+            service using the bundled web application archive in
+            either Apache Tomcat or Oracle WebLogic Server. 
+        </p>
+      <p>
+            The RDF Graph feature's release package includes
+            a bundled web application archive (joseki.war). Details
+            on how to build a web application archive (joseki.war)
+            for a previous release of the Oracle NoSQL Database or for modification
+            purposes can be found in <a class="xref" href="generate-war.html" title="Appendix B. Generating a New SPARQL Service WAR file">Generating a New SPARQL Service WAR file</a>.
+        </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="deploy"></a>Deploy joseki.war</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                The following steps describe how to deploy the
+                prebundled joseki.war into Apache Tomcat or Oracle
+                WebLogic Server. 
+            </p>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p>
+                        Ensure that you have downloaded and
+                        unzipped the RDF Graph release package for the
+                        Oracle NoSQL Database, as explained in 
+                        <a class="xref" href="setup.html#setup-env" title="Setup the System Environment">Setup the System Environment</a>.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        Extract the <code class="literal">joseki-config.ttl</code> file located
+                        in the joseki.war using the following
+                        commands:
+                    </p>
+              <pre class="programlisting">cd /tmp/jena_adapter/war
+jar xf joseki.war joseki-config.ttl</pre>
+            </li>
+            <li>
+              <p>
+                        Modify Apache Jena Joseki's configuration file
+                        (joseki-config.ttl) to specify the store name,
+                        host name, and host port for accessing an
+                        Oracle NoSQL database. This data will be used
+                        by the SPARQL Service endpoint to establish
+                        connections to the Oracle NoSQL Database and
+                        execute update and query operations. For
+                        detailed information about this configuration,
+                        <a class="xref" href="setup-sparql.html#nosqlconnection" title="Configuring an Oracle NoSQL Database connection in the SPARQL service">Configuring an Oracle NoSQL Database connection in the SPARQL service</a>.
+                    </p>
+            </li>
+            <li>
+              <p> 
+                        Rebuild joseki.war by updating the
+                        <code class="literal">joseki-config.ttl</code> as follows:
+                    </p>
+              <pre class="programlisting">jar uf joseki.war joseki-config.ttl</pre>
+            </li>
+            <li>
+              <p>
+                        Deploy the joseki.war into the selected
+                        J2EE container. 
+                    </p>
+            </li>
+          </ol>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="tomcat"></a>Use Apache Tomcat</h3>
+            </div>
+          </div>
+        </div>
+        <p> 
+                This section describes how to deploy the SPARQL
+                Service endpoint using Apache Tomcat 7.0. Apache
+                Tomcat is an open source web server implementing Java
+                Servlet and JavaServer Pages (JSP) and providing an
+                HTTP web server environment to run Web applications.
+                Further information and support on Apache Tomcat can
+                be found in <a class="ulink" href="http://tomcat.apache.org/" target="_top">http://tomcat.apache.org/</a>.
+            </p>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p>
+                        Download and install Apache Tomcat 7.0. For
+                        details see <a class="ulink" href="http://tomcat.apache.org/tomcat-7.0-doc/index.html" target="_top">http://tomcat.apache.org/tomcat-7.0-doc/index.html</a>.
+                    </p>
+            </li>
+            <li>
+              <p> 
+                        Go to the web application directory of
+                        Apache Tomcat Server and copy the joseki.war
+                        file as follows. This operation will unpack
+                        the war file and deploy the web application.
+                        (For information about deploying web
+                        application in Apache Tomcat, please refer to
+                        <a class="ulink" href="http://tomcat.apache.org/tomcat-7.0-doc/deployer-howto.html" target="_top">http://tomcat.apache.org/tomcat-7.0-doc/deployer-howto.html</a>.
+                    </p>
+              <pre class="programlisting">cd $CATALINA_BASE/webapps
+cp -rf /tmp/jena_adapter/joseki.war $CATALINA_HOME/webapps</pre>
+            </li>
+            <li>
+              <p> 
+                        Verify your deployment by using your Web
+                        browser to connect to a URL in the following
+                        format (assume that the Web application is
+                        deployed at port 8080):
+                    </p>
+              <p> 
+                        http://&lt;hostname&gt;:8080/joseki 
+                    </p>
+              <p>
+                        You should see a page titled <span class="emphasis"><em>Oracle NoSQL
+                            Database SPARQL Service Endpoint using
+                            Joseki</em></span>,
+                        and the first text box should contain an
+                        example SPARQL query. 
+                    </p>
+            </li>
+            <li>
+              <p>
+                        Click <code class="literal">Submit Query</code>.
+                    </p>
+            </li>
+          </ol>
+        </div>
+        <p>
+                    You should see a page titled <span class="emphasis"><em>Oracle NoSQL
+                        Database SPARQL Endpoint Query Results</em></span>. There may
+                    or may not be any results, depending on the
+                    underlying semantic model against which the query
+                    is executed. 
+                </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="weblogic"></a>Use Oracle WebLogic Server</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                This section describes how to deploy the SPARQL
+                Service endpoint using Oracle WebLogic Server 12c. For
+                information about Oracle WebLogic Server please refer
+                to <a class="ulink" href="http://www.oracle.com/technetwork/middleware/weblogic/overview/index.html" target="_top">http://www.oracle.com/technetwork/middleware/weblogic/overview/index.html</a>.
+               </p>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p>
+                        Download and Install Oracle WebLogic Server
+                        12c Release 1 (12.1.1). For details, see
+                        <a class="ulink" href="http://www.oracle.com/technetwork/middleware/weblogic/overview/index.html" target="_top">http://www.oracle.com/technetwork/middleware/weblogic/overview/index.html</a>
+                        and
+                        <a class="ulink" href="http://www.oracle.com/technetwork/middleware/ias/downloads/wls-main-097127.html" target="_top">http://www.oracle.com/technetwork/middleware/ias/downloads/wls-main-097127.html</a>.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        Go to the auto-deploy directory of the
+                        WebLogic Server installation and copy files,
+                        as follows. (For information about
+                        auto-deploying applications in development
+                        domains refer to the following document:
+                        <a class="ulink" href="http://docs.oracle.com/cd/E24329_01/web.1211/e24443/autodeploy.htm" target="_top">http://docs.oracle.com/cd/E24329_01/web.1211/e24443/autodeploy.htm</a>)
+                    </p>
+              <pre class="programlisting">cd &lt;domain_name&gt;/autodeploy
+cp -rf /tmp/joseki.war &lt;domain_name&gt;/autodeploy</pre>
+              <p>
+                        In the preceding example,
+                        &lt;domain_name&gt; is the name of a WebLogic
+                        Server domain. 
+                    </p>
+              <p>
+                        Note that you can run a WebLogic Server domain in
+                        two different modes: development and production.
+                        However, only development mode allows you use the
+                        auto-deployment feature. 
+                    </p>
+            </li>
+            <li>
+              <p>
+                        Verify your deployment by using your Web
+                        browser to connect to a URL in the following
+                        format (assume that port 7001 is used):
+                    </p>
+              <p>
+                        http://&lt;hostname&gt;:7001/joseki 
+                    </p>
+              <p> 
+                        You should see a page titled <span class="emphasis"><em>Oracle NoSQL
+                            Database SPARQL Service Endpoint using
+                            Joseki</em></span>,
+                        and the first text box should contain an
+                        example SPARQL query.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        Click <code class="literal">Submit Query</code>.
+                    </p>
+              <p> 
+                        </p>
+              <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+                            You should see a page titled <span class="emphasis"><em>Oracle NoSQL
+                                Database SPARQL Endpoint Query Results</em></span>. There may
+                            or may not be any results, depending on the
+                            underlying semantic model against which the query
+                            is executed. 
+                        </div>
+              <p>
+                    </p>
+            </li>
+          </ol>
+        </div>
+        <p> 
+                        By default, the <code class="literal">joseki-config.ttl</code> file
+                        contains an oracle-nosql:Dataset definition
+                        using all graphs stored in the Oracle NoSQL
+                        Database. The following snippet shows the
+                        configuration.
+                    </p>
+        <pre class="programlisting">&lt;#oracle&gt; rdf:type oracle-nosql:Dataset;
+joseki:poolSize 3;  ## Number of concurrent connections allowed 
+                    ## to this dataset.
+oracle-nosql:connection  ## NoSQL connection
+[ 
+rdf:type oracle-nosql:NoSQLConnection;
+oracle-nosql:hostName "localhost";
+oracle-nosql:storeName "mystore";
+oracle-nosql:hostPort "5000";
+];
+oracle-nosql:allGraphs [] .       ## Graph descriptions</pre>
+        <p> 
+                        The <code class="literal">oracle-nosql:allGraphs</code> predicate denotes
+                        that the SPARQL Service endpoint will serve
+                        queries using all named graphs (including the
+                        default graph) stored in an Oracle NoSQL Database.
+                        You can also specify the rulebase(s) to use when
+                        serving queries. In the following example, the
+                        <code class="literal">oracle:ruleBaseID</code> predicate denotes that the
+                        SPARQL Service endpoint should serve queries using
+                        all named graphs (including asserted and inferred
+                        triples marked with the rulebase ID 1.
+                    </p>
+        <pre class="programlisting">&lt;#oracle&gt; rdf:type oracle-nosql:Dataset;
+joseki:poolSize 3;  ## Number of concurrent connections allowed
+                    ## to this dataset.
+oracle-nosql:connection  ## NoSQL connection
+[ 
+rdf:type oracle-nosql:NoSQLConnection;
+oracle-nosql:hostName "localhost";
+oracle-nosql:storeName "mystore";
+oracle-nosql:hostPort "5000";
+];
+oracle-nosql:allGraphs [ oracle-nosql:ruleBaseID "1" .  ] . 
+## Graph descriptions</pre>
+        <p>
+                        If you require the SPARQL Service endpoint to serve
+                        queries using only a specified set of graph names,
+                        then use the
+                        <code class="literal">oracle-nosql:namedGraph</code>
+                        predicate instead of
+                        <code class="literal">oracle-nosql:allGraphs</code>. Further
+                        details can be found in 
+                        <a class="xref" href="setup-sparql.html#sparqlservice" title="Configuring the SPARQL Service: Oracle NoSQL Database">Configuring the SPARQL Service:
+             Oracle NoSQL Database</a>.
+                    </p>
+        <p>
+                        You can add a few example triples and quads
+                        to test the named graph functions using the
+                        following Java code snippet: 
+                    </p>
+        <pre class="programlisting">public static void main(String[] args) throws Exception
+{
+String szStoreName  = args[0];
+String szHostName   = args[1];
+String szHostPort   = args[2];
+    
+System.out.println("Create Oracle NoSQL connection");
+OracleNoSqlConnection conn  =         
+OracleNoSqlConnection.createInstance(szStoreName,
+                                     szHostName,   
+                                     szHostPort);   
+System.out.println("Create Oracle NoSQL graph and dataset ");
+OracleGraphNoSql graph = new OracleGraphNoSql(conn);
+DatasetGraphNoSql datasetGraph = DatasetGraphNoSql.createFrom(graph);
+
+// Close graph, as it is no longer needed
+graph.close();  
+
+// add data to the bob named graph
+datasetGraph.add(new Quad(
+        Node.createURI("http://example.org/bob"), // graph name
+        Node.createURI("urn:bob"),
+        Node.createURI("http://xmlns.com/foaf/0.1/name"),
+        Node.createLiteral("Bob")));
+    
+// add data to the alice named graph
+datasetGraph.add(new Quad(
+        Node.createURI("http://example.org/alice"), // graph name
+        Node.createURI("urn:alice"),
+        Node.createURI("http://xmlns.com/foaf/0.1/name"),
+        Node.createLiteral("Alice")));
+ds.close();
+conn.dispose();   
+}</pre>
+        <p>
+                    After inserting the quads, go to
+                    http://&lt;hostname&gt;:7001/joseki (Oracle
+                    WebLogic Server) or
+                    http://&lt;hostname&gt;:8080/joseki (Apache
+                    Tomcat), type the following SPARQL query, and
+                    click <code class="literal">Submit Query</code>:
+                </p>
+        <pre class="programlisting">SELECT ?g ?s ?p ?o
+WHERE 
+{ GRAPH ?g 
+   { ?s ?p ?o} 
+}</pre>
+        <p>
+                    The result should be an HTML table with four
+                    columns and two sets of result bindings.
+                </p>
+        <p>
+                    This page also contains a
+                    JSON Output option. If this option is selected
+                    (enabled), the SPARQL query response is converted
+                    to JSON format.
+                </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="nosqlconnection"></a>Configuring an Oracle NoSQL Database connection in the SPARQL service</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                To configure the connections to the Oracle NoSQL Database,
+                you must modify Apache Jena Joseki's configuration file
+                (<code class="literal">joseki-config.ttl</code>) file located in
+                <code class="literal">/tmp/joseki.war</code> to include the store
+                name, host name, and host port to access the Oracle NoSQL
+                Database. This data is used by the SPARQL Service endpoint
+                to establish connections to the Oracle NoSQL Database and
+                execute update and query operations.
+            </p>
+        <p> 
+                To define this data, refer to the
+                <code class="literal">oracle-nosql:connection</code> predicate in the
+                <code class="literal">joseki-config.ttl</code>. This predicate
+                denotes that the SPARQL service endpoint will connect to an
+                Oracle NoSQL Database named
+                &lt;<span class="emphasis"><em>store_name</em></span>&gt; accessible through
+                the host name &lt;<span class="emphasis"><em>host_name</em></span>&gt; and
+                port &lt;<span class="emphasis"><em>host_port</em></span>&gt;. The following
+                snippet shows the configuration. 
+            </p>
+        <pre class="programlisting">&lt;#oracle&gt; rdf:type oracle-nosql:Dataset;
+joseki:poolSize 1;  ## Number of concurrent connections allowed to 
+                    ## this data set.
+oracle-nosql:connection  ## NoSQL connection
+[ 
+rdf:type oracle-nosql:NoSQLConnection;
+oracle-nosql:hostName &lt;host_name&gt;;
+oracle-nosql:storeName &lt;store_name&gt;;
+oracle-nosql:hostPort &lt;host_port&gt;;
+];
+...</pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="sparqlservice"></a>Configuring the SPARQL Service:
+             Oracle NoSQL Database</h3>
+            </div>
+          </div>
+        </div>
+        <p> 
+                By default, the SPARQL Service endpoint assumes that
+                queries are going to be executed against all named graphs
+                (including the default graph) stored in the specified
+                Oracle NoSQL database. Users can configure these settings
+                to serve queries using only the default graph or a subset
+                of named graphs by editing the
+                <code class="literal">joseki-config.ttl</code> configuration file,
+                which is in
+                <code class="literal">&lt;domain_name&gt;/autodeploy/joseki.war</code>.
+            </p>
+        <p> 
+                The supplied <code class="literal">joseki-config.ttl</code> file includes a
+                section similar to the following for the Oracle NoSQL Database
+                data set: 
+            </p>
+        <pre class="programlisting">#
+## Datasets
+#
+[] ja:loadClass 
+"oracle.spatial.rdf.client.jena.assembler.OracleAssemblerVocab" . 
+
+oracle-nosql:Dataset rdfs:subClassOf ja:RDFDataset . 
+      
+&lt;#oracle&gt; rdf:type oracle-nosql:Dataset;
+## Number of concurrent connections allowed to this dataset.
+joseki:poolSize 1;  
+	
+oracle-nosql:connection  ## connection to an Oracle NoSQL Database
+ 	[ 
+rdf:type oracle-nosql:NoSQLConnection;
+oracle-nosql:hostName "localhost";
+  		oracle-nosql:storeName "mystore";
+       oracle-nosql:hostPort "5000";
+];
+
+oracle-nosql:allGraphs [] .</pre>
+        <p>
+                In this section of the file, you can:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p> 
+                        Modify the <code class="literal">joseki:poolSize</code>
+                        value, which specifies the number of concurrent
+                        connections allowed to this Oracle NoSQL data set
+                        (&lt;#oracle&gt; rdf:type oracle-nosql:Dataset;),
+                        which points to various RDF models in the Oracle
+                        NoSQL Database.
+                    </p>
+            </li>
+            <li>
+              <p> 
+                        Specify the default graph used to serve
+                        queries using the property
+                        <code class="literal">oracle-nosql:defaultGraph</code> as follows:
+                    </p>
+              <pre class="programlisting">&lt;#oracle&gt; rdf:type oracle-nosql:Dataset;
+joseki:poolSize 1; ## Number of concurrent connections allowed to
+                   ## this data set.
+oracle-nosql:connection  ## NoSQL connection
+[  
+rdf:type oracle-nosql:NoSQLConnection;
+oracle-nosql:hostName "localhost";
+oracle-nosql:storeName "mystore";
+oracle-nosql:hostPort "5000";
+];
+oracle-nosql:defaultGraph [] .
+</pre>
+            </li>
+            <li>
+              <p> 
+                        The <code class="literal">oracle:defaultGraph</code>
+                        predicate denotes that the SPARQL Service endpoint
+                        should serve queries using the default graph
+                        (consisting of triples that have no or NULL graph
+                        names), if stored in the Oracle NoSQL Database.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        If you require the SPARQL service endpoint to serve
+                        queries using asserted and inferred triples from a
+                        default graph, you should specify the rulebase ID
+                        of the inferred triples. The
+                        <code class="literal">oracle:ruleBaseID</code> predicate
+                        denotes that the endpoint should include all
+                        triples marked with the specified rulebase ID.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        For example, the following specifies
+                        rulebase ID 1 for the default graph.
+                    </p>
+              <pre class="programlisting">oracle-nosql:defaultGraph [
+	oracle-nosql:ruleBaseID "1" .
+] .</pre>
+            </li>
+            <li>
+              <p> 
+                        Specify a subset of named graphs that the
+                        SPARQL Service endpoint will use to serve
+                        queries. For example, you can specify two
+                        named graphs called &lt;http://G1&gt; and
+                        &lt;http://G2&gt; as follows:
+                    </p>
+              <pre class="programlisting">&lt;#oracle&gt;&gt; rdf:type oracle-nosql:Dataset;
+joseki:poolSize 1; ## Number of concurrent connections allowed to
+                   ## this data set.
+oracle-nosql:connection  ## NoSQL connection
+[ 
+rdf:type oracle-nosql:NoSQLConnection;
+oracle-nosql:hostName "localhost";
+oracle-nosql:storeName "mystore";
+oracle-nosql:hostPort "5000";
+];
+    
+ oracle-nosql:namedGraph [ oracle-nosql:graphName &lt;http://G1&gt; ] .
+ oracle-nosql:namedGraph [ oracle-nosql:graphName &lt;http://G2&gt; ] .
+</pre>
+            </li>
+            <li>
+              <p> 
+                    The <code class="literal">oracle-nosql:namedGraph</code>
+                    predicate denotes that the SPARQL Service endpoint
+                    should serve queries using the named graph with a graph
+                    name denoted by
+                    <code class="literal">oracle-nosql:graphName</code>, if stored in
+                    the Oracle NoSQL Database. In this example, the SPARQL
+                    Service endpoint will only serve queries using two
+                    named graphs &lt;http://G1&gt; and &lt;http://G2&gt;.
+                    This way, any triple belonging to a different named
+                    graph will not be considered.
+                </p>
+            </li>
+            <li>
+              <p> 
+                    If you require the SPARQL service endpoint to serve
+                    queries using asserted and inferred triples of a named
+                    graph, you should specify the rulebase ID of the
+                    inferred triples. The
+                    <code class="literal">oracle:ruleBaseID</code> predicate denotes
+                    that the endpoint should include all triples marked
+                    with the specified rulebase ID.  For example, the
+                    following specifies that a rulebase ID, identified with
+                    1, should be used in conjunction with named graph
+                    &lt;http://G1&gt;.
+                </p>
+              <pre class="programlisting">oracle-nosql:namedGraph [
+	oracle-nosql:graphName &lt;http://G1&gt; ; 
+    oracle-nosql:ruleBaseID "1" .
+] .</pre>
+            </li>
+            <li>
+              <p> 
+                    Note that when using this configuration, one
+                    can still use SPARQL Update requests to create new
+                    graphs or add data to named graphs. However,
+                    queries against named graphs not specified in this
+                    configuration will not return any matches. 
+                </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="setup.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="setup.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="connect.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 2. Setup RDF Graph </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 3. Connect to NoSQL Database</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Performing a failover</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="failover-switchover.html" title="Chapter 7.  Failover and Switchover Operations" />
+    <link rel="prev" href="failover-switchover.html" title="Chapter 7.  Failover and Switchover Operations" />
+    <link rel="next" href="perform_switchover.html" title="Performing a switchover" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Performing a failover</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="failover-switchover.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 7.  Failover and Switchover Operations </th>
+          <td width="20%" align="right"> <a accesskey="n" href="perform_switchover.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="perform_failover"></a>Performing a failover</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            If quorum is maintained, you do not need to do
+            anything because the store is still performing
+            normally. 
+        </p>
+      <p>
+            In situations where a zone fails but quorum is lost, your
+            only option is to perform a failover. 
+        </p>
+      <p>
+            For example, suppose a store consists of two primary zones, 
+            "Manhattan" and "JerseyCity", each deployed in its own
+            physical data center.
+        </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p> 
+                For simplicity, this example uses a store with a
+                replication factor of two. In general, a Primary Replication Factor
+                of 3 is adequate for most applications and is a good starting
+                point, because 3 replicas allow write availability if a
+                single primary zone fails. 
+            </p>
+      </div>
+      <p>
+            Additionally, suppose that the "Manhattan" zone fails.
+            Resulting in the failure of all of the associated Storage Nodes
+            and a loss of quorum. In this case, if the host hardware of
+            "Manhattan" was irreparably damaged or the problem will take
+            too long to repair you may choose to initiate a failover.
+        </p>
+      <p> 
+            The following steps walk you through the process of
+            verifying failures, isolating Storage Nodes, and reducing admin
+            quorum to perform a failover operation. This process allows
+            service to be continued in the event of a Zone failure. 
+        </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                    Connect to the store. To do this, connect to an admin
+                    running in the JerseyCity zone: 
+                </p>
+            <pre class="programlisting">java -Xmx256m -Xms256m -jar KVHOME/lib/kvstore.jar \
+runadmin -host jersey1 -port 6000 </pre>
+          </li>
+          <li>
+            <p> 
+                    Use the <code class="literal">verify configuration</code>
+                    command to confirm the failures:
+                </p>
+            <pre class="programlisting">kv-&gt; verify configuration
+Connected to Admin in read-only mode
+Verify: starting verification of store mystore based upon 
+topology sequence #207
+200 partitions and 2 storage nodes.
+Time: 2015-05-29 19:41:14 UTC   Version: 12.1.3.4.1
+See jersey1:/kvroot/mystore/log/mystore_{0..N}.log 
+                                               for progress messages
+Verify: Shard Status: healthy:0 writable-degraded:0 
+                                                read-only:1 offline:0
+Verify: Admin Status: read-only
+Verify: Zone [name=Manhattan id=zn1 type=PRIMARY]   
+RN Status: online:0 offline:1
+Verify: Zone [name=JerseyCity id=zn2 type=PRIMARY]   
+RN Status: online:1 offline:0
+Verify: == checking storage node sn1 ==
+Verify:         sn1: ping() failed for sn1 : 
+Unable to connect to the storage node agent at host nyc1, 
+port 5000, which may not be running; nested exception is: 
+    java.rmi.ConnectException: Connection refused to host: 
+    nyc1; nested exception is: 
+    java.net.ConnectException: Connection refused
+Verify: Storage Node [sn1] on nyc1:5000    
+Zone: [name=Manhattan id=zn1 type=PRIMARY] UNREACHABLE
+Verify:         admin1: ping() failed for admin1 : 
+Unable to connect to the storage node agent at host nyc1,
+port 5000, which may not be running; nested exception is: 
+    java.rmi.ConnectException: Connection refused to host:
+    nyc1; nested exception is: 
+    java.net.ConnectException: Connection refused
+Verify:     Admin [admin1]      Status: UNREACHABLE
+Verify:     rg1-rn1: ping() failed for rg1-rn1 :
+Unable to connect to the storage node agent at host nyc1, 
+port 5000, which may not be running; nested exception is: 
+    java.rmi.ConnectException: Connection refused to host: 
+    nyc1; nested exception is: 
+    java.net.ConnectException: Connection refused
+Verify:     Rep Node [rg1-rn1]  Status: UNREACHABLE
+Verify: == checking storage node sn2 ==
+Verify: Storage Node [sn2] on jersey1:6000    
+Zone: [name=JerseyCity id=zn2 type=PRIMARY]    Status: RUNNING   
+Ver: 12cR1.3.4.1 2015-05-28 08:27:41 UTC  Build id: 287a5a28cea4
+Verify:     Admin [admin2]      
+Status: RUNNING,MASTER (non-authoritative)
+Verify:     Rep Node [rg1-rn2]  
+Status: RUNNING,MASTER (non-authoritative) 
+                                   sequenceNumber:217 haPort:6003
+Verification complete, 4 violations, 0 notes found.
+Verification violation: [admin1]        ping() failed for admin1 : 
+Unable to connect to the storage node agent at host nyc1, 
+port 5000,which may not be running; nested exception is: 
+    java.rmi.ConnectException: Connection refused to host: 
+    nyc1; nested exception is: 
+    java.net.ConnectException: Connection refused
+Verification violation: [rg1-rn1]       ping() failed for rg1-rn1 : 
+Unable to connect to the storage node agent at host nyc1, 
+port 5000, which may not be running; nested exception is: 
+    java.rmi.ConnectException: Connection refused to host: 
+    nyc1; nested exception is: 
+    java.net.ConnectException: Connection refused
+Verification violation: [sn1]   ping() failed for sn1 :
+Unable to connect to the storage node agent at host nyc1, 
+port 5000, which may not be running; nested exception is: 
+    java.rmi.ConnectException: Connection refused to host: 
+    nyc1; nested exception is: 
+    java.net.ConnectException: Connection refused </pre>
+            <p>
+                    In this case, the Storage Node Agent at host nyc1 is
+                    confirmed unavailable. 
+                </p>
+          </li>
+          <li>
+            <p>
+                    To prevent a hard rollback and data loss, isolate
+                    failed nodes (Manhattan) from the rest of the system.
+                    Make sure all failed nodes are prevented from rejoining
+                    the store until their configurations have been updated.
+                </p>
+            <p> To do this, you can: 
+                </p>
+            <div class="itemizedlist">
+              <ul type="disc">
+                <li>
+                  <p> 
+                            Disconnect the network physically or use a
+                            firewall. 
+                        </p>
+                </li>
+                <li>
+                  <p> 
+                            Modify the start-up sequence on failed nodes
+                            to prevent SNAs from starting. 
+                        </p>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <p>
+                    To make changes to the store, you first need to
+                    reduce admin quorum. To do this, use the
+                        <code class="literal">repair-admin-quorum</code> command,
+                    specifying the available primary zone: 
+                </p>
+            <pre class="programlisting">kv-&gt; repair-admin-quorum -znname JerseyCity
+Connected to admin in read-only mode
+Repaired admin quorum using admins: [admin2] </pre>
+            <p> 
+                    Now you can perform administrative procedures using
+                    the remaining admin service with the temporarily
+                    reduced quorum. 
+                </p>
+          </li>
+          <li>
+            <p> 
+                    Use the <code class="literal">plan failover</code> command to
+                    update the configuration of the store with the
+                    available zones.
+                </p>
+            <pre class="programlisting">kv-&gt; plan failover -znname JerseyCity -type primary
+-znname Manhattan -type offline-secondary -wait 
+Executing plan 8, waiting for completion...
+Plan 8 ended successfully</pre>
+            <p> 
+                    The <code class="literal">plan failover</code> command fails
+                    if it is executed while other plans are still running.
+                    You should cancel or interrupt the plans, before executing this plan.
+                </p>
+            <p> 
+                    For example, suppose the <code class="literal">topology
+                        redistribute</code> is in progress. If you run
+                    the <code class="literal">plan failover</code> command, it will
+                    fail. For it to succeed, you need to first cancel or
+                    interrupt the <code class="literal">topology redistribute</code>
+                    command.
+                </p>
+            <p> 
+                    To do this, first use the <code class="literal">show
+                        plans</code> command to learn the plan ID of the
+                    topology redistribute command. In this case, 9. Then,
+                    cancel the <code class="literal">topology redistribute</code>
+                    command using the <code class="literal">plan cancel</code>
+                    command:
+                </p>
+            <pre class="programlisting">kv-&gt; plan cancel -id 9 </pre>
+            <p>
+                    After performing the failover, confirm that the zone type
+                    of Manhattan has been changed to secondary using the <code class="literal">ping</code> command. 
+                </p>
+            <pre class="programlisting">kv-&gt; ping
+Pinging components of store mystore based upon topology sequence #208
+200 partitions and 2 storage nodes
+Time: 2015-07-26 05:00:34 UTC   Version: 12.1.3.4.1
+Shard Status: healthy:0 writable-degraded:1 read-only:0 offline:0
+Admin Status: writable-degraded
+Zone [name=Manhattan id=zn1 type=SECONDARY]   
+RN Status: online:0 offline:1
+Zone [name=JerseyCity id=zn2 type=PRIMARY]   
+RN Status: online:1 offline:0
+Storage Node [sn1] on nyc1:5000    
+Zone: [name=Manhattan id=zn1 type=SECONDARY] UNREACHABLE
+        Admin [admin1]          Status: UNREACHABLE
+        Rep Node [rg1-rn1]      Status: UNREACHABLE
+Storage Node [sn2] on jersey1:6000    
+Zone: [name=JerseyCity id=zn2 type=PRIMARY]
+Status: RUNNING   
+Ver: 12cR1.3.4.1 2015-07-13 10:16:21 UTC  Build id: 508d38507fff
+        Admin [admin2]          Status: RUNNING,MASTER
+        Rep Node [rg1-rn2]      
+        Status: RUNNING,MASTER sequenceNumber:427 haPort:6011  </pre>
+          </li>
+          <li>
+            <p> 
+                    The failover operation is now complete. Write
+                    availability in the store is reestablished using zone 2
+                    as the only available primary zone. Zone 1 is offline.
+                    Any data that was not propagated from zone 1 prior to
+                    the failure will be lost. 
+                </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p> 
+                        In this case, the store has only a single
+                        working copy of its data, so single node failures
+                        in the surviving zone will prevent read and write
+                        access, and, if the failure is a permanent one, may
+                        produce permanent data loss.
+                    </p>
+            </div>
+          </li>
+        </ol>
+      </div>
+      <p>
+            If the problems that led to the failover have been corrected
+            and the original data from the previously failed nodes
+            (Manhattan) is still available, you can return the old nodes to
+            service by performing a switchover. To do this, see the next
+            section. 
+        </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="failover-switchover.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="failover-switchover.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="perform_switchover.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 7.  Failover and Switchover Operations  </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Performing a switchover</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

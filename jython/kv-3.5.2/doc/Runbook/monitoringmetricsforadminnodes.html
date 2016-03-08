@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Monitoring Metrics for Administration Nodes</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Run Book" />
+    <link rel="up" href="softwaremonitor.html" title="Chapter 2. Software Monitoring" />
+    <link rel="prev" href="monitorforrepnodes.html" title="Monitoring Metrics for Replication Nodes" />
+    <link rel="next" href="hardwaremonitoring.html" title="Chapter 3. Hardware Monitoring" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Monitoring Metrics for Administration Nodes</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="monitorforrepnodes.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 2. Software Monitoring </th>
+          <td width="20%" align="right"> <a accesskey="n" href="hardwaremonitoring.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="monitoringmetricsforadminnodes"></a>Monitoring Metrics for Administration Nodes</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            The following metrics are accessible through SNMP and JMX and
+            are intended to be used for the monitoring of the
+            administrative nodes in the Oracle NoSQL Database cluster.
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    adminId – The unique ID for the admin node.
+                </p>
+          </li>
+          <li>
+            <p>
+                   adminServiceStatus – The status of the administrative
+                   service. It can be one of the follows:
+                </p>
+            <div class="itemizedlist">
+              <ul type="circle">
+                <li>
+                  <p>
+                            unreachable(0) – The admin node unreachable. 
+                            This can be due to a network error or the
+                            admin node maybe down.
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            starting (1) – The admin node agent is booting
+                            up. 
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            waitingForDeploy (2) – Indicates a bootstrap admin
+                            that has not been configured, that is, it has not been
+                            given a store name. Configuring the admin triggers the
+                            creation of the Admin database, and changes its status
+                            from "WAITING_FOR_DEPLOY" to "RUNNING".
+                            
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            running(3) – The admin node is running.
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            stopping(4) – The admin node in the process of
+                            shutting down. 
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            stopped(5) – An intentional clean shutdown of
+                            the admin node.
+                         </p>
+                </li>
+                <li>
+                  <p>
+                            errorRestarting(6) – The storage node tried to start
+                            the admin several times without success and gave up.
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            errorNoRestart(7) – Service is in an error
+                            state and will not be automatically restarted. 
+                            Administrative intervention is required.
+                        </p>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <p>
+                    adminHttpPort – The port that the admin is listening
+                    for incoming HTTP requests.
+                </p>
+          </li>
+          <li>
+            <p>
+                    adminLogFileCount – A logging config parameter that
+                    represents the maximum number of log files that are
+                    retained by the admin node. 
+                </p>
+          </li>
+          <li>
+            <p>
+                    adminLogFileLimit – A logging config parameter that
+                    represents the maximum size of a single log file in
+                    bytes.
+                </p>
+          </li>
+          <li>
+            <p>
+                    adminPollPeriod – The frequency by which the Admin
+                    polls agents (replication node and sna) for statistics.
+                    This polling receives service status changes, performance
+                    metrics, and log messages. This period is reported in
+                    units of milliseconds.
+                </p>
+          </li>
+          <li>
+            <p>
+                    adminEventExpiryAge – Tells how long critical events
+                    are saved in the admin database. This value is
+                    reported in units of hours.
+                </p>
+          </li>
+          <li>
+            <p>
+                    adminIsMaster – A Boolean value which indicates whether
+                    or not this admin node is the master node for the admin
+                    group.
+                </p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="monitorforrepnodes.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="softwaremonitor.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="hardwaremonitoring.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Monitoring Metrics for Replication Nodes </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 3. Hardware Monitoring</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

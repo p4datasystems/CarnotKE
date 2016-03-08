@@ -1,0 +1,559 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>CREATE TABLE</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="ddl_overview.html" title="Appendix A. Table Data Definition Language Overview" />
+    <link rel="prev" href="ddlcomments.html" title="DDL Comments" />
+    <link rel="next" href="modifytableddl.html" title="Modify Table Definitions" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">CREATE TABLE</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ddlcomments.html">Prev</a> </td>
+          <th width="60%" align="center">Appendix A. Table Data Definition Language Overview</th>
+          <td width="20%" align="right"> <a accesskey="n" href="modifytableddl.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="tablecreationddl"></a>CREATE TABLE</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="tablecreationddl.html#fielddefddl">Field Definitions</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="tablecreationddl.html#supportedtypesddl">Supported Data Types</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="tablecreationddl.html#fieldconstraintsddl">Field Constraints</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="tablecreationddl.html#tablecreateexample">Table Creation Examples</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+            To create a table definition, use a <code class="literal">CREATE TABLE</code>
+            statement. Its form is:
+        </p>
+      <pre class="programlisting">CREATE TABLE [IF NOT EXISTS] <span class="emphasis"><em>table-name</em></span> (
+    <span class="emphasis"><em>field-definition</em></span>, <span class="emphasis"><em>field-definition-2</em></span> ..., 
+    PRIMARY KEY (<span class="emphasis"><em>field-name</em></span>, <span class="emphasis"><em>field-name-2</em></span>...),
+    [COMMENT "<span class="emphasis"><em>comment string</em></span>"]
+)
+</pre>
+      <p>
+            where:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    <code class="literal">IF NOT EXISTS</code> is optional, and it
+                    causes table creation to be silently skipped if a table
+                    of the given name already exists in the store, and the
+                    table's definition exactly matches the provided
+                    definition. No error is returned as a result of the
+                    statement execution.
+                </p>
+            <p>
+                    If this statement phrase is not specified, then an
+                    attempt to duplicate a table name in the store results
+                    in a failed table creation.
+                </p>
+          </li>
+          <li>
+            <p>
+                    <span class="emphasis"><em>table-name</em></span> is the name of the table.
+                    This field is required. If you are creating a sub-table,
+                    then use dot notation. For example, a table might be named
+                    <code class="literal">Users</code>. You might then define a sub-table named
+                    <code class="literal">Users.MailingAddress</code>.
+                </p>
+          </li>
+          <li>
+            <p>
+                    <span class="emphasis"><em>field-definition</em></span> is a comma-separated
+                    list of fields. There are one or more field definitions for
+                    every table. Field definitions are described next in this
+                    section.
+                </p>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">PRIMARY KEY</code> identifies at least one 
+                    field in the table as the primary key. A primary key
+                    definition is required for every table. For information on
+                    primary keys, see 
+                    <a class="xref" href="primaryshardkeys.html#primarykeys" title="Primary Keys">Primary Keys</a>.
+                </p>
+            <p>
+                    To define a shard key (optional), use the SHARD keyword in the
+                    primary key statement. For information on shard keys,
+                    see 
+                    <a class="xref" href="primaryshardkeys.html#shardkeys" title="Shard Keys">Shard Keys</a>.
+                </p>
+            <p>
+                    For example:
+                </p>
+            <pre class="programlisting">PRIMARY KEY (SHARD(id), lastName)</pre>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">COMMENT</code> is optional. You can use
+                    this to provide a brief description of the table. The
+                    comment will not be interpreted but it is included in 
+                    the table's metadata.
+                </p>
+          </li>
+        </ul>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="fielddefddl"></a>Field Definitions</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                When defining a table, field definitions take the form:
+            </p>
+        <pre class="programlisting"><span class="emphasis"><em>field-name</em></span> <span class="emphasis"><em>type</em></span> [<span class="emphasis"><em>constraints</em></span>] [COMMENT "<span class="emphasis"><em>comment-string</em></span>"] </pre>
+        <p>
+                where:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                        <span class="emphasis"><em>field-name</em></span> is the name of the
+                        field. For example: <code class="literal">id</code> or
+                        <code class="literal">familiarName</code>. Every field must
+                        have a name.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <span class="emphasis"><em>type</em></span> describes the field's
+                        data type. This can be a simple type such as
+                        INTEGER or STRING, or it can be a complex type such
+                        a RECORD. The list of allowable types is described
+                        in the next section.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <span class="emphasis"><em>constraints</em></span> describes any
+                        limits placed on the data contained in the field.
+                        That is, minimum or maximum values, allowable
+                        ranges, or default values. This information is
+                        optional. See 
+                        <a class="xref" href="tablecreationddl.html#fieldconstraintsddl" title="Field Constraints">Field Constraints</a>
+                        for more information.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">COMMENT</code> is optional. You can use
+                        this to provide a brief description of the field. The
+                        comment will not be interpreted but it is included in 
+                        the table's metadata.
+                    </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="supportedtypesddl"></a>Supported Data Types</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                The following data types are supported for table fields:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                        <code class="literal">ARRAY</code>
+                    </p>
+              <p>
+                        An array of data. All elements of the array must be
+                        of the same data type, and this type must be
+                        declared when you define the array field. For
+                        example, to define an array of strings:
+                    </p>
+              <pre class="programlisting">myArray ARRAY(STRING)</pre>
+              <p>
+                        Note that field constraints can be applied to
+                        array value. For example:
+                    </p>
+              <pre class="programlisting">myArray ARRAY(INTEGER CHECK(ELEMENTOF(myArray) &gt; 0 and \
+ELEMENTOF(myArray) &lt; 100))</pre>
+              <p>
+                        See  <a class="xref" href="tablecreationddl.html#checkconstraint" title="CHECK">CHECK</a>
+                        for a description of the CHECK statement.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">BINARY</code>
+                    </p>
+              <p>
+                        Binary data.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">BINARY(<span class="emphasis"><em>length</em></span>)</code>
+                    </p>
+              <p>
+                        Fixed-length binary field of size
+                        <span class="emphasis"><em>length</em></span> (in bytes).
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">BOOLEAN</code>
+                    </p>
+              <p>
+                        A boolean data type. 
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">DOUBLE</code>
+                    </p>
+              <p>
+                        A double.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">ENUM</code>
+                    </p>
+              <p>
+                        An enumerated list. The field definition must
+                        provide the list of allowable enumerated values.
+                        For example:
+                    </p>
+              <pre class="programlisting">fruitName ENUM(apple,pear,orange)</pre>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">FLOAT</code>
+                    </p>
+              <p>
+                        A float.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">INTEGER</code>
+                    </p>
+              <p>
+                        An integer.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">LONG</code>
+                    </p>
+              <p>
+                        A long.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">MAP</code>
+                    </p>
+              <p>
+                        A data map. All map keys are strings, but when
+                        defining these fields you must define the data type
+                        of the data portion of the map. For example, if
+                        your keys map to integer values, then you
+                        define the field like this:
+                    </p>
+              <pre class="programlisting">myMap MAP(INTEGER)</pre>
+              <p>
+                        Note that field constraints can be applied to
+                        mapped value. For example:
+                    </p>
+              <pre class="programlisting">myMap MAP(INTEGER CHECK(ELEMENTOF(myMap) &gt; 0 and \
+ELEMENTOF(myMap) &lt; 13))</pre>
+              <p>
+                        See <a class="xref" href="tablecreationddl.html#checkconstraint" title="CHECK">CHECK</a>
+                        for a description of the CHECK statement.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">RECORD</code>
+                    </p>
+              <p>
+                        An embedded record. This field definition must
+                        define all the fields contained in the embedded
+                        record. All of the same syntax rules apply as are
+                        used for defining an ordinary table field. For
+                        example, a simple embedded record might be defined
+                        as:
+                    </p>
+              <pre class="programlisting">myEmbeddedRecord RECORD(firstField STRING, secondField INTEGER)</pre>
+              <p>
+                        Data constraints, default values, and so forth can
+                        also be used with the embedded record's field
+                        definitions.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">STRING</code>
+                    </p>
+              <p>
+                        A string.
+                    </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="fieldconstraintsddl"></a>Field Constraints</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                Field constraints are used to define information about the
+                field, such as the allowable range
+                of values and default values. For example:
+            </p>
+        <pre class="programlisting">day_of_month CHECK (day_of_month &gt;= 1 AND day_of_month &lt;= 31)</pre>
+        <p>
+                Not all data type support constraints, and individual data
+                types do not support all possible constraints.
+            </p>
+        <div class="sect3" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h4 class="title"><a id="checkconstraint"></a>CHECK</h4>
+              </div>
+            </div>
+          </div>
+          <p>
+                    Use CHECK to specify an allowable range of values. The
+                    symbols <code class="literal">AND</code>, <code class="literal">&lt;</code>, <code class="literal">&lt;=</code>, <code class="literal">&gt;</code>, and
+                    <code class="literal">&gt;=</code> are all supported.
+                    <code class="literal">&lt;=</code> and <code class="literal">&gt;=</code>
+                    specifying inclusive ranges, and
+                    <code class="literal">&lt;</code> and <code class="literal">&gt;</code>
+                    specify exclusive ranges. For example:
+                </p>
+          <pre class="programlisting">myInt INTEGER CHECK(myInt &gt; 10 and myInt &lt; 20)</pre>
+          <p>
+                    For simple data types, (INTEGER, LONG, FLOAT, DOUBLE,
+                    STRING), use the field's name to specify the range, as
+                    shown in the previous example. 
+                </p>
+          <p>
+                    For STRING datatypes, the range specifies the string's
+                    value range based on a lexicographical comparison of
+                    the Unicode value of each character in the string. For
+                    example:
+                </p>
+          <pre class="programlisting"> myString STRING CHECK(myString &gt; "aaa" and myString &lt; "zzz") </pre>
+          <p>
+                    causes the string <code class="literal">ccc</code> to be within
+                    the valid range, but <code class="literal">CCC</code> or
+                    <code class="literal">cccc</code> would not be. If you specify
+                    numbers for the range, then the number is interpreted
+                    as a string range. In this case:
+                </p>
+          <pre class="programlisting"> myString STRING CHECK(myString &gt; 10 and myString &lt; 20) </pre>
+          <p>
+                    means that <code class="literal">11</code> is allowable, but
+                    <code class="literal">21</code> or <code class="literal">aaa</code> would
+                    not be.
+                </p>
+          <p>
+                    For MAP and ARRAY datatypes, CHECK can be used to constraint the
+                    range of allowable values. Use <code class="literal">ELEMENTOF()</code>
+                    to refer to the MAP's or ARRAY's value. For example:
+                </p>
+          <pre class="programlisting">myMap MAP(INTEGER CHECK(ELEMENTOF(myMap) &gt; 10))</pre>
+          <p>
+                    or:
+                </p>
+          <pre class="programlisting">myArray ARRAY(INTEGER CHECK(ELEMENTOF(myArray) &gt; 100 AND \
+ELEMENTOF(myArray) &lt; 1000))</pre>
+          <p>
+                    CHECK is not supported for BINARY, BOOLEAN, ENUM, or
+                    RECORD datatypes, although CHECK is supported for the
+                    individual fields defined by RECORD:
+                </p>
+          <pre class="programlisting">myRec RECORD(a STRING, b INTEGER CHECK(b &gt;= 0 AND b &lt;= 10))</pre>
+        </div>
+        <div class="sect3" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h4 class="title"><a id="commentconstraint"></a>COMMENT</h4>
+              </div>
+            </div>
+          </div>
+          <p>
+                    All data types can accept a COMMENT as part of
+                    their constraint. COMMENT strings are not parsed, but do
+                    become part of the table's metadata. For example:
+                </p>
+          <pre class="programlisting">myRec RECORD(a STRING, b INTEGER) COMMENT "Comment string"</pre>
+          <p>
+                    or
+                </p>
+          <pre class="programlisting">myInt INTEGER CHECK(myInt &gt; 10 and myInt &lt; 20) COMMENT "Comment string"</pre>
+        </div>
+        <div class="sect3" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h4 class="title"><a id="defaultconstraint"></a>DEFAULT</h4>
+              </div>
+            </div>
+          </div>
+          <p>
+                    All fields can accept a DEFAULT constraint, except for
+                    ARRAY, BINARY, MAP, and RECORD. The value specified by DEFAULT
+                    is used in the event that the field data is not
+                    specified when the table is written to the store.
+                </p>
+          <p>
+                    For example:
+                </p>
+          <pre class="programlisting">id INTEGER DEFAULT -1,
+description STRING DEFAULT "NONE",
+size ENUM(small,medium,large) DEFAULT medium,
+inStock BOOLEAN DEFAULT FALSE</pre>
+        </div>
+        <div class="sect3" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h4 class="title"><a id="notnullconstraint"></a>NOT NULL</h4>
+              </div>
+            </div>
+          </div>
+          <p>
+                    <code class="literal">NOT NULL</code> indicates that the field
+                    cannot be NULL. This constraint requires that you also
+                    specify a DEFAULT value. Order is unimportant for these
+                    constraints. For example:
+                </p>
+          <pre class="programlisting">id INTEGER NOT NULL DEFAULT -1,
+description STRING DEFAULT "NONE" NOT NULL</pre>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="tablecreateexample"></a>Table Creation Examples</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                The following are provided to illustrate the concepts
+                described above.
+            </p>
+        <pre class="programlisting">CREATE TABLE users (
+  id INTEGER,
+  firstName STRING,
+  lastName STRING,
+  age INTEGER,
+  PRIMARY KEY (id),
+  COMMENT "This comment applies to the table itself"
+) </pre>
+        <pre class="programlisting">CREATE TABLE usersNoId (
+  firstName STRING,
+  lastName STRING COMMENT "This comment applies to this field only",
+  age INTEGER CHECK (age &gt; 0 AND age &lt; 150),
+  ssn STRING NOT NULL DEFAULT "xxx-yy-zzzz",
+  PRIMARY KEY (SHARD(lastName), firstName)
+) </pre>
+        <pre class="programlisting">CREATE TABLE users.address (
+  streetNumber INTEGER,
+  streetName STRING,  // this comment is ignored by the DDL parser
+  city STRING,
+  /* this comment is ignored */
+  zip INTEGER CHECK(zip &gt; 11111 AND zip &lt; 99999),
+  addrType ENUM (home, work, other),
+  PRIMARY KEY (addrType)
+) </pre>
+        <pre class="programlisting">CREATE TABLE complex (
+  COMMENT "this comment goes into the table metadata"
+  id INTEGER, 
+  PRIMARY KEY (id), # this comment is just syntax
+  nestedMap MAP(RECORD( m MAP(FLOAT), a ARRAY(RECORD(age INTEGER)))),
+  address RECORD (street INTEGER, streetName STRING, city STRING, \
+                  zip INTEGER COMMENT "zip comment"),
+  friends MAP (STRING),
+  floatArray ARRAY (FLOAT),
+  aFixedBinary BINARY(5),
+  days ENUM(mon, tue, wed, thur, fri, sat, sun) NOT NULL DEFAULT tue
+) </pre>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ddlcomments.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ddl_overview.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="modifytableddl.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">DDL Comments </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Modify Table Definitions</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Using Simple Consistency</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="consistency.html" title="Chapter 10. Consistency Guarantees" />
+    <link rel="prev" href="consistency.html" title="Chapter 10. Consistency Guarantees" />
+    <link rel="next" href="consistency-time.html" title="Using Time-Based Consistency" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Using Simple Consistency</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="consistency.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 10. Consistency Guarantees</th>
+          <td width="20%" align="right"> <a accesskey="n" href="consistency-time.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="consistency-pre"></a>Using Simple Consistency</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+              <span>
+                      You can use static instances of the <code class="classname">Consistency</code>
+                      base class 
+              </span>
+              
+              
+              to specify certain rigid consistency guarantees.
+              There are three such instances that you can use:
+          </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                      <code class="literal">Consistency.ABSOLUTE</code>
+                      
+                      
+                  </p>
+            <p>
+                      Requires that the operation be serviced at the master
+                      node. In this way, the 
+                          <span> record(s) </span>
+                          
+                      will always be consistent with the master. 
+                  </p>
+            <p>
+                      This is the strongest possible consistency guarantee
+                      that you can require, but it comes at the cost of
+                      servicing all read and write requests at the master
+                      node. If you direct all your traffic to the master
+                      node (which is just one machine for each partition),
+                      then you will not be distributing your read
+                      operations across your replicas. You also will slow
+                      your write operations because your master will be
+                      busy servicing read requests.  For this reason, you
+                      should use this consistency guarantee sparingly.
+                  </p>
+          </li>
+          <li>
+            <p>
+                      <code class="literal">Consistency.NONE_REQUIRED</code>
+                      
+                      
+                  </p>
+            <p>
+                      Allows the store operation to proceed regardless of
+                      the state of the replica relative to the master. This
+                      is the most relaxed consistency guarantee that you
+                      can require. It allows for the maximum possible store
+                      performance, but at the high possibility that your
+                      application will be operating on stale or out-of-date
+                      information.
+                  </p>
+          </li>
+          <li>
+            <p>
+                      <code class="literal">Consistency.NONE_REQUIRED_NO_MASTER</code>
+                      
+                      
+                  </p>
+            <p>
+                      Requires read operations to be serviced on a replica;
+                      never the Master. When this policy is used, the read
+                      operation will not be performed if the only node
+                      available is the Master.
+                  </p>
+            <p>
+                      Where possible, this consistency policy should be
+                      avoided in favor of the secondary zones feature.
+                  </p>
+          </li>
+        </ol>
+      </div>
+      <p>
+              For example, suppose you are performing a critical read
+              operation that you know must absolutely have the most
+              up-to-date data. Then do this:
+          </p>
+      <a id="consist-2"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.Consistency;
+import oracle.kv.ConsistencyException;
+import oracle.kv.Key;
+import oracle.kv.Value;
+import oracle.kv.ValueVersion;
+
+import java.util.ArrayList;
+
+...
+
+ArrayList&lt;String&gt; majorComponents = new ArrayList&lt;String&gt;();
+
+...
+
+// Define the major path components for the key
+majorComponents.add("Smith");
+majorComponents.add("Bob");
+
+// Create the key
+Key myKey = Key.createKey(majorComponents);
+
+// Now retrieve the record. Note that we do not show the creation of 
+// the kvstore handle here.
+
+try {
+    ValueVersion vv = kvstore.get(myKey,
+                        Consistency.ABSOLUTE,
+                        0,     // Timeout parameter. 
+                               // 0 means use the default.
+                        null); // Timeout units. Null because
+                               // the Timeout is 0. 
+                                   
+    Value v = vv.getValue();
+    /*
+     * From here, deserialize using your Avro binding.
+     */
+} catch (ConsistencyException ce) {
+    // The consistency guarantee was not met
+} </pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="consistency.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="consistency.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="consistency-time.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 10. Consistency Guarantees </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Using Time-Based Consistency</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

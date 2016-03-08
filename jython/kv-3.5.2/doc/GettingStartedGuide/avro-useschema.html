@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Using Avro Schemas</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="avroschemas.html" title="Chapter 6. Avro Schemas" />
+    <link rel="prev" href="avroschemas.html" title="Chapter 6. Avro Schemas" />
+    <link rel="next" href="schemaevolution.html" title="Schema Evolution" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Using Avro Schemas</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="avroschemas.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Avro Schemas</th>
+          <td width="20%" align="right"> <a accesskey="n" href="schemaevolution.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="avro-useschema"></a>Using Avro Schemas</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            Once you have defined your schema, you make use of it in your
+            Oracle NoSQL Database application in the following way:
+        </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                    Add the schema to your store. See 
+                    <a class="xref" href="provideschema.html" title="Managing Avro Schema in the Store">Managing Avro Schema in the Store</a>
+                    for information on how to do this. 
+                </p>
+          </li>
+          <li>
+            <p>
+                    Identify the schema to your application. 
+                </p>
+          </li>
+          <li>
+            <p>
+                    Serialize and/or deserialize Oracle NoSQL Database values which use the
+                    Avro data format. You use Avro bindings to perform the
+                    serialization functions. There are different bindings
+                    available to you, each of which offers pluses and
+                    negatives. We will describe the different bindings
+                    later in this section.
+                </p>
+          </li>
+        </ol>
+      </div>
+      <p>
+            Other than that, the mechanisms you use to
+            read/write/delete records in the store do not change just
+            because you are using the Avro data format with your
+            values. Avro affects your code only where you manage your
+            values.
+        </p>
+      <p>
+            The following sections describe the bindings that you use to
+            serialize and deserialize your data. The binding that you use
+            defines how you provide your schema to the store.
+        </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="avroschemas.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="avroschemas.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="schemaevolution.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 6. Avro Schemas </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Schema Evolution</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

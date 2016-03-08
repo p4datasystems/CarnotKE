@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Specifying Field Ranges</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="tableget.html" title="Chapter 6. Reading Table Rows" />
+    <link rel="prev" href="tableiterator.html" title="Iterating over Table Rows" />
+    <link rel="next" href="childparenttableiter.html" title="Iterating with Nested Tables" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Specifying Field Ranges</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tableiterator.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Reading Table Rows</th>
+          <td width="20%" align="right"> <a accesskey="n" href="childparenttableiter.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="readfieldranges"></a>Specifying Field Ranges</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            When performing multi-key operations in the store, you can
+            specify a range of rows to operate upon. You do this using 
+
+            <span>
+                the <code class="methodname">FieldRange</code> class, 
+            </span>
+            
+            
+            which is accepted by any of the methods which perform bulk
+            reads.  This 
+            
+            <span>
+                class 
+            </span>
+            
+            
+            is used to restrict the selected rows to
+            those matching a range of field values. 
+        </p>
+      <p>
+            For example, suppose you defined a table like this:
+        </p>
+      <pre class="programlisting">CREATE TABLE myTable (
+    surname STRING,
+    familiarName STRING,
+    userID STRING,
+    phonenumber STRING,
+    address STRING,
+    email STRING,
+    dateOfBirth STRING,
+    PRIMARY KEY (SHARD(surname, familiarName), userID)
+) </pre>
+      <p>
+            The <code class="literal">surname</code> contains a person's family name,
+            such as <code class="literal">Smith</code>. The <code class="literal">familiarName</code>
+            contains their common name, such as <code class="literal">Bob</code>,
+            <code class="literal">Patricia</code>, <code class="literal">Robert</code>, and so
+            forth.
+        </p>
+      <p>
+            Given this, you could perform operations for all the rows
+            related to users with a surname of <code class="literal">Smith</code>,
+            but we can limit the result set to just those users with
+            familiar names that fall alphabetically between
+            <code class="literal">Bob</code> and <code class="literal">Patricia</code>
+            by specifying a field range.
+        </p>
+      <p>
+            A <code class="classname">FieldRange</code> is created using
+            <span>
+                <code class="methodname">Table.createFieldRange()</code>.
+                This method takes just one argument — the name of the primary
+                key for which you want to set the range. 
+            </span>
+            
+            
+        </p>
+      <p>
+            In this case, we will define the start of the key range using
+            the string "Bob" and the end of the key range to be
+            "Patricia".  Both ends of the key range will be inclusive. 
+        </p>
+      <p>
+            In this example, we use <code class="classname">TableIterator</code>,
+            but we could just as easily use this range on any multi-row
+            read operation, such as the
+            <span>
+                <code class="methodname">TableAPI.multiGet()</code> 
+                 
+                or
+                <code class="methodname">TableAPI.multiGetKeys()</code>
+                
+                methods. 
+            </span>
+
+
+            
+
+            <span>
+                The
+                <code class="classname">FieldRange</code> object is passed to these
+                methods using a <code class="classname">MultiRowOptions</code> class
+                instance, which we construct using the
+                <code class="methodname">FieldRange.createMultiRowOptions()</code>
+                convenience method.
+            </span>
+        </p>
+      <a id="fieldrange-1"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.KVStore;
+import oracle.kv.table.FieldRange;
+import oracle.kv.table.MultiRowOptions;
+import oracle.kv.table.PrimaryKey;
+import oracle.kv.table.Row;
+import oracle.kv.table.Table;
+import oracle.kv.table.TableAPI;
+import oracle.kv.table.TableIterator;
+
+...
+
+// KVStore handle creation is omitted for brevity
+
+...
+
+TableAPI tableH = kvstore.getTableAPI();
+
+// The name you give to getTable() must be identical
+// to the name that you gave the table when you created
+// the table using the CREATE TABLE DDL statement.
+Table myTable = tableH.getTable("myTable");
+
+// Construct the PrimaryKey. In this case, we are
+// using a partial primary key.
+PrimaryKey key = myTable.createPrimaryKey();
+key.put("surname", "Smith");
+
+// Create the field range.
+<strong class="userinput"><code>FieldRange fh = myTable.createFieldRange("familiarName");
+fh.setStart("Bob", true);
+fh.setEnd("Patricia", true);
+MultiRowOptions mro = fh.createMultiRowOptions();</code></strong>
+
+// Exception handling is omitted, but in production code
+// ConsistencyException, RequestTimeException, and FaultException
+// would have to be handled.
+TableIterator&lt;Row&gt; iter = tableH.tableIterator(key, <strong class="userinput"><code>mro</code></strong>, null);
+try {
+    while (iter.hasNext()) {
+        Row row = iter.next();
+        // Examine your row's fields here
+    } 
+} finally {
+    if (iter != null) {
+        iter.close(); 
+    }
+}</pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tableiterator.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="tableget.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="childparenttableiter.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Iterating over Table Rows </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Iterating with Nested Tables</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

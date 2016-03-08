@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Consistency</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Concepts Manual" />
+    <link rel="up" href="introduction.html" title="Chapter 1. Introduction to Oracle NoSQL Database" />
+    <link rel="prev" href="datamodels.html" title="Data Models" />
+    <link rel="next" href="durability.html" title="Durability" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Consistency</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="datamodels.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 1. Introduction to Oracle NoSQL Database </th>
+          <td width="20%" align="right"> <a accesskey="n" href="durability.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="consistency"></a>Consistency</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+                Oracle NoSQL Database provides several different consistency policies.
+                At one end of the spectrum, applications can specify
+                absolute consistency, which guarantees that all reads
+                return the most recently written value for a designated
+                key. At the other end of the spectrum, applications capable
+                of tolerating inconsistent data can specify weak
+                consistency, allowing the database to return a value
+                efficiently even if it is not entirely up to date. In
+                between these two extremes, applications can specify
+                time-based consistency to constrain how old a record might
+                be or version-based consistency to support both atomicity
+                for read-modify-write operations and reads that are at
+                least as recent as the specified version. 
+            </p>
+      <p>
+                The following illustration depicts the range of
+                consistency policies that can be used by an application
+                that makes use of Oracle NoSQL Database: 
+            </p>
+      <div class="mediaobject">
+        <img src="consistency.jpg" alt="Consistency policies" />
+      </div>
+      <p>
+                Flexible consistency policies enables developers to
+                easily create business solutions providing data guarantees
+                while meeting application latency and scalability
+                requirements. 
+            </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="datamodels.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="introduction.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="durability.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Data Models </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Durability</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

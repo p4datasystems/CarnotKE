@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="test1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dist/Lib/test/bug1373.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dist/Lib/test/syspath_import.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dist/Lib/test/zipdir.zip!/" />
+      <root url="jar://$PROJECT_DIR$/dist/Lib/test/classimport_Lib.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dist/Lib/test/classimport.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dist/Lib/test/blob.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dist/Lib/test/bug1239.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

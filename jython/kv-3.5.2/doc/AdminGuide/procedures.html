@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 6. Administrative Procedures</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="prev" href="upgrade_release_1_to_2.html" title="Upgrade from NoSQL DB Release 1.0 to NoSQL DB Release 2.0" />
+    <link rel="next" href="recovery.html" title="Recovering the Store" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 6. Administrative Procedures</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="upgrade_release_1_to_2.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="recovery.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="procedures"></a>Chapter 6. Administrative Procedures</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="procedures.html#backup">Backing Up the Store</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="procedures.html#takesnapshot">Taking a Snapshot</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="procedures.html#snapshotmanage">Snapshot Management</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="recovery.html">Recovering the Store</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="recovery.html#usingload">Using the Load Program</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="recovery.html#restoredirect">Restoring Directly from a Snapshot</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="provideschema.html">Managing Avro Schema</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="provideschema.html#schema-add-to-store">Adding Schema</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="provideschema.html#change-schema-in-store">Changing Schema</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="provideschema.html#disable-schema-in-store">Disabling and Enabling Schema</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="provideschema.html#show-schema-in-store">Showing Schema</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="increasecapacity.html">Increasing the capacity of a Storage Node</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="replacefailedsn.html">Replacing a Failed Storage Node</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="replacedisk.html">Replacing a Failed Disk</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="replacedc.html">Repairing a Failed Zone by Replacing Hardware</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="disableservices.html">Disabling Storage Node Agent Hosted Services</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="verifyingthestore.html">Verifying the Store</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="monitoring.html">Monitoring the Store</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="monitoring.html#monitorevents">Events</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="setstoreparams.html">Setting Store Parameters</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="setstoreparams.html#changeparamcli">Changing Parameters</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="setstoreparams.html#settingpolicycli">Setting Store Wide Policy Parameters</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="setstoreparams.html#adminparameters">Admin Parameters</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="setstoreparams.html#storagenodeparameters">Storage Node Parameters</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="setstoreparams.html#replicationnodeparameters">Replication Node Parameters</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="setstoreparams.html#securityparameters">Security Parameters</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="setstoreparams.html#admin_restart">Admin Restart</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="setstoreparams.html#rn_restart">Replication Node Restart</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="removestore.html">Removing an Oracle NoSQL Database Deployment</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="fixhaportrange.html">Fixing Incorrect Storage Node HA Port Ranges</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+        This chapter contains procedures that may be generally useful to
+        the Oracle NoSQL Database administrator.
+    </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+            Oracle NoSQL Database Storage Nodes and Admins make use of an embedded
+            database (Oracle Berkeley DB, Java Edition).  You should never
+            directly manipulate the files maintained by this database. In
+            general it is a bad idea to move, delete or modify the files
+            and directories located under KVROOT unless you are asked to do
+            so by Oracle Customer Support. But in particular,
+            <span class="emphasis"><em>never</em></span> move or delete any file ending with
+            a <code class="literal">jdb</code> suffix.  These will all be found in an
+            <code class="literal">env</code> directory somewhere under KVROOT.
+        </p>
+      </div>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="backup"></a>Backing Up the Store</h2>
+            </div>
+          </div>
+        </div>
+        <div class="toc">
+          <dl>
+            <dt>
+              <span class="sect2">
+                <a href="procedures.html#takesnapshot">Taking a Snapshot</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="procedures.html#snapshotmanage">Snapshot Management</a>
+              </span>
+            </dt>
+          </dl>
+        </div>
+        <p>
+            To back up the KVStore, you take snapshots of nodes in the store
+            and copy the resulting snapshots to a safe location.
+            Note that the distributed nature and scale of Oracle NoSQL Database makes it
+            unlikely that a single machine can hold the backup for the
+            entire store. These instructions do not address where and how
+            snapshots are stored.
+        </p>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="takesnapshot"></a>Taking a Snapshot</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                A snapshot provides consistency across all records
+                within the same shard, but not across partitions in
+                independent shards. The underlying snapshot
+                operations are performed in parallel to the extent
+                possible in order to minimize any potential inconsistencies.
+            </p>
+          <p>
+                To take a snapshot from the admin CLI,
+                use the <code class="literal">snapshot create</code> command:
+            </p>
+          <pre class="programlisting">kv-&gt; snapshot create -name &lt;snapshot name&gt;</pre>
+          <p>
+                Using this command, you can create or remove a named
+                snapshot. (The name of the snapshot is provided using the
+                &lt;name&gt; parameter.) You can also remove all snapshots
+                currently stored in the store. 
+            </p>
+          <p>
+                For example, to create and remove a snapshot:
+            </p>
+          <pre class="programlisting">kv-&gt; snapshot create -name Thursday
+Created snapshot named 110915-153514-Thursday on all 3 nodes
+kv-&gt; snapshot remove -name 110915-153514-Thursday
+Removed snapshot 110915-153514-Thursday </pre>
+          <p>
+                You can also remove all snapshots currently stored in 
+                the store:
+            </p>
+          <pre class="programlisting">kv-&gt; snapshot create -name Thursday
+Created snapshot named 110915-153700-Thursday on all 3 nodes
+kv-&gt; snapshot create -name later
+Created snapshot named 110915-153710-later on all 3 nodes
+kv-&gt; snapshot remove -all
+Removed all snapshots</pre>
+          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+            <h3 class="title">Note</h3>
+            <p>
+                    Snapshots should not be taken while any configuration
+                    (topological) changes are being made, because the
+                    snapshot might be inconsistent and not usable. At the time
+                    of the snapshot, use ping and then save the information that identifies masters
+                    for later use during a load or restore. 
+                    For more information,
+                    see <a class="xref" href="procedures.html#snapshotmanage" title="Snapshot Management">Snapshot Management</a>.
+                </p>
+          </div>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="snapshotmanage"></a>Snapshot Management</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                When you run a snapshot, data is collected from every
+                Replication Node in the system, including both masters and
+                replicas. If the operation does not succeed for at least
+                one of the nodes in a shard, it fails.
+            </p>
+          <p>
+                If you decide to create an off-store copy of the snapshot,
+                you should copy the snapshot data for only one of the nodes in
+                each shard. If possible, copy the snapshot data
+                taken from the node that was serving as the master at the
+                time the snapshot was taken.
+            </p>
+          <p>
+                At the time of the snapshot, you can identify which nodes are
+                currently running as the master using the ping command. There is a master for
+                each shard in the store and they are identified
+                by the keyword: MASTER. For example, in the following
+                example, replication node rg1-rn1, running on Storage Node sn1,
+                is the current master:
+            </p>
+          <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar ping -port 5000 -host node01
+Pinging components of store mystore based upon topology sequence #316
+300 partitions and 3 storage nodes
+Time: 2015-06-11 02:54:35 UTC   Version: 12.1.3.4.0
+Shard Status: healthy:3 writable-degraded:0 read-only:0 offline:0
+Admin Status: healthy
+Zone [name=Boston id=zn1 type=PRIMARY]   
+RN Status: online:9 offline:0 maxDelayMillis:1 maxCatchupTimeSecs:0
+Storage Node [sn1] on node01:5000
+   Zone: [name=Boston id=zn1 type=PRIMARY]    Status: RUNNING   
+   Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+      Admin [admin1]          Status: RUNNING,MASTER
+      Rep Node [rg1-rn1]      Status: RUNNING,REPLICA 
+        sequenceNumber:231 haPort:5011 delayMillis:1 catchupTimeSecs:0
+      Rep Node [rg2-rn1]      Status: RUNNING,REPLICA 
+        sequenceNumber:231 haPort:5012 delayMillis:1 catchupTimeSecs:0
+      Rep Node [rg3-rn1]      Status: RUNNING,MASTER 
+        sequenceNumber:227 haPort:5013
+Storage Node [sn2] on node02:6000
+   Zone: [name=Boston id=zn1 type=PRIMARY]    Status: RUNNING   
+   Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+      Rep Node [rg1-rn2]      Status: RUNNING,MASTER 
+        sequenceNumber:231 haPort:6010
+      Rep Node [rg2-rn2]      Status: RUNNING,REPLICA 
+        sequenceNumber:231 haPort:6011 delayMillis:1 catchupTimeSecs:0
+      Rep Node [rg3-rn2]      Status: RUNNING,REPLICA 
+        sequenceNumber:227 haPort:6012 delayMillis:1 catchupTimeSecs:0
+Storage Node [sn3] on node03:7000
+   Zone: [name=Boston id=zn1 type=PRIMARY]    Status: RUNNING   
+   Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+      Rep Node [rg1-rn3]      Status: RUNNING,REPLICA 
+        sequenceNumber:231 haPort:7010 delayMillis:1 catchupTimeSecs:0
+      Rep Node [rg2-rn3]      Status: RUNNING,MASTER 
+        sequenceNumber:231 haPort:7011
+      Rep Node [rg3-rn3]      Status: RUNNING,REPLICA 
+        sequenceNumber:227 haPort:7012 delayMillis:1 catchupTimeSecs:0
+</pre>
+          <p>
+               You should save the above information and associate it with the respective snapshot,
+               for later use during a load or restore.
+            </p>
+          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+            <h3 class="title">Note</h3>
+            <p>
+                    Snapshots include the admin database.  Depending on
+                    how the store might need to be restored, the admin
+                    database may or may not be useful. 
+                </p>
+          </div>
+          <p>
+                Snapshot data for the local Storage Node is stored in a directory inside of the
+                <code class="literal">KVROOT</code> directory. For each
+                Storage Node in the store, you have a directory
+                named:
+            </p>
+          <pre class="programlisting">KVROOT/&lt;store&gt;/&lt;SN&gt;/&lt;resource&gt;/snapshots/&lt;snapshot_name&gt;/files</pre>
+          <p>
+                where:
+            </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+                        &lt;store&gt; is the name of the store.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        &lt;SN&gt; is the name of the Storage Node.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        &lt;resource&gt; is the name of the resource
+                        running on the Storage Node. Typically this is
+                        the name of a replication node.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        &lt;snapshot_name&gt; is the name of the
+                        snapshot.
+                    </p>
+              </li>
+            </ul>
+          </div>
+          <p>
+                Snapshot data consists of a number of files, and they all
+                are important. For example:
+            </p>
+          <pre class="programlisting"> &gt; ls /var/kvroot/mystore/sn1/rg1-rn1/snapshots/110915-153828-later
+00000000.jdb 00000002.jdb 00000004.jdb 00000006.jdb
+00000001.jdb 00000003.jdb 00000005.jdb 00000007.jdb </pre>
+          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+            <h3 class="title">Note</h3>
+            <p>
+                 To preserve storage, purge obsolete snapshots on a periodic basis.
+              </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="upgrade_release_1_to_2.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="recovery.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Upgrade from NoSQL DB Release 1.0 to NoSQL DB Release 2.0 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Recovering the Store</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

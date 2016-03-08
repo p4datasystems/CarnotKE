@@ -1,0 +1,113 @@
+2016-02-28 06:46:44.437 UTC INFO [sn1] Starting StorageNodeAgent for kvstore
+2016-02-28 06:46:44.457 UTC INFO [sn1] Started MasterRebalanceThread
+2016-02-28 06:46:44.463 UTC INFO [sn1] Starting MonitorAgent.  Server socket factory:<ClearServerSocketFactory name=main backlog=0 port range=0,0> Client socket factory:<ClientSocketFactory name=kvstore|sn|monitor id=-370587917 connectMs=10000 readMs=5000>
+2016-02-28 06:46:44.471 UTC INFO [sn1] Successfully created secure proxy for the storage node agent
+2016-02-28 06:46:44.477 UTC INFO [sn1] Rebound to registry port 5000 using name sn1 with SSF:<ClearServerSocketFactory name=main backlog=0 port range=0,0>
+2016-02-28 06:46:44.477 UTC INFO [sn1] Service status changed from STARTING to RUNNING
+2016-02-28 06:46:44.477 UTC INFO [sn1] Started StorageNodeAgent for kvstore
+2016-02-28 06:46:44.593 UTC INFO [sn1] admin1: Creating AdminService
+2016-02-28 06:46:44.832 UTC INFO [sn1] admin1: Created AdminService
+2016-02-28 06:46:45.062 UTC INFO [sn1] rg1-rn1: Creating RepNode
+2016-02-28 06:46:45.288 UTC INFO [sn1] rg1-rn1: Starting RepNode
+2016-02-28 06:46:45.290 UTC INFO [sn1] rg1-rn1: Started RepNode
+2016-02-28 06:46:45.290 UTC INFO [sn1] rg1-rn1: Configuring RepNode
+2016-02-28 06:46:45.593 UTC INFO [sn1] Thread returning for service rg1-rn1
+2016-02-28 06:46:46.445 UTC INFO [sn1] rg1-rn1: Created RepNode
+2016-02-28 06:46:46.589 UTC INFO [sn1] noteState called
+2016-02-28 06:46:46.590 UTC INFO [sn1] added:State RN:rg1-rn1 state: MASTER top seq num: 14
+2016-02-28 06:46:46.591 UTC INFO [sn1] sn: sn1 state transition: State RN:rg1-rn1 state: MASTER top seq num: 14 active masters:[rg1-rn1] active replicas:0 replica leases:0
+2016-02-28 06:46:46.592 UTC INFO [sn1] Acquiring initial topology from RNs
+2016-02-28 06:46:46.597 UTC INFO [sn1] Topology acquired from RN: rg1-rn1 Topo seq#: 14
+2016-02-28 06:50:36.438 UTC INFO [sn1] Starting StorageNodeAgent for kvstore
+2016-02-28 06:50:36.440 UTC INFO [sn1] Creating a Registry on port DESKTOP-BS7Q9BS:5000 server socket factory:<ClearServerSocketFactory name=registry backlog=1024 port range=0,0>
+2016-02-28 06:50:36.552 UTC INFO [sn1] Using mgmt class oracle.kv.impl.mgmt.NoOpAgent
+2016-02-28 06:50:36.564 UTC INFO [sn1] findManagedProcesses exception: Cannot run program "jps": CreateProcess error=2, The system cannot find the file specified
+2016-02-28 06:50:36.565 UTC INFO [sn1] findManagedProcesses exception: Cannot run program "jps": CreateProcess error=2, The system cannot find the file specified
+2016-02-28 06:50:36.573 UTC INFO [sn1] findManagedProcesses exception: Cannot run program "jps": CreateProcess error=2, The system cannot find the file specified
+2016-02-28 06:50:36.669 UTC INFO [sn1] Started MasterRebalanceThread
+2016-02-28 06:50:36.675 UTC INFO [sn1] rg1-rn1: Starting RepNode
+2016-02-28 06:50:36.676 UTC INFO [sn1] rg1-rn1: Started RepNode
+2016-02-28 06:50:36.683 UTC INFO [sn1] admin1: Starting AdminService
+2016-02-28 06:50:36.683 UTC INFO [sn1] admin1: Started AdminService
+2016-02-28 06:50:36.750 UTC INFO [sn1] Starting MonitorAgent.  Server socket factory:<ClearServerSocketFactory name=main backlog=0 port range=0,0> Client socket factory:<ClientSocketFactory name=kvstore|sn|monitor id=710068074 connectMs=10000 readMs=5000>
+2016-02-28 06:50:36.848 UTC INFO [sn1] Successfully created secure proxy for the storage node agent
+2016-02-28 06:50:36.895 UTC INFO [sn1] Rebound to registry port 5000 using name sn1 with SSF:<ClearServerSocketFactory name=main backlog=0 port range=0,0>
+2016-02-28 06:50:36.895 UTC INFO [sn1] Service status changed from STARTING to RUNNING
+2016-02-28 06:50:36.895 UTC INFO [sn1] Started StorageNodeAgent for kvstore
+2016-02-28 06:50:39.891 UTC INFO [sn1] noteState called
+2016-02-28 06:50:39.892 UTC INFO [sn1] added:State RN:rg1-rn1 state: MASTER top seq num: 14
+2016-02-28 06:50:39.892 UTC INFO [sn1] Thread returning for service rg1-rn1
+2016-02-28 06:50:39.893 UTC INFO [sn1] sn: sn1 state transition: State RN:rg1-rn1 state: MASTER top seq num: 14 active masters:[rg1-rn1] active replicas:0 replica leases:0
+2016-02-28 06:50:39.893 UTC INFO [sn1] Acquiring initial topology from RNs
+2016-02-28 06:50:39.903 UTC INFO [sn1] Topology acquired from RN: rg1-rn1 Topo seq#: 14
+2016-02-28 06:50:44.460 UTC INFO [sn1] Thread returning for service admin1
+2016-03-01 06:18:47.766 UTC INFO [sn1] Starting StorageNodeAgent for kvstore
+2016-03-01 06:18:47.768 UTC INFO [sn1] Creating a Registry on port DESKTOP-BS7Q9BS:5000 server socket factory:<ClearServerSocketFactory name=registry backlog=1024 port range=0,0>
+2016-03-01 06:18:48.007 UTC INFO [sn1] Using mgmt class oracle.kv.impl.mgmt.NoOpAgent
+2016-03-01 06:18:48.024 UTC INFO [sn1] findManagedProcesses exception: Cannot run program "jps": CreateProcess error=2, The system cannot find the file specified
+2016-03-01 06:18:48.024 UTC INFO [sn1] findManagedProcesses exception: Cannot run program "jps": CreateProcess error=2, The system cannot find the file specified
+2016-03-01 06:18:48.034 UTC INFO [sn1] findManagedProcesses exception: Cannot run program "jps": CreateProcess error=2, The system cannot find the file specified
+2016-03-01 06:18:48.199 UTC INFO [sn1] Started MasterRebalanceThread
+2016-03-01 06:18:48.204 UTC INFO [sn1] rg1-rn1: Starting RepNode
+2016-03-01 06:18:48.206 UTC INFO [sn1] rg1-rn1: Started RepNode
+2016-03-01 06:18:48.212 UTC INFO [sn1] admin1: Starting AdminService
+2016-03-01 06:18:48.213 UTC INFO [sn1] admin1: Started AdminService
+2016-03-01 06:18:48.307 UTC INFO [sn1] Starting MonitorAgent.  Server socket factory:<ClearServerSocketFactory name=main backlog=0 port range=0,0> Client socket factory:<ClientSocketFactory name=kvstore|sn|monitor id=393172063 connectMs=10000 readMs=5000>
+2016-03-01 06:18:48.382 UTC INFO [sn1] Successfully created secure proxy for the storage node agent
+2016-03-01 06:18:48.452 UTC INFO [sn1] Rebound to registry port 5000 using name sn1 with SSF:<ClearServerSocketFactory name=main backlog=0 port range=0,0>
+2016-03-01 06:18:48.452 UTC INFO [sn1] Service status changed from STARTING to RUNNING
+2016-03-01 06:18:48.452 UTC INFO [sn1] Started StorageNodeAgent for kvstore
+2016-03-01 06:18:52.238 UTC INFO [sn1] noteState called
+2016-03-01 06:18:52.239 UTC INFO [sn1] added:State RN:rg1-rn1 state: MASTER top seq num: 14
+2016-03-01 06:18:52.240 UTC INFO [sn1] sn: sn1 state transition: State RN:rg1-rn1 state: MASTER top seq num: 14 active masters:[rg1-rn1] active replicas:0 replica leases:0
+2016-03-01 06:18:52.240 UTC INFO [sn1] Acquiring initial topology from RNs
+2016-03-01 06:18:52.254 UTC INFO [sn1] Thread returning for service rg1-rn1
+2016-03-01 06:18:52.261 UTC INFO [sn1] Topology acquired from RN: rg1-rn1 Topo seq#: 14
+2016-03-01 06:18:58.990 UTC INFO [sn1] Thread returning for service admin1
+2016-03-01 21:16:06.659 UTC INFO [sn1] Starting StorageNodeAgent for kvstore
+2016-03-01 21:16:06.659 UTC INFO [sn1] Creating a Registry on port DESKTOP-BS7Q9BS:5000 server socket factory:<ClearServerSocketFactory name=registry backlog=1024 port range=0,0>
+2016-03-01 21:16:07.033 UTC INFO [sn1] Using mgmt class oracle.kv.impl.mgmt.NoOpAgent
+2016-03-01 21:16:07.080 UTC INFO [sn1] findManagedProcesses exception: Cannot run program "jps": CreateProcess error=2, The system cannot find the file specified
+2016-03-01 21:16:07.081 UTC INFO [sn1] findManagedProcesses exception: Cannot run program "jps": CreateProcess error=2, The system cannot find the file specified
+2016-03-01 21:16:07.097 UTC INFO [sn1] findManagedProcesses exception: Cannot run program "jps": CreateProcess error=2, The system cannot find the file specified
+2016-03-01 21:16:07.328 UTC INFO [sn1] Started MasterRebalanceThread
+2016-03-01 21:16:07.328 UTC INFO [sn1] rg1-rn1: Starting RepNode
+2016-03-01 21:16:07.344 UTC INFO [sn1] rg1-rn1: Started RepNode
+2016-03-01 21:16:07.359 UTC INFO [sn1] admin1: Starting AdminService
+2016-03-01 21:16:07.359 UTC INFO [sn1] admin1: Started AdminService
+2016-03-01 21:16:07.460 UTC INFO [sn1] Starting MonitorAgent.  Server socket factory:<ClearServerSocketFactory name=main backlog=0 port range=0,0> Client socket factory:<ClientSocketFactory name=kvstore|sn|monitor id=-795456548 connectMs=10000 readMs=5000>
+2016-03-01 21:16:07.560 UTC INFO [sn1] Successfully created secure proxy for the storage node agent
+2016-03-01 21:16:07.582 UTC INFO [sn1] Rebound to registry port 5000 using name sn1 with SSF:<ClearServerSocketFactory name=main backlog=0 port range=0,0>
+2016-03-01 21:16:07.582 UTC INFO [sn1] Service status changed from STARTING to RUNNING
+2016-03-01 21:16:07.582 UTC INFO [sn1] Started StorageNodeAgent for kvstore
+2016-03-01 21:16:15.605 UTC INFO [sn1] noteState called
+2016-03-01 21:16:15.605 UTC INFO [sn1] added:State RN:rg1-rn1 state: MASTER top seq num: 14
+2016-03-01 21:16:15.606 UTC INFO [sn1] sn: sn1 state transition: State RN:rg1-rn1 state: MASTER top seq num: 14 active masters:[rg1-rn1] active replicas:0 replica leases:0
+2016-03-01 21:16:15.606 UTC INFO [sn1] Acquiring initial topology from RNs
+2016-03-01 21:16:15.624 UTC INFO [sn1] Thread returning for service rg1-rn1
+2016-03-01 21:16:27.430 UTC INFO [sn1] Thread returning for service admin1
+2016-03-01 21:17:15.613 UTC INFO [sn1] Acquiring initial topology from RNs
+2016-03-01 21:17:15.633 UTC INFO [sn1] Topology acquired from RN: rg1-rn1 Topo seq#: 14
+2016-03-07 23:02:51.537 UTC INFO [sn1] Starting StorageNodeAgent for kvstore
+2016-03-07 23:02:51.541 UTC INFO [sn1] Creating a Registry on port DESKTOP-BS7Q9BS:5000 server socket factory:<ClearServerSocketFactory name=registry backlog=1024 port range=0,0>
+2016-03-07 23:02:57.397 UTC INFO [sn1] Using mgmt class oracle.kv.impl.mgmt.NoOpAgent
+2016-03-07 23:02:57.424 UTC INFO [sn1] findManagedProcesses exception: Cannot run program "jps": CreateProcess error=2, The system cannot find the file specified
+2016-03-07 23:02:57.426 UTC INFO [sn1] findManagedProcesses exception: Cannot run program "jps": CreateProcess error=2, The system cannot find the file specified
+2016-03-07 23:02:57.498 UTC INFO [sn1] findManagedProcesses exception: Cannot run program "jps": CreateProcess error=2, The system cannot find the file specified
+2016-03-07 23:02:57.777 UTC INFO [sn1] Started MasterRebalanceThread
+2016-03-07 23:02:57.810 UTC INFO [sn1] rg1-rn1: Starting RepNode
+2016-03-07 23:02:57.815 UTC INFO [sn1] rg1-rn1: Started RepNode
+2016-03-07 23:02:58.069 UTC INFO [sn1] admin1: Starting AdminService
+2016-03-07 23:02:58.069 UTC INFO [sn1] admin1: Started AdminService
+2016-03-07 23:02:58.404 UTC INFO [sn1] Starting MonitorAgent.  Server socket factory:<ClearServerSocketFactory name=main backlog=0 port range=0,0> Client socket factory:<ClientSocketFactory name=kvstore|sn|monitor id=-1336632884 connectMs=10000 readMs=5000>
+2016-03-07 23:02:58.735 UTC INFO [sn1] Successfully created secure proxy for the storage node agent
+2016-03-07 23:02:58.761 UTC INFO [sn1] Rebound to registry port 5000 using name sn1 with SSF:<ClearServerSocketFactory name=main backlog=0 port range=0,0>
+2016-03-07 23:02:58.762 UTC INFO [sn1] Service status changed from STARTING to RUNNING
+2016-03-07 23:02:58.762 UTC INFO [sn1] Started StorageNodeAgent for kvstore
+2016-03-07 23:03:03.989 UTC INFO [sn1] Thread returning for service rg1-rn1
+2016-03-07 23:03:04.001 UTC INFO [sn1] noteState called
+2016-03-07 23:03:04.002 UTC INFO [sn1] added:State RN:rg1-rn1 state: MASTER top seq num: 14
+2016-03-07 23:03:04.003 UTC INFO [sn1] sn: sn1 state transition: State RN:rg1-rn1 state: MASTER top seq num: 14 active masters:[rg1-rn1] active replicas:0 replica leases:0
+2016-03-07 23:03:04.003 UTC INFO [sn1] Acquiring initial topology from RNs
+2016-03-07 23:03:04.013 UTC INFO [sn1] Topology acquired from RN: rg1-rn1 Topo seq#: 14
+2016-03-07 23:03:49.268 UTC INFO [sn1] Thread returning for service admin1

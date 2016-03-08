@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Installing and Configuring SPARQL Gateway</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="sparql.html" title="Chapter 9. SPARQL Gateway for XML-based Tools" />
+    <link rel="prev" href="sparql.html" title="Chapter 9. SPARQL Gateway for XML-based Tools" />
+    <link rel="next" href="sparql-gateway.html" title="Using SPARQL Gateway with RDF Data" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Installing and Configuring SPARQL Gateway</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="sparql.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 9. SPARQL Gateway for XML-based
+        Tools</th>
+          <td width="20%" align="right"> <a accesskey="n" href="sparql-gateway.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="install-configure"></a>Installing and Configuring SPARQL Gateway</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="install-configure.html#download-rdf">Download the RDF Graph .zip File</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="install-configure.html#deploy-sparql">Deploy SPARQL Gateway in WebLogic Server</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="install-configure.html#proxy-settings">Modify Proxy Settings</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="install-configure.html#sparql-group">Add and Configure the SparqlGatewayAdminGroup Group</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+            To install and configure SPARQL Gateway, follow these
+            major steps, which are explained in subsections that
+            follow: 
+        </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                    Download the RDF Graph .zip file. 
+                </p>
+          </li>
+          <li>
+            <p>
+                    Deploy SPARQL Gateway in WebLogic Server.
+                </p>
+          </li>
+          <li>
+            <p> 
+                    Modify Proxy Settings, if necessary.
+                </p>
+          </li>
+          <li>
+            <p> 
+                    Configure the OracleSGDS Data Source, if
+                    necessary.
+                </p>
+          </li>
+          <li>
+            <p>
+                    Add and configure the SparqlGatewayAdminGroup
+                    Group, if desired.
+                </p>
+          </li>
+        </ol>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="download-rdf"></a>Download the RDF Graph .zip File</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                If you have not already done so, download the RDF
+                Graph feature from My Oracle Support. For download details,
+                see <a class="xref" href="prerequisite.html" title="Appendix A. Prerequisite Software">Prerequisite Software</a>.
+            </p>
+        <p> 
+                Note that the SPARQL Gateway Java class
+                implementations are embedded in sdordfclient.jar.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="deploy-sparql"></a>Deploy SPARQL Gateway in WebLogic Server</h3>
+            </div>
+          </div>
+        </div>
+        <p> 
+                Deploy the SPARQL Gateway web application (sparqlgateway.war) which
+                is bundled in rdf_graph_for_nosql_database.zip into Oracle
+                WebLogic Server. Verify your deployment by using your web browser
+                to connect to the URL http://&lt;host-name&gt;:7001/sparqlgateway
+                (This assumes that the Web application is deployed at port 7001).
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="proxy-settings"></a>Modify Proxy Settings</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                If your SPARQL Gateway is behind a firewall and you
+                want the SPARQL Gateway to communicate with SPARQL
+                endpoints on the internet as well as those inside the
+                firewall, you might need to use the following JVM
+                settings: 
+            </p>
+        <pre class="programlisting">-Dhttp.proxyHost=&lt;your_proxy_host&gt;
+-Dhttp.proxyPort=&lt;your_proxy_port&gt;
+-Dhttp.nonProxyHosts=127.0.0.1|
+&lt;hostname_1_for_sparql_endpoint_inside_firewall&gt;|&lt;
+hostname_2_for_sparql_endpoint_inside_firewall&gt;|...|
+&lt;hostname_n_for_sparql_endpoint_inside_firewall&gt;</pre>
+        <p> 
+                You can specify these settings in the
+                <code class="literal">startWebLogic.sh</code> script.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="sparql-group"></a>Add and Configure the SparqlGatewayAdminGroup Group</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                The following JSP files in SPARQL Gateway can help
+                you to view, edit, and update SPARQL queries and XSL
+                transformations that are stored in an Oracle database:
+            </p>
+        <pre class="programlisting">http://&lt;host&gt;:7001/sparqlgateway/admin/sparql.jsp</pre>
+        <pre class="programlisting">http://&lt;host&gt;:7001/sparqlgateway/admin/xslt.jsp</pre>
+        <p>
+                These files are protected by HTTP basic
+                authentication. In <code class="literal">WEB-INF/weblogic.xml</code>, a principal
+                named <code class="literal">SparqlGatewayAdminGroup</code> is defined.
+            </p>
+        <p> 
+                To be able to log in to either of these JSP pages, you must
+                use the WebLogic Server to add a group named
+                <code class="literal">SparqlGatewayAdminGroup</code>, and create a
+                new user or assign an existing user to this group.
+            </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="sparql.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="sparql.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="sparql-gateway.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 9. SPARQL Gateway for XML-based
+        Tools </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Using SPARQL Gateway with RDF Data</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

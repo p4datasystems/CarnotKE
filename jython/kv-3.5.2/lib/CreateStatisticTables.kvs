@@ -1,0 +1,46 @@
+#Create table "TableStatsPartition".
+execute 
+"create table if not exists TableStatsPartition(
+tableName string,
+partitionId integer,
+shardId integer,
+count long,
+avgKeySize integer,
+primary key (tableName, partitionId)
+)";
+
+
+#Create table "TableStatsIndex".
+execute 
+"create table if not exists TableStatsIndex(
+tableName string,
+indexName string,
+shardId integer,
+count long,
+avgKeySize integer,
+primary key (tableName, indexName, shardId)
+)";
+
+
+#Create table "PartitionStatsLease".
+execute 
+"create table if not exists PartitionStatsLease(
+partitionId integer,
+leasingRN string,
+leaseExpiry string,
+lastUpdated string,
+primary key (partitionId)
+)";
+
+
+#Create table "IndexStatsLease".
+execute 
+"create table if not exists IndexStatsLease(
+tableName string,
+indexName string,
+shardId integer,
+leasingRN string,
+leaseExpiry string,
+lastUpdated string,
+primary key (tableName, indexName, shardId)
+)";

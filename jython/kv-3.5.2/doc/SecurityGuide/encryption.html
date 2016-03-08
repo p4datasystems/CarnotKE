@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 7. Encryption</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="prev" href="transport_parameters.html" title="Transport parameters" />
+    <link rel="next" href="ssl_comm.html" title="SSL communication properties" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 7. Encryption</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="transport_parameters.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="ssl_comm.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="encryption"></a>Chapter 7. Encryption</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="encryption.html#ssl_model">SSL model</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="ssl_comm.html">SSL communication properties</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p> 
+        Encryption of network data provides data privacy so that
+        unauthorized parties are not able to view plain text data as it
+        passes over the network. 
+    </p>
+      <p>
+        Oracle NoSQL Database uses SSL-based encryption to encrypt network traffic
+        between applications and the server, command line-utilities
+        and the server, as well as between server components.
+    </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+            JMX access requires the use of SSL. The web Admin
+            interface does not operate over SSL.
+        </p>
+      </div>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="ssl_model"></a>SSL model</h2>
+            </div>
+          </div>
+        </div>
+        <p> 
+            Oracle NoSQL Database uses a simple SSL key management strategy. A
+            single, shared, RSA key is used to protect communication.
+            In this shared key model, you must be sure that
+            there is a master copy of the security directory and
+            that it gets copied to each server. You should not run
+            makebootconfig with the <code class="literal">-store-security
+            configure</code> option on all servers. Most
+            servers should have the <code class="literal">-store-security
+            enable</code> option specified in their
+            makebootconfig command. 
+        </p>
+        <p>
+            The shared key has an associated self-signed certificate with a
+            Subject Distinguished Name that is not server-specific.
+            The automatically-created certificates are generated with
+            the Distinguished Name: <code class="literal">CN=NoSQL</code>.
+        </p>
+        <p> 
+            Each server component listens on SSL interfaces and
+            presents the shared certificate to clients and other
+            servers that connect to it, as proof of its authenticity.
+            Each client and server component uses a Java truststore
+            containing a copy of the shared certificate to validate
+            the certificate presented by servers.
+        </p>
+        <p>
+            When accessing a NoSQL instance that is secured using
+            SSL/TLS, you must specify at least the following
+            information: 
+        </p>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p> 
+                    You must specify that the client will connect
+                    using SSL. This is done by setting the
+                    security property oracle.kv.transport to "ssl".
+                </p>
+            </li>
+            <li>
+              <p>
+                    You must specify the Java truststore file that
+                    is used to validate the server certificate. This
+                    is done by setting the security property
+                    oracle.kv.ssl.trustStore.
+                </p>
+              <p>
+                    For example, to start
+                    <code class="literal">runadmin</code> in security mode
+                    use the following command:
+                </p>
+              <pre class="programlisting">java -Doracle.kv.security=mylogin.txt \
+-jar KVHOME/lib/kvstore.jar runadmin  </pre>
+              <p>
+                   where the file mylogin.txt should be a copy of the client.security 
+                   file with additional properties settings for authentication.
+                   The file would then contain content like this:
+                </p>
+              <pre class="programlisting">oracle.kv.auth.username=root
+oracle.kv.auth.wallet.dir=login.wallet
+oracle.kv.transport=ssl
+oracle.kv.ssl.trustStore=client.trust
+oracle.kv.ssl.protocols=TLSv1.2,TLSv1.1,TLSv1
+oracle.kv.ssl.hostnameVerifier=dnmatch(CN\=NoSQL) </pre>
+              <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                <h3 class="title">Note</h3>
+                <p>
+                        If you fail to correctly specify the
+                        oracle.kv.transport property or the
+                        truststore, the client will fail to connect to
+                        the server.
+                    </p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="transport_parameters.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ssl_comm.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Transport parameters </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> SSL communication properties</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

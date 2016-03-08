@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>JSON Bindings</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="avrobindings.html" title="Chapter 7. Avro Bindings" />
+    <link rel="prev" href="specificbinding-overview.html" title="Specific Binding" />
+    <link rel="next" href="multikey.html" title="Chapter 8. Key Ranges and Depth for Multi-Key Operations" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">JSON Bindings</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="specificbinding-overview.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 7. Avro Bindings</th>
+          <td width="20%" align="right"> <a accesskey="n" href="multikey.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="jsonbinding-overview"></a>JSON Bindings</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="jsonbinding-overview.html#avro-jsonbinding-using">Using Avro JSON Bindings</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="jsonbinding-overview.html#avro-json-binding-with-record">Using a JSON Binding with a JSON Record</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+            The <code class="classname">JsonAvroBinding</code> interface
+            represents values as instances of <code class="classname">JsonRecord</code>.
+            A single schema binding is created using
+            <code class="classname">AvroCatalog.getJsonBinding()</code>. A
+            multiple schema binding is created using 
+            <code class="classname">AvroCatalog.getJsonMultiBinding()</code>.
+        </p>
+      <p>
+            The most important reason to use a JSON binding is for
+            interoperability with other components or external systems
+            that use JSON objects. This is because JSON bindings expose
+            JSON objects, which can be managed with the Jackson API; a
+            popular API used to manage JSON records.
+        </p>
+      <p>
+            Like generic bindings, a JSON binding treats values
+            generically. And, like generic bindings, the schemas used
+            in the application need not be fixed at build time if the
+            schemas are treated dynamically.
+        </p>
+      <p>
+            However, unlike <code class="classname">GenericRecord</code>,
+            certain Avro data types are not represented conveniently
+            using the JSON syntax:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    Avro <code class="literal">int</code> and
+                    <code class="literal">long</code> are both represented as a
+                    JSON <code class="literal">integer</code>. 
+                </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+                        To avoid type conversion errors, it is safest
+                        to always define integer fields in the Avro
+                        schema using type <code class="literal">long</code>
+                        rather than <code class="literal">int</code> when using
+                        this binding.
+                    </p>
+            </div>
+          </li>
+          <li>
+            <p>
+                    Avro <code class="literal">float</code> and
+                    <code class="literal">double</code> are both represented as a
+                    JSON <code class="literal">number</code>.
+                </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+                        Because Jackson represents floating point
+                        numbers as a Java <code class="literal">Double</code>,
+                        you must define floating point fields in the
+                        Avro schema using type
+                        <code class="literal">double</code> rather than
+                        <code class="literal">float</code> when using this
+                        binding.
+                    </p>
+            </div>
+          </li>
+          <li>
+            <p>
+                    Avro <code class="literal">record</code> and
+                    <code class="literal">map</code> are represented as a JSON
+                    <code class="literal">object</code>.
+                </p>
+          </li>
+          <li>
+            <p>
+                    Avro <code class="literal">bytes</code> and
+                    <code class="literal">fixed</code> are both represented as a
+                    JSON <code class="literal">string</code>, using Unicode
+                    escape syntax.
+                </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+                        Characters greater than 0xFF are invalid
+                        because they cannot be translated to bytes
+                        without loss of information.
+                    </p>
+            </div>
+          </li>
+          <li>
+            <p>
+                    An Avro <code class="literal">enum</code> is represented as a
+                    JSON <code class="literal">string</code>.
+                </p>
+          </li>
+          <li>
+            <p>
+                    Avro unions have a special 
+                    
+                        JSON representation.
+                    .
+                </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+            For this reason, applications that use the JSON binding
+            should limit the data types used in their Avro schemas, and
+            should treat the above data types carefully.
+        </p>
+      <p>
+            Like <code class="classname">GenericRecord</code>, a JSON object
+            does not provide type safety. It can be error prone,
+            because fields are accessed by string name and so data
+            types cannot be checked at compile time.
+        </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="avro-jsonbinding-using"></a>Using Avro JSON Bindings</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                To use schema encapsulated in a generated Avro-specific
+                class, you first provide the schema to the store as
+                described in
+                <a class="xref" href="provideschema.html" title="Managing Avro Schema in the Store">Managing Avro Schema in the Store</a>.
+            </p>
+        <p>
+                In your Oracle NoSQL Database client code, you must make the schema
+                available to the code. Do this by reading the schema
+                directly from the file where you created it.  For
+                example, suppose you had the following schema defined
+                in a file named <code class="literal">my-schema.avsc</code>:
+            </p>
+        <pre class="programlisting">{
+    "type": "record",
+    "name": "MyInfo",
+    "namespace": "avro",
+    "fields": [
+        {"name": "ID", "type": "int"}
+    ]
+} </pre>
+        <p>
+                Then to read that schema into your client code:
+            </p>
+        <pre class="programlisting">package avro;
+
+import java.io.File;
+import org.apache.avro.Schema;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.JsonNodeFactory;
+import org.codehaus.jackson.node.ObjectNode;
+
+import oracle.kv.avro.AvroCatalog;
+import oracle.kv.avro.JsonAvroBinding;
+import oracle.kv.avro.JsonRecord;
+
+...
+
+final Schema.Parser parser = new Schema.Parser();
+parser.parse(new File("my-schema.avsc")); 
+final Schema myInfoSchema = 
+    parser.getTypes().get("avro.MyInfo"); 
+</pre>
+        <p>
+                Before you can begin serializing and deserializing values
+                that use the Avro data format, you must create a JSON
+                binding and then create an Avro record for that binding. 
+            </p>
+        <pre class="programlisting">/**
+ * For the sake of brevity, we skip the necessary steps of 
+ * declaring and opening the store handle.
+ */
+final AvroCatalog catalog = store.getAvroCatalog();
+final JsonAvroBinding binding = 
+    catalog.getJsonBinding(myInfoSchema);</pre>
+        <p>
+                Once you have the binding, you need a way for your application
+                to represent the fields in the schema, so that they can be read
+                and written. You do this by creating a 
+                <span class="emphasis"><em>JSON record</em></span> and from there an
+                <span class="emphasis"><em>Object Node</em></span>, which is a data structure
+                that allows you to read and/or write the fields in the schema.
+            </p>
+        <p>
+                For example, assume we performed a store read, and now we want
+                to examine the information stored with the Oracle NoSQL Database record.
+            </p>
+        <pre class="programlisting">/**
+  * Assume a store read was performed here, and resulted in a 
+  * ValueVersion instance called 'vv'. Then, to deserialize
+  * the value in the returned record:
+  */
+final JsonRecord record = binding.toObject(vv.getValue());
+final ObjectNode member = (ObjectNode) record.getJsonNode();
+/* Retrieve the contents of the ID field. Because we are 
+ * using a generic binding, we must type cast the retrieved
+ * value.
+ */
+final int ID = member.get("ID").getIntValue(); </pre>
+        <p>
+                If we want to write to a field (that is, we want to serialize
+                some data), we use the member's <code class="methodname">put()</code>
+                method. As an example, suppose we wanted to create a brand new
+                object to be written to the store. Then:
+            </p>
+        <pre class="programlisting">final ObjectNode member2 = JsonNodeFactory.instance.objectNode();
+member2.put("ID", 100011);
+final JsonRecord record2 = new JsonRecord(member2, myInfoSchema);
+...
+/**
+  * Assume the creation of a store key here.
+ */
+...
+store.put(key, binding.toValue(record2)); </pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="avro-json-binding-with-record"></a>Using a JSON Binding with a JSON Record</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                The most common usage of the JSON binding is to store
+                information that is already marked up with JSON. A
+                typical example would be data collected from a web
+                server in JSON format that you then want to place in
+                the store.
+            </p>
+        <p>
+                Because Oracle NoSQL Database's Avro implementation relies on the
+                Jackson API, which is a common API used to parse JSON
+                records, everything you need is already in place to
+                put a JSON record into the store.
+            </p>
+        <p>
+                Suppose you had a JSON record that looked like this:
+            </p>
+        <pre class="programlisting">{
+    "name": {
+        "first": "Percival",
+        "last":  "Lowell"
+    },
+    "age": 156,
+    "address": {
+        "street": "Mars Hill Rd",
+        "city": "Flagstaff",
+        "state": "AZ",
+        "zip": 86001
+    }
+} </pre>
+        <p>
+                To support records of this type, you need a schema
+                definition:
+            </p>
+        <pre class="programlisting">{
+    "type": "record",
+    "name": "MemberInfo",
+    "namespace": "avro",
+    "fields": [
+        {"name": "name", "type": {
+            "type": "record",
+            "name": "FullName",
+            "fields": [
+                {"name": "first", "type": "string"},
+                {"name": "last", "type": "string"}
+            ]
+        }},
+        {"name": "age", "type": "int"},
+        {"name": "address", "type": {
+            "type": "record",
+            "name": "Address",
+            "fields": [
+                {"name": "street", "type": "string"},
+                {"name": "city", "type": "string"},
+                {"name": "state", "type": "string"},
+                {"name": "zip", "type": "int"}
+            ]
+        }}
+    ]
+} </pre>
+        <p>
+                Assuming that you added that schema to a file called 
+                <code class="literal">MemberInfo.avsc</code>, you add it to the
+                store using the CLI (using the <code class="literal">ddl add-schema</code>
+                command), and then create your JSON binding in the same
+                way as shown in the previous example. 
+            </p>
+        <p>
+                (Note that one additional class is required for this
+                example: <code class="classname">ObjectMapper</code>. In
+                addition, we use
+                <code class="classname">java.io.BufferedReader</code> and
+                <code class="classname">java.io.FileReader</code> to support
+                reading the JSON record from disk, which is something
+                that you probably would not do in production client
+                code.)
+            </p>
+        <pre class="programlisting">package avro;
+
+import java.io.BufferedReader;
+import java.io.File;
+import org.apache.avro.Schema;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.JsonNodeFactory;
+import org.codehaus.jackson.node.ObjectNode;
+
+import oracle.kv.avro.AvroCatalog;
+import oracle.kv.avro.JsonAvroBinding;
+import oracle.kv.avro.JsonRecord;
+
+import oracle.kv.Key;
+import oracle.kv.Value;
+
+...
+
+final Schema.Parser parser = new Schema.Parser();
+parser.parse(new File("MemberInfo.avsc")); 
+final Schema memberInfoSchema = 
+    parser.getTypes().get("avro.MemberInfo"); 
+
+...
+
+/**
+ * For the sake of brevity, we skip the necessary steps of 
+ * declaring and opening the store handle.
+ */
+
+...
+
+final AvroCatalog catalog = store.getAvroCatalog();
+final JsonAvroBinding binding = 
+    catalog.getJsonBinding(memberInfoSchema);</pre>
+        <p>
+                The next step is to read the JSON record into your
+                application. Typically, this would occur over the
+                network, but for simplicity, we show the
+                record being read from a file on disk:
+            </p>
+        <pre class="programlisting">try {
+    final String jsonText = 
+        readFile(new File("MemberInfoRecord.json"));</pre>
+        <p>
+                Next, we use the Jackson API to parse the text so as to
+                create a JSON object:
+            </p>
+        <pre class="programlisting">    final ObjectMapper jsonMapper = new ObjectMapper();
+
+    final JsonNode jsonObject = jsonMapper.readTree(jsonText); </pre>
+        <p>
+                Finally, we write the JSON object to a JSON record,
+                which we then use to create an Oracle NoSQL Database
+                <code class="classname">Value</code>.
+            </p>
+        <pre class="programlisting">    final JsonRecord jsonRecord = 
+        new JsonRecord(jsonObject, memberInfoSchema);
+
+    final Value value = binding.toValue(jsonRecord);</pre>
+        <p>
+                The final step is to the write the object to the store
+                in the usual way:
+            </p>
+        <pre class="programlisting">    store.put(Key.fromString("/any/old/key"), value);
+} catch (IOException io) {
+    io.printStackTrace();
+} </pre>
+        <p>
+                To be complete, the code for the
+                <code class="methodname">readFile()</code> method used in this
+                example is:
+            </p>
+        <pre class="programlisting">private String readFile(File f) throws IOException {
+    final BufferedReader r = new BufferedReader(new FileReader(f));
+    final StringBuilder buf = new StringBuilder(1000);
+    String line;
+    while ((line = r.readLine()) != null) {
+        buf.append(line);
+        buf.append("\n");
+    }
+    return buf.toString();
+} </pre>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="specificbinding-overview.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="avrobindings.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="multikey.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Specific Binding </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 8. Key Ranges and Depth for Multi-Key Operations</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

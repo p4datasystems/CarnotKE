@@ -1,0 +1,16 @@
+################################
+# Table: cookbookTable         #
+################################
+# Create table
+table create -name cookbookTable
+# Add table fields
+add-field -name email -type STRING
+add-field -name name  -type STRING
+add-field -name gender -type STRING
+add-field -name address -type STRING
+add-field -name phone -type STRING
+# Assign the email field as primary key
+primary-key -field email
+exit
+# Add table to the database
+plan add-table -wait -name cookbookTable

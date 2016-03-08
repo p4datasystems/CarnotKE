@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Parallel Scans</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="tableget.html" title="Chapter 6. Reading Table Rows" />
+    <link rel="prev" href="indexread.html" title="Reading Indexes" />
+    <link rel="next" href="bulkget.html" title="Bulk Get Operations" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Parallel Scans</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="indexread.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Reading Table Rows</th>
+          <td width="20%" align="right"> <a accesskey="n" href="bulkget.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="parallelscan"></a>Parallel Scans</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            By default, store reads are performed using multiple threads,
+            the number of which is chosen by the number of cores available
+            to your code. You can configure the maximum number of
+            client-side threads to be used for the scan, as well as the
+            number of results per request and the maximum number of result
+            batches that the Oracle NoSQL Database client can hold before the scan pauses.
+            To do this, use the <code class="classname">TableIteratorOptions</code>
+            class.  You pass this to
+            <code class="methodname">TableAPI.tableIterator()</code>. This creates
+            a <code class="classname">TableIterator</code> that uses the specified
+            parallel scan configuration.
+        </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+                You cannot configure the number of scans you use for your reads
+                if you are using indexes.
+            </p>
+      </div>
+      <p>
+            For example, to retrieve all of the records in the store using
+            5 threads in parallel, you would do this:
+        </p>
+      <a id="parallelscan-2"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.Consistency;
+import oracle.kv.Direction;
+import oracle.kv.KVStore;
+import oracle.kv.table.FieldRange;
+import oracle.kv.table.PrimaryKey;
+import oracle.kv.table.MultiRowOption;
+import oracle.kv.table.Row;
+import oracle.kv.table.Table;
+import oracle.kv.table.TableAPI;
+import oracle.kv.table.TableIterator;
+import oracle.kv.table.TableIteratorOptions;
+
+...
+
+// KVStore handle creation is omitted for brevity
+
+...
+
+TableAPI tableH = kvstore.getTableAPI();
+
+Table myTable = tableH.getTable("myTable");
+
+// Construct the PrimaryKey.
+PrimaryKey key = myTable.createPrimaryKey();
+key.put("itemType", "Hats");
+key.put("itemCategory", "baseball");
+
+<strong class="userinput"><code>TableIteratorOptions tio =
+    new TableIteratorOptions(Direction.UNORDERED,
+                             Consistency.NONE_REQUIRED,
+                             0,     // timeout
+                             null,  // timeout units
+                             5,     // number of concurrent
+                                    // threads
+                             0,     // results per request
+                             0);    // max result sets</code></strong>
+// Exception handling is omitted, but in production code
+// ConsistencyException, RequestTimeException, and FaultException
+// would have to be handled.
+TableIterator&lt;Row&gt; iter = 
+    tableH.tableIterator(key, null, <strong class="userinput"><code>tio</code></strong>);
+try {
+    while (iter.hasNext()) {
+        Row row = iter.next();
+        // Examine your row's fields here
+    } 
+} finally {
+    if (iter != null) {
+        iter.close(); 
+    }
+}</pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="indexread.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="tableget.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="bulkget.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Reading Indexes </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Bulk Get Operations</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

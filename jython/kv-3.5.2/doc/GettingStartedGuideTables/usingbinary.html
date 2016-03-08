@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Using Binary</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="usingtypes.html" title="Chapter 7. Using Data Types" />
+    <link rel="prev" href="usingtypes.html" title="Chapter 7. Using Data Types" />
+    <link rel="next" href="usingenums.html" title="Using Enums" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Using Binary</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="usingtypes.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 7. Using Data Types</th>
+          <td width="20%" align="right"> <a accesskey="n" href="usingenums.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="usingbinary"></a>Using Binary</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            You can declare a field as binary using the <code class="literal">BINARY</code>
+            statement.  You then read and write the field value using a Java byte array.
+        </p>
+      <p>
+            If you want to store a large binary object, then you should use
+            the LOB APIs rather than a binary field. For information on
+            using the LOB APIs, see the
+            <a href="../booklets/lobs/index.html#introduction" class="olink">Oracle NoSQL API Large Object API</a>
+            introduction.
+        </p>
+      <p>
+            Note that fixed binary should be used over the binary datatype any time
+            you know that all the field values will be of the same size.
+            Fixed binary is a more compact storage format because it does
+            not need to store the size of the array. See
+            <a class="xref" href="usingfixedbinary.html" title="Using Fixed Binary">Using Fixed Binary</a>
+            for information on the fixed binary datatype.
+        </p>
+      <p>
+            To define a simple two-field table where the primary key is
+            a UID and the second field contains a binary field, you
+            use the following statement:
+        </p>
+      <pre class="programlisting">CREATE TABLE myTable (
+    uid INTEGER,
+    myByteArray BINARY,
+    PRIMARY KEY(uid)
+) </pre>
+      <p>
+            <code class="literal">CHECK</code>, <code class="literal">DEFAULT</code> and <code class="literal">NOT NULL</code>
+            constraints are not supported for binary values.
+        </p>
+      <p>
+            To write the byte array, use <code class="methodname">Row.put()</code>.
+        </p>
+      <pre class="programlisting">TableAPI tableH = kvstore.getTableAPI();
+
+Table myTable = tableH.getTable("myTable");
+
+Row row = myTable.createRow();
+row.put("uid", 12345);
+
+String aString = "The quick brown fox.";
+try {
+    row.put("myByteArray", aString.getBytes("UTF-8"));
+} catch (UnsupportedEncodingException uee) {
+    uee.printStackTrace();
+}
+
+tableH.put(row, null, null); </pre>
+      <p>
+            To read the binary field, use
+            <code class="methodname">Row.get().asBinary()</code>. This returns a
+            <code class="classname">BinaryValue</code> class instance. You can then
+            use <code class="methodname">BinaryValue.get()</code> to retrieve the
+            stored byte array. 
+        </p>
+      <p>
+            For example:
+        </p>
+      <pre class="programlisting">TableAPI tableH = kvstore.getTableAPI();
+
+Table myTable = tableH.getTable("myTable");
+
+/* Create a primary key for user id 12345 and get a row */
+PrimaryKey key = myTable.createPrimaryKey();
+key.put("uid", 12345);
+Row row = tableH.get(key, null);
+
+byte[] b = row.get("myByteArray").asBinary().get();
+String aString = new String(b);
+System.out.println("aString: " + aString); </pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="usingtypes.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="usingtypes.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="usingenums.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 7. Using Data Types </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Using Enums</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

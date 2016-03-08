@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Guidelines for Updating Kerberos Passwords</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="security_guidelines.html" title="Chapter 12. Keeping Oracle NoSQL Database Secure" />
+    <link rel="prev" href="update_keystore.html" title="Guidelines for Updating Keystore Passwords" />
+    <link rel="next" href="update_cert.html" title="Guidelines for Updating the SSL key/certificate" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Guidelines for Updating Kerberos Passwords</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="update_keystore.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 12. Keeping Oracle NoSQL Database Secure</th>
+          <td width="20%" align="right"> <a accesskey="n" href="update_cert.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="update_kerbpass"></a>Guidelines for Updating Kerberos Passwords</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+            The password of Kerberos principal should be periodically
+            changed. To do this, you can either manually specify it by using
+                <code class="literal">kadmin.local</code> or automatically randomize
+            principal keys by using the <code class="literal">config renew-keytab</code>
+            command of the <code class="literal">securityconfig</code> tool.
+        </p>
+      <p> 
+            The syntax for this command is:
+        </p>
+      <pre class="programlisting">config renew-keytab -root &lt; secroot &gt; [-secdir &lt;security dir&gt;]
+[-keysalt &lt;enc:salt[,enc:salt,..]&gt;]
+[-kadmin-path &lt;kadmin utility path&gt;]
+[-instance-name &lt;database instance name&gt;]
+[-admin-principal &lt;kerberos admin principal name&gt;]
+[-kadmin-keytab &lt;keytab file&gt; ]
+[-kadmin-ccache &lt;credential cache file&gt;] </pre>
+      <p>
+            where:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    <code class="literal">-keysalt</code>
+                </p>
+            <p> 
+                    Sets the list of encryption types and salt types to be used for any
+                    new keys created. The default value is
+                        <code class="literal">des3-cbc-sha1:normal,aes128-cts-hmac-sha1-96:normal,arcfour-hmac:normal</code>.
+                </p>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">-kadmin-path</code>
+                </p>
+            <p> 
+                    Indicates the absolute path of Kerberos kadmin utility.
+                    The default value is
+                        <code class="literal">/usr/kerberos/sbin/kadmin</code>. 
+                </p>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">-instance-name</code>
+                </p>
+            <p>
+                    Specifies the service principal name. The default value
+                    is the fully qualified domain name (FQDN) of the Storage
+                    Node where Oracle NoSQL Database is running.
+                </p>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">-admin-principal</code>
+                </p>
+            <p> 
+                    Specifies the principal used to login to the Kerberos
+                    admin interface. This is required while using kadmin keytab
+                    or password to connect to the admin interface.
+                </p>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">-kadmin-keytab </code>
+                </p>
+            <p> 
+                    Specifies the location of a Kerberos keytab file that
+                    stores Kerberos admin user principals and encrypted keys.
+                    The security configuration tool will use the specified
+                    keytab file to login to the Kerberos admin interface.
+                </p>
+            <p> 
+                    You need to specify the
+                        <code class="literal">-admin-principal</code> flag when using
+                    keytab to login to the Kerberos admin, otherwise the correct
+                    admin principal will not be recognized. This flag cannot be
+                    specified in conjunction with the
+                        <code class="literal">-kadmin-ccache</code> flag. 
+                </p>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">-kadmin-ccache</code>
+                </p>
+            <p> 
+                    Specifies the complete path name to the Kerberos
+                    credentials cache file that should contain a service ticket
+                    for the kadmin/ADMINHOST. <code class="literal">ADMINHOST</code> is
+                    the fully-qualified hostname of the admin server or
+                    kadmin/admin service. 
+                </p>
+            <p> 
+                    If not specified, the user is prompted to enter the
+                    password for principal while logging to the Kerberos admin
+                    interface. This flag cannot be specified in conjunction with
+                    the <code class="literal">-kadmin-keytab</code> flag.
+                </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+            To manually update the Kerberos principal password instead, you
+            should follow these steps: 
+        </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p> 
+                    Use kadmin.local utility to change the service principal
+                    password: 
+                </p>
+            <pre class="programlisting">kadmin.local: cpw nosql/myhost
+Enter password for principal nosql/myhost@EXAMPLE.COM
+Re-enter password for principal nosql/myhost@EXAMPLE.COM</pre>
+          </li>
+          <li>
+            <p>
+                    Regenerate the keytab file for Oracle NoSQL Database service principal.
+                </p>
+            <pre class="programlisting">kadmin.local: ktadd –norandkey –k new.keytab </pre>
+          </li>
+          <li>
+            <p> 
+                    Copy the new keytab file for Oracle NoSQL Database service principal to
+                    each Storage Node. For example: 
+                </p>
+            <pre class="programlisting">scp new.keytab kvuser@mystore:KVROOT/security/store.keytab
+...</pre>
+          </li>
+          <li>
+            <p> 
+                    Validate the keytab file by comparing the key version
+                    number (kvno):
+                </p>
+            <pre class="programlisting">kadmin.local:getprinc nosql/myhost@EXAMPLE.COM
+Principal: nosql/myhost@EXAMPLE.COM
+Expiration date: [never]
+Last password change: Thu Jun 04 03:16:38 UTC 2015
+Password expiration date: [none]
+Maximum ticket life: 1 day 00:00:00
+Maximum renewable life: 0 days 00:00:00
+Last modified: Thu Jun 04 03:16:38 UTC 2015 (root/admin@US.ORACLE.COM)
+Last successful authentication: [never]
+Last failed authentication: [never]
+Failed password attempts: 0
+Number of keys: 4
+Key: vno 12, aes256-cts-hmac-sha1-96
+Key: vno 12, aes128-cts-hmac-sha1-96
+Key: vno 12, des3-cbc-sha1
+Key: vno 12, arcfour-hmac
+MKey: vno 1
+Attributes:
+Policy: [none]
+Kadmin.local: quit
+# klist –k new.keytab
+KVNO Principal
+---- ------------------------
+12 nosql/myhost@EXAMPLE.COM
+12 nosql/myhost@EXAMPLE.COM
+12 nosql/myhost@EXAMPLE.COM
+12 nosql/myhost@EXAMPLE.COM</pre>
+          </li>
+        </ol>
+      </div>
+      <p>
+            Client side user principals require similar password rotation.
+            Keytab or credential cache used to login to the database should be
+            renewed. If <code class="literal">kinit</code> tool is used to create a
+            credential cache, you should run <code class="literal">kdestroy</code> to
+            clear cached tickets and re-run kinit to generate a new credential
+            cache. 
+        </p>
+      <p>
+            For example: 
+        </p>
+      <pre class="programlisting"># kdestroy –c /tmp/krb5ccache
+# kinit –c /tmp/krb5ccache</pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="update_keystore.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="security_guidelines.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="update_cert.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Guidelines for Updating Keystore Passwords </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Guidelines for Updating the SSL key/certificate</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

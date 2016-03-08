@@ -1,0 +1,1154 @@
+OracleNosqlMIB DEFINITIONS ::= BEGIN
+
+-- MIB implemented by the Oracle Nosql Database's Storage Node Agent.
+-- This SNMP agent represents the Storage Node and the Storage Node's
+-- managed processes.
+--
+-- The abbreviation "nosql," as used in comments mentioning OIDs, is defined as
+-- iso(1).org(3).dod(6).internet(1).private(4).enterprises(1).
+--     oracle(111).nosql(42)
+
+IMPORTS
+    MODULE-IDENTITY, OBJECT-IDENTITY, NOTIFICATION-TYPE, enterprises,
+        OBJECT-TYPE, Unsigned32, Integer32, Counter32
+        FROM SNMPv2-SMI
+
+    OBJECT-GROUP, NOTIFICATION-GROUP, MODULE-COMPLIANCE
+        FROM SNMPv2-CONF
+
+    DisplayString, TruthValue, TEXTUAL-CONVENTION, TimeInterval, DateAndTime
+        FROM SNMPv2-TC;
+
+    nosql MODULE-IDENTITY
+        LAST-UPDATED "201402070000Z"
+        ORGANIZATION "Oracle Corporation"
+        CONTACT-INFO "support@sleepycat-tools.us.oracle.com"
+        DESCRIPTION
+            "This MIB defines SNMP data and trap objects reported by
+             Oracle Nosql Database's Storage Node Agent."
+        REVISION "201402070000Z"
+        DESCRIPTION "Oracle NoSQL Database 3.0"
+    ::= { oracle 42 }
+
+-- External OIDs
+
+    oracle      OBJECT IDENTIFIER ::= { enterprises 111 }
+
+-- Textual Conventions (typedefs)
+
+ServiceStatusTC ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION "Enumeration of service status"
+    SYNTAX INTEGER {
+        starting(1),
+        waitingForDeploy(2),
+        running(3),
+        stopping(4),
+        stopped(5),
+        errorRestarting(6),
+        errorNoRestart(7),
+        unreachable(8)
+    }
+
+-- Top-level component categories
+
+    storageNode       OBJECT IDENTIFIER ::= { nosql 1 }
+    storageNodeEvents OBJECT IDENTIFIER ::= { nosql 2 }
+    repNodes          OBJECT IDENTIFIER ::= { nosql 3 }
+    repNodeEvents     OBJECT IDENTIFIER ::= { nosql 4 }
+    admin             OBJECT IDENTIFIER ::= { nosql 5 }
+    adminEvents       OBJECT IDENTIFIER ::= { nosql 6 }
+
+-- Info for the Storage Node itself
+
+-- snId: nosql.1.1
+    snId OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The StorageNodeId number of this Storage Node"
+    ::= { storageNode 1 }
+
+-- snServiceStatus: nosql.1.2
+    snServiceStatus OBJECT-TYPE
+        SYNTAX          ServiceStatusTC
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The reported service status of the Storage Node."
+    ::= { storageNode 2 }
+
+-- snHostname: nosql.1.3
+    snHostname OBJECT-TYPE
+        SYNTAX          DisplayString
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The name associated with the network interface
+             on which this Storage Node's registry listens."
+    ::= { storageNode 3 }
+
+-- snRegistryPort: nosql.1.4
+    snRegistryPort OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The port number of the Storage Node's RMI registry."
+    ::= { storageNode 4 }
+
+-- snHAHostname: nosql.1.5
+    snHAHostname OBJECT-TYPE
+        SYNTAX          DisplayString
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The name of the network interface used by the HA subsystem."
+    ::= { storageNode 5 }
+
+-- snHaPortRange: nosql.1.6
+    snHaPortRange OBJECT-TYPE
+        SYNTAX          DisplayString
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "Defines the range of port numbers available for assigning
+             to Replication Nodes that are hosted on this Storage Node.
+             A port is allocated automatically from this range when a
+             Replication Node is deployed."
+    ::= { storageNode 6 }
+
+-- snStoreName: nosql.1.7
+    snStoreName OBJECT-TYPE
+        SYNTAX          DisplayString
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The configured name of the store to which this
+             Storage Node belongs."
+    ::= { storageNode 7 }
+
+-- snRootDirPath: nosql.1.8
+    snRootDirPath OBJECT-TYPE
+        SYNTAX          DisplayString
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The pathname of the store's root directory."
+    ::= { storageNode 8 }
+
+-- snAdminHttpPort: nosql.1.9
+    snAdminHttpPort OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The http port used by the Admin Console web application."
+    ::= { storageNode 9 }
+
+-- snLogFileCount: nosql.1.10
+    snLogFileCount OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The number of log files that are kept."
+    ::= { storageNode 10 }
+
+-- snLogFileLimit: nosql.1.11
+    snLogFileLimit OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The maximum size of log files."
+    ::= { storageNode 11 }
+
+-- snCapacity: nosql.1.12
+    snCapacity OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The number of Replication Nodes that can be hosted
+             on this Storage Node."
+    ::= { storageNode 12 }
+
+-- snMountPoints: nosql.1.13
+    snMountPoints OBJECT-TYPE
+        SYNTAX          DisplayString
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "A list of file system mount points on which Replication Nodes
+             can be deployed"
+    ::= { storageNode 13 }
+
+-- snMemory: nosql.1.14
+    snMemory OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "MB"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The amount of memory known to be available on this Storage Node."
+    ::= { storageNode 14 }
+
+-- snCPUs: nosql.1.15
+    snCPUs OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The number of CPUs known to be available on this Storage Node."
+    ::= { storageNode 15 }
+
+-- snEventList: nosql.2.0
+    snEventList OBJECT-IDENTITY
+        STATUS          current
+        DESCRIPTION
+            "Head of the list of events for the Storage Node."
+    ::= { storageNodeEvents 0 }
+
+-- snStatusChange: nosql.2.0.1
+    snStatusChange NOTIFICATION-TYPE
+        OBJECTS {
+            snId,
+            snServiceStatus
+        }
+        STATUS          current
+        DESCRIPTION
+            "Sent when the Storage Nodes's service status changes.
+             Carries a copy of the new status."
+   ::= { snEventList 1 }
+
+-- repNodeEventList: nosql.4.0
+    repNodeEventList OBJECT-IDENTITY
+        STATUS          current
+        DESCRIPTION
+            "Head of the list of events for the Replication Nodes."
+    ::= { repNodeEvents 0 }
+
+-- repNodeStatusChange: nosql.4.0.1
+    repNodeStatusChange NOTIFICATION-TYPE
+        OBJECTS {
+            repNodeShardNumber,
+            repNodeNumber,
+            repNodeServiceStatus
+        }
+        STATUS          current
+        DESCRIPTION
+            "Sent when a Replication Node's service status changes.
+             Carries a copy of the new status."
+   ::= { repNodeEventList 1 }
+
+-- repNodeThroughputFloorExceeded: nosql 4.0.2
+    repNodeThroughputFloorExceeded NOTIFICATION-TYPE
+        OBJECTS {
+            repNodeShardNumber,
+            repNodeNumber,
+            repNodeIntervalThroughput
+        }
+        STATUS          current
+        DESCRIPTION
+            "Sent when a Replication Node's throughput is less than the set
+             limit. Carries a copy of the offending throughput value."
+   ::= { repNodeEventList 2 }
+
+-- repNodeLatencyCeilingExceeded: nosql 4.0.3
+    repNodeLatencyCeilingExceeded NOTIFICATION-TYPE
+        OBJECTS {
+            repNodeShardNumber,
+            repNodeNumber,
+            repNodeIntervalLatAvg
+        }
+        STATUS          current
+        DESCRIPTION
+            "Sent when a Replication Node's average latency is greater than
+             the set limit. Carries a copy of the offending latency value."
+   ::= { repNodeEventList 3 }
+
+-- repNodeMultiThroughputFloorExceeded: nosql 4.0.4
+    repNodeMultiThroughputFloorExceeded NOTIFICATION-TYPE
+        OBJECTS {
+            repNodeShardNumber,
+            repNodeNumber,
+            repNodeMultiIntervalThroughput
+        }
+        STATUS          current
+        DESCRIPTION
+            "Sent when a Replication Node's multi-operation throughput is
+             less than the set limit. Carries a copy of the offending
+             throughput value."
+   ::= { repNodeEventList 4 }
+
+-- repNodeMultiLatencyCeilingExceeded: nosql 4.0.5
+    repNodeMultiLatencyCeilingExceeded NOTIFICATION-TYPE
+        OBJECTS {
+            repNodeShardNumber,
+            repNodeNumber,
+            repNodeMultiIntervalLatAvg
+        }
+        STATUS          current
+        DESCRIPTION
+            "Sent when a Replication Node's multi-operation average latency is
+            greater than the set limit. Carries a copy of the offending
+            latency value."
+   ::= { repNodeEventList 5 }
+
+-- repNodeCommitLagThresholdExceeded: nosql 4.0.6
+    repNodeCommitLagThresholdExceeded NOTIFICATION-TYPE
+        OBJECTS {
+            repNodeShardNumber,
+            repNodeNumber,
+            repNodeCommitLag
+        }
+        STATUS          current
+        DESCRIPTION
+            "Sent when the average commit lag (in milliseconds) for the
+            associated replication node during a given time interval exceeds
+            the set threshold. Carries a copy of the offending lag value."
+   ::= { repNodeEventList 6 }
+
+-- adminEventList: nosql.6.0
+    adminEventList OBJECT-IDENTITY
+        STATUS          current
+        DESCRIPTION
+            "Head of the list of events for the Admin."
+    ::= { adminEvents 0 }
+
+-- adminStatusChange: nosql.6.0.1
+    adminStatusChange NOTIFICATION-TYPE
+        OBJECTS {
+            adminId,
+            adminServiceStatus,
+            adminIsMaster
+        }
+        STATUS          current
+        DESCRIPTION
+            "Sent when a Admin's service status changes.
+             Carries a copy of the new status."
+   ::= { adminEventList 1 }
+
+-- The repNodes node contains a count of the RepNodes
+-- and the Array of repnodes.
+
+-- nRepNodes: nosql.3.1
+    nRepNodes   OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The number of Replication Nodes hosted on this
+                         Storage Node."
+    ::= { repNodes 1 }
+
+-- repNodesTable: nosql.3.2
+    repNodeTable OBJECT-TYPE
+        SYNTAX          SEQUENCE OF RepNodeTableEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "Table of Replication Nodes hosted on this Storage Node."
+    ::= { repNodes 2 }
+
+-- repNodesTable: nosql.3.2.1
+    repNodeTableEntry OBJECT-TYPE
+        SYNTAX          RepNodeTableEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION     "An entry in the repNodeTable"
+        INDEX           { repNodeShardNumber,
+                          repNodeNumber}
+    ::= { repNodeTable 1 }
+
+    RepNodeTableEntry ::=
+        SEQUENCE {
+                repNodeShardNumber                      INTEGER,
+                repNodeNumber                           INTEGER,
+                repNodeServiceStatus                    ServiceStatusTC,
+
+                -- Single Interval Latency Info
+                repNodeIntervalStart                    DateAndTime,
+                repNodeIntervalEnd                      DateAndTime,
+                repNodeIntervalPeriod                   TimeInterval,
+                repNodeIntervalTotalOps                 INTEGER,
+                repNodeIntervalThroughput               Unsigned32,
+                repNodeIntervalLatMin                   INTEGER,
+                repNodeIntervalLatMax                   INTEGER,
+                repNodeIntervalLatAvg                   DisplayString,
+                repNodeIntervalLatAvgInt                INTEGER,
+                repNodeIntervalLatAvgFrac               INTEGER,
+                repNodeIntervalPct95                    INTEGER,
+                repNodeIntervalPct99                    INTEGER,
+
+                -- Single Cumulative Latency Info
+                repNodeCumulativeStart                  DateAndTime,
+                repNodeCumulativeEnd                    DateAndTime,
+                repNodeCumulativeTotalOps               INTEGER,
+                repNodeCumulativeThroughput             Unsigned32,
+                repNodeCumulativeLatMin                 INTEGER,
+                repNodeCumulativeLatMax                 INTEGER,
+                repNodeCumulativeLatAvg                 DisplayString,
+                repNodeCumulativeLatAvgInt              INTEGER,
+                repNodeCumulativeLatAvgFrac             INTEGER,
+                repNodeCumulativePct95                  INTEGER,
+                repNodeCumulativePct99                  INTEGER,
+
+                -- Multi Op Interval Latency Info
+                repNodeMultiIntervalStart               DateAndTime,
+                repNodeMultiIntervalEnd                 DateAndTime,
+                repNodeMultiIntervalPeriod              TimeInterval,
+                repNodeMultiIntervalTotalOps            INTEGER,
+                repNodeMultiIntervalTotalRequests       INTEGER,
+                repNodeMultiIntervalThroughput          Unsigned32,
+                repNodeMultiIntervalLatMin              INTEGER,
+                repNodeMultiIntervalLatMax              INTEGER,
+                repNodeMultiIntervalLatAvg              DisplayString,
+                repNodeMultiIntervalLatAvgInt           INTEGER,
+                repNodeMultiIntervalLatAvgFrac          INTEGER,
+                repNodeMultiIntervalPct95               INTEGER,
+                repNodeMultiIntervalPct99               INTEGER,
+
+                -- Multi Op Cumulative Latency Info
+                repNodeMultiCumulativeStart             DateAndTime,
+                repNodeMultiCumulativeEnd               DateAndTime,
+                repNodeMultiCumulativeTotalOps          INTEGER,
+                repNodeMultiCumulativeTotalRequests     INTEGER,
+                repNodeMultiCumulativeThroughput        Unsigned32,
+                repNodeMultiCumulativeLatMin            INTEGER,
+                repNodeMultiCumulativeLatMax            INTEGER,
+                repNodeMultiCumulativeLatAvg            DisplayString,
+                repNodeMultiCumulativeLatAvgInt         INTEGER,
+                repNodeMultiCumulativeLatAvgFrac        INTEGER,
+                repNodeMultiCumulativePct95             INTEGER,
+                repNodeMultiCumulativePct99             INTEGER,
+
+                -- Commit Lag
+                repNodeCommitLag                        Unsigned32,
+
+                -- RepNode Parameters
+                repNodeCacheSize                        INTEGER,
+                repNodeConfigProperties                 DisplayString,
+                repNodeCollectEnvStats                  TruthValue,
+                repNodeStatsInterval                    INTEGER,
+                repNodeMaxTrackedLatency                INTEGER,
+                repNodeJavaMiscParams                   DisplayString,
+                repNodeLoggingConfigProps               DisplayString,
+                repNodeHeapSize                         INTEGER,
+                repNodeMountPoint                       DisplayString,
+                repNodeLatencyCeiling                   INTEGER,
+                repNodeThroughputFloor                  INTEGER,
+                repNodeCommitLagThreshold               Unsigned32
+        }
+
+-- repNodeShardNumber: nosql.3.2.1.1
+    repNodeShardNumber OBJECT-TYPE
+        SYNTAX          INTEGER (1..100000)
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The Shard, or RepGroup component of a RepNodeId."
+    ::= { repNodeTableEntry 1 }
+
+-- repNodeNumber: nosql.3.2.1.2
+    repNodeNumber OBJECT-TYPE
+        SYNTAX          INTEGER (1..100000)
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The Node Number component of a RepNodeId."
+    ::= { repNodeTableEntry 2 }
+
+-- repNodeServiceStatus: nosql.3.2.1.3
+    repNodeServiceStatus OBJECT-TYPE
+        SYNTAX          ServiceStatusTC
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The reported service status of the Replication Node."
+    ::= { repNodeTableEntry 3 }
+
+-- repNodeIntervalStart: nosql.3.2.1.4
+    repNodeIntervalStart OBJECT-TYPE
+        SYNTAX          DateAndTime
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Timestamp at the beginning of a measured interval."
+    ::= { repNodeTableEntry 4 }
+
+-- repNodeIntervalEnd: nosql.3.2.1.5
+    repNodeIntervalEnd OBJECT-TYPE
+        SYNTAX          DateAndTime
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Timestamp at the end of a measured interval."
+    ::= { repNodeTableEntry 5 }
+
+-- repNodeIntervalPeriod: nosql.3.2.1.6
+    repNodeIntervalPeriod OBJECT-TYPE
+        SYNTAX          TimeInterval
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "Duration of measured interval, in hundredths of a second."
+    ::= { repNodeTableEntry 6 }
+
+-- repNodeIntervalTotalOps: nosql.3.2.1.7
+    repNodeIntervalTotalOps OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The total number of singleton operations
+             during a measured interval."
+    ::= { repNodeTableEntry 7 }
+
+-- repNodeIntervalThroughput: nosql.3.2.1.8
+    repNodeIntervalThroughput OBJECT-TYPE
+        SYNTAX          Unsigned32
+        UNITS           "ops/sec"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Singleton operations per second
+                         during a measured interval."
+    ::= { repNodeTableEntry 8 }
+
+-- repNodeIntervalLatMin: nosql.3.2.1.9
+    repNodeIntervalLatMin OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "ms"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The lowest latency for singleton operations
+                         measured during an interval."
+    ::= { repNodeTableEntry 9 }
+
+-- repNodeIntervalLatMax: nosql.3.2.1.10
+    repNodeIntervalLatMax OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "ms"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The highest latency for single operations
+                         measured during an interval."
+    ::= { repNodeTableEntry 10 }
+
+-- repNodeIntervalLatAvg: nosql.3.2.1.11
+    repNodeIntervalLatAvg OBJECT-TYPE
+        SYNTAX          DisplayString
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The average latency for single operations during a measured
+             interval, as a string representing a floating-point number."
+    ::= { repNodeTableEntry 11 }
+
+-- repNodeIntervalLatAvgInt: nosql.3.2.1.12
+    repNodeIntervalLatAvgInt OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The integer part of the average latency."
+    ::= { repNodeTableEntry 12 }
+
+-- repNodeIntervalLatAvgFrac: nosql.3.2.1.13
+    repNodeIntervalLatAvgFrac OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The fractional part of the average latency, as an integer
+            number of thousandths."
+    ::= { repNodeTableEntry 13 }
+
+-- repNodeIntervalPct95: nosql.3.2.1.14
+    repNodeIntervalPct95 OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "ms"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The 95th percentile latency for single operations
+             during a measured interval."
+    ::= { repNodeTableEntry 14 }
+
+-- repNodeIntervalPct99: nosql.3.2.1.15
+    repNodeIntervalPct99 OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "ms"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The 99th percentile latency for single operations
+             during a measured interval."
+    ::= { repNodeTableEntry 15 }
+
+-- repNodeCumulativeStart: nosql.3.2.1.16
+    repNodeCumulativeStart OBJECT-TYPE
+        SYNTAX          DateAndTime
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Timestamp of service startup;
+                         the start time of a cumulative measurement."
+    ::= { repNodeTableEntry 16 }
+
+-- repNodeCumulativeEnd: nosql.3.2.1.17
+    repNodeCumulativeEnd OBJECT-TYPE
+        SYNTAX          DateAndTime
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Timestamp at end of a cumulative measurement period."
+    ::= { repNodeTableEntry 17 }
+
+-- repNodeCumulativeTotalOps: nosql.3.2.1.18
+    repNodeCumulativeTotalOps OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The total number of single operations since service startup."
+    ::= { repNodeTableEntry 18 }
+
+-- repNodeCumulativeThroughput: nosql.3.2.1.19
+    repNodeCumulativeThroughput OBJECT-TYPE
+        SYNTAX          Unsigned32
+        UNITS           "ops/sec"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Single operations per second since service startup."
+    ::= { repNodeTableEntry 19 }
+
+-- repNodeCumulativeLatMin: nosql.3.2.1.20
+    repNodeCumulativeLatMin OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "ms"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The lowest latency measured for single operations
+             since service startup."
+    ::= { repNodeTableEntry 20 }
+
+-- repNodeCumulativeLatMax: nosql.3.2.1.21
+    repNodeCumulativeLatMax OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "ms"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The highest latency measured for single operations
+             since service startup."
+    ::= { repNodeTableEntry 21 }
+
+-- repNodeCumulativeLatAvg: nosql.3.2.1.22
+    repNodeCumulativeLatAvg OBJECT-TYPE
+        SYNTAX          DisplayString
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The average latency for single operations since service startup,
+             as a string representing a floating-point number."
+    ::= { repNodeTableEntry 22 }
+
+-- repNodeCumulativeLatAvgInt: nosql.3.2.1.23
+    repNodeCumulativeLatAvgInt OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The integer part of the cumulative average latency."
+    ::= { repNodeTableEntry 23 }
+
+-- repNodeCumulativeLatAvgFrac: nosql.3.2.1.24
+    repNodeCumulativeLatAvgFrac OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The fractional part of the cumulative average latency,
+            as an integer number of thousandths."
+    ::= { repNodeTableEntry 24 }
+
+-- repNodeCumulativePct95: nosql.3.2.1.25
+    repNodeCumulativePct95 OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "ms"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The 95th percentile latency for single operations
+             since service startup."
+    ::= { repNodeTableEntry 25 }
+
+-- repNodeCumulativePct99: nosql.3.2.1.26
+    repNodeCumulativePct99 OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "ms"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The 99th percentile latency for single operations
+             since service startup."
+    ::= { repNodeTableEntry 26 }
+
+-- repNodeMultiIntervalStart: nosql.3.2.1.27
+    repNodeMultiIntervalStart OBJECT-TYPE
+        SYNTAX          DateAndTime
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Timestamp at the beginning of a measured interval."
+    ::= { repNodeTableEntry 27 }
+
+-- repNodeMultiIntervalEnd: nosql.3.2.1.28
+    repNodeMultiIntervalEnd OBJECT-TYPE
+        SYNTAX          DateAndTime
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Timestamp at the end of a measured interval."
+    ::= { repNodeTableEntry 28 }
+
+-- repNodeMultiIntervaPeriod: nosql.3.2.1.29
+    repNodeMultiIntervalPeriod OBJECT-TYPE
+        SYNTAX          TimeInterval
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "Duration of a measured interval, in hundredths of a second."
+    ::= { repNodeTableEntry 29 }
+
+-- repNodeMultiIntervalTotalOps: nosql.3.2.1.30
+    repNodeMultiIntervalTotalOps OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The total number of single operations performed in
+	     multi-operation sequences during a measured interval."
+    ::= { repNodeTableEntry 30 }
+
+-- repNodeMultiIntervalThroughput: nosql.3.2.1.31
+    repNodeMultiIntervalThroughput OBJECT-TYPE
+        SYNTAX          Unsigned32
+        UNITS           "ops/sec"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "Multi-operations sequences per second during a measured interval."
+    ::= { repNodeTableEntry 31 }
+
+-- repNodeMultiIntervalLatMin: nosql.3.2.1.32
+    repNodeMultiIntervalLatMin OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "ms"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The lowest latency measured for multi-operation sequences
+             during a measured interval."
+    ::= { repNodeTableEntry 32 }
+
+-- repNodeMultiIntervalLatMax: nosql.3.2.1.33
+    repNodeMultiIntervalLatMax OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "ms"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The highest latency measured for multi-operation sequences
+             during a measured interval."
+    ::= { repNodeTableEntry 33 }
+
+-- repNodeMultiIntervalLatAvg: nosql.3.2.1.34
+    repNodeMultiIntervalLatAvg OBJECT-TYPE
+        SYNTAX          DisplayString
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The average latency for multi-operation sequences during
+             a measured interval, as a string representing a
+             floating-point number."
+    ::= { repNodeTableEntry 34 }
+
+-- repNodeMultiIntervalLatAvgInt: nosql.3.2.1.35
+    repNodeMultiIntervalLatAvgInt OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The integer part of the average latency."
+    ::= { repNodeTableEntry 35 }
+
+-- repNodeMultiIntervalLatAvgFrac: nosql.3.2.1.36
+    repNodeMultiIntervalLatAvgFrac OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The fractional part of the average latency, as an integer
+            number of thousandths."
+    ::= { repNodeTableEntry 36 }
+
+-- repNodeMultiIntervalPct95: nosql.3.2.1.37
+    repNodeMultiIntervalPct95 OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "ms"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The 95th percentile latency for multi-operation sequences
+             during a measured interval."
+    ::= { repNodeTableEntry 37 }
+
+-- repNodeMultiIntervalPct99: nosql.3.2.1.38
+    repNodeMultiIntervalPct99 OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "ms"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The 99th percentile latency for multi-operation sequences
+             during a measured interval."
+    ::= { repNodeTableEntry 38 }
+
+-- repNodeMultiCumulativeStart: nosql.3.2.1.39
+    repNodeMultiCumulativeStart OBJECT-TYPE
+        SYNTAX          DateAndTime
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Timestamp of service startup;
+                         the start time of a cumulative measurement."
+    ::= { repNodeTableEntry 39 }
+
+-- repNodeMultiCumulativeEnd: nosql.3.2.1.40
+    repNodeMultiCumulativeEnd OBJECT-TYPE
+        SYNTAX          DateAndTime
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "Timestamp at the end of a cumulative measurement period."
+    ::= { repNodeTableEntry 40 }
+
+-- repNodeMultiCumulativeTotalOps: nosql.3.2.1.41
+    repNodeMultiCumulativeTotalOps OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The total number of single operations performed in
+	     multi-operation sequences since service startup."
+    ::= { repNodeTableEntry 41 }
+
+-- repNodeMultiCumulativeThroughput: nosql.3.2.1.42
+    repNodeMultiCumulativeThroughput OBJECT-TYPE
+        SYNTAX          Unsigned32
+        UNITS           "ops/sec"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "Multi-operations sequences per second since service startup."
+    ::= { repNodeTableEntry 42 }
+
+-- repNodeMultiCumulativeLatMin: nosql.3.2.1.43
+    repNodeMultiCumulativeLatMin OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "ms"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The lowest latency measured for multi-operation sequences
+             since service startup."
+    ::= { repNodeTableEntry 43 }
+
+-- repNodeMultiCumulativeLatMax: nosql.3.2.1.44
+    repNodeMultiCumulativeLatMax OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "ms"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The highest latency measured for multi-operation sequences
+             since service startup."
+    ::= { repNodeTableEntry 44 }
+
+-- repNodeMultiCumulativeLatAvg: nosql.3.2.1.45
+    repNodeMultiCumulativeLatAvg OBJECT-TYPE
+        SYNTAX          DisplayString
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The average latency for multi-operation sequences since service
+            startup, as a string representing a floating-point number."
+    ::= { repNodeTableEntry 45 }
+
+-- repNodeMultiCumulativeLatAvgInt: nosql.3.2.1.46
+    repNodeMultiCumulativeLatAvgInt OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The integer part of the average latency."
+    ::= { repNodeTableEntry 46 }
+
+-- repNodeMultiCumulativeLatAvgFrac: nosql.3.2.1.47
+    repNodeMultiCumulativeLatAvgFrac OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The fractional part of the average latency, as an integer
+            number of thousandths."
+    ::= { repNodeTableEntry 47 }
+
+-- repNodeMultiCumulativePct95: nosql.3.2.1.48
+    repNodeMultiCumulativePct95 OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "ms"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The 95th percentile latency for multi-operation sequences
+             since service startup."
+    ::= { repNodeTableEntry 48 }
+
+-- repNodeMultiCumulativePct99: nosql.3.2.1.49
+    repNodeMultiCumulativePct99 OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "ms"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The 99th percentile latency for multi-operation sequences
+             since service startup."
+    ::= { repNodeTableEntry 49 }
+
+-- repNodeCommitLag: nosql.3.2.1.50
+    repNodeCommitLag OBJECT-TYPE
+        SYNTAX          Unsigned32
+        UNITS           "ms"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The average commit lag for the associated replication node's
+            update operations during a given time interval; which is
+            determined by computing the quotient of the total lag
+            (reported by the JE backend) and the number of commit log
+            records replayed by the node. Provides a measure of how
+            'far behind' the node has fallen behind the master."
+    ::= { repNodeTableEntry 50 }
+
+-- repNodeReplicationState: nosql.3.2.1.51
+    repNodeReplicationState OBJECT-TYPE
+        SYNTAX          DisplayString
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The current replication state of this node.  Possible values
+	    are MASTER, REPLICA, DETACHED, and UNKNOWN."
+    ::= { repNodeTableEntry 51 }
+
+-- repNodeCacheSize: nosql.3.2.1.100
+    repNodeCacheSize OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "MBytes"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The size of the BDB-JE cache, in MBytes."
+    ::= { repNodeTableEntry 100 }
+
+-- repNodeConfigProperties: nosql.3.2.101
+    repNodeConfigProperties OBJECT-TYPE
+        SYNTAX          DisplayString
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Non-default BDB-JE configuration properties."
+    ::= { repNodeTableEntry 101 }
+
+-- repNodeCollectEnvStats: nosql.3.2.1.102
+    repNodeCollectEnvStats OBJECT-TYPE
+        SYNTAX          TruthValue
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "If true, then the underlying BDB-JE subsystem
+                         will dump statistics into a local .stat file."
+    ::= { repNodeTableEntry 102 }
+
+-- repNodeStatsInterval: nosql.3.2.1.103
+    repNodeStatsInterval OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "seconds"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The collection period for latency statistics, in sec."
+    ::= { repNodeTableEntry 103 }
+
+-- repNodeMaxTrackedLatency: nosql.3.2.1.104
+    repNodeMaxTrackedLatency OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "ms"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The highest latency that will be included
+                         in the calculation of latency percentiles."
+    ::= { repNodeTableEntry 104 }
+
+-- repNodeJavaMiscParams: nosql.3.2.1.105
+    repNodeJavaMiscParams OBJECT-TYPE
+        SYNTAX          DisplayString
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "A string that is added to the command line
+                         when the Replication Node process is started."
+    ::= { repNodeTableEntry 105 }
+
+-- repNodeLoggingConfigProps: nosql.3.2.1.106
+    repNodeLoggingConfigProps OBJECT-TYPE
+        SYNTAX          DisplayString
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Contains property settings for the Logging subsystem."
+    ::= { repNodeTableEntry 106 }
+
+-- repNodeHeapSize: nosql.3.2.1.107
+    repNodeHeapSize OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "MB"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The size of the Java heap for this Replication Node."
+    ::= { repNodeTableEntry 107 }
+
+-- repNodeMountPoint: nosql.3.2.1.108
+    repNodeMountPoint OBJECT-TYPE
+        SYNTAX          DisplayString
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The path to the file system mount point where
+                         this Replication Node's files are stored."
+    ::= { repNodeTableEntry 108 }
+
+-- repNodeLatencyCeiling: nosql.3.2.1.109
+    repNodeLatencyCeiling OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "ms"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "If the Replication Node's latency exceeds this value,
+                         a repNodeLatencyCeilingExceeded notification will
+                         be sent."
+    ::= { repNodeTableEntry 109 }
+
+-- repNodeThroughputFloor: nosql.3.2.1.110
+    repNodeThroughputFloor OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "ops/sec"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "Sets a lower bound on Replication Node throughput.
+                         Lower throughput reports will cause a
+                         repNodeThroughputFloorExceeded notification
+                         to be sent."
+    ::= { repNodeTableEntry 110 }
+
+-- repNodeMultiIntervalTotalRequests: nosql.3.2.1.111
+    repNodeMultiIntervalTotalRequests OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The total number of multi-operation sequences
+             during a measured interval."
+    ::= { repNodeTableEntry 111 }
+
+-- repNodeMultiCumulativeTotalRequests: nosql.3.2.1.112
+    repNodeMultiCumulativeTotalRequests OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The total number of multi operation sequences
+             since service startup."
+    ::= { repNodeTableEntry 112 }
+
+-- repNodeCommitLagThreshold: nosql.3.2.1.113
+    repNodeCommitLagThreshold OBJECT-TYPE
+        SYNTAX          Unsigned32
+        UNITS           "ms"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "If the Replication Node's average commit lag exceeds
+                         this value, a repNodeCommitLagThresholdExceeded
+                         notification will be sent."
+    ::= { repNodeTableEntry 113 }
+
+-- group for the Admin, if present
+
+-- adminId: nosql.5.1
+    adminId OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The AdminId number of an Admin instance."
+    ::= { admin 1 }
+
+-- adminServiceStatus: nosql.5.2
+    adminServiceStatus OBJECT-TYPE
+        SYNTAX          ServiceStatusTC
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The reported service status of the Admin."
+    ::= { admin 2 }
+
+-- adminHttpPort: nosql.5.3
+    adminHttpPort OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The port number used by the Admin Console web application."
+    ::= { admin 3 }
+
+-- adminLogFileCount: nosql.5.4
+    adminLogFileCount OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The number of log files that are kept."
+    ::= { admin 4 }
+
+-- adminLogFileLimit: nosql.5.5
+    adminLogFileLimit OBJECT-TYPE
+        SYNTAX          INTEGER
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+            "The maximum size of log files."
+    ::= { admin 5 }
+
+-- adminPollPeriod: nosql.5.6
+    adminPollPeriod OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "ms"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "The polling period for collecting metrics"
+    ::= { admin 6 }
+
+-- adminEventExpiryAge: nosql.5.7
+    adminEventExpiryAge OBJECT-TYPE
+        SYNTAX          INTEGER
+        UNITS           "hours"
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "How long to keep critical event records."
+    ::= { admin 7 }
+
+-- adminIsMaster: nosql.5.8
+    adminIsMaster OBJECT-TYPE
+        SYNTAX          TruthValue
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION     "This Admin is the master among Admin instances."
+    ::= { admin 8 }
+
+END

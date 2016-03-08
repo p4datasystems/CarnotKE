@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Using a Script to Configure the Store</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="configure.html" title="Chapter 3. Configuring the KVStore" />
+    <link rel="prev" href="multiple-datacenters.html" title="Configuring with Multiple Zones" />
+    <link rel="next" href="smoketest.html" title="Smoke Testing the System" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Using a Script to Configure the Store</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="multiple-datacenters.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 3. Configuring the KVStore</th>
+          <td width="20%" align="right"> <a accesskey="n" href="smoketest.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="deploy-script"></a>Using a Script to Configure the Store</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            Up to this point, we have shown how to configure a store using
+            an interactive command line interface session. However, you can
+            collect all of the commands used in the prior sections into a
+            script file, and then run them in a single batch operation.  To
+            do this, use the <code class="literal">load</code> command in the command
+            line interface. For example:
+        </p>
+      <p>
+            Using the <code class="literal">load -file</code> command line option:
+        </p>
+      <pre class="programlisting">&gt; java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar runadmin -port 5000 -host node01 \
+load -file scrpt.txt</pre>
+      <p>
+            Using directly the <code class="literal">load -file</code> command:
+        </p>
+      <pre class="programlisting">kv-&gt; load -file &lt;path to file&gt; </pre>
+      <p>
+            Using this command you can load the named file and interpret
+            its contents as a script of commands to be executed.
+        </p>
+      <p>
+            The file, <code class="literal">scrpt.txt</code>, would then contain
+            content like this:
+        </p>
+      <pre class="programlisting">### Begin Script ###
+configure -name mystore
+plan deploy-zone -name "Boston" -rf 3 -wait
+plan deploy-sn -zn zn1 -host node01 -port 5000 -wait
+plan deploy-admin -sn sn1 -port 5001 -wait
+pool create -name BostonPool
+pool join -name BostonPool -sn sn1
+plan deploy-sn -zn zn1 -host node02 -port 6000 -wait
+pool join -name BostonPool -sn sn2
+plan deploy-sn -zn zn1 -host node03 -port 7000 -wait
+pool join -name BostonPool -sn sn3
+topology create -name topo -pool BostonPool -partitions 300
+plan deploy-topology -name topo -wait
+exit
+### End Script ### </pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="multiple-datacenters.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="configure.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="smoketest.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Configuring with Multiple Zones </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Smoke Testing the System</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

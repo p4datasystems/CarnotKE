@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>DROP TABLE</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="ddl_overview.html" title="Appendix A. Table Data Definition Language Overview" />
+    <link rel="prev" href="modifytableddl.html" title="Modify Table Definitions" />
+    <link rel="next" href="addindexddl.html" title="CREATE INDEX" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">DROP TABLE</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="modifytableddl.html">Prev</a> </td>
+          <th width="60%" align="center">Appendix A. Table Data Definition Language Overview</th>
+          <td width="20%" align="right"> <a accesskey="n" href="addindexddl.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="deletetableddl"></a>DROP TABLE</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            To delete a table definition, use a <code class="literal">DROP TABLE</code>
+            statement. Its form is:
+        </p>
+      <pre class="programlisting">DROP TABLE [IF EXISTS] <span class="emphasis"><em>table-name</em></span></pre>
+      <p>
+            where:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    <code class="literal">IF EXISTS</code> is optional, and it causes
+                    the drop statement to be ignored if a table with the
+                    specified name does not exist in the store. If this
+                    phrase is not specified, and the table does not
+                    currently exist, then the DROP statement will fail with
+                    an error.
+                </p>
+          </li>
+          <li>
+            <p>
+                    <span class="emphasis"><em>table-name</em></span> is the name of the
+                    table you want to drop. 
+                </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+            Note that dropping a table is a lengthy operation because all
+            table data currently existing in the store is deleted as a part
+            of the drop operation.
+        </p>
+      <p>
+            If child tables are defined for the table that you are
+            dropping, then they must be dropped first. For example, if you
+            have tables: 
+        </p>
+      <table class="simplelist" border="0" summary="Simple list">
+        <tr>
+          <td>myTable</td>
+        </tr>
+        <tr>
+          <td>myTable.childTable1</td>
+        </tr>
+        <tr>
+          <td>myTable.childTable2</td>
+        </tr>
+      </table>
+      <p>
+            then <code class="literal">myTable.childTable1</code> and
+            <code class="literal">myTable.childTable2</code> must be dropped before
+            you can drop <code class="literal">myTable</code>.
+        </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="modifytableddl.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ddl_overview.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="addindexddl.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Modify Table Definitions </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> CREATE INDEX</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

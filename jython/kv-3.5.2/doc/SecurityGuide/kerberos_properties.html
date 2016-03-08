@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Kerberos Security Properties</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="kerberos.html" title="Chapter 4. Kerberos Authentication Service" />
+    <link rel="prev" href="kadmin.html" title="Kadmin and kadmin.local" />
+    <link rel="next" href="jaas.html" title="JAAS programming framework integration" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Kerberos Security Properties</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="kadmin.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 4. Kerberos Authentication Service</th>
+          <td width="20%" align="right"> <a accesskey="n" href="jaas.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="kerberos_properties"></a>Kerberos Security Properties</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="kerberos_properties.html#setprop_file">Setting Security Properties in a security login file</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="kerberos_properties.html#setprop_kvstoreconfig">Setting Security Properties through KVStoreConfig</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="kerberos_properties.html#login_secprop">Using security properties to login</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p> 
+            To setup the Kerberos security properties, you can set them in a
+            login file or through the <code class="classname">KVStoreConfig</code>
+            class. 
+        </p>
+      <p> 
+            The minimal configuration needed to setup Kerberos includes
+            setting the following properties:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    <code class="literal">oracle.kv.auth.username</code>
+                </p>
+            <p> 
+                    Specifies the Kerberos user name in Oracle NoSQL Database. It must match
+                    the principal name in KDC and match the Kerberos user
+                    account name created in the database. The client will use
+                    the value of this option to create the credential which is
+                    used in the client-server authentication. If the short name
+                    of principal is specified in this field, you must also
+                    specify <code class="literal">oracle.kv.auth.kerberos.realm</code>. 
+                </p>
+            <p> 
+                    If KerberosCredentials is not used, this field has to be
+                    specified in the login file or security properties field of
+                    KVStoreConfig. 
+                </p>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">oracle.kv.auth.kerberos.services</code>
+                </p>
+            <p> 
+                   Specifies the Kerberos principals for services
+                   associated with each helper host. Setting this property
+                   is required if, as recommended, each host uses a different 
+                   principal that includes its own principal name. All principals
+                   should specify the same service and realm. If this property 
+                   is not set, the client will use <code class="literal">oraclenosql</code>
+                   as the principal name for services on all helper hosts.
+                </p>
+            <p>
+                   Each entry should specify the helper host name followed by the
+                   Kerberos service name, and optionally an instance name and realm name.
+                   The entries are separated by commas, ignoring spaces. If any entry does not
+                   specify a realm, each entry will use the default realm specified in
+                   Kerberos configuration file. If any entry specifies a realm name, then
+                   all entries must specify the same one. The syntax is:
+                </p>
+            <pre class="programlisting">host:service[:instance[@realm]][, host:service[:instance[@realm]]]* </pre>
+            <p>
+                   For example:
+                </p>
+            <pre class="programlisting">host37:nosql/host37@EXAMPLE.COM, 
+host53:nosql/host53@EXAMPLE.COM </pre>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">oracle.kv.auth.kerberos.keytab</code>
+                </p>
+            <p> 
+                   The default location of the keytab file is specified by the Kerberos
+                   configuration file. If the keytab is not specified there, then the
+                   system looks for the file <code class="literal">user.home/krb5.keytab</code>.
+                </p>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">oracle.kv.auth.kerberos.realm</code>
+                </p>
+            <p>
+                    Specifies the Kerberos realm for the user principal if
+                    using a short name to specify the client login principal.
+                </p>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">oracle.kv.auth.kerberos.ccache</code>
+                </p>
+            <p> 
+                    Specifies the path of the Kerberos ticket cache. This
+                    field is optional. The default ticket cache is
+                    "/tmp/krbcc_&lt;uid&gt;". If the credential cache is not
+                    found, the system will look for the file
+                    user.home/krb5cc_user.name. If you want to use your own
+                    ticket cache, set this field to the path of the ticket
+                    cache. 
+                </p>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">oracle.kv.auth.kerberos.mutualAuth</code>
+                </p>
+            <p>
+                    Specifies whether the client should use mutual
+                    authentication. If this value is set to true, the client
+                    will authenticate the server's identity in the login
+                    results. 
+                </p>
+            <p>
+                    The default value is <code class="literal">false</code>, so mutual
+                    authentication is disabled.
+                </p>
+          </li>
+        </ul>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="setprop_file"></a>Setting Security Properties in a security login file</h3>
+            </div>
+          </div>
+        </div>
+        <p> 
+                To set the properties in a security file, specify the
+                location of the login file by setting the
+                    <code class="literal">oracle.kv.security</code> Java system property.
+                For example: 
+            </p>
+        <pre class="programlisting">java -Doracle.kv.security=kerberoslogin.txt HelloWorld </pre>
+        <p>
+                where the file kerberoslogin.txt should be a copy of the
+                client.security file with additional properties settings for
+                Kerberos authentication. The file would then contain content
+                like this:
+            </p>
+        <pre class="programlisting">oracle.kv.auth.username=krbuser@EXAMPLE.COM
+oracle.kv.auth.external.mechanism=kerberos
+oracle.kv.auth.kerberos.keytab=/kerberos/krb5.keytab
+oracle.kv.auth.kerberos.services=
+                 node01:oraclenosql/node01.example.com@EXAMPLE.COM
+oracle.kv.auth.kerberos.mutualAuth=false </pre>
+        <p>
+                You can specify the location of the Kerberos
+                configuration file by specifying the
+                    <code class="literal">java.security.krb5.conf</code> Java system
+                property. For example:
+            </p>
+        <pre class="programlisting">java -Djava.security.krb5.conf=/kerberos/krb5.conf \
+-Doracle.kv.security=kerberoslogin.txt HelloWorld </pre>
+        <p> 
+                You can also set the default realm using
+                    <code class="literal">java.security.krb5.realm</code>. To set the
+                default kdc, use <code class="literal">java.security.krb5.kdc</code>.
+            </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p> 
+                    Set the Java system properties for both the realm 
+                    and the KDC or neither of them. These properties override
+                    the default realm and KDC values specified in the <code class="literal">krb5.conf</code> file.
+                </p>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="setprop_kvstoreconfig"></a>Setting Security Properties through KVStoreConfig</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                You can also set security properties using 
+                <code class="classname">KVStoreConfig</code>. For example: 
+            </p>
+        <pre class="programlisting">Properties securityProps = new Properties();
+securityProps.setProperty("oracle.kv.auth.username", 
+                                           "krbuser@EXAMPLE.COM");
+securityProps.setProperty("oracle.kv.auth.external.mechanism", "kerberos");
+securityProps.setProperty("oracle.kv.auth.kerberos.keytab", 
+                                            "/kerberos/krb5.keytab");
+securityProps.setProperty("oracle.kv.auth.kerberos.services", 
+                      "node01:oraclenosql/node01.example.com@EXAMPLE.COM");
+securityProps.setProperty("oracle.kv.auth.kerberos.ccache", 
+                                              "/kerberos/krbcc_501");
+securityProps.setProperty("oracle.kv.auth.kerberos.mutualAuth", "false");
+
+KVStoreConfig kvConfig = new KVStoreConfig("mystore", "node01:5000");
+kvConfig.setSecurityProperties(securityProps); </pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="login_secprop"></a>Using security properties to login</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                To login to Oracle NoSQL Database using security properties, you can use
+                credential cache, a keytab file or the principal password.
+            </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p> 
+                    When connecting through the Admin CLI, if credential cache
+                    or keytabs login attempts fail, Oracle NoSQL Database prompts for
+                    the principal's password.
+                </p>
+        </div>
+        <div class="sect3" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h4 class="title"><a id="login_cache"></a>Using credential cache</h4>
+              </div>
+            </div>
+          </div>
+          <p> 
+                    To login to Oracle NoSQL Database using credential cache:
+                </p>
+          <div class="orderedlist">
+            <ol type="1">
+              <li>
+                <p>
+                            Run the <code class="literal">kinit</code> Kerberos tool to
+                            save the credential in the credential cache.
+                        </p>
+                <p> 
+                            For example, to authenticate the client principal
+                            krbuser@EXAMPLE.COM to KDC:
+                        </p>
+                <pre class="programlisting">kinit krbuser@EXAMPLE.COM
+Password for krbuser@EXAMPLE.COM: ******** </pre>
+                <p>
+                            The granted TGT will be saved in the default
+                            credential cache for later authentication.
+                        </p>
+              </li>
+              <li>
+                <p> 
+                            You can also generate a separate cache. To do
+                            this run the following command:
+                        </p>
+                <pre class="programlisting">kinit krbuser@EXAMPLE.COM -c krbcc_krbuser</pre>
+              </li>
+              <li>
+                <p> 
+                            Perform the login by specifying
+                                <code class="literal">oracle.kv.auth.kerberos.ccache</code>
+                            in a security login file or through
+                                <code class="classname">KVStoreConfig</code>. In this
+                            case, a security login file is used: 
+                        </p>
+                <pre class="programlisting">java -Xmx256m -Xms256m \
+-Doracle.kv.security=mylogin.txt \
+-jar KVHOME/lib/kvstore.jar runadmin -port 5000 -host localhost
+Logged in admin as krbuser</pre>
+                <p> 
+                            The file <code class="literal">mylogin.txt</code> should be
+                            a copy of the <code class="literal">client.security</code>
+                            file with additional properties settings for
+                            Kerberos authentication. The file would then contain
+                            content like this: 
+                        </p>
+                <pre class="programlisting">oracle.kv.auth.kerberos.ccache=/kerberos/krbcc_krbuser
+oracle.kv.auth.username = krbuser@EXAMPLE.COM 
+oracle.kv.auth.external.mechanism=kerberos
+oracle.kv.auth.kerberos.services=
+                 node01:oraclenosql/node01.example.com@EXAMPLE.COM
+oracle.kv.auth.kerberos.mutualAuth=false </pre>
+                <p> 
+                            In this case, Oracle NoSQL Database reads the credential cache 
+                            and logins to Kerberos without needing a password.
+                        </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div class="sect3" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h4 class="title"><a id="login_keytab"></a>Using a keytab</h4>
+              </div>
+            </div>
+          </div>
+          <p> 
+                    To login to Oracle NoSQL Database using a keytab: 
+                </p>
+          <div class="orderedlist">
+            <ol type="1">
+              <li>
+                <p>
+                            Run the <code class="literal">kinit</code> Kerberos tool to
+                            extract the keytab:
+                        </p>
+                <pre class="programlisting">kadmin.local:  ktadd -k /tmp/mykeytab krbuser@EXAMPLE.COM
+Entry for principal krbuser@EXAMPLE.COM added to 
+keytab WRFILE:/tmp/mykeytab. </pre>
+              </li>
+              <li>
+                <p> 
+                            Copy the keytab file to any client machine that will
+                            use the krbuser@EXAMPLE.COM principal to login
+                            automatically to Oracle NoSQL Database.
+                        </p>
+              </li>
+              <li>
+                <p> 
+                            Set the Kerberos security properties, including
+                            the keytab file location, on each client by
+                            specifying them in a security file or through the
+                                <code class="classname">KVStoreConfig</code> class. 
+                        </p>
+                <p>
+                            In this example, a security file (login) is
+                            used. To login, specify the keytab location by using
+                            <code class="literal">oracle.kv.auth.kerberos.keytab</code>.
+                            You must also specify the username using
+                                <code class="literal">oracle.kv.auth.username</code>. For
+                            example, the login file would then contain content like
+                            this: 
+                        </p>
+                <pre class="programlisting">oracle.kv.auth.kerberos.keytab = /kerberos/mykeytab
+oracle.kv.auth.username = krbuser@EXAMPLE.COM
+oracle.kv.auth.external.mechanism=kerberos
+oracle.kv.auth.kerberos.services=
+                 node01:oraclenosql/node01.example.com@EXAMPLE.COM
+oracle.kv.auth.kerberos.mutualAuth=false
+</pre>
+                <p> 
+                            In this case, Oracle NoSQL Database reads the keytab and logins
+                            to Kerberos without needing a password.
+                        </p>
+                <p> 
+                            For more information on Kerberos security
+                            properties, see <a class="xref" href="kerberos_properties.html" title="Kerberos Security Properties">Kerberos Security Properties</a>. 
+                        </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="kadmin.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="kerberos.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="jaas.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Kadmin and kadmin.local </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> JAAS programming framework integration</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

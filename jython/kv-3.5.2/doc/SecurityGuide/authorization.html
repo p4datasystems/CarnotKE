@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 9. Configuring Authorization</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="prev" href="sessions.html" title="Sessions" />
+    <link rel="next" href="roles.html" title="Roles" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 9. Configuring Authorization</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="sessions.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="roles.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="authorization"></a>Chapter 9. Configuring Authorization</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="authorization.html#privileges">Privileges</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="authorization.html#system_privileges">System Privileges</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="authorization.html#object_privileges">Object Privileges</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="authorization.html#tableownership">Table Ownership</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="authorization.html#privilege_hierarchy">Privilege Hierarchy</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="roles.html">Roles</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="roles.html#system_roles">System Built-in Roles</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="roles.html#user_defined_roles">User-Defined Roles</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="managing_roles.html">Managing Roles, Privileges and Users</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="managing_roles.html#role_creation">Role Creation</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="managing_roles.html#role_removal">Role Removal</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="managing_roles.html#role_status">Role Status</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="managing_roles.html#grant_role">Grant Roles or Privileges</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="managing_roles.html#revoke_role">Revoke Roles or Privileges</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+        </dl>
+      </div>
+      <p>
+             Oracle NoSQL Database provides role-based authorization which enables the user to
+             assign kvstore roles to user accounts to define accessible
+             data and allow database administrative operations for each user account.
+        </p>
+      <p>
+             Users can acquire desired privileges by role-granting. The user-defined role
+             feature allows the user to create new roles using kvstore built-in privileges,
+             and add new privilege groups to users by assigning newly-defined roles to users.
+             You can grant users multiple roles. 
+        </p>
+      <p>
+             For more information, see:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+              <a class="xref" href="authorization.html#privileges" title="Privileges">Privileges</a>
+            </p>
+          </li>
+          <li>
+            <p>
+              <a class="xref" href="roles.html" title="Roles">Roles</a>
+            </p>
+          </li>
+          <li>
+            <p>
+              <a class="xref" href="managing_roles.html" title="Managing Roles, Privileges and Users">Managing Roles, Privileges and Users</a>
+            </p>
+          </li>
+        </ul>
+      </div>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="privileges"></a>Privileges</h2>
+            </div>
+          </div>
+        </div>
+        <div class="toc">
+          <dl>
+            <dt>
+              <span class="sect2">
+                <a href="authorization.html#system_privileges">System Privileges</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="authorization.html#object_privileges">Object Privileges</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="authorization.html#tableownership">Table Ownership</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="authorization.html#privilege_hierarchy">Privilege Hierarchy</a>
+              </span>
+            </dt>
+          </dl>
+        </div>
+        <p>
+             A privilege is an approval to perform an operation on one or more Oracle NoSQL Database objects.
+             In Oracle NoSQL Database, all privileges fall into the two general categories:
+        </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                System privileges
+             </p>
+              <p>
+                This gives a user the ability to perform a particular action, or to perform an
+                action on any data objects of a particular type.
+             </p>
+            </li>
+            <li>
+              <p>
+                Object privileges
+             </p>
+              <p>
+                This gives a user the ability to perform a particular action on a specific object,
+                such as a table. 
+            </p>
+            </li>
+          </ul>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="system_privileges"></a>System Privileges</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+             Oracle NoSQL Database provides the following system privileges, covering both data
+             access and administrative operations:
+        </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+                  <code class="literal">SYSDBA</code>
+                </p>
+                <p>
+                Can perform Oracle NoSQL Database management, including table
+                create/drop/evolve, index create/drop and Avro schema
+                create/evolve.
+             </p>
+              </li>
+              <li>
+                <p>
+                  <code class="literal">SYSVIEW</code>
+                </p>
+                <p>
+                 Can view/show system information, configuration and metadata.
+             </p>
+              </li>
+              <li>
+                <p>
+                  <code class="literal">DBVIEW</code>
+                </p>
+                <p>
+                 Can query data object information. The object is defined as a
+                 resource in Oracle NoSQL Database, subject to access control. At present,
+                 you can have this privilege to query the table, index and Avro
+                 schema's information.
+             </p>
+              </li>
+              <li>
+                <p>
+                  <code class="literal">USRVIEW</code>
+                </p>
+                <p>
+                 Can query users' own information, like their own user
+                 information, the status of commands they issued.
+             </p>
+              </li>
+              <li>
+                <p>
+                  <code class="literal">SYSOPER</code>
+                </p>
+                <p>
+                Can perform Oracle NoSQL Database system configuration, topology management, user 
+                privilege/role management, diagnostic and maintenance operations.
+                Allows a role to perform cancel, execute, interrupt, and wait on any plan.
+             </p>
+              </li>
+              <li>
+                <p>
+                  <code class="literal">READ_ANY</code>
+                </p>
+                <p>
+                Can get/iterate keys and values in the entire store, including any tables.
+             </p>
+              </li>
+              <li>
+                <p>
+                  <code class="literal">WRITE_ANY</code>
+                </p>
+                <p>
+                Can put/delete values in the entire store, including any tables.
+             </p>
+              </li>
+              <li>
+                <p>
+                  <code class="literal">CREATE_ANY_TABLE</code>
+                </p>
+                <p>
+                Can create any table in the store.
+             </p>
+              </li>
+              <li>
+                <p>
+                  <code class="literal">DROP_ANY_TABLE</code>
+                </p>
+                <p>
+                Can drop any table from the store.
+             </p>
+              </li>
+              <li>
+                <p>
+                  <code class="literal">EVOLVE_ANY_TABLE</code>
+                </p>
+                <p>
+                Can evolve any table in the store.
+             </p>
+              </li>
+              <li>
+                <p>
+                  <code class="literal">CREATE_ANY_INDEX</code>
+                </p>
+                <p>
+                Can create any index on any table in the store.
+             </p>
+              </li>
+              <li>
+                <p>
+                  <code class="literal">DROP_ANY_INDEX</code>
+                </p>
+                <p>
+                Can drop any index from any table in the store.
+             </p>
+              </li>
+              <li>
+                <p>
+                  <code class="literal">READ_ANY_TABLE</code>
+                </p>
+                <p>
+                Can read from any table in the store.
+             </p>
+              </li>
+              <li>
+                <p>
+                  <code class="literal">DELETE_ANY_TABLE</code>
+                </p>
+                <p>
+                Can delete data from any table in the store.
+             </p>
+              </li>
+              <li>
+                <p>
+                  <code class="literal">INSERT_ANY_TABLE</code>
+                </p>
+                <p>
+                Can insert and update data in any table in the store.
+             </p>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="object_privileges"></a>Object Privileges</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+             The object privileges defined in Oracle NoSQL Database are:
+             </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+                  <code class="literal">READ_TABLE</code>
+                </p>
+                <p>Can read from a specific table in the.</p>
+              </li>
+              <li>
+                <p>
+                  <code class="literal">DELETE_TABLE</code>
+                </p>
+                <p>Can delete data from a specific table in the store</p>
+              </li>
+              <li>
+                <p>
+                  <code class="literal">INSERT_TABLE</code>
+                </p>
+                <p>Can insert and update data to a specific table in the store.</p>
+              </li>
+              <li>
+                <p>
+                  <code class="literal">EVOLVE_TABLE</code>
+                </p>
+                <p>Can evolve a specific table.</p>
+              </li>
+              <li>
+                <p>
+                  <code class="literal">CREATE_INDEX</code>
+                </p>
+                <p>Can create indexes on a specific table.</p>
+              </li>
+              <li>
+                <p>
+                  <code class="literal">DROP_INDEX</code>
+                </p>
+                <p>Can drop indexes from a specific table.</p>
+              </li>
+            </ul>
+          </div>
+          <p> 
+            For more information on the privileges required by the user to access specific
+            KVStore APIs as well as CLI commands, see
+            <a class="xref" href="required_privileges.html" title="Appendix B. KVStore Required Privileges">KVStore Required Privileges</a>.
+        </p>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="tableownership"></a>Table Ownership</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+            When you are using a secure store, tables are owned by the
+            user that created them. A table's owner has by default full
+            privileges to the table. That is, the owner has all the
+            table object privileges.
+        </p>
+          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+            <h3 class="title">Note</h3>
+            <p>
+                For tables created in a non-secured store, or tables
+                created prior to the 3.3 release, the table's owner is
+                null.
+            </p>
+          </div>
+          <p>
+            Once a table is created, its owner cannot be changed. If a
+            table is dropped and then recreated, all previously granted
+            table privileges must be granted again.
+        </p>
+          <p>
+            Parent and child tables are required to have the same
+            owner. However, table privileges are not automatically
+            granted to the table's children. For example, if 
+            <code class="literal">READ_TABLE</code> is granted to table
+            <code class="literal">myTable</code>, then that privilege is not
+            automatically granted to any of that table's children. To
+            grant <code class="literal">READ_TABLE</code> to the child tables,
+            you must individually grant the privilege to each child
+            table in turn.
+        </p>
+          <p>
+            A table's owner can grant or revoke all table
+            privileges to or from other roles. To do this, use the
+            <code class="literal">GRANT</code> DDL statement. (See
+            <a class="xref" href="managing_roles.html#grant_role" title="Grant Roles or Privileges">Grant Roles or Privileges</a>
+            for details.) To make a user other than the owner be able
+            to read/insert/delete a specific table, two conditions must
+            be met:
+        </p>
+          <div class="orderedlist">
+            <ol type="1">
+              <li>
+                <p>
+                    The user has the read/insert/delete privilege for
+                    the table in question; and
+                </p>
+              </li>
+              <li>
+                <p>
+                    The user has the same privilege, or read privilege,
+                    for all parent tables of that table. 
+                </p>
+              </li>
+            </ol>
+          </div>
+          <p>
+            For example, for table <code class="literal">myTable</code> and its
+            child <code class="literal">myTable.child1</code>, a non-owner user
+            can only insert data to <code class="literal">myTable.child1</code>
+            when she has insert privilege (or better) on
+            <code class="literal">myTable.child1</code>, and read and/or insert
+            privilege on <code class="literal">myTable</code>.
+        </p>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="privilege_hierarchy"></a>Privilege Hierarchy</h3>
+              </div>
+            </div>
+          </div>
+          <p> 
+             In Oracle NoSQL Database, there is a relationship between parts of existing privileges,
+             called 'implications'. Implication means that a privilege may be a superset
+             of some other privileges.
+        </p>
+          <p>
+             For example, Privilege A implies (=&gt;) B means that
+             privilege A has all the permissions defined in privilege B. 
+        </p>
+          <p> 
+            The following illustration depicts all implication relationship among
+            Oracle NoSQL Database privileges:
+        </p>
+          <div class="mediaobject">
+            <img src="privilegehierarchy.jpg" alt="NoSQL Database Hierarchy of Privileges" />
+          </div>
+          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+            <h3 class="title">Note</h3>
+            <p>
+              All implications are transitive, that is, if A=&gt;B and B=&gt;C, then A=&gt;C. 
+           </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="sessions.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="roles.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Sessions </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Roles</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

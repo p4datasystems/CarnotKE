@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 1. Introduction to Oracle NoSQL Database</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Concepts Manual" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Concepts Manual" />
+    <link rel="prev" href="preface.html" title="Preface" />
+    <link rel="next" href="architecture.html" title="Architecture" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 1. Introduction to Oracle NoSQL Database </th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="preface.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="architecture.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="introduction"></a>Chapter 1. Introduction to Oracle NoSQL Database </h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="introduction.html#licensing">Licensing Options</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="architecture.html">Architecture</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="architecture.html#repnode-group">Replication Nodes and
+                Shards</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="architecture.html#replicationfactor">Replication Factor</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="architecture.html#partitions">Partitions</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="architecture.html#data-centers">Zones</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="architecture.html#topologies">Topologies</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="datamodels.html">Data Models</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="consistency.html">Consistency</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="durability.html">Durability</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="durability.html#quorum">Quorum</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="admin-cli.html">Administration</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="admin-cli.html#kvlite">KVLite</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="admin-cli.html#cli-history">The Administration Command Line Interface history</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="monitoring.html">Monitoring</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="monitoring.html#admin-console">The Admin Console</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="troubleshooting.html">Troubleshooting</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="kvstore-access.html">Access and Security</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="integration.html">Integration</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="integration.html#hadoopintegration">Hadoop Integration</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="integration.html#exttab">Oracle External Tables Integration</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="integration.html#coherence">Coherence Integration</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+        </dl>
+      </div>
+      <p> 
+        Welcome to Oracle NoSQL Database. Oracle NoSQL Database provides multi-terabyte distributed
+        key/value pair storage that offers scalable throughput and
+        performance. That is, it services network requests to store and
+        retrieve data which is accessed as tables of information or,
+        optionally, as key-value pairs. Oracle NoSQL Database services these types of data
+        requests with a latency, throughput, and data consistency that is
+        predictable based on how the store is configured. 
+    </p>
+      <p> 
+        Oracle NoSQL Database offers full Create, Read, Update and Delete (CRUD)
+        operations with adjustable durability guarantees. Oracle NoSQL Database is
+        designed to be highly available, with excellent throughput and
+        latency, while requiring minimal administrative interaction.
+    </p>
+      <p> 
+        Oracle NoSQL Database provides performance scalability. If you require better
+        performance, you use more hardware. If your performance
+        requirements are not very steep, you can purchase and manage fewer
+        hardware resources. 
+    </p>
+      <p> 
+        Oracle NoSQL Database is meant for any application that requires
+        network-accessible data with user-definable read/write performance
+        levels. The typical application is a web application which is
+        servicing requests across the traditional three-tier architecture:
+        web server, application server, and back-end database. In this
+        configuration, Oracle NoSQL Database is meant to be installed behind the
+        application server, causing it to either take the place of the
+        back-end database, or work alongside it. To make use of Oracle NoSQL Database,
+        code must be written that runs on the application server. 
+    </p>
+      <p> 
+        An application makes use of Oracle NoSQL Database by performing network
+        requests against Oracle NoSQL Database's data store, which is referred to as the
+        KVStore. The requests are made using the Oracle NoSQL Database Driver, which is
+        linked into your application as a Java library (.jar file), and
+        then accessed using a series of Java APIs.
+    </p>
+      <p> 
+        The usage of these APIs is introduced in one of two manuals.
+        Most developers will want to read
+            <em class="citetitle">Oracle NoSQL Database Getting Started with the Table API</em>. Developers who want to
+        use the older, legacy Key/Value API should read
+            <em class="citetitle">Oracle NoSQL Database Getting Started with the Key/Value API</em>.
+    </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+        Oracle NoSQL Database is tested using Java 7, and so Oracle NoSQL Database should be used
+            only with that version of Java.
+        </p>
+      </div>
+      <p> 
+        You can also access data stored in Oracle NoSQL Database tables by using a non
+        Java language driver. C, Node.js and Python drivers are available.
+        For more information, see the specific driver's Quick Start Guide. 
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="licensing"></a>Licensing Options</h2>
+            </div>
+          </div>
+        </div>
+        <p> 
+            Oracle NoSQL Database is available in two licensing options:
+        </p>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p> 
+                    Oracle NoSQL Database Community Edition (CE) 
+                </p>
+              <p> 
+                    Available under the AGPL license. If you cannot
+                    comply with the terms of the AGPL license, you should
+                    consider purchasing Oracle NoSQL Database Enterprise Edition. 
+                </p>
+            </li>
+            <li>
+              <p> 
+                    Oracle NoSQL Database Enterprise Edition (EE) 
+                </p>
+              <p>
+                    Available under a standard Oracle commercial license
+                    and provides additional warranties and
+                    indemnifications. The primary benefit of Oracle NoSQL Database
+                    Enterprise Edition is integration with the Oracle
+                    stack. Specifically, EE exclusively includes or is
+                    required for the following:
+                </p>
+              <div class="itemizedlist">
+                <ul type="disc">
+                  <li>
+                        Oracle Database External Table integration
+                    </li>
+                  <li> 
+                        Oracle Big Data SQL integration
+                    </li>
+                  <li> 
+                        Oracle Coherence integration
+                    </li>
+                  <li>
+                        Oracle Event Processing integration
+                    </li>
+                  <li>
+                        Oracle Enterprise Manager integration 
+                    </li>
+                  <li>
+                        Oracle Semantic Graph integration 
+                    </li>
+                  <li>
+                        Oracle Wallet integration 
+                    </li>
+                  <li>
+                        SNMP administrative interface 
+                    </li>
+                </ul>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="preface.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="architecture.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Preface </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Architecture</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

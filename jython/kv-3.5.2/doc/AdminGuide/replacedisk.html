@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Replacing a Failed Disk</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="procedures.html" title="Chapter 6. Administrative Procedures" />
+    <link rel="prev" href="replacefailedsn.html" title="Replacing a Failed Storage Node" />
+    <link rel="next" href="replacedc.html" title="Repairing a Failed Zone by Replacing Hardware" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Replacing a Failed Disk</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="replacefailedsn.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Administrative Procedures</th>
+          <td width="20%" align="right"> <a accesskey="n" href="replacedc.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="replacedisk"></a>Replacing a Failed Disk</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+          If a disk has failed, or is in the process of failing, you can replace the disk.
+          Disk replacement procedures are necessary to keep the store running. 
+          This section walks you through the steps of replacing a failed disk, 
+          to preserve data availability.
+       </p>
+      <p>
+           The following example deploys a KVStore to a set of three machines, 
+           each with 3 disks. Use the <code class="literal">storagedir</code> flag of the
+           <code class="literal">makebootconfig</code> command to specify the storage location of the
+           other two disks. 
+        </p>
+      <pre class="programlisting">&gt; java -jar KVHOME/lib/kvstore.jar makebootconfig \
+    -root /opt/ondb/var/kvroot \
+    -port 5000  \
+    -admin 5001 \
+    -host node09
+    -harange 5010,5020 \
+    -num_cpus 0  \
+    -memory_mb 0 \
+    -store-security none \
+    -capacity 2  \
+    -storagedir /disk1/ondb/data \
+    -storagedir /disk2/ondb/data  </pre>
+      <p>   
+           With a boot configuration such as that shown above, the directory 
+           structure that is created and populated on each machine would then be:
+       </p>
+      <pre class="programlisting"> - Machine 1 (SN1) -     - Machine 2 (SN2) -    - Machine 3 (SN3) -
+/opt/ondb/var/kvroot   /opt/ondb/var/kvroot  /opt/ondb/var/kvroot
+  log files              log files             log files
+  /store-name           /store-name           /store-name
+    /log                   /log                  /log
+    /sn1                   /sn2                  /sn3
+      config.xml             config.xml            config.xml
+      /admin1                /admin2               /admin3
+        /env                   /env                  /env
+
+/disk1/ondb/data         /disk1/ondb/data        /disk1/ondb/data
+  /rg1-rn1                 /rg1-rn2                /rg1-rn3
+    /env                     /env                    /env
+
+/disk2/ondb/data         /disk2/ondb/data        /disk2/ondb/data
+  /rg2-rn1                 /rg2-rn2                /rg2-rn3
+    /env                     /env                    /env </pre>
+      <p>   
+           In this case, configuration information and administrative
+           data is stored in a location that is separate from all of the replication data.
+           The replication data itself is stored by each distinct
+           Replication Node service on separate, physical media as well. Storing
+           data in this way provides failure isolation and will typically
+           make disk replacement less complicated and time consuming.
+       </p>
+      <p>
+           To replace a failed disk:
+        </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+           Determine which disk has failed. To do this, you can use standard system
+           monitoring and management mechanisms. In the previous example, suppose disk2
+           on Storage Node 3 fails and needs to be replaced.
+        </p>
+          </li>
+          <li>
+            <p>
+           Then given a directory structure, determine which Replication Node service to stop.
+           With the structure described above, the store writes replicated data to disk2 on Storage Node 3, so 
+           <code class="literal">rg2-rn3</code> must be stopped before replacing the failed disk.
+        </p>
+          </li>
+          <li>
+            <p>
+           Use the <code class="literal">plan stop-service</code> command to stop the affected
+           service (rg2-rn3) so that any attempts by the system to communicate with it
+           are no longer made; resulting in a reduction in the amount of error output
+           related to a failure you are already aware of.
+        </p>
+            <pre class="programlisting">kv-&gt; plan stop-service -service rg2-rn3</pre>
+          </li>
+          <li>
+            <p>
+           Remove the failed disk (disk2) using whatever procedure is
+           dictated by the operating system, disk manufacturer, and/or hardware
+           platform.
+        </p>
+          </li>
+          <li>
+            <p>
+           Install a new disk using any appropriate procedures. 
+        </p>
+          </li>
+          <li>
+            <p>
+           Format the disk to have the same storage directory as before;
+           in this case, <code class="literal">/disk2/ondb/var/kvroot</code>.
+        </p>
+          </li>
+          <li>
+            <p>
+           With the new disk in place, use the <code class="literal">plan start-service</code>
+           command to start the <code class="literal">rg2-rn3</code> service.
+        </p>
+            <pre class="programlisting">kv-&gt; plan start-service -service rg2-rn3</pre>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+             It can take a considerable amount of time for the disk to recover all 
+             of its data; depending on the amount of data that previously resided on
+             the disk before failure. It is also important to note that the system may
+             encounter additional network traffic and load while the new disk is being
+             repopulated.
+          </p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="replacefailedsn.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="procedures.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="replacedc.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Replacing a Failed Storage Node </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Repairing a Failed Zone by Replacing Hardware</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>SSL communication properties</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="encryption.html" title="Chapter 7. Encryption" />
+    <link rel="prev" href="encryption.html" title="Chapter 7. Encryption" />
+    <link rel="next" href="config_auth.html" title="Chapter 8. Configuring Authentication" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">SSL communication properties</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="encryption.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 7. Encryption</th>
+          <td width="20%" align="right"> <a accesskey="n" href="config_auth.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="ssl_comm"></a>SSL communication properties</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            Assuming that the NoSQL server is secured by SSL, client connections 
+            from Oracle NoSQL Database administrative clients will need to connect over SSL
+            as well. This can be achieved by providing security properties for 
+            the connection.
+        </p>
+      <p>
+            For Oracle-provided command line tools, a security
+            file must be specified. The security configuration process automatically
+            generates a basic security file <code class="literal">(client.security)</code>
+            that can be used to connect to the store. You may wish to make a copy
+            of this and modify it to include additional configuration properties. 
+        </p>
+      <p>
+            The minimal configuration needed to connect to a secure store
+            includes setting the following properties:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    <code class="literal">oracle.kv.transport=ssl</code>
+                </p>
+            <p>
+                    Directs KVStore clients and utilities to
+                    connect to the KVStore RMI registry via SSL.
+                </p>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">oracle.kv.ssl.trustStore=&lt;path-to-ssl-truststore&gt;</code>
+                </p>
+            <p>
+                    Names a copy of the truststore file generated
+                    by <code class="literal">makebootconfig</code> or
+                    <code class="literal">securityconfig</code> to enable validation of the
+                    KVStore server SSL certificate. 
+                </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p> 
+                        You can use SSL to communicate an
+                        application with other SSL servers without
+                        using truststore-based certification
+                        validation. 
+                    </p>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <p>
+           In addition to the two properties listed above, the following properties are also
+           supported for control of SSL communications:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    <code class="literal">oracle.kv.ssl.ciphersuites</code>
+                </p>
+            <p> 
+                    Specifies a comma-separated list of SSL cipher
+                    suites that should be allowed in communication
+                    with the server. 
+                </p>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">oracle.kv.ssl.protocols</code>
+                </p>
+            <p> 
+                    Specifies a comma-separated list of SSL
+                    protocols that should be allowed in communication
+                    with the server.
+                </p>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">oracle.kv.ssl.trustStoreType</code>
+                </p>
+            <p>
+                    Specifies the type of truststore being used. If
+                    not specified, the default type for the Java
+                    runtime is used.
+                </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p> 
+                  Applications may also set these security properties
+                  through API methods on KVStoreConfig. 
+              </p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="encryption.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="encryption.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="config_auth.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 7. Encryption </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 8. Configuring Authentication</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

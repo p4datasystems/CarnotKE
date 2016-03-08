@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Retrieving a Single Record</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="recordget.html" title="Chapter 5. Reading Records" />
+    <link rel="prev" href="recordget.html" title="Chapter 5. Reading Records" />
+    <link rel="next" href="multiget.html" title="Using multiGet()" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Retrieving a Single Record</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="recordget.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 5. Reading Records</th>
+          <td width="20%" align="right"> <a accesskey="n" href="multiget.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="singleget"></a>Retrieving a Single Record</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+          To retrieve a record from the store, use the 
+          <code class="methodname">KVStore.get()</code> method. This method
+          returns a <code class="classname">ValueVersion</code> object.
+          Use <code class="methodname">ValueVersion.getValue()</code>
+          to return the <code class="classname">Value</code> object associated with
+          the key. It is then up to your application to turn the
+          <code class="classname">Value</code>'s byte array into a useful form.
+          Normally, this will require the use of an Avro binding. See
+          <a class="xref" href="avrobindings.html" title="Chapter 7. Avro Bindings">Avro Bindings</a>
+          for details.
+      </p>
+      <p>
+          For example, in <a class="xref" href="recordput.html" title="Writing Records to the Store">Writing Records to the Store</a>
+          we showed a trivial example of storing a key-value pair to the
+          store, where the value was a simple String. The following trivial
+          example shows how to retrieve that record. (Again, this is
+          <span class="emphasis"><em>not</em></span> how your code should deserialize data,
+          because this example does not use Avro to manage the value's
+          schema.)
+      </p>
+      <a id="singleget-1"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.Key;
+import oracle.kv.Value;
+import oracle.kv.ValueVersion;
+import java.util.ArrayList;
+
+...
+
+ArrayList&lt;String&gt; majorComponents = new ArrayList&lt;String&gt;();
+ArrayList&lt;String&gt; minorComponents = new ArrayList&lt;String&gt;();
+
+...
+
+// Define the major and minor path components for the key
+majorComponents.add("Smith");
+majorComponents.add("Bob");
+
+minorComponents.add("phonenumber");
+
+// Create the key
+Key myKey = Key.createKey(majorComponents, minorComponents);
+
+// Now retrieve the record. Note that we do not show the creation of 
+// the kvstore handle here.
+
+ValueVersion vv = kvstore.get(myKey);
+Value v = vv.getValue(); 
+String data = new String(v.getValue());</pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="recordget.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="recordget.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="multiget.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 5. Reading Records </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Using multiGet()</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

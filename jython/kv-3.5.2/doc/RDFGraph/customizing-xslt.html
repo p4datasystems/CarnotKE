@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Customizing the Default XSLT File</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="sparql.html" title="Chapter 9. SPARQL Gateway for XML-based Tools" />
+    <link rel="prev" href="sparql-gateway.html" title="Using SPARQL Gateway with RDF Data" />
+    <link rel="next" href="sparql-wi.html" title="Using the SPARQL Gateway Graphical Web Interface" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Customizing the Default XSLT File</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="sparql-gateway.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 9. SPARQL Gateway for XML-based
+        Tools</th>
+          <td width="20%" align="right"> <a accesskey="n" href="sparql-wi.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="customizing-xslt"></a>Customizing the Default XSLT File</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            You can customize the default XSL transformation file
+            (the one referenced using <code class="literal">wx=default.xslt</code>). This section
+            presents some examples of customizations. 
+        </p>
+      <p> 
+            The following example implements this namespace prefix
+            replacement logic: if a variable binding returns a URI
+            that starts with http://purl.org/goodrelations/v1#, that
+            portion is replaced by gr:; and if a variable binding
+            returns a URI that starts with
+            http://www.w3.org/2000/01/rdf-schema#, that portion is
+            replaced by rdfs:. 
+        </p>
+      <pre class="programlisting">&lt;xsl:when test="starts-with(text(),
+'http://purl.org/goodrelations/v1#')"&gt;
+&lt;xsl:value-of select="concat('gr:',substring-after(text(),
+'http://purl.org/goodrelations/v1#'))"/&gt;
+&lt;/xsl:when&gt;
+...
+&lt;xsl:when test="starts-with(text(),
+                         'http://www.w3.org/2000/01/rdf-schema#')"&gt;
+   &lt;xsl:value-of select="concat('rdfs:',substring-after(text(),
+'http://www.w3.org/2000/01/rdf-schema#'))"/&gt;
+&lt;/xsl:when&gt;
+The following example implements logic to trim a leading http://localhost/ 
+or a leading http://127.0.0.1/.
+&lt;xsl:when test="starts-with(text(),'http://localhost/')"&gt;
+  &lt;xsl:value-of select="substring-after(text(),'http://localhost/')"/&gt;
+&lt;/xsl:when&gt;
+&lt;xsl:when test="starts-with(text(),'http://127.0.0.1/')"&gt;
+  &lt;xsl:value-of select="substring-after(text(),'http://127.0.0.1/')"/&gt;
+&lt;/xsl:when&gt;
+</pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="sparql-gateway.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="sparql.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="sparql-wi.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Using SPARQL Gateway with RDF Data </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Using the SPARQL Gateway Graphical Web Interface</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

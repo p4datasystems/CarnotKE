@@ -1,0 +1,864 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Using the Authentication APIs</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="kvapi.html" title="Chapter 1. Developing for Oracle NoSQL Database" />
+    <link rel="prev" href="kvapi.html" title="Chapter 1. Developing for Oracle NoSQL Database" />
+    <link rel="next" href="kvlite-usage.html" title="Chapter 2. Introduction to Oracle KVLite" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Using the Authentication APIs</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="kvapi.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 1. Developing for Oracle NoSQL Database</th>
+          <td width="20%" align="right"> <a accesskey="n" href="kvlite-usage.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="authentication"></a>Using the Authentication APIs</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="authentication.html#configuressl">Configuring SSL</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="authentication.html#logincreds">Authentication using LoginCredentials</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="authentication.html#loginrenew">Renewing Expired Login Credentials</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="authentication.html#kerberoslogin">Authentication using Kerberos</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="authentication.html#kerberosloginjaas">Authentication using Kerberos and JAAS</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="authentication.html#accessdenied">Unauthorized Access</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+          Oracle NoSQL Database can be installed such that your client code does not have
+          to authenticate to the store. (For the sake of clarity, most of
+          the examples in this book do not perform authentication.)
+          However, if you want your store to operate in a secure manner,
+          you can require authentication. Note that doing so will result in a
+          performance cost due to the overhead of using SSL and
+          authentication. While best practice is for a production store to
+          require authentication over SSL, some sites that are performance
+          sensitive may want to forgo that level of security.
+      </p>
+      <p>
+          Authentication involves sending username/password credentials to
+          the store at the time 
+          
+          <span>
+          a store handle is acquired. 
+          </span>
+
+          
+      </p>
+      <p>
+          A store that is
+          configured to support authentication is automatically configured
+          to communicate with clients using SSL in order to ensure privacy
+          of the authentication and other sensitive information. When SSL
+          is used, SSL certificates need to be installed on the machines
+          where your 
+          
+          <span>
+            client code 
+          </span>
+          
+          
+          runs in order to validate that the store 
+          that is being accessed is trustworthy.
+      </p>
+      <p>
+          Be aware that you can authenticate to the store in several different ways.
+          You can use Kerberos, or you can specify a
+          <code class="classname">LoginCredentials</code> implementation instance to
+          <code class="methodname">KVStoreFactory.getStore()</code>. (Oracle NoSQL Database
+          provides the <code class="classname">PasswordCredentials</code> class as a
+          <code class="classname">LoginCredentials</code> implementation.)
+          If you use Kerberos, you can either use security properties
+          understood by Oracle NoSQL Database to provide necessary Kerberos information,
+          or you can use the Java Authentication and Authorization Service
+          (JAAS) programming framework.
+      </p>
+      <p>
+          For information on using <code class="classname">LoginCredentials</code>,
+          see <a class="xref" href="authentication.html#logincreds" title="Authentication using LoginCredentials">Authentication using LoginCredentials</a>. For
+          information on using Kerberos, see 
+          <a class="xref" href="authentication.html#kerberoslogin" title="Authentication using Kerberos">Authentication using Kerberos</a>. 
+          For information on using JAAS with Kerberos, see
+          <a class="xref" href="authentication.html#kerberosloginjaas" title="Authentication using Kerberos and JAAS">Authentication using Kerberos and JAAS</a>.
+      </p>
+      <p>
+          Configuring a store for authentication is described in the
+          <em class="citetitle">Oracle NoSQL Database Security Guide</em>.
+      </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="configuressl"></a>Configuring SSL</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+              If you are using a secure store, then all communications
+              between your 
+              <span>
+                client code 
+              </span>
+              
+              and the store is transported over
+              SSL, including authentication credentials. You must
+              therefore configure your client code to use SSL.  To do this,
+              you identify where the SSL certificate data is, and you also
+              separately indicate that the SSL transport is to be used.
+          </p>
+        <div class="sect3" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h4 class="title"><a id="idtruststore"></a>Identifying the Trust Store</h4>
+              </div>
+            </div>
+          </div>
+          <p>
+                  When an Oracle NoSQL Database store is configured to use the SSL
+                  transport, a series of security files are generated using
+                  a security configuration tool. One of these files is the
+                  <code class="literal">client.trust</code> file, which must be copied
+                  to any machine running 
+                  
+                  <span>
+                    Oracle NoSQL Database client code. 
+                 </span>
+                  
+              </p>
+          <p>
+                  For information on using the security configuration tool,
+                  see the <em class="citetitle">Oracle NoSQL Database Security Guide</em>.
+              </p>
+          <p>
+                  Your 
+                  
+                  <span>
+                    code 
+                 </span>
+                  
+                  
+                  must be told where the <code class="literal">client.trust</code>
+                  file can be found because it contains the certificates
+                  necessary to establish an SSL connection
+                  with the store. You indicate where this file is
+                  physically located on your machine using the
+                  <code class="literal">oracle.kv.ssl.trustStore</code> property.
+
+                    <span>
+                        There are two ways to set this property:
+                    </span>
+              </p>
+          <div class="orderedlist">
+            <ol type="1">
+              <li>
+                <p>
+                          Identify the location of the trust store by using
+                          a <code class="classname">Properties</code> object
+                          to set the <code class="literal">oracle.kv.ssl.trustStore</code>
+                          property. You then use
+                          <code class="methodname">KVStoreConfig.setSecurityProperties()</code>
+                          to pass the <code class="classname">Properties</code>
+                          object to your <code class="classname">KVStore</code>
+                          handle.
+                      </p>
+                <p>
+                          When you use this method, you use
+                          <code class="literal">KVSecurityConstants.SSL_TRUSTSTORE_FILE_PROPERTY</code>
+                          as the property name.
+                      </p>
+              </li>
+              <li>
+                <p>
+                          Use the <code class="literal">oracle.kv.security</code>
+                          property to refer to a properties file, such as
+                          the <code class="literal">client.trust</code> file. In that
+                          file, set the
+                          <code class="literal">oracle.kv.ssl.trustStore</code>
+                          property.
+                      </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div class="sect3" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h4 class="title"><a id="setssltransport"></a>Setting the SSL Transport Property</h4>
+              </div>
+            </div>
+          </div>
+          <p>
+                  In addition to identifying the location of the
+                  <code class="literal">client.trust</code> file, you must also tell
+                  your 
+                  
+                  <span>
+                    client code 
+                 </span>
+                  
+                  
+                  to use the SSL transport. You 
+                  do this by setting the <code class="literal">oracle.kv.transport</code>
+                  property.
+                    <span>
+                        There are two ways to set this property:
+                    </span>
+              </p>
+          <div class="orderedlist">
+            <ol type="1">
+              <li>
+                <p>
+                          Identify the location of the trust store by using
+                          a <code class="classname">Properties</code> object
+                          to set the <code class="literal">oracle.kv.transport</code>
+                          property. You then use
+                          <code class="methodname">KVStoreConfig.setSecurityProperties()</code>
+                          to pass the <code class="classname">Properties</code>
+                          object to your <code class="classname">KVStore</code>
+                          handle.
+                      </p>
+                <p>
+                          When you use this method, you use
+                          <code class="literal">KVSecurityConstants.TRANSPORT_PROPERTY</code>
+                          as the property name, and
+                          <code class="literal">KVSecurityConstants.SSL_TRANSPORT_NAME</code>
+                          as the property value.
+                      </p>
+              </li>
+              <li>
+                <p>
+                          Use the <code class="literal">oracle.kv.security</code>
+                          property to refer to a properties file, such as
+                          the <code class="literal">client.trust</code> file. In that
+                          file, set the
+                          <code class="literal">oracle.kv.transport</code> property.
+                      </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="logincreds"></a>Authentication using LoginCredentials</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+              You can authenticate to the store by specifying a
+              <code class="classname">LoginCredentials</code> implementation instance to
+              <code class="methodname">KVStoreFactory.getStore()</code>. Oracle NoSQL Database
+              provides the <code class="classname">PasswordCredentials</code> class as a
+              <code class="classname">LoginCredentials</code> implementation.
+              If your store requires SSL to be used as the transport, configure
+              that prior to performing the authentication. (See the
+              previous section for details.)
+          </p>
+        <p>
+              Your code should be prepared to handle a failed
+              authentication attempt.
+              <code class="methodname">KVStoreFactory.getStore()</code> will throw
+              <code class="classname">AuthenticationFailure</code> in the event of
+              a failed authentication attempt. You can catch that exception
+              and handle the problem there.
+          </p>
+        <p>
+              The following is a simple example of obtaining a store
+              handle for a secured store. The SSL transport is used in this
+              example. 
+          </p>
+        <pre class="programlisting">import java.util.Properties;
+
+import oracle.kv.AuthenticationFailure;
+import oracle.kv.PasswordCredentials;
+import oracle.kv.KVSecurityConstants;
+import oracle.kv.KVStoreConfig;
+import oracle.kv.KVStoreFactory;
+
+
+
+KVStore store = null;
+try {
+    /*
+     * storeName, hostName, port, username, and password are all
+     * strings that would come from somewhere else in your 
+     * application.
+     */
+    KVStoreConfig kconfig = 
+        new KVStoreConfig(storeName, hostName + ":" + port);
+
+    /* Set the required security properties */
+    Properties secProps = new Properties();
+    secProps.setProperty(KVSecurityConstants.TRANSPORT_PROPERTY,
+                         KVSecurityConstants.SSL_TRANSPORT_NAME);
+    secProps.setProperty
+        (KVSecurityConstants.SSL_TRUSTSTORE_FILE_PROPERTY,
+        "/home/kv/client.trust");
+    kconfig.setSecurityProperties(secProps);
+
+    store =
+        KVStoreFactory.getStore(kconfig,
+          new PasswordCredentials(username,
+                                  password.toCharArray(),
+                                  null /* ReauthenticateHandler */));
+} catch (AuthenticationFailureException afe) {
+    /* 
+     * Could potentially retry the login, possibly with different
+     * credentials, but in this simple example, we just fail the
+     * attempt.
+     */
+    System.out.println("authentication failed!");
+    return;
+} </pre>
+        <p>
+            Another way to handle the login is to place your authentication
+            credentials in a flat text file that contains all the necessary
+            properties for authentication. In order for this to work, a
+            password store must have been configured for your Oracle NoSQL Database store.
+            (See the <em class="citetitle">Oracle NoSQL Database Security Guide</em> for
+            information on setting up password stores).
+        </p>
+        <p>
+            For example, suppose your store has been configured to use a
+            password file password store and it is contained in a file
+            called <code class="literal">login.pwd</code>. In that case, you might
+            create a login properties file called
+            <code class="literal">login.txt</code> that looks like this:
+        </p>
+        <pre class="programlisting">oracle.kv.auth.username=clientUID1
+oracle.kv.auth.pwdfile.file=/home/nosql/login.pwd
+oracle.kv.transport=ssl
+oracle.kv.ssl.trustStore=/home/nosql/client.trust </pre>
+        <p>
+            In this case, you can perform authentication in the following
+            way:
+        </p>
+        <pre class="programlisting">import oracle.kv.AuthenticationFailure;
+import oracle.kv.PasswordCredentials;
+import oracle.kv.KVStoreConfig;
+import oracle.kv.KVStoreFactory;
+
+/* the client gets login credentials from the login.txt file */
+/* can be set on command line as well */
+System.setProperty("oracle.kv.security", "/home/nosql/login.txt");
+
+KVStore store = null;
+try {
+    /*
+     * storeName, hostName, port are all strings that would come 
+     * from somewhere else in your application.
+     *
+     * Notice that we do not pass in any login credentials.
+     * All of that information comes from login.txt
+     */
+    myStoreHandle =
+        KVStoreFactory.getStore(
+            new KVStoreConfig(storeName, hostName + ":" + port)) 
+} catch (AuthenticationFailureException afe) {
+    /* 
+     * Could potentially retry the login, possibly with different
+     * credentials, but in this simple example, we just fail the
+     * attempt.
+     */
+    System.out.println("authentication failed!")
+    return;
+} </pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="loginrenew"></a>Renewing Expired Login Credentials</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+              It is possible for an authentication session to expire.  This
+              can happen for several reasons. One is that the store's
+              administrator has configured the store to not allow session
+              extension and the session has timed out. These properties are
+              configured using <code class="literal">sessionExtendAllow</code> and
+              <code class="literal">sessionTimeout</code>. See the
+              <em class="citetitle">Oracle NoSQL Database Security Guide</em> for information on
+              these properties.
+          </p>
+        <p>
+              Reauthentication might also be required if some kind of a
+              major disruption has occurred to the store which caused the
+              authentication session to become invalidated. This is a
+              pathological condition which you should not see with any kind
+              of frequency in a production store. Stores which are
+              installed in labs might exhibit this condition more,
+              especially if the stores are frequently restarted.
+          </p>
+        <p>
+              An application can encounter an expired authentication
+              session at any point in its lifetime, so robust code that
+              must remain running should always be written to respond to
+              authentication session expirations.
+          </p>
+        <p>
+              When an authentication session expires, by default the method
+              which is attempting store access will throw
+              <code class="classname">AuthenticationRequiredException</code>.  Upon
+              seeing this, your code needs to reauthenticate to the store,
+              and then retry the failed operation.
+          </p>
+        <p>
+              You can manually reauthenticate to the store by 
+              using the <code class="methodname">KVStore.login()</code> method.
+              This method requires you to provide the login credentials via
+              a <code class="classname">LoginCredentials</code> class instance
+              (such as <code class="classname">PasswordCredentials</code>):
+          </p>
+        <pre class="programlisting">try {
+    ...
+    /* Store access code happens here */
+    ...
+} catch (AuthenticationRequiredException are) {
+    /*
+     * myStoreHandle is a KVStore class instance.
+     * 
+     * pwCreds is a PasswordCredentials class instance, obtained
+     * from somewhere else in your code.
+     */
+    myStoreHandle.login(pwCreds);
+} </pre>
+        <p>
+              Note that this is not required if you use the
+              <code class="literal">oracle.kv.auth.username</code> and
+              <code class="literal">oracle.kv.auth.pwdfile.file</code>
+              properties, as shown in the previous section.
+              In that case, your Oracle NoSQL Database client code
+              will automatically and silently reauthenticate your client
+              using the values specified by those properties.
+          </p>
+        <p>
+              A third option is to create a
+              <code class="classname">ReauthenticationHandler</code> class
+              implementation that performs your reauthentication for you.
+              This option is only necessary if you provided a
+              <code class="classname">LoginCredentials</code> implementation
+              instance (that is,
+              <code class="classname">PasswordCredentials</code>)
+              in a call to <code class="methodname">KVStoreFactory.getStore()</code>,
+              and you want to avoid a subsequent need to retry operations
+              by catching <code class="classname">AuthenticationRequiredException</code>.
+          </p>
+        <p>
+              A truly robust example of a
+              <code class="classname">ReauthenticationHandler</code> implementation
+              is beyond the scope of this manual (it would be driven by
+              highly unique requirements that are unlikely to be
+              appropriate for your site). Still, in the interest of
+              completeness, the following shows a very simple and not very
+              elegant implementation of
+              <code class="classname">ReauthenticationHandler</code>:
+          </p>
+        <pre class="programlisting">package kvstore.basicExample
+
+import oracle.kv.ReauthenticationHandler;
+import oracle.kv.PasswordCredentials;
+
+public class MyReauthHandler implements ReauthenticationHandler {
+    public void reauthenticate(KVStore reauthStore) {
+        /*
+         * The code to obtain the username and password strings would
+         * go here. This should be consistent with the code to perform
+         * simple authentication for your client.
+         */
+        PasswordCredentials cred = new PasswordCredentials(username,
+            password.toCharArray());
+
+        reauthStore.login(cred);
+    }
+} </pre>
+        <p>
+            You would then supply a <code class="classname">MyReauthHandler</code>
+            instance when you obtain your store handle:
+        </p>
+        <pre class="programlisting">import java.util.Properties;
+
+import oracle.kv.AuthenticationFailure;
+import oracle.kv.PasswordCredentials;
+import oracle.kv.KVSecurityConstants;
+import oracle.kv.KVStoreConfig;
+import oracle.kv.KVStoreFactory;
+
+import kvstore.basicExample.MyReauthHandler;
+
+KVStore store = null;
+try {
+    /*
+     * storeName, hostName, port, username, and password are all
+     * strings that would come from somewhere else in your 
+     * application. The code you use to obtain your username
+     * and password should be consistent with the code used to
+     * obtain that information in MyReauthHandler.
+     */
+    KVStoreConfig kconfig = 
+        new KVStoreConfig(storeName, hostName + ":" + port);
+
+    /* Set the required security properties */
+    Properties secProps = new Properties();
+    secProps.setProperty(KVSecurityConstants.TRANSPORT_PROPERTY,
+                         KVSecurityConstants.SSL_TRANSPORT_NAME);
+    secProps.setProperty
+        (KVSecurityConstants.SSL_TRUSTSTORE_FILE_PROPERTY,
+        "/home/kv/client.trust");
+    kconfig.setSecurityProperties(secProps);
+
+    store =
+        KVStoreFactory.getStore(kconfig,
+            new PasswordCredentials(username,
+                                    password.toCharArray()));
+            new MyReauthHandler());
+} catch (AuthenticationFailureException afe) {
+    /* 
+     * Could potentially retry the login, possibly with different
+     * credentials, but in this simple example, we just fail the
+     * attempt.
+     */
+    System.out.println("authentication failed!")
+    return;
+} </pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="kerberoslogin"></a>Authentication using Kerberos</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+              You can authenticate to the store by using Kerberos. To
+              do this, you must already have installed Kerberos and
+              obtained the necessary login and service information. See
+              the <em class="citetitle">Oracle NoSQL Database Security Guide</em> for details.
+          </p>
+        <p>
+              The following is a simple example of obtaining a store
+              handle for a secured store, and using Kerberos to
+              authenticate. Information specific to Kerberos, such as
+              the Kerberos user name, is specified using
+              <code class="literal">KVSecurityConstants</code> that are set as
+              properties to the <code class="classname">KVStoreConfig</code>
+              instance which is used to create the store handle.
+          </p>
+        <pre class="programlisting">import java.util.Properties;
+
+import oracle.kv.KVSecurityConstants;
+import oracle.kv.KVStore;
+import oracle.kv.KVStoreConfig;
+import oracle.kv.KVStoreFactory;
+
+KVStore store = null;
+/*
+ * storeName, hostName, port, username, and password are all
+ * strings that would come from somewhere else in your 
+ * application.
+ */
+KVStoreConfig kconfig = 
+    new KVStoreConfig(storeName, hostName + ":" + port);
+
+/* Set the required security properties */
+Properties secProps = new Properties();
+
+/* Set the user name */
+secProps.setProperty(KVSecurityConstants.AUTH_USERNAME_PROPERTY,
+                    "krbuser");
+
+/* Use Kerberos */
+secProps.setProperty(KVSecurityConstants.AUTH_EXT_MECH_PROPERTY,
+                     "kerberos");
+
+/* Set SSL for the wire level encryption */
+secProps.setProperty(KVSecurityConstants.TRANSPORT_PROPERTY,
+                     KVSecurityConstants.SSL_TRANSPORT_NAME);
+
+/* Set the location of the public trust file for SSL */
+secProps.setProperty
+    (KVSecurityConstants.SSL_TRUSTSTORE_FILE_PROPERTY,
+    "/home/kv/client.trust");
+
+/* Set the service principal associated with the helper host */
+final String servicesDesc =
+        "localhost:oraclenosql/localhost@EXAMPLE.COM";
+secProps.setProperty(
+        KVSecurityConstants.AUTH_KRB_SERVICES_PROPERTY,
+        servicesDesc);
+
+/*
+ * Set the default realm name to permit using a short name for the 
+ * user principal
+ */
+secProps.setProperty(KVSecurityConstants.AUTH_KRB_REALM_PROPERTY,
+                     "EXAMPLE.COM");
+
+/* Specify the client keytab file location */
+secProps.setProperty(KVSecurityConstants.AUTH_KRB_KEYTAB_PROPERTY,
+                     "/tmp/krbuser.keytab");
+
+kconfig.setSecurityProperties(secProps);
+
+store = KVStoreFactory.getStore(kconfig); </pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="kerberosloginjaas"></a>Authentication using Kerberos and JAAS</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+              You can authenticate to the store by using Kerberos and
+              the Java Authentication and Authorization Service (JAAS)
+              login API. To do this, you must already have installed
+              Kerberos and obtained the necessary login and service
+              information. See the
+              <em class="citetitle">Oracle NoSQL Database Security Guide</em> for details.
+          </p>
+        <p>
+              The following is a simple example of obtaining a store
+              handle for a secured store, and using Kerberos with JAAS to
+              authenticate. 
+          </p>
+        <p>
+              To use JAAS, you create a configuration file that
+              contains required Kerberos configuration information. For
+              example, the following could be placed in the file named 
+              <code class="literal">jaas.config</code>:
+          </p>
+        <pre class="programlisting">oraclenosql {
+  com.sun.security.auth.module.Krb5LoginModule required
+  principal="krbuser"
+  useKeyTab="true"
+  keyTab="/tmp/krbuser.keytab";
+}; </pre>
+        <p>
+              To identify this file to your application, set the Java
+              property <code class="literal">java.security.auth.login.config</code>
+              using the <code class="literal">-D</code> option when you run your
+              application.
+          </p>
+        <p>
+              Beyond that, you use <code class="literal">KVSecurityConstants</code>
+              to specify necessary properties, such as the SSL
+              transport. You can also specify necessary Kerberos
+              properties, such as the Kerberos user name, using
+              <code class="literal">KVSecurityConstants</code>, or you can use
+              the <code class="classname">KerberosCredentials</code> class to
+              do this.
+          </p>
+        <pre class="programlisting">import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.util.Properties;
+
+import javax.security.auth.Subject;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
+
+import oracle.kv.KerberosCredentials;
+import oracle.kv.KVSecurityConstants;
+import oracle.kv.KVStore;
+import oracle.kv.KVStoreConfig;
+import oracle.kv.KVStoreFactory;
+
+/*
+ * storeName, hostName, port, username, and password are all
+ * strings that would come from somewhere else in your
+ * application.
+ */
+final KVStoreConfig kconfig =
+    new KVStoreConfig(storeName, hostName + ":" + port);
+
+/* Set the required security properties */
+Properties secProps = new Properties();
+
+/* Set SSL for the wire level encryption */
+secProps.setProperty(KVSecurityConstants.TRANSPORT_PROPERTY,
+                     KVSecurityConstants.SSL_TRANSPORT_NAME);
+
+/* Set the location of the public trust file for SSL */
+secProps.setProperty
+    (KVSecurityConstants.SSL_TRUSTSTORE_FILE_PROPERTY,
+    "/home/kv/client.trust");
+
+/* Use Kerberos */
+secProps.setProperty(KVSecurityConstants.AUTH_EXT_MECH_PROPERTY,
+                     "kerberos");
+
+/* Set Kerberos properties */
+final Properties krbProperties = new Properties();
+
+/* Set the service principal associated with the helper host */
+final String servicesPpal =
+    "localhost:oraclenosql/localhost@EXAMPLE.COM";
+krbProperties.setProperty(KVSecurityConstants.AUTH_KRB_SERVICES_PROPERTY,
+                          hostName + ":" + servicesPpal);
+
+/* Set default realm name, because the short name
+ * for the user principal is used.
+ */
+krbProperties.setProperty(KVSecurityConstants.AUTH_KRB_REALM_PROPERTY,
+                          "EXAMPLE.COM");
+
+/* Specify Kerberos principal */
+final KerberosCredentials krbCreds =
+    new KerberosCredentials("krbuser", krbProperties);
+
+try {
+    /* Get a login context */
+    final Subject subj = new Subject();
+    final LoginContext lc = new LoginContext("oraclenosql", subj);
+
+    /* Attempt to log in */
+    lc.login();
+
+    /* Get the store using the credentials specified in the subject */
+    kconfig.setSecurityProperties(secProps);
+
+    store = Subject.doAs(
+        subj, new PrivilegedExceptionAction&lt;KVStore&gt;() {
+            @Override
+            public KVStore run() throws Exception {
+                return KVStoreFactory.getStore(kconfig, krbCreds, null);
+            }
+        });
+} catch (LoginException le) {
+    // LoginException handling goes here
+} catch (PrivilegedActionException pae) {
+    // PrivilegedActionException handling goes here
+} catch (Exception e) {
+    // General Exception handling goes here
+}
+ </pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="accessdenied"></a>Unauthorized Access</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+              Clients which must authenticate to a store are granted some
+              amount of access to the store. This could range from a
+              limited set of privileges to full, complete access. The
+              amount of access is defined by the roles and privileges
+              granted to the authenticating user. Therefore, a call to the
+              Oracle NoSQL Database API could fail due to not having the authorization to
+              perform the operation. When this happens,
+              <code class="classname">UnauthorizedException</code> will be thrown.
+          </p>
+        <p>
+            See the <em class="citetitle">Oracle NoSQL Database Security Guide</em> for
+            information on how to define roles and privileges for users.
+          </p>
+        <p>
+              When <code class="classname">UnauthorizedException</code> is seen,
+              the operation should not be retried. Instead, the operation
+              should either be abandoned entirely, or your code could
+              attempt to reauthenticate using different credentials that
+              would have the required permissions necessary to perform the
+              operation. Note that a client can log out of a store using 
+              <code class="methodname">KVStore.logout()</code>. How your code logs
+              back in is determined by how your store is configured for
+              access, as described in the previous sections. 
+          </p>
+        <pre class="programlisting">// Open a store handle, and perform authentication as you do
+// as described earlier in this section.
+
+...
+
+
+try {
+    // When you attempt some operation (such as a put or delete)
+    // to a secure store, you should catch UnauthorizedException
+    // in case the user credentials you are using do not have the
+    // privileges necessary to perform the operation.
+} catch (UnauthorizedException ue) {
+    /* 
+     * When you see this, either abandon the operation entirely,
+     * or log out and log back in with credentials that might
+     * have the proper permissions for the operation.
+     */
+    System.out.println("authorization failed!")
+    return;
+} </pre>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="kvapi.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="kvapi.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="kvlite-usage.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 1. Developing for Oracle NoSQL Database </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 2. Introduction to Oracle KVLite</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

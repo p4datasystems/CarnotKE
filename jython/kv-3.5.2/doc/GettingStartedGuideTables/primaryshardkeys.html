@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 4. Primary and Shard Key Design</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="prev" href="createindex.html" title="Creating Indexes" />
+    <link rel="next" href="rowdata.html" title="Row Data" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 4. Primary and Shard Key Design</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="createindex.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="rowdata.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="primaryshardkeys"></a>Chapter 4. Primary and Shard Key Design</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="primaryshardkeys.html#primarykeys">Primary Keys</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="primaryshardkeys.html#primarykeydtlimits">Data Type Limitations</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="primaryshardkeys.html#partialprimarykeys">Partial Primary Keys</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="primaryshardkeys.html#shardkeys">Shard Keys</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="rowdata.html">Row Data</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+      <span class="emphasis"><em>Primary keys</em></span> and <span class="emphasis"><em>shard keys</em></span>
+      are important concepts for your table design. What you use for
+      primary and shard keys has implications in terms of your ability to
+      read multiple rows at a time. But beyond that, your key design has
+      important performance implications.
+  </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="primarykeys"></a>Primary Keys</h2>
+            </div>
+          </div>
+        </div>
+        <div class="toc">
+          <dl>
+            <dt>
+              <span class="sect2">
+                <a href="primaryshardkeys.html#primarykeydtlimits">Data Type Limitations</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="primaryshardkeys.html#partialprimarykeys">Partial Primary Keys</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="primaryshardkeys.html#shardkeys">Shard Keys</a>
+              </span>
+            </dt>
+          </dl>
+        </div>
+        <p>
+          Every table must have one or more fields designated as the primary
+          key. This designation occurs at the time that the table is created,
+          and cannot be changed after the fact. A table's primary key uniquely 
+          identifies every row in the table. In the simplest case, it is used
+          to retrieve a specific row so that it can be examined and/or
+          modified.
+      </p>
+        <p>
+          For example, a table might have five fields:
+          <code class="literal">productName</code>, <code class="literal">productType</code>,
+          <code class="literal">color</code>, <code class="literal">size</code>, and
+          <code class="literal">inventoryCount</code>. To retrieve individual rows
+          from the table, it might be enough to just know the product's
+          name. In this case, you would set the primary key field as
+          <code class="literal">productName</code> and then retrieve rows based on
+          the product name that you want to examine/manipulate.
+      </p>
+        <p>
+          In this case, the table statement you use to define this table
+          is:
+      </p>
+        <pre class="programlisting">CREATE TABLE myProducts (
+    productName STRING,
+    productType STRING,
+    color ENUM (blue,green,red),
+    size ENUM (small,medium,large),
+    inventoryCount INTEGER,
+    // Define the primary key. Every table must have one.
+    PRIMARY KEY (productName)
+) </pre>
+        <p>
+          However, you can use multiple fields for your primary keys. 
+          For example:
+      </p>
+        <pre class="programlisting">CREATE TABLE myProducts (
+    productName STRING,
+    productType STRING,
+    color ENUM (blue,green,red),
+    size ENUM (small,medium,large),
+    inventoryCount INTEGER,
+    // Define the primary key. Every table must have one.
+    PRIMARY KEY (productName, productType)
+) </pre>
+        <p>
+          On a functional level, doing this allows you to delete multiple rows
+          in your table in a single atomic operation. In addition, multiple
+          primary keys allows you to retrieve a subset of the rows in your
+          table in a single atomic operation.
+      </p>
+        <p>
+          We describe how to retrieve multiple rows from your table in
+          <a class="xref" href="tableget.html" title="Chapter 6. Reading Table Rows">Reading Table Rows</a>. We show how to delete
+          multiple rows at a time in 
+          <a class="xref" href="recorddelete.html#multidelete" title="Using multiDelete()">Using multiDelete()</a>.
+      </p>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="primarykeydtlimits"></a>Data Type Limitations</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+              Fields can be designated as primary keys only if they are
+              declared to be one of the following types:
+          </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+                      Integer
+                  </p>
+              </li>
+              <li>
+                <p>
+                      Long
+                  </p>
+              </li>
+              <li>
+                <p>
+                      Float
+                  </p>
+              </li>
+              <li>
+                <p>
+                      Double
+                  </p>
+              </li>
+              <li>
+                <p>
+                      String
+                  </p>
+              </li>
+              <li>
+                <p>
+                      Enum
+                  </p>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="partialprimarykeys"></a>Partial Primary Keys</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+              Some of the methods you use to perform multi-row operations
+              allow, or even require, a partial primary key. A partial
+              primary key is, simply, a key where only some of the
+              fields comprising the row's primary key are specified.
+          </p>
+          <p>
+              For example, the following example specifies three fields for
+              the table's primary key:
+          </p>
+          <pre class="programlisting">CREATE TABLE myProducts (
+    productName STRING,
+    productType STRING,
+    productClass STRING,
+    color ENUM (blue,green,red),
+    size ENUM (small,medium,large),
+    inventoryCount INTEGER,
+    // Define the primary key. Every table must have one.
+    PRIMARY KEY (productName, productType, productClass)
+) </pre>
+          <p>
+                In this case, a full primary key would be one where you
+                provide value for all three primary key fields: 
+                <code class="literal">productName</code>, <code class="literal">productType</code>,
+                and <code class="literal">productClass</code>. A partial primary key
+                would be one where you provide values for only one or two
+                of those fields.
+            </p>
+          <p>
+                Note that order matters when specifying a partial key. The
+                partial key must be a subset of the full key, starting with
+                the first field specified and then adding fields in order.
+                So the following partial keys are valid:
+            </p>
+          <table class="simplelist" border="0" summary="Simple list">
+            <tr>
+              <td>
+                <code class="literal">productName</code>
+              </td>
+            </tr>
+            <tr>
+              <td><code class="literal">productName</code>, <code class="literal">productType</code></td>
+            </tr>
+          </table>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="shardkeys"></a>Shard Keys</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+              Shard keys identify which primary key fields are meaningful
+              in terms of shard storage. That is, rows which contain the
+              same values for all the shard key fields are guaranteed to be
+              stored on the same shard. This matters for some operations
+              that promise atomicity of the results. (See 
+              <a class="xref" href="multiop.html" title="Chapter 12. Executing a Sequence of Operations">Executing a Sequence of Operations</a>
+              for more information.)
+          </p>
+          <p>
+              For example, suppose you set the following primary keys:
+          </p>
+          <pre class="programlisting">PRIMARY KEY (productType, productName, productClass)</pre>
+          <p>
+              You can guarantee that rows are placed on the same shard
+              using the values set for the <code class="literal">productType</code>
+              and <code class="literal">productName</code> fields like this:
+          </p>
+          <pre class="programlisting">PRIMARY KEY (SHARD(productType, productName), productClass)</pre>
+          <p>
+              Note that order matters when it comes to shard keys. The keys
+              must be specified in the order that they are defined as
+              primary keys, with no gaps in the key list. In other words,
+              given the above example, it is impossible to set
+              <code class="literal">productType</code> and <code class="literal">productClass</code>
+              as shard keys without also specifying <code class="literal">productName</code>
+              as a shard key.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="createindex.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="rowdata.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Creating Indexes </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Row Data</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

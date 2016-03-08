@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Using storeIterator()</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="recordget.html" title="Chapter 5. Reading Records" />
+    <link rel="prev" href="multigetiterator.html" title="Using multiGetIterator()" />
+    <link rel="next" href="readsubranges.html" title="Specifying Subranges" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Using storeIterator()</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="multigetiterator.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 5. Reading Records</th>
+          <td width="20%" align="right"> <a accesskey="n" href="readsubranges.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="storeiterator"></a>Using storeIterator()</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            If you want to retrieve all the records that match only some of
+            the major key components, use 
+            <code class="methodname">KVStore.storeIterator()</code>. Using this
+            method, you can iterate over all of the records in the store,
+            or over all of the records that match a partial set of major
+            components.
+        </p>
+      <p>
+            <code class="methodname">KVStore.storeIterator()</code> does not
+            return the entire set of records all at once. Instead, it
+            batches the fetching of key-value pairs in the iterator, to
+            minimize the number of network round trips, while not
+            monopolizing the available bandwidth. Also, the records
+            returned by this method are in unsorted order.
+        </p>
+      <p>
+            Note that this method does not result in a single atomic
+            operation. Because the retrieval is batched, the return set can
+            change over the course of the entire retrieval operation. As a
+            result, you lose the atomicity of the operation when you use
+            this method.
+        </p>
+      <p>
+            This method provides for an unsorted traversal of records in
+            the store. If you do not provide a key, then this method will
+            iterate over all of the records in the store. If you do provide
+            a key, you must provide only a subset of the major key
+            components used by your records. The key that you provide must
+            NOT include any minor key components.
+        </p>
+      <p>
+            To use this method, at a minimum you must specify:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    A traversal direction. 
+                </p>
+          </li>
+          <li>
+            <p>
+                    The suggested number of keys to fetch during each
+                    network round trip. If you provide a value of 0, an
+                    internally determined default is used.
+                </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+            This minimum list would iterate over all keys in the store. You
+            can also iterate over all the descendants of a specified parent
+            key. Key ranges may also be supplied.
+        </p>
+      <p>
+            This method performs single-threaded retrieval of
+            records if <code class="methodname">StoreIteratorConfig.setMaxConcurrentRequests</code>
+            is anything other than 1. You might be able to achieve better performance by
+            using parallel scans, which uses multiple threads to retrieve
+            data from the store. See 
+            <a class="xref" href="parallelscan.html" title="Parallel Scans">Parallel Scans</a>
+            for more information.
+        </p>
+      <p>
+            For example, suppose you are storing user records that use keys
+            like this:
+        </p>
+      <pre class="programlisting">/Smith/Bob/-/birthdate
+/Smith/Bob/-/phonenumber
+/Smith/Bob/-/image
+/Smith/Bob/-/userID 
+/Smith/Patricia/-/birthdate
+/Smith/Patricia/-/phonenumber
+/Smith/Patricia/-/image
+/Smith/Patricia/-/userID 
+/Smith/Richard/-/birthdate
+/Smith/Richard/-/phonenumber
+/Smith/Richard/-/image
+/Smith/Richard/-/userID 
+/Wong/Bill/-/birthdate
+/Wong/Bill/-/phonenumber
+/Wong/Bill/-/image
+/Wong/Bill/-/userID</pre>
+      <p>
+            Then in the simplest case, you can retrieve all of the records
+            for all users whose surname is 'Smith' as follows: 
+        </p>
+      <a id="storeiterator-1"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.Direction;
+import oracle.kv.Key;
+import oracle.kv.Value;
+import oracle.kv.KeyValueVersion;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+...
+
+ArrayList&lt;String&gt; majorComponents = new ArrayList&lt;String&gt;();
+
+...
+
+// Define the major and minor path components for the key
+majorComponents.add("Smith");
+
+// Create the retrieval key
+Key myKey = Key.createKey(majorComponents);
+
+// Now retrieve the records. Note that we do not show the creation of 
+// the kvstore handle here.
+
+
+Iterator &lt;KeyValueVersion&gt;i = 
+    kvstore.storeIterator(Direction.UNORDERED, 0,
+                          myKey, null, null);
+while (i.hasNext()) {
+    Value v = i.next().getValue(); 
+    // Do some work with the Value here
+} </pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="multigetiterator.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="recordget.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="readsubranges.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Using multiGetIterator() </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Specifying Subranges</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

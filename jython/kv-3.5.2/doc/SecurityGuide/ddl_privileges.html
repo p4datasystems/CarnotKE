@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Privileges for DDL Commands</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="required_privileges.html" title="Appendix B. KVStore Required Privileges" />
+    <link rel="prev" href="required_privileges.html" title="Appendix B. KVStore Required Privileges" />
+    <link rel="next" href="kvstore_api.html" title="Privileges for Accessing KVStore APIs" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Privileges for DDL Commands</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="required_privileges.html">Prev</a> </td>
+          <th width="60%" align="center">Appendix B. KVStore Required Privileges</th>
+          <td width="20%" align="right"> <a accesskey="n" href="kvstore_api.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="ddl_privileges"></a>Privileges for DDL Commands</h2>
+          </div>
+        </div>
+      </div>
+      <p>SYSDBA:</p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>CREATE TABLE</p>
+          </li>
+          <li>
+            <p>CREATE INDEX</p>
+          </li>
+          <li>
+            <p>DROP INDEX</p>
+          </li>
+          <li>
+            <p>DROP TABLE</p>
+          </li>
+          <li>
+            <p>ALTER TABLE</p>
+          </li>
+        </ul>
+      </div>
+      <p>CREATE_ANY_TABLE:</p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>CREATE TABLE</p>
+          </li>
+        </ul>
+      </div>
+      <p>DROP_ANY_TABLE:</p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>DROP TABLE</p>
+          </li>
+        </ul>
+      </div>
+      <p>EVOLVE_ANY_TABLE or EVOLVE_TABLE (on $table_name):</p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>ALTER TABLE table_name</p>
+          </li>
+        </ul>
+      </div>
+      <p>CREATE_ANY_INDEX or CREATE_INDEX (on $table_name):</p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>CREATE INDEX ON table_name</p>
+          </li>
+        </ul>
+      </div>
+      <p>DROP_ANY_INDEX or DROP_INDEX (on $table_name):</p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>DROP INDEX ON table_name</p>
+          </li>
+        </ul>
+      </div>
+      <p>SYSOPER:</p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>CREATE USER</p>
+          </li>
+          <li>
+            <p>CREATE ROLE</p>
+          </li>
+          <li>
+            <p>DROP USER</p>
+          </li>
+          <li>
+            <p>DROP ROLE</p>
+          </li>
+          <li>
+            <p>ALTER USER</p>
+          </li>
+          <li>
+            <p>GRANT</p>
+          </li>
+          <li>
+            <p>REVOKE</p>
+          </li>
+        </ul>
+      </div>
+      <p>DBVIEW:</p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>SHOW TABLE</p>
+          </li>
+          <li>
+            <p>SHOW INDEX</p>
+          </li>
+          <li>
+            <p>DESCRIBE TABLE</p>
+          </li>
+          <li>
+            <p>DESCRIBE INDEX</p>
+          </li>
+        </ul>
+      </div>
+      <p>SYSVIEW:</p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>SHOW USERS</p>
+          </li>
+          <li>
+            <p>SHOW ROLES</p>
+          </li>
+        </ul>
+      </div>
+      <p>USRVIEW:</p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>SHOW USERS (for self only)</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="required_privileges.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="required_privileges.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="kvstore_api.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Appendix B. KVStore Required Privileges </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Privileges for Accessing KVStore APIs</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

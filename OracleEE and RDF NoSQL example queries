@@ -1,0 +1,23 @@
+conn3 = connectTo 'OracleNoSQL' 'C##cs329e_UTEid' 'orcl_UTEid' 'rdf_mode' 'A0'
+
+Neo4j on conn3 "CREATE (:emp { EMPNO : 7369, ENAME : 'SMITH', JOB : 'CLERK', MGR : 7902, HIREDATE : '17-DEC-80', SAL : 800, COMM : 0, DEPTNO : 20})"
+
+SPARQL on conn3 "SELECT ?empno ?job WHERE { GRAPH c:emp_SCHEMA { ?indiv rdf:type c:emp } GRAPH c:emp { ?indiv c:mgr ?mgr . ?indiv c:empno ?empno . ?indiv c:comm ?comm . ?indiv c:ename ?ename . ?indiv c:deptno ?deptno . ?indiv c:hiredate ?hiredate . ?indiv c:sal ?sal . ?indiv c:job ?job . } }"
+
+conn_native = connectTo 'jdbc:oracle:thin:@sayonara.microlab.cs.utexas.edu:1521:orcl' 'C##cs329e_UTEid' 'orcl_UTEid' 'native_mode' 'A0'
+
+SELECT v1 "empno", v2 "deptno", v3 "comm", v4 "job", v5 "mgr", v6 "ename", v7 "hiredate", v8 "sal", v9 "dept" FROM TABLE(SEM_MATCH('SELECT * WHERE { GRAPH c:emp_SCHEMA { ?indiv rdf:type c:emp } GRAPH c:emp { ?indiv c:mgr ?mgr . ?indiv c:empno ?empno . ?indiv c:comm ?comm . ?indiv c:ename ?ename . ?indiv c:deptno ?deptno . ?indiv c:hiredate ?hiredate . ?indiv c:sal ?sal . ?indiv c:job ?job . } }' , SEM_MODELS('A0_C##CS329E_UTEID'), null, SEM_ALIASES( SEM_ALIAS('', '#')), null) )
+
+SQL on conn_native """SELECT * FROM TABLE(SEM_MATCH('SELECT * WHERE { GRAPH :emp_SCHEMA { ?indiv rdf:type :emp } GRAPH :emp { ?indiv :mgr ?mgr . ?indiv :empno ?empno . ?indiv :comm ?comm . ?indiv :ename ?ename . ?indiv :deptno ?deptno . ?indiv :hiredate ?hiredate . ?indiv :sal ?sal . ?indiv :job ?job . } }' , SEM_MODELS('A0_C##CS329E_UTEID'), null, SEM_ALIASES( SEM_ALIAS('', '#')), null) )"""
+
+SQL on conn_native "SELECT v1 FROM TABLE(SEM_MATCH('SELECT * WHERE { GRAPH <emp_SCHEMA> { ?s1 rdf:type :emp } OPTIONAL { ?s1 :empno ?v1 } }' ,SEM_MODELS('A0_C##CS329E_UTEID'), null,SEM_ALIASES( SEM_ALIAS('', '#')), null) )"
+
+
+
+SPARQL on conn3                                            "SELECT ?empno ?job WHERE { GRAPH c:emp_SCHEMA { ?indiv rdf:type c:emp } GRAPH c:emp { ?indiv c:mgr ?mgr . ?indiv c:empno ?empno . ?indiv c:comm ?comm . ?indiv c:ename ?ename . ?indiv c:deptno ?deptno . ?indiv c:hiredate ?hiredate . ?indiv c:sal ?sal . ?indiv c:job ?job . } }"
+
+SQL on conn_native "SELECT ename, job FROM TABLE(SEM_MATCH('SELECT ?ename ?job WHERE { GRAPH <emp_SCHEMA> { ?indiv rdf:type :emp } GRAPH <emp> { ?indiv :ename ?ename . ?indiv :job ?job . } }' , SEM_MODELS('A0_C##CS329E_UTEID'), null, SEM_ALIASES( SEM_ALIAS('', '#')), null) )"
+
+conn_rdf = connectTo 'jdbc:oracle:thin:@sayonara.microlab.cs.utexas.edu:1521:orcl' 'C##cs329e_UTEid' 'orcl_UTEid' 'rdf_mode' 'A0'
+
+SQL on conn_rdf "select ename from emp"

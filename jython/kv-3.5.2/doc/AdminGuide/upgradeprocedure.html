@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>General Upgrade Notes</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="deploymentupdate.html" title="Chapter 5. Upgrading an Existing Oracle NoSQL Database Deployment" />
+    <link rel="prev" href="deploymentupdate.html" title="Chapter 5. Upgrading an Existing Oracle NoSQL Database Deployment" />
+    <link rel="next" href="upgrade_release_2_to_2.1.html" title="Upgrade from Release 2.0 to Release 3.0" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">General Upgrade Notes</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="deploymentupdate.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 5. Upgrading an Existing Oracle NoSQL Database Deployment</th>
+          <td width="20%" align="right"> <a accesskey="n" href="upgrade_release_2_to_2.1.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="upgradeprocedure"></a>General Upgrade Notes</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+              This section contains upgrade information that is generally
+              true for all versions of Oracle NoSQL Database. Upgrade instructions and
+              notes for specific releases are given in sections following
+              this one.
+          </p>
+      <p>
+              When Oracle NoSQL Database is first installed, it is placed in a KVHOME
+              directory, which may be per-machine, or optionally be
+              shared by multiple Storage Nodes (for example, using
+              NFS). Here, we call this existing KVHOME location,
+              <code class="literal">OLD_KVHOME</code>.
+          </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+                  It is useful for installations to adopt a convention
+                  for KVHOME that includes the release number. That
+                  is, always use a KVHOME location such as
+                  <code class="literal">/var/kv/kv-M.N.O</code>, where
+                  <code class="literal">M.N.O</code> are the release.major.minor
+                  numbers. This can be easily achieved by simply
+                  unzip/untarring the distribution into a common
+                  directory (/var/kv in this example).
+              </p>
+      </div>
+      <p>
+              Installing new software requires that each node be
+              restarted.  Oracle NoSQL Database is a replicated system, so to
+              avoid excessive failover events it is recommended
+              that any node that is running as a MASTER be
+              restarted after all those marked REPLICA. This
+              command tells you which nodes are MASTER and
+              REPLICA:
+          </p>
+      <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar ping -host &lt;hostname&gt; -port &lt;port&gt;</pre>
+      <p>
+             To make the process more debuggable, when upgrading a 
+             node and while the Storage Node is stopped, you should
+             move the existing log files under KVROOT and 
+             KVROOT/&lt;storename&gt;/log to any other
+             directory.
+          </p>
+      <p>
+               Use the host and registry port for any active node in the
+               store. For example, in the following example, rg1-rn1 and
+               rg2-rn1 are running as MASTER and should be restarted last:
+           </p>
+      <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar ping -port 5000 -host node01
+Pinging components of store mystore based upon topology sequence #315
+300 partitions and 6 storage nodes
+Time: 2015-06-11 04:49:17 UTC   Version: 12.1.3.4.0
+Shard Status: healthy:2 writable-degraded:0 read-only:0 offline:0
+Admin Status: healthy
+Zone [name=Boston id=zn1 type=PRIMARY]   
+RN Status: online:6 offline:0 maxDelayMillis:1 maxCatchupTimeSecs:0
+Storage Node [sn1] on node01:5000    
+Zone: [name=Boston id=zn1 type=PRIMARY]    Status: RUNNING   
+Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+    Admin [admin1]          Status: RUNNING,MASTER
+    Rep Node [rg1-rn1]      Status: RUNNING,MASTER 
+      sequenceNumber:327 haPort:5011
+Storage Node [sn2] on node02:6000    
+Zone: [name=Boston id=zn1 type=PRIMARY]    Status: RUNNING   
+Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+    Rep Node [rg1-rn2]      Status: RUNNING,REPLICA 
+      sequenceNumber:327 haPort:6010 delayMillis:1 catchupTimeSecs:0
+Storage Node [sn3] on node03:7000    
+Zone: [name=Boston id=zn1 type=PRIMARY]    Status: RUNNING   
+Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+    Rep Node [rg1-rn3]      Status: RUNNING,REPLICA 
+      sequenceNumber:327 haPort:7010 delayMillis:1 catchupTimeSecs:0
+Storage Node [sn4] on node04:8000    
+Zone: [name=Boston id=zn1 type=PRIMARY]    Status: RUNNING   
+Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+    Rep Node [rg2-rn1]      Status: RUNNING,MASTER 
+      sequenceNumber:327 haPort:8010
+Storage Node [sn5] on node05:9000    
+Zone: [name=Boston id=zn1 type=PRIMARY]    Status: RUNNING   
+Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+    Rep Node [rg2-rn2]      Status: RUNNING,REPLICA 
+      sequenceNumber:327 haPort:9010 delayMillis:1 catchupTimeSecs:0
+Storage Node [sn6] on node06:10000    
+Zone: [name=Boston id=zn1 type=PRIMARY]    Status: RUNNING   
+Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+    Rep Node [rg2-rn3]      Status: RUNNING,REPLICA 
+      sequenceNumber:327 haPort:10010 delayMillis:1 catchupTimeSecs:0
+</pre>
+      <p>
+              When upgrading your store, place the updated software in a new KVHOME 
+              directory on a Storage Node running the admin service. The new KVHOME 
+              directory is referred to here as NEW_KVHOME. If the KVHOME and NEW_KVHOME 
+              directories are shared by multiple Storage Nodes (for example, using NFS),
+              it is necessary to maintain both locations while the upgrade is going on.
+              The original KVHOME directory is no longer needed once the upgrade is complete.
+              In this case, the start up procedure on each node needs to be modified to refer
+              to the value of NEW_KVHOME in order to have it use the new software.
+           </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+              In cases where each node has its own copy of the software installation, 
+              then it is possible to replace the installation in place and not modify
+              the value of KVHOME.
+           </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="deploymentupdate.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="deploymentupdate.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="upgrade_release_2_to_2.1.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 5. Upgrading an Existing Oracle NoSQL Database Deployment </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Upgrade from Release 2.0 to Release 3.0</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

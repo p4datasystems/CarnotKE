@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 8. Key Ranges and Depth for Multi-Key Operations</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="prev" href="jsonbinding-overview.html" title="JSON Bindings" />
+    <link rel="next" href="depth.html" title="Specifying Depth" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 8. Key Ranges and Depth for Multi-Key Operations</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="jsonbinding-overview.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="depth.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="multikey"></a>Chapter 8. Key Ranges and Depth for Multi-Key Operations</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="multikey.html#subranges">Specifying Subranges</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="depth.html">Specifying Depth</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+        When performing multi-key operations (for example,
+        <code class="methodname">KVStore.multiGet()</code>,
+        <code class="methodname">KVStore.multiDelete()</code>,
+        <code class="methodname">KVStore.storeIterator()</code>), you can limit the
+        records that are operated upon by specifying key ranges and depth.
+        Key ranges allow you to identify a subset of keys to use out of a
+        matching set.  Depth allows you to specify how many children you
+        want the multi-key operation to use.
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="subranges"></a>Specifying Subranges</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+            When performing multi-key operations in the store, you can
+            specify a range of records to operate upon. You do this using
+            the <code class="classname">KeyRange</code> class. This class defines a
+            range of <code class="classname">String</code> values for the key
+            components immediately following a key that is used in a
+            multiple get operation.
+        </p>
+        <p>
+            For example, suppose you were using the following keys:
+        </p>
+        <pre class="programlisting">/Smith/Bob/-/birthdate
+/Smith/Bob/-/phonenumber
+/Smith/Bob/-/image
+/Smith/Bob/-/userID 
+/Smith/Patricia/-/birthdate
+/Smith/Patricia/-/phonenumber
+/Smith/Patricia/-/image
+/Smith/Patricia/-/userID 
+/Smith/Richard/-/birthdate
+/Smith/Richard/-/phonenumber
+/Smith/Richard/-/image
+/Smith/Richard/-/userID 
+/Wong/Bill/-/birthdate
+/Wong/Bill/-/phonenumber
+/Wong/Bill/-/image
+/Wong/Bill/-/userID</pre>
+        <p>
+            Given this, you could perform operations for all the records
+            related to users Bob Smith and Patricia Smith by constructing a
+            <code class="classname">KeyRange</code>. When you do this, you must
+            identify the key components that define the upper and lower
+            bounds of the range. You must also identify if the key
+            components that you provide are inclusive or exclusive.
+        </p>
+        <p>
+            In this case, we will define the start of the key range using
+            the string "Bob" and the end of the key range to be "Patricia". 
+            Both ends of the key range will be inclusive.
+        </p>
+        <a id="subranges-1"></a>
+        <pre class="programlisting">package kvstore.basicExample;
+
+import oracle.kv.KeyRange;
+
+...
+
+KeyRange kr = new KeyRange("Bob", true, "Patricia", true);</pre>
+        <p>
+            You then use the <code class="classname">KeyRange</code> instance when
+            you perform your multi-key operation. For example, suppose 
+            you were retrieving records from your store using 
+            <code class="methodname">KVStore.storeIterator()</code>:
+        </p>
+        <a id="subranges-2"></a>
+        <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.Direction;
+import oracle.kv.Key;
+import oracle.kv.Value;
+import oracle.kv.KeyRange;
+import oracle.kv.KeyValueVersion;
+import oracle.kv.RequestTimeoutException;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+...
+
+ArrayList&lt;String&gt; majorComponents = new ArrayList&lt;String&gt;();
+
+...
+
+// Define the major and minor path components for the key
+majorComponents.add("Smith");
+
+// Create the retrieval key
+Key myKey = Key.createKey(majorComponents);
+
+<strong class="userinput"><code>KeyRange kr = new KeyRange("Bob", true, "Patricia", true);</code></strong>
+
+// Now retrieve the records. Note that we do not show the creation of
+// the kvstore handle here.
+
+
+try {
+    Iterator&lt;KeyValueVersion&gt; i = 
+        kvstore.storeIterator(Direction.FORWARD, 0,
+                              myKey<strong class="userinput"><code>, kr</code></strong>, null);
+    while (i.hasNext()) {
+        Value v = i.next().getValue(); 
+        // Do some work with the Value here
+    }
+} catch (RequestTimeoutException re) {
+    // The operation was not completed within the 
+    // timeout value
+} </pre>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="jsonbinding-overview.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="depth.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">JSON Bindings </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Specifying Depth</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 7.  Failover and Switchover Operations</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="prev" href="fixhaportrange.html" title="Fixing Incorrect Storage Node HA Port Ranges" />
+    <link rel="next" href="perform_failover.html" title="Performing a failover" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 7.  Failover and Switchover Operations </th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="fixhaportrange.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="perform_failover.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="failover-switchover"></a>Chapter 7.  Failover and Switchover Operations </h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="failover-switchover.html#repairzone">Repairing a Failed Zone</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="perform_failover.html">Performing a failover</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="perform_switchover.html">Performing a switchover</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p> 
+        Optimal use of available physical datacenters is achieved by
+        deploying your store across multiple Zones. This provides fault
+        isolation as each Zone has a copy of your complete store, including
+        a copy of all the shards. With this configuration, when a zone
+        fails, write availability is automatically reestablished as long as
+        quorum is maintained. 
+    </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p> 
+            To achieve other levels of fault isolation, best practices for data
+            center design should be applied. For example, site location,
+            building selection, floor layout, mechanical design, electrical
+            system design, modularity, etc. 
+        </p>
+      </div>
+      <p> 
+        However, if quorum is lost, manual procedures such as failovers
+        can be used instead to recover from zone failures. For more information
+        on quorum, see the Oracle NoSQL Database Concepts manual.
+    </p>
+      <p> 
+        A failover is typically performed when the primary zone fails or
+        has become unreachable and one of the secondary zones is
+        transitioned to take over the primary role. Failover can also be
+        performed to reduce the quorum to the available primary zones.
+        Failover may or may not result in data loss.
+    </p>
+      <p> 
+        Switchovers can be used after performing a failover (to restore
+        the original configuration) or for planned maintenance.
+    </p>
+      <p>
+        A switchover is typically a role reversal between a primary zone
+        and one of the secondary zones of the store. A switchover can also
+        be performed to convert one or more zones to another type for
+        maintenance purposes. Switchover requires quorum and guarantees no
+        data loss. It is typically done for planned maintenance of the
+        primary system. 
+    </p>
+      <p>
+        In this chapter, we explain how failover and switchover
+        operations are performed.
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="repairzone"></a>Repairing a Failed Zone</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+            If a zone fails but quorum is maintained, you have the
+            option to repair the failed zone with new hardware by following
+            the procedure described in <a class="xref" href="replacedc.html" title="Repairing a Failed Zone by Replacing Hardware">Repairing a Failed Zone by Replacing Hardware</a>.
+        </p>
+        <p>
+            Another option is to convert the failed zone to a secondary
+            zone. In some cases, this approach can improve the high 
+            availability characteristics of the store by reducing the quorum
+            requirements.
+        </p>
+        <p>
+            For example, suppose a store consists of two primary zones:
+            zone 1 with a replication factor of three and zone 2, with a
+            replication factor of two. Additionally, suppose zone 2 fails.
+            In this case, quorum is maintained because you would have 3 out
+            of the 5 replicas, but any additional failure would result in a
+            loss of quorum. 
+        </p>
+        <p>
+            Converting zone 2 to a secondary zone would reduce the
+            primary replication factor to 3, meaning that each shard could
+            tolerate an additional failure.
+        </p>
+        <p>
+            You should determine if switching zone types would actually improve
+            availability. If so, then decide if it is worth doing in the
+            current circumstances.
+        </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="fixhaportrange.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="perform_failover.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Fixing Incorrect Storage Node HA Port Ranges </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Performing a failover</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

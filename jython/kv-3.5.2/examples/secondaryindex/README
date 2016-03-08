@@ -1,0 +1,256 @@
+		      Index View Sample Program
+
+An "Index View" is a mapping between record values and associated
+records primary keys. This is very much like secondary indices, but
+because this example does not implement true secondary indices (which
+would address issues like ACID), we refer to them as Index Views. This
+sample program shows how to build a custom Index View in Oracle
+NoSQL Database. It accepts user input commands and performs index
+creation, updating and deletion operations.
+
+We use the term "Index View" and "Secondary Index" interchangably in
+the documentation and comments for this example, even though this is
+not a true secondary index implementation.
+
+Schema
+-------------------------------------------------------------------------------
+The sample defines the following Bill Info Schema as its primary DB KV
+format in which the Key is "id" and the Value is the remaining fields
+serialized with the schema depicted in the resource file
+"billinfoschema.avsc".
+
+   FIELD_NAME      TYPE      SAMPLE_VALUE           REMARKS
+     id           String       211                 primary key
+     name         String       Finn
+     email        String       john@gmail.com
+     phone        String       1-287-903-7176
+     date         String       06/27/13
+     cost          Long        3740
+
+The sample also defines its secondary DB KV format in which the major key is
+secondary key, the minor key is the related primary key and the Value
+is empty.
+
+It is important to minimize key sizes in order to reduce memory usage
+by NoSQL Database. Therefore, when designing applications that
+implement Index Views you should also consider an alternative design
+that uses key-value pairs rather than the key-only records in this
+example. Such an implementation would instead store the primary keys
+(which are stored in the minor key in this implementation) in the
+value portion of each record.
+
+Files In The Package
+-------------------------------------------------------------------------------
+This package has the following files:
+
+1.BillInfo.java:
+
+    A class which holds the BillInfo Schema attributes. This class
+    defines interfaces for converting between primary DB KV pairs
+    and BillInfo instances.
+
+2.Binding.java:
+
+    Provides a generic conversion between Values and Avro schema
+    instances.
+
+3.IndexViewExample.java:
+
+    The 'main' class that defines and performs all user input
+    commands. It implements minor commands and delegates secondary
+    index operations to IndexViewService.
+
+4.IndexViewService.java:
+
+    Provides APIs for creating, updating and deleting secondary
+    indexes on the Oracle NoSQL Database.
+
+5.billinfo-schema.avsc:
+
+    Defines the schema for the Value in the primary database's DB KV
+    pair.
+
+7.example_data.csv:
+
+    This is the default data file for loading data in the BillInfo
+    Schema format. It has about 4000 records. If more are required,
+    utilize a tool named "datagenerator" to generate data. For more
+    information, see http://www.generatedata.com.
+
+ Running the Example
+ ------------------------------------------------------------------------------
+1) Start a KVStore instance
+
+    Before running the example, First start a Oracle NoSQL Database
+    instance. A simple way is to run KVLite as described in the
+    INSTALL document. For example,
+
+    java -jar KVHOME/lib/kvclient.jar kvlite -port 5000 -host <hostname> -store \
+    kvstore -root /tmp/kvroot -admin 5001 &
+
+2) Add Avro Schemas to Oracle NoSQL Database
+
+    After starting the KVStore instance, start the admin CLI as described in
+    the Oracle NoSQL Database Administrator's Guide. Then enter the following
+    commands to add the example schemas to Oracle NoSQL Database. For
+    example,
+
+    java -jar KVHOME/lib/kvstore.jar runadmin -port 5000 -host <hostname>
+    kv-> ddl add-schema -file billinfo-schema.avsc
+    Added schema: secondaryindex.billinfo.1
+    kv->
+
+3) Compile the example code
+
+    javac -cp KVHOME/lib/kvclient.jar:SAMPLE_DIR SAMPLE_DIR/secondaryindex/*.java
+
+4) Run the sample and load some data
+
+    java -cp KVHOME/lib/kvclient.jar:SAMPLE_DIR
+    secondaryindex.IndexViewExample -loaddata -file \
+                                    SAMPLE_DIR/secondaryindex/example_data.csv \
+                                    -host  <host_name default:localhost> \
+                                    -port  <port default:5000> \
+                                    -store <store_name default:kvstore>
+
+5) Build an Index View on the email field
+
+    java -cp KVHOME/lib/kvclient.jar:SAMPLE_DIR
+    secondaryindex.IndexViewExample -buildindex -name email \
+                                       -host  <host_name> \
+                                       -port  <port> \
+                                       -store <store_name>
+
+6) Query using the Index View
+
+    java -cp KVHOME/lib/kvclient.jar:SAMPLE_DIR
+    secondaryindex.IndexViewExample -query \
+          -seckey email="Cras.vulputate.velit@consequat.com" \
+                                       -host  <host_name>
+                                       -port  <port>
+                                       -store <store_name>
+
+Command
+-------------------------------------------------------------------------------
+These are the commands that the program accepts:
+
+ java -cp KVHOME/lib/kvclient.jar:SAMPLE_DIR secondaryindex.IndexViewExample
+   [-loaddata [-file <dir_data_file>]]
+   [-buildindex -name <field_name1>[,field_name2]*]
+   [-dropindex -name <field_name1>[,field_name2]*]
+   [-insert -key <primary_key_field_value>
+        -value <field_name1>=<field_value1>[,<field_name2>=<field_value2>]*]
+   [-update [-key <primary_key_field_value> |
+        -seckey <field_name1>=<field_value1>[,<field_name2>=<field_value2>]*]
+        -value <field_name1>=<field_value1>[,<field_name2>=<field_value2>]*]]
+   [-delete [-key <primary_key_field_value> |
+        -seckey <field_name1>=<field_value1>[,<field_name2>=<field_value2>]*
+   [-query -seckey <field_name1>=<field_value1>[,<field_name2>=<field_value2>]*]
+   [-showindex]
+   [-host <hostname>] [-port <port>] [-store <storeName>]
+
+1) -loaddata
+
+    Loads records from a data file.
+
+       java ... secondaryindex.IndexViewExample \
+           -loaddata -file <dir_data_file>
+
+    The <-file> argument supplies the path of data file and defaults
+    to "example_data.csv" (included in the package).
+    Outputs the record count on completion.
+
+ 2) -buildindex
+
+    Builds Index Views on the given fields for all KV pairs in the
+    primary DB.
+
+        java ... secondaryindex.IndexViewExample \
+            -buildindex -name <field_name>
+
+    The example also supports multi-column index construction. In
+    order to specify multiple fields, use the command as follows:
+
+         secondaryindex.IndexViewExample \
+             -buildindex -name <field_name1>,<field_name2>,...
+
+3) -dropindex
+
+    Drops Index Views on the given fields.
+
+         java ... secondaryindex.IndexViewExample \
+	     -dropindex -name <field_name>
+
+    To drop a multi-field Index View:
+
+         java ... secondaryindex.IndexViewExample \
+             -dropindex -name <field_name1>,<field_name2>,...
+
+4) -insert
+
+    This command inserts a single record into the primary DB and
+    updates any Index Views.
+
+         java ... secondaryindex.IndexViewExample \
+            -insert -key <primary_key_value> \
+            -value <field_name1>=<field_value1>,<field_name2>=<field_value2>,...
+
+    The <-key> argument specifies the value of primary key ("id" in the
+    schema).
+
+5) -update
+
+    This command updates one or more records in the primary DB and
+    updates any Index Views.
+
+         java ... IndexViewExample \
+	    -update -key <primary_key_value> \
+            -value <field_name1>=<field_value1>,<field_name2>=<field_value2>,...
+
+    This command can also be used to update records through an Index View:
+
+         java ... secondaryindex.IndexViewExample \
+            -update -seckey <field_name1>=<field_value1>, \
+                            <field_name2>=<field_value2>,... \
+                    -value <field_name1>=<field_value1>, \
+                           <field_name2>=<field_value2>,...
+
+    This syntax updates all primary DB records found using the given
+    secondary key.
+
+6) -delete
+
+    This command deletes one or more records in the primary DB and
+    updates any Index Views.
+
+         java ... secondaryindex.IndexViewExample \
+	     -delete -key <primary_key_value>
+
+    Deletion using an Index View is also supported:
+
+         java ... secondaryindex.IndexViewExample \
+             -delete -seckey <field_name1>=<field_value1>, \
+                             <field_name2>=<field_value2>,...
+
+7) -query
+
+    This command queries records in the primary DB using an Index View.
+
+         java ... secondaryindex.IndexViewExample \
+	     -query -seckey <field_name1>=<field_value1>, \
+                            <field_name2>=<field_value2>,...
+
+    The query is performed once using the Index View and once without
+    (using a scan over the primary database). Both elapsed times are
+    shown.
+
+8) -showindex
+
+    This command outputs the field names, schema name and current status of
+    all Index Views.
+
+      java ... secondaryindex.IndexViewExample \
+             -showindex
+
+-------------------------------------------------------------------------------
+More information can be found at the top of each source file.

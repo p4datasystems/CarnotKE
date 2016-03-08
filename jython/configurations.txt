@@ -1,0 +1,15 @@
+conf run 1
+
+Main Class: org.python.util.jython
+
+VM Options: -agentlib:jdwp=transport=dt_shmem,server=y,suspend=n,address=javadebug -Dpython.home=dist -Dpython.console=org.python.util.InteractiveConsole
+
+C:\Users\nelma\Google Drive\Work\GitHub\CarnotKE\jython\
+
+connect
+
+Path to Jar: C:\Users\nelma\Google Drive\Work\GitHub\CarnotKE\jython\kv-3.5.2\lib\kvstore.jar
+
+Program arguments: kvlite
+
+remote conf

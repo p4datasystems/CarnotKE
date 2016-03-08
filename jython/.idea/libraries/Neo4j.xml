@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Neo4j">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Neo4j/WDB.zip!/" />
+      <root url="jar://$PROJECT_DIR$/Neo4j/WDB-new.zip!/" />
+      <root url="jar://$PROJECT_DIR$/Neo4j/cyphersim.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

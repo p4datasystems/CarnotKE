@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Bulk Get Operations</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="recordget.html" title="Chapter 5. Reading Records" />
+    <link rel="prev" href="parallelscan.html" title="Parallel Scans" />
+    <link rel="next" href="avroschemas.html" title="Chapter 6. Avro Schemas" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Bulk Get Operations</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="parallelscan.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 5. Reading Records</th>
+          <td width="20%" align="right"> <a accesskey="n" href="avroschemas.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="bulkget"></a>Bulk Get Operations</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+        Bulk get operations allow you to retrieve and process records from each
+        shard in parallel, like a parallel scan, but using a sequence of keys 
+        instead of a single key as retrieval criteria.
+    </p>
+      <p> 
+        A bulk get operation does not return the entire set of
+        
+        <span>
+           KV pairs 
+        </span>
+        
+
+        all at once. Instead, it batches the fetching of 
+        
+        <span>
+           KV pairs 
+        </span>
+        
+        
+        in the iterator, to minimize the number of network round trips,
+        while not monopolizing the available bandwidth. Batches are fetched
+        in parallel across multiple Replication Nodes. If more threads are
+        specified on the client side, then the user can expect better
+        retrieval performance – until processor or network resources are
+        saturated. 
+    </p>
+      <p> 
+        To do this, use one of the
+        
+        <span>
+            <code class="methodname">KVStore.storeIterator()</code> or 
+            <code class="methodname">KVStore.storeKeysIterator()</code>
+        </span>
+        
+        
+        methods that provide bulk retrievals. These accept a sequence of 
+        keys instead of a single key as the retrieval criteria. The sequence 
+        is provided using either an <code class="literal">Iterator&lt;Key&gt;</code> or
+        <code class="literal">List&lt;Iterator&lt;Key&gt;&gt;</code> value. 
+    </p>
+      <p>
+        The methods retrieve the 
+        
+        <span>
+           KV pairs or keys 
+        </span>
+        
+        
+        matching the keys supplied by the iterator(s). 
+    </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p> 
+            If the iterator yields duplicate keys, the 
+            
+            <span>
+               <code class="classname">KeyValueVersion</code>
+            </span>
+            
+           
+            associated with the duplicate keys will be returned at least
+            once and potentially multiple times. 
+        </p>
+      </div>
+      <p>
+        The supplied parent key must contain the complete major key path. The 
+        minor key path may be omitted or may be a partial path. 
+    </p>
+      <p> 
+        When using these methods, you can also
+        optionally specify:
+    </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p> 
+                The <code class="literal">Depth</code> parameter to specify how many
+                children of the parent key to return.
+            </p>
+          </li>
+          <li>
+            <p>
+                The <code class="literal">KeyRange</code> parameter to specify a range of records to operate
+                on.
+            </p>
+          </li>
+          <li>
+            <p>
+                <code class="literal">MaxConcurrentRequests</code> using a
+                <code class="classname">StoreIteratorConfig</code> class
+                instance to configure the number of threads used to perform the
+                bulk get operation. 
+            </p>
+          </li>
+        </ul>
+      </div>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+            If <code class="literal">MaxConcurrentRequests</code> is not specified, a
+            default value is calculated based on the available hardware. 
+        </p>
+      </div>
+      <p>
+        For example, suppose you use the following
+        keys: 
+    </p>
+      <pre class="programlisting">/Hats/-/baseball
+/Hats/-/baseball/longbill
+/Hats/-/baseball/longbill/blue
+/Hats/-/baseball/longbill/red
+/Hats/-/baseball/shortbill
+/Hats/-/baseball/shortbill/blue
+/Hats/-/baseball/shortbill/red
+/Hats/-/western
+/Hats/-/western/felt
+/Hats/-/western/felt/black
+/Pants/-/western/felt/gray
+/Pants/-/baseball/cotton
+/Pants/-/baseball/cotton/blue
+/Pants/-/baseball/cotton/red
+/Shoes/-/baseball/
+/Shoes/-/baseball/blue
+/Shoes/-/baseball/red</pre>
+      <p> 
+        If you want to locate all the Hats and Pants
+        used for baseball, using nine threads in parallel, you can retrieve
+        all of the records that use the major key component
+        <code class="literal">Hats</code> and minor key component
+        <code class="literal">baseball</code> as well as the records that use the
+        major key component <code class="literal">Pants</code> and minor key
+        component <code class="literal">baseball</code> as follows: 
+    </p>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import oracle.kv.Consistency;
+import oracle.kv.Key;
+import oracle.kv.StoreIteratorConfig;
+import oracle.kv.ParallelScanIterator;
+import oracle.kv.KeyValueVersion;
+
+...
+
+// KVStore handle creation is omitted for brevity
+
+...
+
+// Create the retrieval keys
+Key myKey = Key.createKey("Hats","baseball");
+Key myOtherKey = Key.createKey("Pants","baseball");
+         
+
+// Use multi-threading for this store iteration and limit the number of
+// threads (degree of parallelism) to 9. 
+final StoreIteratorConfig storeIteratorConfig =
+      new StoreIteratorConfig().setMaxConcurrentRequests(9);
+
+// Create the parent key iterator.
+List&lt;Key&gt; searchKeys = new ArrayList&lt;Key&gt;();
+
+// Add the retrieval keys to the list.
+searchKeys.add(myKey);
+searchKeys.add(myOtherKey);
+
+final ParallelScanIterator&lt;KeyValueVersion&gt; iterator =
+      kvstore.storeIterator(searchKeys.iterator(),
+                          0, //BatchSize
+                          null, //SubRange
+                          null, //Depth
+                          Consistency.NONE_REQUIRED,
+                          0, //Timeout
+                          null,
+                          storeIteratorConfig);
+        
+// Now retrieve the records.
+try {
+    while (iterator.hasNext()) {
+    KeyValueVersion kvv = iterator.next();
+    // Do some work with the Value here
+    }
+} finally {
+   if (iterator != null) {
+   iterator.close();
+   }
+} </pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="parallelscan.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="recordget.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="avroschemas.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Parallel Scans </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 6. Avro Schemas</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

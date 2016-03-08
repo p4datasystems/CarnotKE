@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Bulk Get Operations</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="tableget.html" title="Chapter 6. Reading Table Rows" />
+    <link rel="prev" href="parallelscan.html" title="Parallel Scans" />
+    <link rel="next" href="usingtypes.html" title="Chapter 7. Using Data Types" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Bulk Get Operations</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="parallelscan.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Reading Table Rows</th>
+          <td width="20%" align="right"> <a accesskey="n" href="usingtypes.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="bulkget"></a>Bulk Get Operations</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+        Bulk get operations allow you to retrieve and process records from each
+        shard in parallel, like a parallel scan, but using a sequence of keys 
+        instead of a single key as retrieval criteria.
+    </p>
+      <p> 
+        A bulk get operation does not return the entire set of
+        
+        
+        <span>
+           rows 
+        </span>
+
+        all at once. Instead, it batches the fetching of 
+        
+        
+        <span>
+           rows 
+        </span>
+        
+        in the iterator, to minimize the number of network round trips,
+        while not monopolizing the available bandwidth. Batches are fetched
+        in parallel across multiple Replication Nodes. If more threads are
+        specified on the client side, then the user can expect better
+        retrieval performance – until processor or network resources are
+        saturated. 
+    </p>
+      <p> 
+        To do this, use one of the
+        
+        
+        <span>
+            <code class="methodname">TableAPI.tableIterator()</code> or 
+            <code class="methodname">TableAPI.tableKeysIterator()</code>
+        </span>
+        
+        methods that provide bulk retrievals. These accept a sequence of 
+        keys instead of a single key as the retrieval criteria. The sequence 
+        is provided using either an <code class="literal">Iterator&lt;Key&gt;</code> or
+        <code class="literal">List&lt;Iterator&lt;Key&gt;&gt;</code> value. 
+    </p>
+      <p>
+        The methods retrieve the 
+        
+        
+        <span>
+           rows or primary keys 
+        </span>
+        
+        matching the keys supplied by the iterator(s). 
+    </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p> 
+            If the iterator yields duplicate keys, the 
+            
+            
+            <span>
+                row
+            </span>
+           
+            associated with the duplicate keys will be returned at least
+            once and potentially multiple times. 
+        </p>
+      </div>
+      <p>
+        The supplied keys should follow these rules:
+    </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                All supplied primary keys should belong to the same
+                table.
+            </p>
+          </li>
+          <li>
+            <p> 
+                The input key must be a complete shard key.
+            </p>
+          </li>
+          <li>
+            <p> 
+                If a field range is specified, then the partial
+                primary keys should be uniform. That is, they should have
+                the same number of components. Also, the field range must be 
+                the first unspecified field of the supplied key.
+            </p>
+          </li>
+        </ol>
+      </div>
+      <p>
+        When using these methods, you can also
+        optionally specify: 
+    </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                A <code class="classname">MultiRowOptions</code> class instance which
+                allows you to specify a field range, as well as the ancestor 
+                and parent tables you want to include in the iteration.
+            </p>
+          </li>
+          <li>
+            <p> 
+                The number of keys to fetch during each network round
+                trip using a <code class="classname">TableIteratorOptions</code>
+                class instance. If you provide a value of 0, an internally
+                determined default is used. You can also specify the
+                traversal order (<code class="literal">UNORDERED</code> is supported). 
+            </p>
+            <p> 
+                You can control how many threads are used to perform the
+                store read using the
+                <code class="literal">MaxConcurrentRequests</code> parameter. 
+            </p>
+            <p>
+                Finally, you can specify a consistency policy. See <a class="xref" href="consistency.html" title="Chapter 10. Consistency Guarantees">Consistency Guarantees</a> for
+                more information.
+            </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+        For example, suppose you have a table
+        that stores information about products, which is designed like
+        this:
+    </p>
+      <pre class="programlisting">CREATE TABLE myTable (
+    itemType STRING,
+    itemCategory STRING,
+    itemClass STRING,
+    itemColor STRING,
+    itemSize STRING,
+    price FLOAT,
+    inventoryCount INTEGER,
+    PRIMARY KEY (SHARD(itemType, itemCategory), itemClass, itemColor,
+    itemSize)) </pre>
+      <p>
+        With tables containing data like this:
+    </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p> Row 1: </p>
+            <table class="simplelist" border="0" summary="Simple list">
+              <tr>
+                <td>itemType: Hats</td>
+              </tr>
+              <tr>
+                <td>itemCategory: baseball</td>
+              </tr>
+              <tr>
+                <td>itemClass: longbill</td>
+              </tr>
+              <tr>
+                <td>itemColor: red</td>
+              </tr>
+              <tr>
+                <td>itemSize: small</td>
+              </tr>
+              <tr>
+                <td>price: 12.07</td>
+              </tr>
+              <tr>
+                <td>inventoryCount: 127</td>
+              </tr>
+            </table>
+          </li>
+          <li>
+            <p> Row 2: </p>
+            <table class="simplelist" border="0" summary="Simple list">
+              <tr>
+                <td>itemType: Hats</td>
+              </tr>
+              <tr>
+                <td>itemCategory: baseball</td>
+              </tr>
+              <tr>
+                <td>itemClass: longbill</td>
+              </tr>
+              <tr>
+                <td>itemColor: red</td>
+              </tr>
+              <tr>
+                <td>itemSize: medium</td>
+              </tr>
+              <tr>
+                <td>price: 13.07</td>
+              </tr>
+              <tr>
+                <td>inventoryCount: 201</td>
+              </tr>
+            </table>
+          </li>
+          <li>
+            <p> Row 3: </p>
+            <table class="simplelist" border="0" summary="Simple list">
+              <tr>
+                <td>itemType: Pants</td>
+              </tr>
+              <tr>
+                <td>itemCategory: baseball</td>
+              </tr>
+              <tr>
+                <td>itemClass: Summer</td>
+              </tr>
+              <tr>
+                <td>itemColor: red</td>
+              </tr>
+              <tr>
+                <td>itemSize: large</td>
+              </tr>
+              <tr>
+                <td>price: 14.07</td>
+              </tr>
+              <tr>
+                <td>inventoryCount: 39</td>
+              </tr>
+            </table>
+          </li>
+          <li>
+            <p> Row 4: </p>
+            <table class="simplelist" border="0" summary="Simple list">
+              <tr>
+                <td>itemType: Pants</td>
+              </tr>
+              <tr>
+                <td>itemCategory: baseball</td>
+              </tr>
+              <tr>
+                <td>itemClass: Winter</td>
+              </tr>
+              <tr>
+                <td>itemColor: white</td>
+              </tr>
+              <tr>
+                <td>itemSize: large</td>
+              </tr>
+              <tr>
+                <td>price: 16.99</td>
+              </tr>
+              <tr>
+                <td>inventoryCount: 9</td>
+              </tr>
+            </table>
+          </li>
+          <li>
+            <p> Row <span class="emphasis"><em>n</em></span>: </p>
+            <table class="simplelist" border="0" summary="Simple list">
+              <tr>
+                <td>itemType: Coats</td>
+              </tr>
+              <tr>
+                <td>itemCategory: Casual</td>
+              </tr>
+              <tr>
+                <td>itemClass: Winter</td>
+              </tr>
+              <tr>
+                <td>itemColor: red</td>
+              </tr>
+              <tr>
+                <td>itemSize: large</td>
+              </tr>
+              <tr>
+                <td>price: 247.99</td>
+              </tr>
+              <tr>
+                <td>inventoryCount: 13</td>
+              </tr>
+            </table>
+          </li>
+        </ul>
+      </div>
+      <p> 
+        If you want to locate all the Hats and
+        Pants used for baseball, using nine threads in parallel, you can
+        retrieve all of the records as follows:
+    </p>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+import java.util.ArrayList;
+import java.util.List;
+import oracle.kv.Consistency;
+import oracle.kv.Direction;
+import oracle.kv.table.MultiRowOptions;
+import oracle.kv.table.PrimaryKey;
+import oracle.kv.table.Row;
+import oracle.kv.table.TableAPI;
+import oracle.kv.table.TableIterator;
+import oracle.kv.table.TableIteratorOptions;
+
+...
+
+// KVStore handle creation is omitted for brevity
+
+...
+
+// Construct the Table Handle
+TableAPI tableH = store.getTableAPI();
+Table table = tableH.getTable("myTable");
+      
+
+// Use multi-threading for this store iteration and limit the number
+// of threads (degree of parallelism) to 9. 
+final int maxConcurrentRequests = 9;
+final int batchResultsSize = 0;
+final TableIteratorOptions tio =
+   new TableIteratorOptions(Direction.UNORDERED,
+                  Consistency.NONE_REQUIRED,
+                  0, null,
+                  maxConcurrentRequests,
+                  batchResultsSize);
+          
+// Create retrieval keys     
+PrimaryKey myKey = table.createPrimaryKey();
+myKey.put("itemType", "Hats");
+myKey.put("itemCategory", "baseball");
+PrimaryKey otherKey = table.createPrimaryKey();
+otherKey.put("itemType", "Pants");
+otherKey.put("itemCategory", "baseball");
+
+List&lt;PrimaryKey&gt; searchKeys = new ArrayList&lt;PrimaryKey&gt;();
+
+// Add the retrieval keys to the list.
+searchKeys.add(myKey);
+searchKeys.add(otherKey);
+  
+     
+final TableIterator&lt;Row&gt; iterator = tableH.tableIterator(
+                                     searchKeys.iterator(), null, tio);
+
+// Now retrieve the records.
+try {
+    while (iterator.hasNext()) {
+    Row row = (Row) iterator.next();
+    // Do some work with the Row here
+    }
+} finally {
+   if (iterator != null) {
+   iterator.close();
+   }
+} </pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="parallelscan.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="tableget.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="usingtypes.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Parallel Scans </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 7. Using Data Types</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

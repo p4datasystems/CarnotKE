@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="Python" name="Python">
+      <configuration sdkName="Python 3.5.0 (C:\Users\nelma\AppData\Local\Programs\Python\Python35-32\python.exe)" />
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="extlibs" level="project" />
+    <orderEntry type="library" name="javalib" level="project" />
+    <orderEntry type="library" name="extlibs.orig" level="project" />
+    <orderEntry type="library" name="Python 3.5.0 (C:\Users\nelma\AppData\Local\Programs\Python\Python35-32\python.exe) interpreter library" level="application" />
+  </component>
+</module>

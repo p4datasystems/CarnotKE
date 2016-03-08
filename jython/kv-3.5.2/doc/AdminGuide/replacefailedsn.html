@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Replacing a Failed Storage Node</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="procedures.html" title="Chapter 6. Administrative Procedures" />
+    <link rel="prev" href="increasecapacity.html" title="Increasing the capacity of a Storage Node" />
+    <link rel="next" href="replacedisk.html" title="Replacing a Failed Disk" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Replacing a Failed Storage Node</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="increasecapacity.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Administrative Procedures</th>
+          <td width="20%" align="right"> <a accesskey="n" href="replacedisk.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="replacefailedsn"></a>Replacing a Failed Storage Node</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            If a Storage Node has failed, or is in the process of failing,
+            you can replace the Storage Node. Upgrading a healthy machine
+            to another one with better specifications is also a common
+            Storage Node replacement scenario. Generally, you should repair
+            the underlying problem (be it hardware or software related)
+            before proceeding with this procedure.
+        </p>
+      <p>
+            There are two ways to replace a failed Storage Node.
+        </p>
+      <p>
+            To replace a failed Storage Node by using a new, different
+            Storage Node (node uses different host name, IP address,
+            and port as the failed host):
+        </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                    If you are replacing hardware, bring it up and make
+                    sure it is ready for your production environment.
+                </p>
+          </li>
+          <li>
+            <p>
+                    On the new, replacement node, create a "boot config"
+                    configuration file using the
+                    <code class="literal">makebootconfig</code> utility.  Do this on
+                    the hardware where your new Storage Node runs.  You
+                    only need to specify the -admin option (the Admin
+                    Console's port) if the hardware hosts the Oracle NoSQL Database
+                    administration processes.
+                </p>
+            <p>
+                    To create the "boot config" file, issue the following
+                    commands:
+                </p>
+            <pre class="programlisting">&gt; mkdir -p KVROOT     (if it doesn't already exist)
+&gt; java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar makebootconfig -root KVROOT \
+                                                  -port 5000 \
+                                                  -admin 5001 \
+                                                  -host &lt;hostname&gt; \
+                                                  -harange 5010,5020 \
+                                                  -store-security none </pre>
+          </li>
+          <li>
+            <p>
+                    Start the Oracle NoSQL Database software on the new node.
+                </p>
+            <pre class="programlisting">&gt; nohup java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar start -root KVROOT&amp; </pre>
+          </li>
+          <li>
+            <p>
+                    Deploy the new Storage Node to the new node. 
+                    You use an existing administrative
+                    process to do this, either using the CLI or the 
+                    Admin Console.  To do this using the CLI:
+                </p>
+            <pre class="programlisting">&gt; java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar runadmin  \
+-port &lt;port&gt; -host &lt;host&gt;
+kv-&gt; plan deploy-sn -zn &lt;id&gt; -host &lt;host&gt; -port &lt;port&gt; -wait
+kv-&gt; </pre>
+          </li>
+          <li>
+            <p>
+                    Add the new Storage Node to the Storage Node pool. (You
+                    created a Storage Node pool when you installed the
+                    store, and you added all your Storage Nodes to it, but
+                    it is otherwise not used in this version of the
+                    product.) 
+                </p>
+            <pre class="programlisting">kv-&gt; show pools
+AllStorageNodes: sn1, sn2, sn3, sn4 ... sn25, sn26
+BostonPool: sn1, sn2, sn3, sn4 ... sn25
+kv-&gt; pool join -name BostonPool -sn sn26
+AllStorageNodes: sn1, sn2, sn3, sn4 ... sn25, sn26
+BostonPool: sn1, sn2, sn3, sn4 ... sn25, sn26 
+kv-&gt;</pre>
+          </li>
+          <li>
+            <p>
+                    Make sure the old Storage Node is not running. If the
+                    problem is with the hardware, then turn off the broken
+                    machine. You can also stop just the Storage Node
+                    software by:
+                </p>
+            <pre class="programlisting">&gt; java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar stop -root KVROOT</pre>
+          </li>
+          <li>
+            <p>
+                    Migrate the services from one Storage Node to another.
+                    If the old node hosted an admin service, the
+                    –admin-port argument is required. The syntax for this
+                    plan is:
+                </p>
+            <pre class="programlisting">plan migrate-sn -from &lt;old SN ID&gt; -to &lt;new SN ID&gt; \
+-admin-port &lt;admin port&gt;</pre>
+            <p>
+                    Assuming that you are migrating from Storage Node 25 to
+                    26 on port 5000, you would use: 
+                </p>
+            <pre class="programlisting">kv-&gt; plan migrate-sn -from sn25 -to sn26 -admin-port 5000</pre>
+          </li>
+          <li>
+            <p>
+                    The old Storage Node is shown in the topology and is
+                    reported as UNREACHABLE. The source SNA should be removed and
+                    its rootdir should be hosed out. Bringing up the old SNA will
+                    also bring up the old Replication Nodes and admins, which are
+                    no longer members of their replication groups. This should be
+                    harmless to the rest of the store, but it produces log error
+                    messages that might be misinterpreted as indicating a problem
+                    with the store. Use the <code class="literal">plan remove-sn</code>
+                    command to remove the old and unused Storage Node in 
+                    your deployment.
+                </p>
+            <pre class="programlisting">kv-&gt; plan remove-sn sn25 -wait</pre>
+          </li>
+        </ol>
+      </div>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+                Replacing a Storage Node qualifies as a topology change.
+                This means that if you want to restore your store from a
+                snapshot taken before the Storage Node was replaced, you
+                must use the <code class="literal">Load</code> program.
+                See <a class="xref" href="recovery.html#usingload" title="Using the Load Program">Using the Load Program</a>
+                for more information.
+            </p>
+      </div>
+      <p>
+            To replace a failed Storage Node by using an identical node
+            (node uses the same host name, internet address, and port as
+            the failed host):
+        </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                    Prerequisite information:
+                </p>
+            <div class="orderedlist">
+              <ol type="a">
+                <li>
+                  <p>
+                            A running Admin process on a known host, with a
+                            known registry port.
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            The ID of the Storage Node to replace (e.g. "sn1").
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            
+                            Before starting the new Storage Node, the SN to be replaced
+                            must be taken down. This can be done administratively or via failure.
+                        </p>
+                </li>
+              </ol>
+            </div>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+                        It is recommended that the KVROOT is empty and that
+                        you do a full network recovery of data before
+                        proceeding.
+                    </p>
+              <p>
+                        The instructions below assume that the KVROOT is
+                        empty and has no valid data.  When the new Storage
+                        Node Agent begins it starts the services it hosts,
+                        which recovers their data from other hosts.  This
+                        recovery may take some time, depending on the size
+                        of the shards involved and it happens in the
+                        background.
+                    </p>
+            </div>
+          </li>
+          <li>
+            <p>
+                    Create the configuration using the
+                    <code class="literal">generateconfig</code> command:
+                </p>
+            <p>
+                    The generateconfig's usage is:
+                </p>
+            <pre class="programlisting">&gt; java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar generateconfig \
+-host &lt;hostname&gt; -port &lt;port&gt; -sn &lt;StorageNodeId&gt; -target &lt;zipfile&gt;</pre>
+            <p>
+                    For example:
+                </p>
+            <pre class="programlisting">&gt; java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar generateconfig -host adminhost \
+-port 13230 -sn sn1 -target /tmp/sn1.config.zip</pre>
+            <p>
+                    The command above creates the target
+                    "/tmp/sn1.config.zip" which is a zip file with the
+                    required configuration to re-create that Storage Node.
+                    The top-level directory in the zip file is the store's
+                    KVROOT.
+                </p>
+          </li>
+          <li>
+            <p>
+                    Restore the Storage Node configuration on the target
+                    host:
+                </p>
+            <div class="orderedlist">
+              <ol type="a">
+                <li>
+                  <p>
+                            Copy the zip file to the target host.
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            Unzip the archive into your KVROOT directory. 
+                            That is, if KVROOT is <code class="literal">/opt/kvroot</code>, 
+                            then do the following:
+                        </p>
+                  <pre class="programlisting">&gt; cd/opt
+&gt; unzip &lt;path-to-sn1.config.zip&gt;</pre>
+                </li>
+              </ol>
+            </div>
+          </li>
+          <li>
+            <p>
+                    Restart the Storage Node on the new host.
+                </p>
+            <pre class="programlisting">&gt; java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar start -root KVROOT</pre>
+          </li>
+        </ol>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="increasecapacity.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="procedures.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="replacedisk.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Increasing the capacity of a Storage Node </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Replacing a Failed Disk</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

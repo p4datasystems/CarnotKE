@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Executing a Sequence</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="multiop.html" title="Chapter 12. Executing a Sequence of Operations" />
+    <link rel="prev" href="sequence-create.html" title="Creating a Sequence" />
+    <link rel="next" href="thirdpartylicenses.html" title="Appendix A. Third Party Licenses" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Executing a Sequence</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="sequence-create.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 12. Executing a Sequence of Operations</th>
+          <td width="20%" align="right"> <a accesskey="n" href="thirdpartylicenses.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="sequence-exec"></a>Executing a Sequence</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            To execute the sequence we created in the previous section, use
+            the 
+            <code class="methodname">KVStore.execute()</code> 
+             
+             
+             
+            method:
+        </p>
+      <a id="sequence-create-2"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.DurabilityException;
+import oracle.kv.FaultException;
+import oracle.kv.OperationExecutionException;
+import oracle.kv.RequestTimeoutException;
+
+...
+            
+try {
+    kvstore.execute(opList);
+} catch (OperationExecutionException oee) {
+    // Some error occurred that prevented the sequence
+    // from executing successfully. Use
+    // oee.getFailedOperationIndex() to determine which
+    // operation failed. Use oee.getFailedOperationResult()
+    // to obtain an OperationResult object, which you can
+    // use to troubleshoot the cause of the execution
+    // exception.
+} catch (DurabilityException de) {
+    // The durability guarantee could not be met.
+} catch (IllegalArgumentException iae) {
+    // An operation in the list was null or empty.
+
+    // Or at least one operation operates on a key
+    // with a major path component that is different
+    // than the others.
+
+    // Or more than one operation uses the same key.
+} catch (RequestTimeoutException rte) {
+    // The operation was not completed inside of the
+    // default request timeout limit.
+} catch (FaultException fe) {
+    // A generic error occurred
+} </pre>
+      <p>
+            Note that if any of the above exceptions are thrown, then the
+            entire sequence is aborted, and your data will be in the state
+            it would have been in if you had never executed the sequence at all.
+        </p>
+      <p>
+            A richer form of <code class="methodname">KVStore.execute()</code> is
+            available. It allows you to specify:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    The list of operations.
+                </p>
+          </li>
+          <li>
+            <p>
+                    The durability guarantee that you want to use for this
+                    sequence. If you want to use the default durability
+                    guarantee, 
+
+                    <span>
+                        pass <code class="literal">null</code> for this
+                        parameter.
+                    </span>
+                    
+                    
+                </p>
+          </li>
+          <li>
+            <p>
+                    A timeout value that identifies the upper bound on the
+                    time interval allowed for processing the entire
+                    sequence.  If you provide <code class="literal">0</code>, 
+                    the default request timeout value is used.
+                </p>
+          </li>
+          <li>
+            <p>
+                  A <code class="classname">TimeUnit</code> that identifies the
+                  units used by the timeout value.  For example:
+                  <code class="literal">TimeUnit.MILLISECONDS</code>.
+              </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+            For an example of using <code class="classname">WriteOptions</code>,
+            see <a class="xref" href="durability.html" title="Chapter 11. Durability Guarantees">Durability Guarantees</a>.
+        </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="sequence-create.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="multiop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="thirdpartylicenses.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Creating a Sequence </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Appendix A. Third Party Licenses</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

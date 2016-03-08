@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Specific Binding</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="avrobindings.html" title="Chapter 7. Avro Bindings" />
+    <link rel="prev" href="genericbinding-overview.html" title="Generic Binding" />
+    <link rel="next" href="jsonbinding-overview.html" title="JSON Bindings" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Specific Binding</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="genericbinding-overview.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 7. Avro Bindings</th>
+          <td width="20%" align="right"> <a accesskey="n" href="jsonbinding-overview.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="specificbinding-overview"></a>Specific Binding</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="specificbinding-overview.html#avro-specific-generate">Generating Specific Avro Classes</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="specificbinding-overview.html#avro-specific-using">Using Avro-specific Bindings</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="specificbinding-overview.html#avro-multispecific">Using Multiple Avro-specific Bindings</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+            The <code class="classname">SpecificAvroBinding</code> interface
+            represents values as instances of a generated Avro class which implements 
+            <code class="classname">SpecificRecord</code>. A single schema
+            binding is created using
+            <code class="methodname">AvroCatalog.getSpecificBinding()</code>.
+            A multiple schema binding is created using 
+            <code class="methodname">AvroCatalog.getSpecificMultiBinding()</code>.
+        </p>
+      <p>
+            Avro-specific classes provide type safety and ease of use.
+            Properties are accessed through getter/setter methods with
+            parameters and return values of the correct type, as
+            defined in the schema.
+        </p>
+      <p>
+            Further, when using Avro-specific classes, the client
+            application does not need to be aware of the Avro schema at
+            runtime. The generated class has an internal reference to
+            its associated schema, and this schema is used by the
+            binding, so the application does not need to explicitly
+            supply a schema. Schemas are supplied at build time, when
+            the source code for the specific class is generated.
+        </p>
+      <p>
+            The disadvantage to using specific bindings is that the set
+            of specific classes is fixed at build time. Applications
+            that wish to treat values generically, or dynamically based
+            on the schema, should use a generic or JSON binding
+            instead.
+        </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="avro-specific-generate"></a>Generating Specific Avro Classes</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                When you use a specific binding, you provide your
+                schema to your application using a generated class. You
+                can do this using the
+                <code class="classname">org.apache.avro.compiler.specific.SchemaTask</code>
+                tool.  
+            </p>
+        <p>
+                An example Ant file that uses
+                <code class="classname">SchemaTask</code> can be found in
+                <code class="literal">KVHOME/examples/avro/generate-specific.xml</code>.
+                It automatically downloads all library dependencies required to
+                generate the Avro class, and then creates generated classes
+                for all schema found in the local directory. The
+                example assumes your schema is contained in flat text
+                files that use the <code class="literal">avsc</code> suffix.
+            </p>
+        <p>
+                For example, suppose you had a schema defined in a file
+                named <code class="literal">my-schema.avsc</code>. Then to
+                generate an Avro-specific class, place
+                <code class="literal">generate-specific.xml</code> and
+                <code class="literal">my-schema.avsc</code> in the same directory
+                and run:
+            </p>
+        <pre class="programlisting">ant -f generate-specific.xml</pre>
+        <p>
+                After Ant downloads all the necessary library
+                dependencies, it will create whatever generated classes
+                are required by the contents of <code class="literal">my-schema.avsc</code>. 
+                The generated classes are named after the
+                <code class="literal">name</code> field in the Avro schema. So if
+                you had the (trivial) schema:
+            </p>
+        <pre class="programlisting">{
+    "type": "record",
+    "name": "MyInfoString",
+    "namespace": "avro",
+    "fields": [
+        {"name": "ID", "type": "int"}
+    ]
+} </pre>
+        <p>
+                the generated class name would be
+                <code class="classname">MyInfoString.java</code>. It contains
+                getter and setter methods that you can use to access
+                the fields in the schema. For example, a generated
+                class for the above schema would contain the fields
+                <code class="methodname">MyInfoString.setID()</code>
+                and
+                <code class="methodname">MyInfoString.getID()</code>.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="avro-specific-using"></a>Using Avro-specific Bindings</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                To use a schema encapsulated in a generated Avro-specific
+                class, you first provide the schema to the store as
+                described in
+                <a class="xref" href="provideschema.html" title="Managing Avro Schema in the Store">Managing Avro Schema in the Store</a>.
+            </p>
+        <p>
+                After that, you access the schema using the generated
+                class.  To do this, you need handles to the store, an
+                Avro catalog, and a specific binding:
+            </p>
+        <pre class="programlisting">package avro;
+
+import oracle.kv.KVStore;
+import oracle.kv.ValueVersion;
+import oracle.kv.avro.AvroCatalog;
+import oracle.kv.avro.SpecificAvroBinding;
+
+...
+
+
+private final KVStore store;
+private final AvroCatalog catalog;
+private final SpecificAvroBinding&lt;MyInfoString&gt; binding;
+
+...
+
+/* store configuration and open omitted for brevity */
+
+...
+
+catalog = store.getAvroCatalog();
+binding = catalog.getSpecificBinding(MyInfoString.class); </pre>
+        <p>
+                Having done that, you can use the binding to serialize
+                and deserialize value objects that conform to the
+                generated class' schema. For example, suppose you
+                performed a store <code class="methodname">get()</code>
+                and retrieved a <code class="classname">ValueVersion</code>.
+                Then you can access its information in the following
+                way:
+            </p>
+        <pre class="programlisting">final MyInfoString member;
+final int ID;
+
+member = binding.toObject(valueVersion.getValue());
+
+System.out.println("ID: " + member.getID()); </pre>
+        <p>
+                To serialize the object for placement in the store, you
+                use the generated class' setter method, as well as the
+                binding's <code class="methodname">toValue()</code>
+                method:
+            </p>
+        <pre class="programlisting">member.setID(2045);
+/* key creation omitted */
+store.put(key, binding.toValue(member)); </pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="avro-multispecific"></a>Using Multiple Avro-specific Bindings</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                If your client code needs to use multiple specific
+                bindings, then you use 
+                <code class="methodname">AvroCatalog.getSpecificMultiBinding()</code>
+                to support the multiple schemas. For example, suppose
+                your client code required the following two schemas:
+            </p>
+        <pre class="programlisting">{
+ "type": "record",
+ "namespace": "avro",
+ "name": "PersonInfo",
+ "fields": [
+   { "name": "first", "type": "string" },
+   { "name": "last", "type": "string" },
+   { "name": "age", "type": "int" }
+ ]
+}
+
+
+{
+ "type": "record",
+ "namespace": "avro",
+ "name": "AnimalInfo",
+ "fields": [
+   { "name": "species", "type": "string"},
+   { "name": "name", "type": "string"},
+   { "name": "age", "type": "int"}
+ ]
+} </pre>
+        <p>
+                Then put <code class="literal">Avro.PersonInfo</code> in a file
+                (call it <code class="literal">PersonSchema.avsc</code>) and
+                <code class="literal">Avro.AnimalInfo</code> in a second file 
+                (<code class="literal">AnimalSchema.avsc</code>). Add these
+                schemas to your store using the command line
+                interface.
+            </p>
+        <p>
+                Next, generate your specific schema classes using:
+            </p>
+        <pre class="programlisting">ant -f generate-specific.xml</pre>
+        <p>
+                as discussed in 
+                <a class="xref" href="specificbinding-overview.html#avro-specific-generate" title="Generating Specific Avro Classes">Generating Specific Avro Classes</a>.
+                This results in two generated classes: 
+                <code class="classname">PersonInfo.java</code> and 
+                <code class="classname">AnimalInfo.java</code>. To use these
+                classes in your client code, you can use a single
+                binding, which you create using 
+                <code class="classname">AvroCatalog.getSpecificMultiBinding()</code>. Note that to do this, 
+                you must use
+                <code class="classname">org.apache.avro.specific.SpecificRecord</code>:
+            </p>
+        <pre class="programlisting">package avro;
+
+import java.util.Arrays;
+
+import oracle.kv.Key;
+import oracle.kv.ValueVersion;
+import oracle.kv.avro.AvroCatalog;
+import oracle.kv.avro.SpecificAvroBinding;
+
+import org.apache.avro.specific.SpecificRecord;
+
+...
+
+private final KVStore store;
+private final AvroCatalog catalog;
+private final SpecificAvroBinding&lt;SpecificRecord&gt; binding;
+
+/*
+ * Store creation is skipped for the sake of brevity.
+ */
+
+...
+
+catalog = store.getAvroCatalog();
+binding = catalog.getSpecificMultiBinding(); </pre>
+        <p>
+                You can then create <code class="classname">PersonInfo</code>
+                and <code class="classname">AnimalInfo</code> objects,
+                serialize them, and write them to the store, like this:
+            </p>
+        <pre class="programlisting">final Key key1 = Key.createKey(Arrays.asList("person", "11"));
+final Key key2 = Key.createKey(Arrays.asList("animal", "11"));
+
+final PersonInfo pi = new PersonInfo();
+pi.setFirst("Jack");
+pi.setLast("Smith");
+pi.setAge(38);
+store.put(key1, binding.toValue(pi));
+
+final AnimalInfo ai = new AnimalInfo();
+ai.setSpecies("Dog");
+ai.setName("Bowzer");
+ai.setAge(6);
+store.put(key2, binding.toValue(ai));</pre>
+        <p>
+                Retrieval of the stored objects is performed with a
+                normal store <code class="methodname">get()</code>.
+                However, to deserialize the retrieved objects you
+                must identify the object's type. You can do this
+                using either the Java <code class="literal">instanceof</code>
+                operator, or by examining the schema's name, as
+                follows:
+            </p>
+        <pre class="programlisting">final ValueVersion vv = store.get(someKey);
+if (vv != null) {
+    SpecificRecord sr = binding.toObject(vv.getValue());
+    if (sr.getSchema().getFullName().equals("avro.PersonInfo")) {
+        PersonInfo o = (PersonInfo) sr;
+        /*
+         * The object is now deserialized. You can access the object's
+         * data using the specific class' getXXX() methods. For example,
+         * o.getFirst().
+         */
+    } else {
+        AnimalInfo o = (AnimalInfo) sr;
+        /*
+         * The object is now deserialized. You can access the object's
+         * data using the specific class' getXXX() methods. For example,
+         * o.getSpecies().
+         */
+    } </pre>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="genericbinding-overview.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="avrobindings.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="jsonbinding-overview.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Generic Binding </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> JSON Bindings</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 3. Record Design Considerations</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="prev" href="clpoptions.html" title="kvlite Utility Command Line Parameter Options" />
+    <link rel="next" href="values.html" title="Values" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 3. Record Design Considerations</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="clpoptions.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="values.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="schema"></a>Chapter 3. Record Design Considerations</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="schema.html#keys">Keys</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="schema.html#keycomponent">What is a Key Component?</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="values.html">Values</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+      Oracle NoSQL Database provides the KVStore, which offers storage of key-value pairs.
+      Each such pair can be thought of as a single record in a database,
+      where the key is used to locate the value. Both the key and the value
+      are application-defined, given some loose restrictions imposed by
+      Oracle NoSQL Database.
+  </p>
+      <p>
+      Every key in the KVStore is a list of strings.  All keys must have one
+      or more major components.  Keys can also optionally have one or more
+      minor components.
+  </p>
+      <p>
+      The value portion of the record can be simply a byte array, but in
+      most cases it should use Avro to identify its schema. (See 
+      <a class="xref" href="avroschemas.html" title="Chapter 6. Avro Schemas">Avro Schemas</a> for more information.)
+      The value portion can be as simple or complex as you want it to be.
+  </p>
+      <p>
+      As a very simple example, suppose you wanted your store to contain
+      information about people. You might then decide to do this:
+  </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+              Key major: email address.
+          </p>
+          </li>
+          <li>
+            <p>
+              Key minor: various properties, such as the user's street
+              address, phone number, photograph, and name.
+          </p>
+          </li>
+          <li>
+            <p>
+                Value: Avro-defined information related to the combination
+                of major and minor key components. So, for example, the
+                value for an email address plus a street address might be
+                multiple fields related to street number, street name,
+                city, and so forth.
+          </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+      This is a very simple example of what you might choose to store in
+      Oracle NoSQL Database. However, from a performance point of view, this example
+      might not be the best way for you to organize your data. How you
+      design both your keys and your values can have important performance
+      implications.
+  </p>
+      <p>
+      The remainder of this chapter describes the performance issues
+      surrounding Oracle NoSQL Database schema design.
+  </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="keys"></a>Keys</h2>
+            </div>
+          </div>
+        </div>
+        <div class="toc">
+          <dl>
+            <dt>
+              <span class="sect2">
+                <a href="schema.html#keycomponent">What is a Key Component?</a>
+              </span>
+            </dt>
+          </dl>
+        </div>
+        <p>
+          Oracle NoSQL Database organizes records using keys. All records have one or more
+          major key components and, optionally, one or more minor key
+          components. If minor key components are in use, the combination
+          of the major and minor components uniquely identifies a single
+          record in the store.
+      </p>
+        <p>
+          Keys are spread evenly using a hash across partitions based on
+          the key's major component(s). Every key must have at least one
+          major component, but you can optionally use a list of major
+          components.  This means that records that share the same
+          combination of major key components are guaranteed to be in the
+          same partition, which means they can be efficiently queried. In
+          addition, records with identical major key components can be
+          operated upon using multiple operations but under a single
+          atomic operation.
+      </p>
+        <p>
+          Remember that major key components are used to identify which
+          partition contains a record, and that every partition is stored
+          in a single shard.  This means that major key components are used
+          to identify which shard stores a given record. The combination of
+          the major key components, plus the data access operation that you
+          want performed is used to identify which node within the shard
+          will service the request. Be aware that you cannot control which
+          physical machine, or even which shard, will be used to store any
+          given piece of data. That is all decided for you by the KV
+          driver.
+      </p>
+        <p>
+          However, the fact that records are placed on the same physical
+          node based on their major key components means that keys which
+          share major key components can be queried efficiently in a single
+          operation. This is because, conceptually, you are operating on a
+          single physical database when you operate on keys stored together
+          in a single partition.  (In reality, a single shard uses multiple
+          physical databases, but that level of complexity is hidden from
+          you when interacting with the store.)
+      </p>
+        <p>
+          Remember that every partition is placed in a single shard, and
+          that your store will have multiple shards.  This is good, because
+          it improves both read and write throughput performance. But in
+          order to take full advantage of that performance enhancement, you
+          need at least as many different major key components as you have
+          partitions. In other words, do not create all your records under
+          a single major key component, or even under a small number of
+          major key components, because doing so will create performance
+          bottle necks as the number of records in your store grow large.
+      </p>
+        <p>
+          Minor key components also offer performance improvements if used
+          correctly, but in order to understand how you need to understand
+          performance issues surrounding the value portion of your records.
+          We will discuss those issues a little later in this chapter.
+      </p>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="keycomponent"></a>What is a Key Component?</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+              A key component is a Java String. Issues of comparison can be
+              answered by examining how Java Strings are compared using
+              your preferred encoding.
+          </p>
+          <p>
+              Because it is a String, a key component can be anything you
+              want it to be. Typically, some naming scheme is adopted for
+              the application so as to logically organize records.
+          </p>
+          <p>
+              It helps to think of key components as being locations in a
+              file system path. You can write out a record's components as if they
+              were a file system path delimited by a forward slash ("/").
+              For example, suppose you  used multiple major components to
+              identify a record, and one such record using the following
+              major components: "Smith", and "Bob." Another record might
+              use "Smith" and "Patricia". And a third might use "Wong", and
+              "Bill". Then the major components for those records could be
+              written as:
+          </p>
+          <pre class="programlisting">/Smith/Bob
+/Smith/Patricia
+/Wong/Bill </pre>
+          <p>
+              Further, suppose you had different kinds of information about
+              each user that you want to store. Then the different types of
+              information could be further identified using minor
+              components such as "birthdate", "image", "phonenumber",
+              "userID", and so forth. The minor portion of a key component
+              is separated by the major components by a special
+              slash-hyphen-slash delimiter (/-/). 
+          </p>
+          <p>
+              By separating keys into major and minor key components,
+              we could potentially store and operate
+              upon the following records.  Those that share a common major
+              component can be operated upon in a single atomic operation:
+          </p>
+          <pre class="programlisting">/Smith/Bob/-/birthdate
+/Smith/Bob/-/phonenumber
+/Smith/Bob/-/image
+/Smith/Bob/-/userID 
+/Smith/Patricia/-/birthdate
+/Smith/Patricia/-/phonenumber
+/Smith/Patricia/-/image
+/Smith/Patricia/-/userID 
+/Wong/Bill/-/birthdate
+/Wong/Bill/-/phonenumber
+/Wong/Bill/-/image
+/Wong/Bill/-/userID</pre>
+          <p>
+                Note that the above keys might not represent the most
+                efficient way to organize your data. We discuss this issue
+                in the next section.
+            </p>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="clpoptions.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="values.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">kvlite Utility Command Line Parameter Options </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Values</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

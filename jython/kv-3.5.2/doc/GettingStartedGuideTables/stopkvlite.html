@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Stopping and Restarting KVLite</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="kvlite-usage.html" title="Chapter 2. Introduction to Oracle KVLite" />
+    <link rel="prev" href="kvlite-usage.html" title="Chapter 2. Introduction to Oracle KVLite" />
+    <link rel="next" href="verifykvlite.html" title="Verifying the Installation" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Stopping and Restarting KVLite</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="kvlite-usage.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 2. Introduction to Oracle KVLite</th>
+          <td width="20%" align="right"> <a accesskey="n" href="verifykvlite.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="stopkvlite"></a>Stopping and Restarting KVLite</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            To stop KVLite, use ^C from within the shell where KVLite is
+            running.
+        </p>
+      <p>
+            To restart the process, simply run the
+            <code class="literal">kvlite</code> utility without any command line
+            options. Do this even if you provided non-standard options when
+            you first started KVLite. This is because KVLite remembers
+            information such as the port value and the store name in
+            between run times. You cannot change these values by using the
+            command line options.
+        </p>
+      <p>
+            If you want to start over with different options than you
+            initially specified, delete the KVROOT directory
+            (<code class="literal">./kvroot</code>, by default), and then re-run
+            the <code class="literal">kvlite</code> utility with whatever options you
+            desire. Alternatively, specify the <code class="literal">-root</code>
+            command line option, making sure to specify a location other
+            than your original KVROOT directory, as well as any other
+            command line options that you want to change.
+        </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="kvlite-usage.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="kvlite-usage.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="verifykvlite.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 2. Introduction to Oracle KVLite </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Verifying the Installation</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

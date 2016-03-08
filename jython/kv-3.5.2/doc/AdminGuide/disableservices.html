@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Disabling Storage Node Agent Hosted Services</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="procedures.html" title="Chapter 6. Administrative Procedures" />
+    <link rel="prev" href="replacedc.html" title="Repairing a Failed Zone by Replacing Hardware" />
+    <link rel="next" href="verifyingthestore.html" title="Verifying the Store" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Disabling Storage Node Agent Hosted Services</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="replacedc.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Administrative Procedures</th>
+          <td width="20%" align="right"> <a accesskey="n" href="verifyingthestore.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="disableservices"></a>Disabling Storage Node Agent Hosted Services</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+          To disable all services associated with a stopped SNA use the <code class="literal">-disable-services</code>
+          flag. This helps isolate failed services to avoid hard rollbacks during a failover. Also,
+          in this way, the configuration can be updated during recovery after a failover.
+          The usage is:
+       </p>
+      <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar {start | stop | restart} 
+[-disable-services] [-verbose]
+-root KVROOT [-config &lt;bootstrapFileName&gt;] </pre>
+      <p>
+        where:
+      </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+            <code class="literal">start -disable-services</code>
+          </p>
+            <p>
+              Starts an Oracle NoSQL Database Storage Node Agent with all of its hosted services disabled. If the
+              SNA is already running, the command will fail.
+            </p>
+          </li>
+          <li>
+            <p>
+            <code class="literal">stop -disable-services</code>
+          </p>
+            <p>
+              Stops an Oracle NoSQL Database Storage Node Agent, marking all of its services disabled so that 
+              they will not start when starting up the SNA in the future or
+              until the services are reenabled.
+            </p>
+          </li>
+          <li>
+            <p>
+            <code class="literal">restart -disable-services</code>
+          </p>
+            <p>
+              Restarts an Oracle NoSQL Database Storage Node Agent with all of its hosted services disabled.
+          </p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="replacedc.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="procedures.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="verifyingthestore.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Repairing a Failed Zone by Replacing Hardware </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Verifying the Store</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

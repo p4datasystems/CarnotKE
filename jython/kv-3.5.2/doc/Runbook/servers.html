@@ -1,0 +1,2058 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Servers</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Run Book" />
+    <link rel="up" href="hardwaremonitoring.html" title="Chapter 3. Hardware Monitoring" />
+    <link rel="prev" href="hardwaremonitoring.html" title="Chapter 3. Hardware Monitoring" />
+    <link rel="next" href="thirdpartylicenses.html" title="Appendix A. Third Party Licenses" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Servers</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="hardwaremonitoring.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 3. Hardware Monitoring</th>
+          <td width="20%" align="right"> <a accesskey="n" href="thirdpartylicenses.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="servers"></a>Servers</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="servers.html#detec_correlating_server_fail">
+            Detecting and Correlating Server Failures to NoSQL Log Events
+            </a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="servers.html#resolv_server_failures">
+            Resolving Server Failures
+            </a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="servers.html#terminology_review">Terminology Review</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="servers.html#assumptions">Assumptions</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="servers.html#replace_sn_with_identical_sn">
+            Replacement Procedure 1: Replace SN with Identical SN
+            </a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="servers.html#new_sn_takes_overduties_removed_sn">
+            Replacement Procedure 2: New SN Takes Over Duties of Removed SN
+            </a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="servers.html#examples">
+            Examples
+            </a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="servers.html#setup">
+            Setup
+            </a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="servers.html#example_1_replace_failed_sn_with_ident_sn">
+            Example 1: Replace a Failed SN with an Identical SN
+            </a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect3">
+              <a href="servers.html#verification_3">
+                Verification
+                </a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="servers.html#example_2_new_sn_takes_over_duties_existing_sn">
+            Example 2: New SN Takes Over Duties of Existing SN
+            </a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect3">
+              <a href="servers.html#verification_2">
+                Verification
+                </a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+            Although not as common as a failed disk, it is not unusual for an
+            administrator to need to replace one of the machines hosting services
+            making up a given KVStore deployment (an SN). There are two common
+            scenarios where a whole machine replacement may occur. The first is
+            when one or more hardware components fail and it is more convenient
+            or cost effective to simply replace the whole machine than it is to
+            replace the failed components. The second is when a working, healthy
+            machine is to be upgraded to a machine that is bigger and robust;
+            for example, a machine with larger disks and better performance
+            characteristics. The procedures presented in this section are intended
+            to describe the steps for preparing a new machine to replace an
+            existing machine, and the steps for retiring the existing machine.
+            </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="detec_correlating_server_fail"></a>
+            Detecting and Correlating Server Failures to NoSQL Log Events
+            </h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                In a distributed such as Oracle NoSQL Database, it is generally difficult to
+                distinguish between network outages and machine failure. The HA
+                components of the NoSQL Database detects when a replication
+                node is unreachable and logs this as an event in the admin log -
+                however grepping for this log event produces false positives.
+                Therefore it is recommended to utilize a systems monitoring
+                package like SNMP or JMX to detect machine/server failure.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="resolv_server_failures"></a>
+            Resolving Server Failures
+            </h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                Two replacement procedures are presented below. Both procedures essentially
+                achieve the same results, and both will result in one or more network restore
+                processes being performed (see below).
+            </p>
+        <p>
+                The first procedure presented replaces the old machine with a machine
+                that – to all interested parties – looks exactly like the
+                original machine. That is, the new machine has the same hostname,
+                IP address, port, and SN id. Compare this with the second procedure;
+                where the old machine is removed from the store's topology
+                and replaced with a machine that appears to be a different machine - 
+                different hostname, IP address, SN id – but the behavior is identical
+                to the behavior of the replaced machine. That is, the new machine runs the
+                same services, and manages the exact same data, as the original machine;
+                it just happens to have a different network and SN identity. Thus, the
+                first case can be viewed as a replacement of only the hardware; that is,
+                from the point of view of the store, the original SN was temporarily taken
+                down and then restarted. The new hardware is not reflected in the store's
+                topology. In the other case, the original SN is removed, and a different
+                SN takes over the original's duties. Although the store's content and
+                behavior hasn't changed, the change in hardware is reflected in the store's
+                new topology.
+            </p>
+        <p>
+                When determining which procedure to use when replacing a storage node, the
+                decision is left to the discretion of the store administrator. Some
+                administrators prefer to always use only one of the procedures, never
+                the other. And some administrators establish a policy that is based on
+                some preferred criteria. For example, you might imagine a policy where the
+                first procedure is employed whenever SN replacement must be performed because
+                the hardware has failed; whereas the second procedure is employed whenever
+                healthy hardware is to be upgraded with newer/better hardware. In the first
+                case, the failed SN is down and unavailable during the replacement process.
+                In the second case, the machine to be replaced can remain up and available
+                while the new machine is being prepared for migration; after which the old
+                machine can be shut down and removed from the topology.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="terminology_review"></a>Terminology Review</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                It may be useful to review some of the terminology introduced in the
+                Oracle NoSQL Database Getting Started Guide as well as the
+                Oracle NoSQL Database Administrator's Guide. Recall from those documents
+                that the physical machine on which the processes of the KVStore run is
+                referred to as a storage node, or SN; where a typical KVStore deployment
+                generally consists of a number of machines – that is, a number of
+                SNs – that execute the processes and software services provided
+                by the Oracle NoSQL Database KVStore. Recall also that when the KVStore software is
+                initially started on a given SN machine, a process referred to as the
+                "Storage Node Agent" (or the SNA) is started. Then, once the SNA is started,
+                the KVStore administrative CLI is used to configure the store and deploy
+                a "topology"; which results in the SNA executing and managing the lifecycle
+                of one or more "services" referred to as "replication nodes" (or RN services).
+                Finally, in addition to starting and managing RN services, the SNA also
+                optionally (depending on the configuration) starts and manages another
+                service type referred to as the "admin" service.
+            </p>
+        <p>
+                Because of the 1-to-1 correspondence between the machines making
+                up a given KVStore deployment and the SNA process initially started on
+                each machine when installing and deploying a store, the terms "storage node",
+                "SN", or "SNx" (where x is a positive integer) are often used interchangeably
+                in the Oracle NoSQL Database documents – including this note – when referring
+                to either the machine on which the SNA is running, or the SNA process itself.
+                Which concept is intended should be clear from the context in which the term
+                is used in a given discussion. For example, when the terms SN3 or sn3 are used
+                below as part of a discussion about hardware issues such as machine failure
+                and recovery, that term refers to the physical host machine running an SNA
+                process that has been assigned the id value 3 and is identified in the store's
+                topology with the string "sn3". In other contexts, for example when the behavior
+                of the store's software is being discussed, the term SN3 and/or sn3 would refer
+                to the actual SNA process running on the associated machine.
+            </p>
+        <p>
+                Although not directly pertinent to the discussion below, the following terms
+                are presented not only for completeness, but also because it may be useful to
+                understand their implications when trying to determine which SN replacement
+                procedure to employ.
+            </p>
+        <p>
+                First, recall from the Oracle NoSQL Database documents that the RN service(s)
+                that are started and managed by each SNA are represented in the store's
+                topology by their service identification number (a positive integer), in
+                conjunction with the identification number of the replication group – or "shard"
+                – in which the service is a member. For example, a given store's topology may
+                reference a particular RN service with the string, "rg3-rn2"; which represents
+                the RN service having id equal to 2 that is a member of the replication group
+                (that is, the shard) with id 3. The capacity then, of a given SN machine that
+                is operating as part of a given KVStore cluster is the number of RN services
+                that will be started and managed by the SNA process deployed to that SN host.
+                Thus, if the capacity of a given SN is 1, only a single RN service will be
+                started and managed by that SN. On the other hand, if the capacity is 3
+                (for example), then 3 RN services will be started and managed by that SN,
+                and each RN will typically belong to a different replication group (share).
+            </p>
+        <p>
+                With respect to the SN host machines and resident SNA processes that are deployed
+                to a given KVStore, two concepts to understand are the concept of a "zone",
+                and the concept of a "pool" of storage nodes. Both concepts correspond to
+                mechanisms that are used to organize the SNs of the store into groups. As a
+                result, the distinction between the two concepts is presented below.
+            </p>
+        <p>
+                When configuring a KVStore for deployment, it is a requirement that at least
+                one "zone" be deployed to the store before deploying any storage nodes.
+                Then, when deploying each SNA process, in addition to specifying the desired
+                host, one of the previously deployed zones must also be specified; which,
+                with respect to the store's topology, will "contain" that SNA, as well as the
+                services managed by that SNA. Thus, the KVStore deployment process produces a
+                a store consisting of one or more zones, where a distinct set of storage
+                nodes belongs to (is a member of) one – and only one – of
+                those zones.
+            </p>
+        <p>
+                In contrast to a zone, rather than being "deployed" to the store, one or
+                more storage node "pools" can be (optionally) "created" within the store. Once
+                such a "pool" is created, any deployed storage node can then be configured to
+                "join" that pool, as well as any other pool that has been created. This means
+                that, unlike zones, where the store consists of one or more zones
+                containing disjoint sets of the deployed SNs, the store can also consist of one
+                or more "pools", where there is no restriction on which, or how many, pools a
+                given SN joins. Every store is automatically configured with a default pool
+                named, "AllStorageNodes"; which all deployed storage nodes join. The creation
+                of any additional pools is optional, and left to the discretion of the deployer;
+                as is the decision about which pools a given storage node joins.
+            </p>
+        <p>
+                Besides the differences described above, there are additional conceptual differences
+                to understand when using zones and pools to group sets of storage nodes.
+                Although zones can be used to represent logical groupings of a store's nodes,
+                crossing physical boundaries, deployers generally map them to real, physical
+                locations. For example, although there is nothing to prevent the deployment of
+                multiple SNA processes to a single machine, where each SNA is deployed to a
+                different zone, more likely than not, a single SNA will be deployed to a
+                single machine, and the store's zones along with the SN machines within
+                each zone will generally be defined to correspond to physical locations
+                that provide some form of fault isolation. For example, each zone may be
+                defined to correspond to a separate floor of a building; or to separate buildings,
+                a few miles apart (or even across the country).
+            </p>
+        <p>
+                Compare how zones are used with how pools are generally used. A single pool
+                may represent all of the storage nodes across all zones; where the default
+                pool is one such pool. On the other hand, multiple pools may be specified; in
+                some cases with no relation between the pools and zones, and in other cases
+                with each pool corresponding to a zone and containing only the nodes belonging
+                to that zone. Although there may be reasons to map a set of storage node
+                pools directly to the store's zones, this is not the primary intent of pools.
+                Whereas the intent of zones is to enable better fault isolation and geographic
+                availability via physical location of the storage nodes, the primary purpose of
+                a pool is to provide a convenient mechanism for referring to a group of storage
+                nodes when applying a given administrative operation. That is, the administrative
+                store operations that take a pool argument can be called once to apply the desired
+                operation to all storage nodes belonging to the specified pool, avoiding the need
+                to execute the operation multiple times; once for each storage node.
+            </p>
+        <p>
+                Associated with zones, another term to understand is "replication factor"
+                (or "rf"). Whenever a zone is deployed to a KVStore, the "replication factor"
+                of that zone must be specified; which represents the number of copies
+                (or "replicas") of each key/value pair to write and maintain on the nodes of the
+                associated zone. Note that whereas "capacity" is a per/SN concept that
+                specifies the number of RN services to manage on a given machine, the
+                "replication factor" is a concept whose scope is per/zone, and is
+                used to determine the number of RN services that belong to each shard
+                (or "replication group") created and managed within the associated zone.
+            </p>
+        <p>
+                Finally, a "network restore" is a process whereby the store automatically
+                recovers all data previously written by a given RN service; retrieving
+                replicas of the data from one or more RN services running on different
+                SNs and then transferring that data (across the network) to the RN whose
+                database is being restored. It is important to understand the implications
+                this process may have on system performance; as the process can be quite
+                time consuming, and can add significant network traffic and load while the
+                data store of the restored RN is being repopulated. Additionally, with
+                respect to SN replacement, these implications can be magnified when the
+                capacity of the SN to be replaced is greater than 1; as this will result
+                in multiple network restorations being performed.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="assumptions"></a>Assumptions</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                When presenting the two procedures below, for simplicity, assume that a 
+                KVStore is initially deployed to 3 machines, resulting in a cluster of 3
+                storage nodes; sn1, sn2, sn3 on hosts with names, host-sn1, host-sn2,
+                and host-sn3 respectively. Assume that:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                     Each machine has a disk named <code class="literal">/opt</code> and
+                     a disk named <code class="literal">/disk1</code>; where each SN
+                     will store its configuration and admin database under
+                     <code class="literal">/opt/ondb/var/kvroot</code>, but will store
+                     the data that is written on the other, separate disk
+                     under <code class="literal">/disk1/ondb/data</code>. 
+                  </p>
+            </li>
+            <li>
+              <p>
+                     The KVStore is installed on each machine under <code class="literal">
+                     /opt/ondb/kv</code>; that is,<code class="literal">KVHOME=/opt/ondb/kv</code>.
+                  </p>
+            </li>
+            <li>
+              <p>
+                     The KVStore is deployed with <code class="literal">KVROOT=/opt/ondb/var/kvroot</code>.
+                  </p>
+            </li>
+            <li>
+              <p>
+                     The KVStore is named "example-store".
+                  </p>
+            </li>
+            <li>
+              <p>
+                     One zone – named "Zone1" and configured with <code class="literal">rf=3</code>
+                     – is deployed to the store.
+                  </p>
+            </li>
+            <li>
+              <p>
+                     Each SN is configured with <code class="literal">capacity=1</code>.
+                  </p>
+            </li>
+            <li>
+              <p>
+                     After deploying each SN to the zone named "Zone1", each SN
+                     joins the <code class="literal">pool</code> named "snpool".
+                  </p>
+            </li>
+            <li>
+              <p>
+                     In addition to the SNA and RN services, an admin service is also
+                     deployed to each machine; that is, <code class="literal">admin1</code> is
+                     deployed to <code class="literal">host-sn1</code> , <code class="literal">admin2</code> 
+                     is deployed to <code class="literal">host-sn2</code>, and <code class="literal">admin3</code>
+                     is deployed to  <code class="literal">host-sn3</code>, each listening
+                     on port 13230.
+                  </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+                Using specific values such as those reflected in the 
+                <a class="xref" href="servers.html#assumptions" title="Assumptions">Assumptions</a>
+                described above enables to follow the steps of each procedure. Combined
+                with the information contained in the Oracle NoSQL Database Administrator's
+                Guide, administrators can generalize and extend those steps to
+                their own particular deployment scenario, substituting the values
+                specific to the given environment where necessary.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="replace_sn_with_identical_sn"></a>
+            Replacement Procedure 1: Replace SN with Identical SN
+            </h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                     The procedure presented in this section describes how to replace the
+                     desired SN with a machine having an identical network and SN identity.
+                     A number of requirements must be satisfied before executing this
+                     procedure; which are:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                     An admin service must be running and accessible somewhere in the system.
+                  </p>
+            </li>
+            <li>
+              <p>
+                      The <code class="literal">id</code> of the SN to be replaced must be known.
+                  </p>
+            </li>
+            <li>
+              <p>
+                     The SN to be replaced must be taken down – either administratively or
+                     via failure – before starting the new SN.
+                  </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+                     An admin service is necessary so that the current configuration of the
+                     SN to be replaced can be retrieved from the admin service's database
+                     and packaged for installation on the new SN. Thus, before proceeding,
+                     the administrator must know the location (hostname or IP address) of
+                     the admin service, along with the port on which that service is
+                     listening for requests. Additionally, since this process requires the
+                     id of the SN to be replaced, the administrator must also know that
+                     value before initiating the procedure below; for example, something
+                     like, sn1, sn2, sn3, etc.
+            </p>
+        <p>
+                     Finally, if the SN to be replaced has failed, and is down,
+                     the last requirement above is automatically satisfied.
+                     On the other hand, if the SN to be replaced is up, then
+                     at some point before starting the new SN, the old SN must be down
+                     so that that SN and the replacement SN do not conflict.
+            </p>
+        <p>
+                     With respect to the requirement related to the admin service, if the
+                     system is running multiple instances of the admin, it is not important
+                     which instance is used in the steps below; just that the admin is
+                     currently running and accessible. This means that if the SN to be
+                     replaced is not only up but is also running an admin service, then
+                     that admin service can be used to retrieve and package that SN's
+                     current configuration. But if that SN has failed or is down
+                     or inaccessible for some reason, then any admin service on that SN is
+                     also down and/or inaccessible - which means an admin service running on
+                     one of the other SNs in the system must be used in the procedure below.
+                     This is why the Oracle NoSQL Database documents strongly encourage administrators to
+                     deploy multiple admin services; where the number deployed should make
+                     quorum loss less likely.
+            </p>
+        <p>
+                     For example, it is obvious that if only 1 admin service was specified
+                     when deploying the store, and that service was deployed to the SN to be
+                     replaced, and that SN has failed or is otherwise inaccessible, then the
+                     loss of that single admin service makes it very difficult to replace
+                     the failed SN using the procedure presented here. Even if multiple admins
+                     are deployed – for example, 2 admins – and the failure of the
+                     SN causes just one of those admins to also fail and thus lose quorum,
+                     even though a working admin remains, it will still require additional
+                     work to recover quorum so that the admin service can perform the
+                     necessary duties to replace the failed SN.
+            </p>
+        <p>
+                     Suppose a KVStore has been deployed as described in the section
+                     <a class="xref" href="servers.html#assumptions" title="Assumptions">Assumptions</a>. Also,
+                     suppose that the sn2 machine (whose hostname is, "host-sn2") has
+                     failed in some way and needs to be replaced. If the administrator wishes
+                     to replace the failed SN with an identical but healthy machine, then the
+                     administrator would do the following:
+            </p>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p>
+                     If, for some reason, host-sn2 is running, shut it down.
+                  </p>
+            </li>
+            <li>
+              <p>
+                     Log into host-sn1 (or host-sn3).
+                  </p>
+            </li>
+            <li>
+              <p>
+                     From the command line, execute the <code class="literal">generateconfig</code>
+                     utility to produce a ZIP file named "sn2-config.zip" that contains the
+                     current configuration of the failed SN (sn2):
+                  </p>
+              <pre class="programlisting">&gt; java -jar /opt/ondb/kv/lib/kvstore.jar generateconfig \
+       -host host-sn1 -port 13230 \
+       -sn sn2 -target /tmp/sn2-config
+</pre>
+              <p>
+                     which creates and populates the file, <code class="literal">/tmp/sn2-config.zip</code>.
+                  </p>
+            </li>
+            <li>
+              <p>
+                     Install and provision a new machine with the same network
+                     configuration as the machine to be replaced; specifically,
+                     the same hostname and IP address.
+                  </p>
+            </li>
+            <li>
+              <p>
+                     Install the KVStore software on the new machine under
+                     <code class="literal">KVHOME=/opt/ondb/kv</code>.
+                  </p>
+            </li>
+            <li>
+              <p>
+                     If the directory <code class="literal">KVROOT=/opt/ondb/var/kvroot
+                     </code> exists, then make sure it's empty; otherwise,
+                     create it:
+                  </p>
+              <pre class="programlisting">&gt; rm -rf /opt/ondb/var/kvroot
+&gt; mkdir -p /opt/ondb/var/kvroot
+</pre>
+            </li>
+            <li>
+              <p>
+                     Copy the ZIP file from <code class="literal">host-sn1</code> to the
+                     new <code class="literal">host-sn</code>. 
+                  </p>
+              <pre class="programlisting">&gt; scp /tmp/sn2-config.zip host-sn2:/tmp
+</pre>
+            </li>
+            <li>
+              <p>
+                     On the new host-sn2, install the contents of the ZIP file
+                     just copied.
+                  </p>
+              <pre class="programlisting">&gt; unzip /tmp/sn2-config.zip -d /opt/ondb/var/kvroot
+</pre>
+            </li>
+            <li>
+              <p>
+                     Restart the sn2 storage node on the new host-sn2 machine, using
+                     the old sn2 configuration that was just installed:
+                  </p>
+              <pre class="programlisting">&gt; nohup java -jar /opt/ondb/kv/lib/kvstore.jar start \
+             -root /opt/ondb/var/kvroot \
+             -config config.xml&amp;
+</pre>
+              <p>
+                     which, after starting the SNA, RN, and admin services, will initiate a
+                     (possibly time-consuming) network restore, to repopulate the data stores
+                     managed by this new sn2.
+                  </p>
+            </li>
+          </ol>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="new_sn_takes_overduties_removed_sn"></a>
+            Replacement Procedure 2: New SN Takes Over Duties of Removed SN
+            </h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                     The procedure presented in this section describes how to deploy a
+                     new SN, having a network and SN identity different than all current
+                     SNs in the store, that will effectively replace one of the current
+                     SNs by taking over that SN's duties and data. Unlike the previous
+                     procedure, the only prerequisite that must be satisfied when
+                     executing this second procedure is the existence of a working quorum
+                     of admin service(s). Also, whereas in the previous procedure
+                     the SN to be replaced must be down prior to powering up the replacement
+                     SN (because the two SNs share an identity), in this case, the SN to be
+                     replaced can remain up and running until the migration step of the
+                     process; where the replacement SN finally takes over the duties of the
+                     SN being replaced. Thus, although the SN to be replaced can be down
+                     throughout the whole procedure if desired, that SN can also be left up
+                     so that it can continue to service requests while the replacement SN
+                     is being prepared.
+            </p>
+        <p>
+                     Suppose a KVStore has been deployed as described in the section
+                     <a class="xref" href="servers.html#assumptions" title="Assumptions">Assumptions</a>. Also, suppose
+                     that the sn2 machine is currently up, but needs to be upgraded to a new
+                     machine with more memory, larger disks, and better overall performance
+                     characteristics. The administrator would then do the following:
+            </p>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p>
+                     From a machine with the Oracle NoSQL Database software installed 
+                     that has network access to one of the machines running an admin
+                     service for the deployed KVStore, start the administrative CLI;
+                     connecting it to that admin service. The machine on which the
+                     CLI is run can be any of the machines making up the store –
+                     even the machine to be replaced – or a separate client machine.
+                     For example, if the administrative CLI is started on the
+                     <code class="literal">sn1</code> storage node, and one wishes to connect that
+                     CLI to the admin service running on that same <code class="literal">sn1</code>
+                     host, the following would be typed from a command prompt on the
+                     host named, <code class="literal">host-sn1</code>:
+                     </p>
+              <pre class="programlisting">&gt; java -jar /opt/ondb/kv/lib/kvstore.jar runadmin \
+       -host host-sn1 -port 13230
+</pre>
+            </li>
+            <li>
+              <p>
+                     From the administrative CLI just started, execute the <code class="literal">show pools
+                     </code> command to determine the storage node <code class="literal">pool</code> the
+                     new storage node will need to join after deployment; for example,
+                     </p>
+              <pre class="programlisting">kv-&gt; show pools
+</pre>
+              <p>
+                     which, given the initial assumptions, should produce output
+                     that looks like the following:
+                     </p>
+              <pre class="programlisting">AllStorageNodes: sn1 sn2 sn3
+snpool: sn1 sn2 sn3
+</pre>
+              <p>
+                     where, from this output, one should note that the name of
+                     the pool the new storage node should join below is "snpool";
+                     and the pool named "AllStorageNodes" is the pool that all
+                     storage nodes join by default when deployed. 
+                     </p>
+            </li>
+            <li>
+              <p>
+                     From the administrative CLI just started, execute the
+                     <code class="literal">show topology</code> command to determine the
+                     zone to use when deploying the new storage node; for 
+                     example,
+                     </p>
+              <pre class="programlisting">kv-&gt; show topology
+</pre>
+              <p>
+                     which, should produce output that looks like the following:
+                     </p>
+              <pre class="programlisting">store=example-store numPartitions=300 sequence=308
+  zn: id=1 name=Zone1 repFactor=3
+
+  sn=[sn1] zn:[id=1 name=Zone1] host-sn1 capacity=1 RUNNING
+    [rg1-rn1] RUNNING
+
+  sn=[sn2] zn:[id=1 name=Zone1] host-sn2 capacity=1 RUNNING
+    [rg1-rn2] RUNNING
+
+  sn=[sn3] zn:[id=1 name=Zone1] host-sn3 capacity=1 RUNNING
+    [rg1-rn3] RUNNING
+  ........
+</pre>
+              <p>
+                     where, from this output, one should then note that the id of
+                     the zone to use when deploying the new storage node is "1". 
+                     </p>
+            </li>
+            <li>
+              <p>
+                     Install and provision a new machine with a network configuration
+                     that is different than each of the machines currently known to the
+                     deployed KVStore. For example, provision the new machine with a
+                     hostname such as, host-sn4, and an IP address unique to the
+                     store's members.
+                     </p>
+            </li>
+            <li>
+              <p>
+                     Install the KVStore software on the new machine under 
+                     <code class="literal">KVHOME=/opt/ondb/kv</code>.
+                  </p>
+            </li>
+            <li>
+              <p>
+                     Create the new storage node's KVROOT directory; for example:
+                  </p>
+              <pre class="programlisting">&gt; mkdir -p /opt/ondb/var/kvroot
+</pre>
+            </li>
+            <li>
+              <p>
+                     Create the new storage node's data directory on a separate disk
+                     than KVROOT; for example:
+                  </p>
+              <pre class="programlisting">&gt; mkdir -p /disk1/ondb/data
+</pre>
+              <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                <h3 class="title">Note</h3>
+                <p>
+                          The path used for the data directory of the replacement SN must
+                          be identical to the path used by the SN to be replaced.
+                          </p>
+              </div>
+            </li>
+            <li>
+              <p>
+                          From the command prompt of the new host-sn4 machine, use the
+                          <code class="literal">makebootconfig</code> utility (described in
+                          Chapter 2 of the Oracle NoSQL Database Administrator's Guide,
+                          section, "Installation Configuration") to create an initial
+                          configuration for the new storage node that is consistent
+                          with the <a class="xref" href="servers.html#assumptions" title="Assumptions">Assumptions</a>
+                          specified above; for example:
+                     </p>
+              <pre class="programlisting">&gt; java -jar /opt/ondb/kv/lib/kvstore.jar makebootconfig \
+       -root /opt/ondb/var/kvroot \
+       -port 13230  \
+       -admin 13231 \
+       -host host-sn4
+       -harange 13232,13235 \
+       -num_cpus 0  \
+       -memory_mb 0 \
+       -capacity 1  \
+       -storagedir /disk1/ondb/data
+</pre>
+              <p>
+                          which produces the file named config.xml, under <code class="literal">
+                          KVROOT=/opt/ondb/var/kvroot</code>.
+                     </p>
+            </li>
+            <li>
+              <p>
+                          Using the configuration just created, start the KVStore software
+                          (the SNA and its managed services) on the new host-sn4 machine;
+                          for example,
+                     </p>
+              <pre class="programlisting">&gt; nohup java -jar /opt/ondb/kv/lib/kvstore.jar start \
+             -root /opt/ondb/var/kvroot \
+             -config config.xml &amp;
+</pre>
+            </li>
+            <li>
+              <p>
+                          Using the information associated with the sn2 storage node
+                          (the SN to replace) that was gathered from the <code class="literal">show topology</code>
+                          and <code class="literal">show pools</code> commands above, use
+                          the administrative CLI to deploy the new storage node and
+                          join the desired pool; that is,
+                     </p>
+              <pre class="programlisting">kv-&gt; plan deploy-sn -znname Zone1 -host host-sn4 -port 13230 -wait
+kv-&gt; pool join -name snpool -sn sn4
+</pre>
+              <p>
+                          For an SN to join a pool, the SN must have been successfully
+                          deployed and the id of the deployed SN must be specified in the 
+                          <code class="literal">pool join</code> command; for example, "sn4" above.
+                          But upon examination of the <code class="literal">plan deploy-sn</code>,
+                          command you can see that the id to assign to the SN being deployed is
+                          not specified. This is because it is the KVStore itself – not the 
+                          administrator – that determines the id to assign to a newly deployed
+                          SN. Thus, given that it was assumed that only 3 storage nodes were
+                          initially deployed in the example used to demonstrate this procedure,
+                          when deploying the next storage node, the system will increment by
+                          1 the integer component of the id assigned to the most recently
+                          deployed SN – "sn3" or 3 in this case – and use the result to
+                          construct the id to assign to the next SN that is deployed. Hence,
+                          "sn4" was assumed to be the id to specify to the
+                          <code class="literal">pool join </code> command above. But if you want to 
+                          ascertain the assigned id, then before joining the pool, execute
+                          the <code class="literal">show topology</code> command which will display the id
+                          that was constructed and assigned to the newly deployed SN.
+                     </p>
+            </li>
+            <li>
+              <p>
+                          Since the old SN must not be running when the migrate operation
+                          is performed (see the next step), if the SN to be replaced is still
+                          running at this point, programmatically shut it down, and then power
+                          off and disconnect the  associated machine. This step can
+                          be performed at any point prior to performing the next step. Thus,
+                          to shut down the SN to be replaced, type the following from the
+                          command prompt of the machine hosting that SN:
+                     </p>
+              <pre class="programlisting">&gt; java -jar /opt/ondb/kv/lib/kvstore.jar stop \
+       -root /opt/ondb/var/kvroot
+</pre>
+              <p>
+                          On completion, the associated machine can then be powered down
+                          and disconnected if desired.
+                     </p>
+            </li>
+            <li>
+              <p>
+                          After the new storage node has been deployed, joined the desired
+                          pool, and the SN to be replaced is no longer running, use the
+                          administrative CLI to migrate that old SN to the new SN. This means,
+                          in this case, that the SNA, RN and admin services associated with sn4
+                          will take over the duties previously performed in the store by the
+                          corresponding services associated with sn2; and the data previously
+                          stored by sn2 will be moved – via the network – to the
+                          storage directory for sn4. To perform this step then, execute the
+                          following command from the CLI:
+                     </p>
+              <pre class="programlisting">kv-&gt; plan migrate-sn -from sn2 -to sn4 -admin-port 13231 [-wait]
+</pre>
+              <p>
+                          In this case, because the old SN had been running an admin
+                          service, the admin-port argument must be specified with the same
+                          value as that used above for the admin argument in the <code class="literal">
+                          makebootconfig</code> command. The <code class="literal">-wait</code>
+                          argument is optional in the command above. If <code class="literal">-wait</code>
+                          is used, then the command will not return until the full migration
+                          has completed; which, depending on the amount of data being migrated,
+                          can take a long time. If <code class="literal">-wait</code> is not
+                          specified, then the <code class="literal">show plan -id &lt;migration-plan-id&gt;
+                          </code> command is used to track the progress of the migration;
+                          allowing other administrative tasks to be performed during the migration.
+                     </p>
+            </li>
+            <li>
+              <p>
+                          After the migration process completes, remove the old SN from the
+                          store's topology. You can do this by executing the
+                          <code class="literal">plan remove-sn</code> command from the administrative CLI.
+                          For example,
+                     </p>
+              <pre class="programlisting">kv-&gt; plan remove-sn -sn sn2 -wait
+</pre>
+              <p>
+                          At this point, the store should have a structure similar to its original
+                          structure; except that the data that was originally stored by sn2 on the
+                          host named host-sn2 via that node's rg1-rn2 service, is now stored on
+                          host-sn4 by the sn4 storage node (via the migrated service named rg1-rn2
+                          that sn4 now manages).
+                     </p>
+            </li>
+          </ol>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="examples"></a>
+            Examples
+            </h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                     In this section, two examples are presented that should allow you to gain
+                     some practical experience with the SN replacement procedures presented
+                     above. Each example uses the same initial configuration, and is intended
+                     to simulate a 3-node KVStore cluster using a single machine with a single
+                     disk. Although no machines will actually fail or be physically replaced,
+                     you should still get a feel for how the cluster and the data stored by a
+                     given SN is automatically recovered when that storage node is replaced
+                     using one of the procedures described above.
+            </p>
+        <p>
+                     Assume that a KVStore is deployed in a manner similar to
+                     the section <a class="xref" href="servers.html#assumptions" title="Assumptions">Assumptions</a>
+                     Specifically, assume that a KVStore is initially deployed using 3
+                     storage nodes - named sn1, sn2, and sn3 – on a single host with
+                     IP address represented by the string, &lt;host-ip&gt; where the host's
+                     actual IP address (or hostname) is substituted for &lt;host-ip&gt;
+                     when running either example. Additionally, since your development system
+                     will typically not contain a disk named /disk1 (as specified in the 
+                     <a class="xref" href="servers.html#assumptions" title="Assumptions">Assumptions</a> section), rather
+                     than provisioning such a disk, assume instead that the data written to the
+                     store will be stored under <code class="literal">/tmp/sn1/disk1</code>,
+                     <code class="literal">/tmp/sn2/disk1</code>, and <code class="literal">/tmp/sn3/disk1</code>
+                     respectively. Finally, since each storage node runs on the same host, assume
+                     each storage node is configured with different ports for the services and
+                     admins run by those nodes; otherwise, all other assumptions are as stated
+                     above in the <a class="xref" href="servers.html#assumptions" title="Assumptions">Assumptions</a> section.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="setup"></a>
+            Setup
+            </h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                     As indicated above, the initial configuration and setup is the same for
+                     each example presented below. Thus, if not done so already, first create
+                     the KVROOT directory; that is,
+            </p>
+        <pre class="programlisting">&gt; mkdir -p /opt/ondb/var/kvroot </pre>
+        <p>
+               Then, to simulate the data disk, create the following directories:
+            </p>
+        <pre class="programlisting">&gt; mkdir -p /tmp/sn1/disk1/ondb/data
+&gt; mkdir -p /tmp/sn2/disk1/ondb/data
+&gt; mkdir -p /tmp/sn3/disk1/ondb/data
+</pre>
+        <p>
+                     Next, open 3 windows; Win_A, Win_B, and Win_C, which will represent the
+                     3 machines running each storage node. In each window, execute the
+                     <code class="literal">makebootconfig</code> command (remembering to substitute
+                     the actual IP address or hostname for the string &lt;host-ip&gt;) to
+                     create a different, but similar, boot config for each SN that will be
+                     configured.
+            </p>
+        <p>
+          <span class="emphasis">
+            <em>On Win_A</em>
+          </span>
+        </p>
+        <pre class="programlisting">java -jar /opt/ondb/kv/lib/kvstore.jar makebootconfig \
+     -root /opt/ondb/var/kvroot 
+     -host &lt;host-ip&gt; \
+     -config config1.xml \
+     -port 13230 \
+     -harange 13232,13235 \
+     -admin 13231 \
+     -memory_mb 100 \
+     -capacity 1 \
+     -storagedir /tmp/sn1/disk1/ondb/data
+</pre>
+        <p>
+          <span class="emphasis">
+            <em>On Win_B</em>
+          </span>
+        </p>
+        <pre class="programlisting">java -jar /opt/ondb/kv/lib/kvstore.jar makebootconfig \
+     -root /opt/ondb/var/kvroot \
+     -host &lt;host-ip&gt; \
+     -config config2.xml \
+     -port 13240 \
+     -harange 13242,13245 \
+     -admin 13241 \
+     -memory_mb 100 \
+     -capacity 1 \
+     -storagedir /tmp/sn2/disk1/ondb/data
+</pre>
+        <p>
+          <span class="emphasis">
+            <em>On Win_C</em>
+          </span>
+        </p>
+        <pre class="programlisting">java -jar /opt/ondb/kv/lib/kvstore.jar makebootconfig \
+     -root /opt/ondb/var/kvroot \
+     -host &lt;host-ip&gt; \
+     -config config3.xml \
+     -port 13250 \
+     -harange 13252,13255 \
+     -admin 13251 \
+     -memory_mb 100 \
+     -capacity 1 \
+     -storagedir /tmp/sn3/disk1/ondb/data
+</pre>
+        <p>
+                     This will produce 3 configuration files:
+            </p>
+        <pre class="programlisting">/opt/ondb/var/kvroot
+    /config1.xml
+    /config2.xml
+    /config3.xml
+</pre>
+        <p>
+                     Next, using the different configurations just generated, from each
+                     window, start a corresponding instance of the KVStore storage node
+                     agent (SNA); which, based on the specific configurations generated,
+                     will start and manage an admin service and an RN service.
+            </p>
+        <p>
+          <span class="emphasis">
+            <em>Win_A</em>
+          </span>
+        </p>
+        <pre class="programlisting">&gt; nohup java -jar /opt/ondb/kv/lib/kvstore.jar start \
+             -root /opt/ondb/var/kvroot \
+             -config config1.xml &amp;
+</pre>
+        <p>
+          <span class="emphasis">
+            <em>Win_B</em>
+          </span>
+        </p>
+        <pre class="programlisting">&gt; nohup java -jar /opt/ondb/kv/lib/kvstore.jar start \
+             -root /opt/ondb/var/kvroot \
+             -config config2.xml &amp;
+</pre>
+        <p>
+          <span class="emphasis">
+            <em>Win_C</em>
+          </span>
+        </p>
+        <pre class="programlisting">nohup java -jar /opt/ondb/kv/lib/kvstore.jar start \
+             -root /opt/ondb/var/kvroot \
+             -config config3.xml &amp;
+</pre>
+        <p>
+                     Finally, from any window (Win_A, Win_B, Win_C, or a new window),
+                     start the KVStore administrative CLI and use it to configure and
+                     deploy the store. For example, to start an administrative CLI
+                     connected to the admin service that was started above using the
+                     configuration employed in Win_A, you would execute the following
+                     command:
+            </p>
+        <pre class="programlisting">&gt; java -jar /opt/ondb/kv/lib/kvstore.jar runadmin \
+       -host &lt;host-ip&gt; -port 13230
+</pre>
+        <p>
+                     To configure and deploy the store, type the following commands from
+                     the administrative CLI prompt (remembering to substitute the actual
+                     IP address or hostname for the string &lt;host-ip&gt;):
+            </p>
+        <pre class="programlisting">configure -name example-store
+plan deploy-zone -name Zone1 -rf 3 -wait
+plan deploy-sn -znname Zone1 -host &lt;host-ip&gt; -port 13230 -wait
+plan deploy-admin -sn 1 -port 13231 -wait
+pool create -name snpool
+pool join -name snpool -sn sn1
+plan deploy-sn -znname Zone1 -host &lt;host-ip&gt; -port 13240 -wait
+plan deploy-admin -sn 2 -port 13241 -wait
+pool join -name snpool -sn sn2
+plan deploy-sn -znname Zone1 -host &lt;host-ip&gt; -port 13250 -wait
+plan deploy-admin -sn 3 -port 13251 -wait
+pool join -name snpool -sn sn3
+change-policy -params "loggingConfigProps=oracle.kv.level=INFO;"
+change-policy -params cacheSize=10000000
+topology create -name store-layout -pool snpool -partitions 300
+plan deploy-topology -name store-layout -plan-name RepNode-Deploy -wait
+</pre>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+                          The CLI command prompt (<code class="literal">kv-&gt;</code>) was
+                          excluded from the list of commands above to facilitate
+                          cutting and pasting the commands into a CLI load script.
+                          </p>
+        </div>
+        <p>
+                     When the commands above complete (use <code class="literal">show plans</code>
+                     to verify each plan's completion), the store is up and running and ready
+                     for data to be written to it. Before proceeding though, verify that
+                     directories like those shown below have been created and populated:
+            </p>
+        <pre class="programlisting">     - Win_A -                  - Win_B -                - Win_C -
+
+/opt/ondb/var/kvroot      /opt/ondb/var/kvroot      /opt/ondb/var/kvroot
+  log files                 log files                 log files
+  /example-store            /example-store            /example-store
+    /log                      /log                      /log
+    /sn1                      /sn2                      /sn3
+      config.xml                config.xml                config.xml
+      /admin1                   /admin2                   /admin3
+        /env                      /env                      /env
+
+/tmp/sn1/disk1/ondb/data  /tmp/sn2/disk1/ondb/data /tmp/sn3/disk1/ondb/data
+  /rg1-rn1                  /rg1-rn2                  /rg1-rn3
+    /env                      /env                      /env
+      00000000.jdb              00000000.jdb              00000000.jdb </pre>
+        <p>
+                     Because rf=3 for the deployed store, and capacity=1 for each SN in that
+                     store, when a key/value pair is initially written to the store, the pair
+                     is stored by each of the replication nodes – rn1, rn2, and rn3 –
+                     in their corresponding data file named "00000000.jdb"; where each
+                     replication node is a member of the replication group – or shard –
+                     named rg1; that is, the key/value pair is stored in:
+            </p>
+        <pre class="programlisting">/tmp/sn1/disk1/ondb/data/rg1-rn1/env/00000000.jdb
+/tmp/sn2/disk1/ondb/data/rg1-rn2/env/00000000.jdb
+/tmp/sn3/disk1/ondb/data/rg1-rn3/env/00000000.jdb
+</pre>
+        <p>
+                     At this point in the setup, each file should contain no key/value
+                     pairs. Data can be written to the store in a way most convenient.
+                     But a utility that is quite handy for doing this is the
+                     KVStore client shell utility; which is a process that connects to
+                     the desired store and then presents a command line interface that
+                     takes interactive commands for putting and getting key/value pairs.
+                     To start the KVStore client shell, type the following from a command
+                     window (remembering to substitute the actual IP address or hostname
+                     for the string &lt;host-ip&gt;):
+            </p>
+        <pre class="programlisting">&gt; java -jar /opt/ondb/kv/lib/kvstore.jar runadmin\
+       -host &lt;host-ip&gt; -port 13230 -store example-store
+
+kv-&gt; get -all
+  0 Record returned.
+
+kv-&gt; put -key /FIRST_KEY -value "HELLO WORLD"
+  Put OK, inserted.
+
+kv-&gt; get -all
+  /FIRST_KEY
+  HELLO WORLD
+</pre>
+        <p>
+                     Although simplistic and not very programmatic, a quick way to
+                     verify that the key/value pair was stored by each RN service is 
+                     to simply grep for the string "HELLO WORLD" in each of the data
+                     files; which should work with binary files on most linux systems.
+                     Using the "grep" command in this way is practical for
+                     examples that consist of only a small amount of data.
+            </p>
+        <pre class="programlisting">&gt; grep "HELLO WORLD" /tmp/sn1/disk1/ondb/data/rg1-rn1/env/00000000.jdb
+  Binary file /tmp/sn1/disk1/ondb/data/rg1-rn1/env/00000000.jdb matches
+&gt; grep "HELLO WORLD" /tmp/sn2/disk1/ondb/data/rg1-rn2/env/00000000.jdb
+  Binary file /tmp/sn2/disk1/ondb/data/rg1-rn2/env/00000000.jdb matches
+&gt; grep "HELLO WORLD" /tmp/sn3/disk1/ondb/data/rg1-rn3/env/00000000.jdb
+  Binary file /tmp/sn3/disk1/ondb/data/rg1-rn3/env/00000000.jdb matches
+</pre>
+        <p>
+                     Based on the output above, the key/value pair that was written
+                     to the store was stored by each RN service belonging to the shard
+                     rg1; that is, each RN service that is a member of the replication
+                     group with id equal to 1 (rg1-rn1, rg1-rn2, and rg1-rn3). With which
+                     shard a particular key is associated depends on the key's value
+                     (specifically, the hash of the key's value) as well as the number
+                     of shards maintained by the store (1 in this case). It is also
+                     worth noting that although this example shows log files with the
+                     name 00000000.jdb, those files are only the first of possibly many
+                     such log files containing data written by the corresponding RN
+                     service. Over time, as the current log file reaches its maximum
+                     capacity, a new file will be created to receive all new data being
+                     written. That new file has a name derived from the previous
+                     file by incrementing the prefix of the previous file. For example,
+                     you might see files with names such as, "..., 00000997.jdb,
+                     00000998.jdb, 00000999.jdb, 00001000.jdb, 00001001.jdb, ...".
+            </p>
+        <p>
+                     Now that data has been written to the store, a failed storage
+                     node can be simulated, and an example of the first SN replacement
+                     procedure can be performed.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="example_1_replace_failed_sn_with_ident_sn"></a>
+            Example 1: Replace a Failed SN with an Identical SN
+            </h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                     To simulate a failed storage node, pick one of the storage nodes
+                     started above, programmatically stop it's associated processes,
+                     and delete all files and directories associated with that process.
+                     For example, suppose sn2 is the "failed" storage node. But before
+                     stopping the sn2 storage node, you might first (optionally) identify
+                     the processes that are running as part of the deployed store; that
+                     is:
+            </p>
+        <pre class="programlisting">&gt; jps -m
+408 kvstore.jar start -root /opt/ondb/var/kvroot -config config1.xml
+833 ManagedService -root /opt/ondb/var/kvroot -class Admin -service
+BootstrapAdmin.13230 -config config1.xml
+1300 ManagedService -root /opt/ondb/var/kvroot/example-store/sn1 -store
+example-store -class RepNode -service rg1-rn1
+....
+563 kvstore.jar start -root /opt/ondb/var/kvroot -config config2.xml
+1121 ManagedService -root /opt/ondb/var/kvroot/example-store/sn2
+-store example-store -class Admin -service admin2
+1362 ManagedService -root /opt/ondb/var/kvroot/example-store/sn2 
+-store example-store -class RepNode -service rg1-rn2
+....
+718 kvstore.jar start -root /opt/ondb/var/kvroot -config config3.xml
+1232 ManagedService -root /opt/ondb/var/kvroot/example-store/sn3 -store
+example-store -class Admin -service admin3
+1431 ManagedService -root /opt/ondb/var/kvroot/example-store/sn3 -store
+example-store -class RepNode -service rg1-rn3
+....
+</pre>
+        <p>
+                     The output above was manually re-ordered for readability.
+                     In reality, each process listed may appear in a random order.
+                     But it should be noted that each SN from the example deployment
+                     corresponds to 3 processes:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                         The SNA process, which is characterized by the string
+                         "kvstore.jar start", and identified by the corresponding
+                         configuration file; for example, <code class="literal">config1.xml</code>
+                         for <code class="literal">sn1</code>, <code class="literal">config2.xml</code> for
+                         <code class="literal">sn2</code>, and <code class="literal">config3.xml</code> for 
+                         <code class="literal">sn3</code>.
+                      </p>
+            </li>
+            <li>
+              <p>
+                         An admin service is characterized by the string <code class="literal">-class Admin
+                         </code>, and either a string of the form <code class="literal">
+                         -service BootstrapAdmin.&lt;port&gt;</code> or a string of
+                         the form <code class="literal">-service admin&lt;id&gt;</code> (see
+                         the explanation below).
+                      </p>
+            </li>
+            <li>
+              <p>
+                         An RN service characterized by the string <code class="literal">-class RepNode
+                         </code> along with a string of the form 
+                         <code class="literal">-service rg1-rn&lt;id&gt;</code>; where "&lt;id&gt;"
+                         is 1, 2, etc. and maps to the SN hosting the given RN service, and
+                         where for a given SN, if the <code class="literal">capacity</code>
+                         of that SN is N&gt;1, then for that SN, there will be N processes
+                         listed that reference a different <code class="literal">RepNode</code> service.
+                      </p>
+            </li>
+          </ul>
+        </div>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+                          With respect to the line in the process list above that references
+                          the string <code class="literal">-service BootstrapAdmin.&lt;port&gt;</code>,
+                          some explanation may be useful. When an SNA starts up and the 
+                          <code class="literal">-admin</code> argument is specified in the
+                          configuration, the SNA will initially start what is referred to
+                          as a bootstrap admin. Because this example specified the
+                          <code class="literal">-admin</code> argument in the configuration of all 3
+                          storage nodes, each SNA in the example starts a corresponding
+                          bootstrap admin. The fact that the process list above contains
+                          only one entry referencing a <code class="literal">BootstrapAdmin</code>
+                          is explained below.
+                       </p>
+        </div>
+        <p>
+                         Recall that Oracle NoSQL Database requires the deployment of
+                         at least 1 admin service. If more than 1 such admin is deployed,
+                         the admin that is deployed first takes on a special role within
+                         the KVStore. In this example, any of the 3 bootstrap admins that
+                         were started by the corresponding SNA can be that first deployed
+                         admin service. After configuring the store and deploying the
+                         zone, the deployer must choose one of the storage nodes
+                         that was started and use the plan <code class="literal">deploy-sn</code> 
+                         command to deploy that storage node to the desired zone
+                         within the store. After deploying that first storage node, the
+                         admin service corresponding to that storage node must then be
+                         deployed, using the <code class="literal">plan deploy-admin</code> command.
+                      </p>
+        <p>
+                         Until that first admin service is deployed, no other storage
+                         nodes or admins can be deployed. When that first admin
+                         service is deployed to the machine running the first SN (sn1
+                         in this case), the bootstrap admin running on that machine
+                         continues running, and takes on the role of the very first
+                         admin service in the store. This is why the 
+                         <code class="literal">BootstrapAdmin.&lt;port&gt;</code> process
+                         continues to appear in the process list; whereas, as explained
+                         below, the processes associated with the other storage nodes
+                         are identified by admin2 and admin3 rather than <code class="literal">
+                         BootstrapAdmin.&lt;port&gt;</code>. It is only after this
+                         first admin is deployed that the other storage nodes
+                         (and admins) can be deployed.
+                      </p>
+        <p>
+                         Upon deployment of any of the other storage nodes, the
+                         BootstrapAdmin process associated with each such storage node
+                         is shut down and removed from the RMI registry. This is because
+                         there is no longer a need for the bootstrap admin on these
+                         additional storage nodes. The existence of a bootstrap admin 
+                         is an indication that the associated SNA can host the 
+                         first admin if desired. But once the first storage node is 
+                         deployed and its corresponding bootstrap admin takes on the role 
+                         of the first admin, the other storage nodes can no longer 
+                         host that first admin; and so, upon deployment of each additional 
+                         storage node, the corresponding <code class="literal">BootstrapAdmin</code> 
+                         process is stopped. Additionally, if that first process referencing
+                         the <code class="literal">BootstrapAdmin</code> is stopped and restarted
+                         at some point after the store has been deployed, then the new
+                         process will be identified in the process list with the string
+                         <code class="literal">-class Admin</code>, just like the other admin
+                         processes.
+                      </p>
+        <p>
+                         Finally, recall that although a store can be deployed with only
+                         1 admin service, it is strongly recommended that multiple admin
+                         services be run for greater availability; where the number of
+                         admins deployed should be large enough that quorum loss is
+                         unlikely in the event of failure of an SN. Thus, as this
+                         example demonstrates, after each additional storage node is
+                         deployed (and the corresponding bootstrap admin is stopped),
+                         a new admin service should then be deployed that will coordinate
+                         with the first admin service to replicate the administrative
+                         information that is persisted. Hence, the admin service
+                         associated with sn1 in the process list above is identified as
+                         a BootstrapAdmin (the first admin service), and the other
+                         admin services are identified as simply admin2 and admin3.
+                      </p>
+        <p>
+                         Thus, to simulate a "failed" storage node, sn2 should be stopped;
+                         which is accomplished by typing the following at the command
+                         prompt:
+                      </p>
+        <pre class="programlisting">&gt; java -jar /opt/ondb/kv/lib/kvstore.jar stop \
+       -root /opt/ondb/var/kvroot \
+       -config config2.xml
+</pre>
+        <p>
+                        Optionally, use the <code class="literal">jps</code> command to
+                        examine the processes that remain; that is,
+                      </p>
+        <pre class="programlisting">&gt; jps -m
+
+408 kvstore.jar start -root /opt/ondb/var/kvroot
+-config config1.xml
+833 ManagedService -root /opt/ondb/var/kvroot
+-class Admin -service BootstrapAdmin.13230 -config config1.xml
+1300 ManagedService -root /opt/ondb/var/kvroot/
+example-store/sn1 -store example-store -class RepNode -service rg1-rn1
+....
+718 kvstore.jar start -root /opt/ondb/var/
+kvroot -config config3.xml
+1232 ManagedService -root /opt/ondb/var/kvroot/example-store/
+sn3 -store example-store -class Admin -service admin3
+1431 ManagedService -root /opt/ondb/var/kvroot/example-store/
+sn3 -store example-store -class RepNode -service rg1-rn3
+....
+</pre>
+        <p>
+                         where the processes previously associated with sn2 are no longer
+                         running. Next, since the sn2 processes have stopped, the associated
+                         files can be deleted as follows:
+                      </p>
+        <pre class="programlisting">&gt; rm -rf /tmp/sn2/disk1/ondb/data/rg1-rn2
+&gt; rm -rf /opt/ondb/var/kvroot/example-store/sn2
+
+&gt; rm -f /opt/ondb/var/kvroot/config2.xml
+&gt; rm -f /opt/ondb/var/kvroot/config2.xml.log
+&gt; rm -f /opt/ondb/var/kvroot/snaboot_0.log.1*
+
+&gt; rm -r /opt/ondb/var/kvroot/example-store/log/admin2*
+&gt; rm -r /opt/ondb/var/kvroot/example-store/log/rg1-rn2*
+&gt; rm -r /opt/ondb/var/kvroot/example-store/log/sn2*
+&gt; rm -r /opt/ondb/var/kvroot/example-store/log/config.rg1-rn2
+&gt; rm -r /opt/ondb/var/kvroot/example-store/log/example-store_0.*.1*
+</pre>
+        <p>
+                         where the files above that contain a suffix component of "1"
+                         (for example, snaboot_0.log.1 and example-store_0.log.1,
+                         example-store_0.perf.1,example-store_0.stat.1, etc.) are
+                         associated with the sn2 storage node.
+                      </p>
+        <p>
+                         Executing the above commands should then simulate a catastrophic
+                         failure of the "machine" to which sn2 was deployed; where the
+                         configuration and data associated with sn2 is now completely
+                         unavailable, and is only recoverable via the deployment of a
+                         "new" – and in this example, identical – sn2 storage node.
+                         To verify this, execute the <code class="literal">show topology</code> 
+                         command from the administrative CLI previously started; that is,
+                      </p>
+        <pre class="programlisting">kv-&gt; show topology
+</pre>
+        <p>
+                         which should produce output that looks like the following:
+                      </p>
+        <pre class="programlisting">store=example-store numPartitions=300 sequence=308
+  zn: id=1 name=Zone1 repFactor=3
+
+  sn=[sn1] zn:[id=1 name=Zone1] &lt;host-ip&gt; capacity=1 RUNNING
+    [rg1-rn1] RUNNING
+
+  sn=[sn2] zn:[id=1 name=Zone1] &lt;host-ip&gt; capacity=1 UNREACHABLE
+    [rg1-rn2] UNREACHABLE
+
+  sn=[sn3] zn:[id=1 name=Zone1] &lt;host-ip&gt; capacity=1 RUNNING
+    [rg1-rn3] RUNNING
+  ........
+</pre>
+        <p>
+                         where the actual IP address or hostname appears instead of the
+                         string &lt;host-ip&gt;, and observe that sn2 is now UNREACHABLE.
+                      </p>
+        <p>
+                         At this point, the first 2 steps of the SN replacement procedure
+                         have been executed. That is, because the sn2 processes have been
+                         stopped and their associated files deleted, from the point of view
+                         of the store's other nodes, the corresponding "machine" is
+                         inaccessible and so has been effectively "shut down" (step 1).
+                         Additionally, because a single machine is being used in this
+                         simulation, we are already logged in to the sn1 (and sn3) host
+                         (step 2). Thus, step 3 of the procedure can now be performed.
+                         That is, to retrieve the sn2 configuration from one of the 
+                         store's remaining healthy nodes, execute the following command
+                         using the port for one of those remaining nodes (and remembering
+                         to substitute the actual IP address or hostname for the string 
+                         &lt;host-ip&gt;):
+                      </p>
+        <pre class="programlisting">&gt; java -jar /opt/ondb/kv/lib/kvstore.jar generateconfig \
+       -host &lt;host-ip&gt; -port 13230 \ 
+       -sn sn2 -target /tmp/sn2-config
+</pre>
+        <p>
+                         Verify that the command above produced the expected zip file:
+                      </p>
+        <pre class="programlisting">&gt; ls -al /tmp/sn2-config.zip
+-rw-rw-r-- 1 &lt;group&gt; &lt;owner&gt; 2651 2013-07-08 12:53 /tmp/sn2-config.zip
+</pre>
+        <p>
+                         where the contents of <code class="literal">/tmp/sn2-config.zip</code> 
+                         should look something like:
+                      </p>
+        <pre class="programlisting">&gt; unzip -t /tmp/sn2-config.zip
+
+Archive: /tmp/sn2-config.zip
+testing: kvroot/config.xml  OK
+testing: kvroot/example-store/sn2/config.xml  OK
+testing: kvroot/example-store/security.policy  OK
+testing: kvroot/security.policy  OK
+No errors detected in compressed data of /tmp/sn2-config.zip
+</pre>
+        <p>
+                         Next, because this example is being run on a single machine,
+                         steps 4, 5, 6, and 7 of the SN replacement procedure have
+                         already been performed. Thus, the next step to perform is to
+                         install the contents of the ZIP file just generated; that is, 
+                      </p>
+        <pre class="programlisting">&gt; unzip /tmp/sn2-config.zip -d /opt/ondb/var
+</pre>
+        <p>
+                         which will overwrite <code class="literal">kvroot/security.policy</code>
+                         and <code class="literal">kvroot/example-store/security.policy</code> with
+                         identical versions of that file.
+                      </p>
+        <p>
+                         When the store was originally deployed, the names of
+                         the top-level configuration files were not identical; that is, 
+                         <code class="literal">config1.xml</code> for sn1, config2.xml for the 
+                         originally deployed sn2, and config3.xml for sn3. This was 
+                         necessary because, for convenience, all three SNs were deployed 
+                         using the same KVROOT; which would have resulted in conflict 
+                         among sn1, sn2, and sn3, had identical names been used for those 
+                         files. With this in mind, it should then be observed that the 
+                         <code class="literal">generateconfig</code> command executed above 
+                         produces a top-level configuration file for the new sn2 that has the
+                         default name (config.xml), rather than <code class="literal">config2.xml</code>.
+                         Because both names – <code class="literal">config2.xml</code> and 
+                         <code class="literal">config.xml</code> – are unique relative to
+                         the names of the configuration files for the store's other nodes,
+                         either name can be used in the next step of the procedure (see below).
+                         But to be consistent with the way sn2 was originally deployed, the
+                         original file name will also be used when deploying the replacement.
+                         Thus, before proceeding with the next step of the procedure, the name
+                         of the <code class="literal">kvroot/config.xml</code> file is changed to
+                         <code class="literal">kvroot/config2.xml</code>; that is,
+                      </p>
+        <pre class="programlisting">&gt; mv /opt/ondb/var/kvroot/config.xml /opt/ondb/var/kvroot/config2.xml
+</pre>
+        <p>
+                         Finally, the last step of the first SN replacement procedure
+                         can be performed. That is, a "new" but identical sn2 is started
+                         using the old sn2 configuration:
+                      </p>
+        <pre class="programlisting">&gt; nohup java -jar /opt/ondb/kv/lib/kvstore.jar start \
+             -root /opt/ondb/var/kvroot \
+             -config config2.xml &amp;
+</pre>
+      </div>
+      <div class="sect3" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h4 class="title"><a id="verification_3"></a>
+                Verification
+                </h4>
+            </div>
+          </div>
+        </div>
+        <p>
+                         To verify that sn2 has been successfully replaced, first execute
+                         the <code class="literal">show topology </code> command from the
+                         administrative CLI; that is,
+                     </p>
+        <pre class="programlisting">kv-&gt; show topology
+</pre>
+        <p>
+                         which should produce output that looks like the following:
+                     </p>
+        <pre class="programlisting">store=example-store numPartitions=300 sequence=308
+  zn: id=1 name=Zone1 repFactor=3
+
+  sn=[sn1] zn:[id=1 name=Zone1] &lt;host-ip&gt; capacity=1 RUNNING
+    [rg1-rn1] RUNNING
+
+  sn=[sn2] zn:[id=1 name=Zone1] &lt;host-ip&gt; capacity=1 RUNNING
+    [rg1-rn2] RUNNING
+
+  sn=[sn3] zn:[id=1 name=Zone1] &lt;host-ip&gt; capacity=1 RUNNING
+    [rg1-rn3] RUNNING
+  ........
+</pre>
+        <p>
+                         where the actual IP address or hostname
+                         appears instead of the string &lt;host-ip&gt;, and observe
+                         that sn2 is again RUNNING.
+                     </p>
+        <p>
+                         In addition to executing the <code class="literal">show topology</code> command,
+                         you can also verify that the previously removed sn2 directory
+                         structure has been recreated and repopulated; that is,
+                         directories and files like the following should again exist:
+                     </p>
+        <pre class="programlisting">/opt/ondb/var/kvroot
+  ....
+  config2.xml*
+  ....
+  /example-store
+    /log
+      ....
+      admin2*
+      rg1-rn2*
+      sn2*
+      config.rg1-rn2
+      ....
+    /sn2
+      config.xml
+      /admin2
+        /env
+
+/tmp/sn2/disk1/ondb/data
+  /rg1-rn2
+    /env
+      00000000.jdb
+</pre>
+        <p>
+                         And finally, verify that the data stored previously by the
+                         original sn2 has been recovered; that is,
+                     </p>
+        <pre class="programlisting">&gt; grep "HELLO WORLD" /tmp/sn2/disk1/ondb/data/rg1-rn2/env/00000000.jdb
+  Binary file /tmp/sn2/disk1/ondb/data/rg1-rn2/env/00000000.jdb matches
+</pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="example_2_new_sn_takes_over_duties_existing_sn"></a>
+            Example 2: New SN Takes Over Duties of Existing SN
+            </h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                     In this example, the second replacement procedure described above
+                     will be employed to replace/upgrade an existing, healthy storage
+                     node (sn2 in this case) with a new storage node that will take
+                     over the duties of the old storage node. As indicated previously,
+                     the assumptions and setup for this example are identical to the
+                     first example's assumptions and setup. Thus, after setting up
+                     this example as previously specified, start an administrative
+                     CLI connected to the admin service associated with the sn1
+                     storage node; that is, substituting the actual IP address or
+                     hostname for the string &lt;host-ip&gt;, execute the following
+                     command:
+            </p>
+        <pre class="programlisting">&gt; java -jar /opt/ondb/kv/lib/kvstore.jar runadmin \
+       -host &lt;host-ip&gt; -port 13230
+</pre>
+        <p>
+                     Then, from the administrative CLI just started, execute
+                     the <code class="literal">show pools</code> and <code class="literal">show topology
+                     </code> commands; that is,
+            </p>
+        <pre class="programlisting">kv-&gt; show pools
+kv-&gt; show topology
+</pre>
+        <p>
+                     which should, respectively, produce output that looks something
+                     like:
+            </p>
+        <pre class="programlisting">AllStorageNodes: sn1 sn2 sn3
+snpool: sn1 sn2 sn3
+</pre>
+        <p>
+                     and
+            </p>
+        <pre class="programlisting">store=example-store numPartitions=300 sequence=308
+  zn: id=1 name=Zone1 repFactor=3
+
+  sn=[sn1] zn: [id=1 name=Zone1] host-sn1 capacity=1 RUNNING
+    [rg1-rn1] RUNNING
+
+  sn=[sn2] zn:[id=1 name=Zone1] host-sn2 capacity=1 RUNNING
+    [rg1-rn2] RUNNING
+
+  sn=[sn3] zn:[id=1 name=Zone1] host-sn3 capacity=1 RUNNING
+    [rg1-rn3] RUNNING
+  ........
+</pre>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+                        At this point, the pool to join is named "snpool",
+                        and the id of the zone to deploy to is "1".
+                    </p>
+        </div>
+        <p>
+                     Next, recall that in a production environment, where the old and
+                     new SNs run on separate physical machines, the old SN would typically
+                     remain up – servicing requests – until the last step
+                     of the procedure. In this example though, the old and new SNs run
+                     on a single machine, where the appearance of separate machines
+                     and file systems is simulated. Because of this, the next step to
+                     perform in this example is to programmatically shut down the
+                     sn2 storage node by executing the following command:
+            </p>
+        <pre class="programlisting">&gt; java -jar /opt/ondb/kv/lib/kvstore.jar stop \
+       -root /opt/ondb/var/kvroot \
+       -config config2.xml
+</pre>
+        <p>
+                     After stopping the sn2 storage node, you might (optionally) execute
+                     the <code class="literal">show topology</code> command and observe that the
+                     sn2 storage node is no longer RUNNING; rather, it is UNREACHABLE,
+                     but will continue to be referenced in the topology until the node
+                     is explicitly removed from the topology (see below). For example,
+                     from the administrative CLI, execute the following command:
+            </p>
+        <pre class="programlisting">kv-&gt; show topology
+</pre>
+        <p>
+                     which should produce output that looks like the following:
+            </p>
+        <pre class="programlisting">store=example-store numPartitions=300 sequence=308
+  zn: id=1 name=Zone1 repFactor=3
+
+  sn=[sn1] zn:[id=1 name=Zone1] host-sn1 capacity=1 RUNNING
+    [rg1-rn1] RUNNING
+
+  sn=[sn2] zn:[id=1 name=Zone1] host-sn2 capacity=1 UNREACHABLE
+    [rg1-rn2] UNREACHABLE
+
+  sn=[sn3] zn:[id=1 name=Zone1] host-sn3 capacity=1 RUNNING
+    [rg1-rn3] RUNNING
+  ........
+</pre>
+        <p>
+                     At this point, preparation of the new, replacement sn4 storage
+                     node can begin; where steps 4, 5, and 6 of the procedure have
+                     already been completed, since a single machine hosts both the
+                     old and new SN in this example.
+            </p>
+        <p>
+                     With respect to the next step (7), recall that when employing
+                     this procedure, step 7 requires that the path of the replacement
+                     SN's data directory must be identical to the path used by the SN
+                     to be replaced. But in this example, the same disk and
+                     file system is used for the location of the data stored by each
+                     SN. Therefore, the storage directory that would be created for
+                     the new sn4 storage node in step 7 already exists and has been
+                     populated by the old sn2 storage node. Thus, to perform step 7
+                     in this example's simulated environment, as well as to support
+                     verification (see below), after shutting down sn2 above, the
+                     storage directory used by that node should be renamed; which
+                     makes room for the storage directory that needs to be
+                     provisioned in step 7 for sn4. That is, type the following at
+                     the command line:
+            </p>
+        <pre class="programlisting">&gt; mv /tmp/sn2 /tmp/sn2_old
+</pre>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+                             The renaming step above is performed only for this example,
+                             and would never be performed in a production environment.
+                    </p>
+        </div>
+        <p>
+                     Next, provision the storage directory that sn4 will use; where the
+                     path specified must be identical to the original path of the
+                     storage directory used by sn2. That is,
+            </p>
+        <pre class="programlisting">&gt; mkdir -p /tmp/sn2/disk1/ondb/data
+</pre>
+        <p>
+                     The next step to perform when preparing the replacement SN is to
+                     generate a boot configuration for the new storage node by executing
+                     the <code class="literal">makebootconfig</code> command (remember to
+                     substitute the actual IP address or hostname for the string &lt;host-ip&gt;):
+            </p>
+        <pre class="programlisting">java -jar /opt/ondb/kv/lib/kvstore.jar makebootconfig \
+     -root /opt/ondb/var/kvroot \
+     -host &lt;host-ip&gt; \
+     -config config4.xml \
+     -port 13260 \
+     -harange 13262,13265 \
+     -admin 13261 \
+     -memory_mb 100 \
+     -capacity 1 \
+     -storagedir /tmp/sn2/disk1/ondb/data
+</pre>
+        <p>
+                     which will produce a configuration file for the new storage node;
+                     <code class="literal">/opt/ondb/var/kvroot/config4.xml</code>.
+            </p>
+        <p>
+                     After creating the configuration above, use that new configuration
+                     to start a new instance of the KVStore storage node agent (SNA),
+                     along with its managed services; that is,
+            </p>
+        <pre class="programlisting">&gt; nohup java -jar /opt/ondb/kv/lib/kvstore.jar start \
+             -root /opt/ondb/var/kvroot \
+             -config config4.xml &amp;
+</pre>
+        <p>
+                     After executing the command above, use the administrative CLI to
+                     deploy a new storage node by executing the following command
+                     (with the actual IP address or hostname substituted for the
+                     string &lt;host-ip&gt;):
+            </p>
+        <pre class="programlisting">kv-&gt; plan deploy-sn -znname Zone1 -host &lt;host-ip&gt; -port 13260 -wait
+</pre>
+        <p>
+                     As explained previously, because "sn3" was the id
+                     assigned (by the store) to the most recently deployed storage
+                     node, the next storage node that is deployed – that is, the storage
+                     node deployed by the command above – will be given "sn4" as its
+                     assigned id. After deploying the sn4 storage node above, you
+                     might then (optionally) execute the <code class="literal">show pools</code>
+                     command from the administrative CLI and observe that the new
+                     storage node has joined the default pool named "AllStorageNodes";
+                     for example:
+            </p>
+        <pre class="programlisting">kv-&gt; show pools
+</pre>
+        <p>
+                     which should produce output that looks like the following:
+            </p>
+        <pre class="programlisting">AllStorageNodes: sn1 sn2 sn3 sn4
+snpool: sn1 sn2 sn3
+</pre>
+        <p>
+                     where upon deployment, although sn4 has joined the pool named
+                     "AllStorageNodes", it has not yet joined the pool named
+                     "snpool".
+            </p>
+        <p>
+                     Next, after successfully deploying the sn4 storage node, use the CLI
+                     to join the pool named "snpool"; that is:
+            </p>
+        <pre class="programlisting">kv-&gt; pool join -name snpool -sn sn4
+</pre>
+        <p>
+                     After deploying the new storage node and joining the pool named "snpool",
+                     using the administrative CLI, you might (optionally) execute the
+                     <code class="literal">show topology</code> command followed by the <code class="literal">show
+                     pools</code> command; and then observe that the new storage node has
+                     been deployed to the store and has joined the pool named "snpool";
+                     for example,
+            </p>
+        <pre class="programlisting">kv-&gt; show topology 
+kv-&gt; show pools
+</pre>
+        <p>
+                     which, given the initial assumptions, should produce output that looks
+                     like the following:
+            </p>
+        <pre class="programlisting">store=example-store numPartitions=300 sequence=308
+  zn: id=1 name=Zone1 repFactor=3
+
+  sn=[sn1] zn:[id=1 name=Zone1] host-sn1 capacity=1 RUNNING
+    [rg1-rn1] RUNNING
+
+  sn=[sn2] zn:[id=1 name=Zone1] host-sn2 capacity=1 UNREACHABLE
+    [rg1-rn2] UNREACHABLE
+
+  sn=[sn3] zn:[id=1 name=Zone1] host-sn3 capacity=1 RUNNING
+    [rg1-rn3] RUNNING
+
+  sn=[sn4] zn:[id=1 name=Zone1] host-sn4 capacity=1 RUNNING
+  ........
+</pre>
+        <p>
+                     and
+            </p>
+        <pre class="programlisting">AllStorageNodes: sn1 sn2 sn3 sn4
+snpool: sn1 sn2 sn3 sn4
+</pre>
+        <p>
+                     The output above shows that the sn4 storage node has been
+                     successfully deployed (is RUNNING) and is now a member of the
+                     pool named "snpool". But it does not yet include an RN service
+                     corresponding to sn4. Such a service will not appear in the
+                     store's topology until sn2 is migrated to sn4 (see below).
+            </p>
+        <p>
+                     At this point, after the sn4 storage node is deployed and has
+                     joined the pool named "snpool", and the old sn2 storage node has
+                     been stopped, sn4 is ready to take over the duties of sn2. This is
+                     accomplished by migrating the sn2 services and data to sn4 by
+                     executing the following command from the administrative CLI
+                     (remembering to substitute the actual IP address or hostname
+                     for the string&lt;host-ip&gt;):
+            </p>
+        <pre class="programlisting">kv-&gt; plan migrate-sn -from sn2 -to sn4 -admin-port 13261 -wait
+</pre>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+                             Because the old sn2 storage node was running an admin
+                             service, the <code class="literal">admin-port</code> argument
+                             must be specified to the <code class="literal">plan migrate</code>
+                             command above; and the value to use for that argument should
+                             be the value that was used previously for the admin argument 
+                             when executing the <code class="literal">makebootconfig</code>
+                             command to generate the configuration for sn4.
+                    </p>
+        </div>
+        <p>
+                     After migrating sn2 to sn4 you might (optionally) execute the
+                     <code class="literal">show topology</code> command again and observe that
+                     the rg1-rn2 service has moved from sn2 to sn4 and is now RUNNING;
+                     that is,
+            </p>
+        <pre class="programlisting">kv-&gt; show topology 
+
+store=example-store numPartitions=300 sequence=308
+  zn: id=1 name=Zone1 repFactor=3
+
+  sn=[sn1] zn:[id=1 name=Zone1] host-sn1 capacity=1 RUNNING
+    [rg1-rn1] RUNNING
+
+  sn=[sn2] zn:[id=1 name=Zone1] host-sn2 capacity=1 UNREACHABLE
+
+  sn=[sn3] zn:[id=1 name=Zone1] host-sn3 capacity=1 RUNNING
+    [rg1-rn3] RUNNING
+
+  sn=[sn4] zn:[id=1 name=Zone1] host-sn4 capacity=1 RUNNING
+    [rg1-rn2] RUNNING
+  ........
+</pre>
+        <p>
+                     Finally, after the migration process is complete, remove the old sn2
+                     storage node from the store's topology; which
+                     can be accomplished by executing the <code class="literal">plan remove-sn
+                     </code> command from the administrative CLI in the
+                     following way:
+            </p>
+        <pre class="programlisting">kv-&gt; plan remove-sn -sn sn2 -wait
+</pre>
+      </div>
+      <div class="sect3" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h4 class="title"><a id="verification_2"></a>
+                Verification
+                </h4>
+            </div>
+          </div>
+        </div>
+        <p>
+                         To verify that sn2 has been successfully replaced/upgraded by sn4,
+                         first execute the <code class="literal">show topology</code> command from
+                         the previously started administrative CLI; that is,
+                     </p>
+        <pre class="programlisting">kv-&gt; show topology
+</pre>
+        <p>
+                         The output is like the following:
+                     </p>
+        <pre class="programlisting">store=example-store numPartitions=300 sequence=308
+  zn: id=1 name=Zone1 repFactor=3
+
+  sn=[sn1] zn:[id=1 name=Zone1] &lt;host-ip&gt; capacity=1 RUNNING
+    [rg1-rn1] RUNNING
+
+  sn=[sn3] zn:[id=1 name=Zone1] &lt;host-ip&gt; capacity=1 RUNNING
+    [rg1-rn3] RUNNING
+
+  sn=[sn4] zn:[id=1 name=Zone1] &lt;host-ip&gt; capacity=1 RUNNING
+    [rg1-rn2] RUNNING
+  ........
+</pre>
+        <p>
+                         Here the actual IP address or hostname appears
+                         instead of the string &lt;host-ip&gt;, and only
+                         sn4 appears in the output rather than sn2.
+                     </p>
+        <p>
+                         In addition to executing the <code class="literal">show topology</code> command,
+                         you can also verify that the expected sn4 directory structure is
+                         created and populated; that is, directories and files like the
+                         following should exist:
+                     </p>
+        <pre class="programlisting">/opt/ondb/var/kvroot
+  ....
+  config4.xml
+  ....
+  /example-store
+    /log
+      ....
+      sn4*
+      ....
+    /sn4
+      config.xml
+      /admin2
+        /env
+
+/tmp/sn2/disk1/ondb/data
+  /rg1-rn2
+    /env
+      00000000.jdb
+</pre>
+        <p>
+                         You can also verify that the data stored previously by sn2
+                         has been migrated to sn4; that is:
+                     </p>
+        <pre class="programlisting">&gt; grep "HELLO WORLD" /tmp/sn2/disk1/ondb/data/rg1-rn2/env/00000000.jdb
+  Binary file /tmp/sn2/disk1/ondb/data/rg1-rn2/env/00000000.jdb matches
+</pre>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+                         Although sn2 was stopped and removed from the topology,
+                         the data files created and populated by sn2 in this example were not
+                         deleted. They were moved under the <code class="literal">/tmp/sn2_old</code> 
+                         directory. Thus, the old sn2 storage directory and data files can
+                         still be accessed. That is:
+                     </p>
+          <pre class="programlisting">/tmp/sn2_old/disk1/ondb/data
+  /rg1-rn2
+    /env
+      00000000.jdb
+</pre>
+          <p>
+                         And the original key/value pair should still exist in the old
+                         sn2 data file; that is,
+                     </p>
+          <pre class="programlisting">&gt; grep "HELLO WORLD" \
+  /tmp/sn2_old/disk1/ondb/data/rg1-rn2/env/00000000.jdb
+  Binary file 
+  /tmp/sn2_old/disk1/ondb/data/rg1-rn2/env/00000000.jdb
+  matches
+</pre>
+        </div>
+        <p>
+                         Finally, the last verification step that can be performed is intended
+                         to show that the new sn4 storage node has taken over the duties
+                         of the old sn2 storage node. This step consists of writing a new
+                         key/value pair to the store and then verifying that the new pair
+                         has been written to the data files of sn1, sn3, and sn4, as was
+                         originally done with sn1, sn3, and sn2 prior to replacing sn2. To
+                         perform this step, you can use the KVStore client shell utility in
+                         the same way as described in
+                         <a class="xref" href="servers.html#setup" title="Setup">
+            Setup
+            </a>, when the first 
+                         key/value pair was initially inserted. That is, you can execute the
+                         following (remembering to substitute the actual IP address or hostname
+                         for the &lt;host-ip&gt; string):
+                     </p>
+        <pre class="programlisting">&gt; java -jar /opt/ondb/kv/lib/kvstore.jar runadmin\
+       -host &lt;host-ip&gt; -port 13230 -store example-store
+
+kv-&gt; get -all
+  /FIRST_KEY
+  HELLO WORLD
+
+kv-&gt; put -key /SECOND_KEY -value "HELLO WORLD 2"
+  Put OK, inserted.
+
+kv-&gt; get -all
+  /SECOND_KEY
+  HELLO WORLD 2
+  /FIRST_KEY
+  HELLO WORLD
+</pre>
+        <p>
+                         After performing the insertion, use the "grep" command to
+                         verify that the new key/value pair was written by sn1, sn3, and
+                         sn4; and of course, the old sn2 data file still only contains the
+                         first key/value pair. That is,
+                     </p>
+        <pre class="programlisting">&gt; grep "HELLO WORLD 2" /tmp/sn1/dsk1/ondb/data/rg1-rn1/env/00000000.jdb
+  Binary file /tmp/sn1/disk1/ondb/data/rg1-rn1/env/00000000.jdb matches
+&gt; grep "HELLO WORLD 2" /tmp/sn2/dsk1/ondb/data/rg1-rn2/env/00000000.jdb
+  Binary file /tmp/sn2/disk1/ondb/data/rg1-rn2/env/00000000.jdb matches
+&gt; grep "HELLO WORLD 2" /tmp/sn3/dsk1/ondb/data/rg1-rn3/env/00000000.jdb
+  Binary file /tmp/sn3/disk1/ondb/data/rg1-rn3/env/00000000.jdb matches
+&gt; grep "HELLO WORLD 2"
+       /tmp/sn2_old/dsk1/ondb/data/rg1-rn2/env/00000000.jdb
+</pre>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="hardwaremonitoring.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="hardwaremonitoring.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="thirdpartylicenses.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 3. Hardware Monitoring </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Appendix A. Third Party Licenses</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

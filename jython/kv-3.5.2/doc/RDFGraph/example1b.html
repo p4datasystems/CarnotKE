@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Example1b.java: Create a named graph and add/delete triples</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="quickstart.html" title="Chapter 8. Quick Start for the RDF Graph Feature" />
+    <link rel="prev" href="quickstart.html" title="Chapter 8. Quick Start for the RDF Graph Feature" />
+    <link rel="next" href="example1c.html" title="Example1c.java: Create an inferred graph and add/delete triples" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center"> Example1b.java: Create a named graph and add/delete triples</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="quickstart.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 8. Quick Start for the RDF Graph Feature</th>
+          <td width="20%" align="right"> <a accesskey="n" href="example1c.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="example1b"></a> Example1b.java: Create a named graph and add/delete triples</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+            This example describes how to add/remove a set of
+            triples over a named graph stored in an Oracle NoSQL
+            Database. 
+        </p>
+      <pre class="programlisting">import com.hp.hpl.jena.graph.*;
+import com.hp.hpl.jena.query.*;
+import com.hp.hpl.jena.rdf.model.Model;
+import oracle.rdf.kv.client.jena.*;
+
+public class Example1b {
+  
+  public static void main(String[] args) throws Exception
+  {
+    
+String szStoreName = args[0];
+String szHostName = args[1];
+String szHostPort = args[2];
+String szGraphName = args[3];
+
+OracleNoSqlConnection conn 
+     = OracleNoSqlConnection.createInstance(szStoreName,
+                                            szHostName,
+                                            szHostPort);
+    
+// This object will handle operations over the named graph 
+OracleGraphNoSql graph 
+                 = new OracleNamedGraphNoSql(szGraphName, conn);
+// Clear the named graph including inferred triples
+graph.clearRepository();
+    
+// Add triples
+graph.add(Triple.create(Node.createURI("u:John"),
+                            Node.createURI("u:parentOf"),
+                            Node.createURI("u:Mary")));
+
+graph.add(Triple.create(Node.createURI("u:Mary"), 
+                            Node.createURI("u:parentOf"),
+                            Node.createURI("u:Jack")));
+       
+String queryString = " select ?x ?y WHERE {?x &lt;u:parentOf&gt; ?y}";
+System.out.println("Execute query " + queryString);
+
+Model model = new OracleModelNoSql(graph);
+Query query = QueryFactory.create(queryString);
+QueryExecution qexec = QueryExecutionFactory.create(query, model);
+    
+try {
+      ResultSet results = qexec.execSelect();
+      ResultSetFormatter.out(System.out, results, query);
+    }
+    
+finally {
+      qexec.close();
+    }
+
+graph.delete(Triple.create(Node.createURI("u:John"), 
+                               Node.createURI("u:parentOf"),
+                               Node.createURI("u:Mary")));
+    
+queryString = "select ?x ?y ?z WHERE {?x ?y ?z}";
+System.out.println("Execute query " + queryString);
+    
+query = QueryFactory.create(queryString);
+qexec = QueryExecutionFactory.create(query, model);
+    
+try {
+      ResultSet results = qexec.execSelect();
+      ResultSetFormatter.out(System.out, results, query);
+    }
+    
+finally {
+      qexec.close();
+    }
+    
+model.close();
+conn.dispose();
+  }  
+} </pre>
+      <p>
+            The following are the commands to compile and run
+            this example, as well as the expected output of the java
+            command.
+        </p>
+      <pre class="programlisting">javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar: ./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar: ./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example1b.java
+
+javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar:./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar:./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example1b &lt;store_name&gt; \
+&lt;host_name&gt; &lt;host_port&gt; &lt;graph_name&gt;
+
+
+Execute query select ?x ?y WHERE {?x &lt;u:parentOf&gt;?y} 
+-----------------------
+| x        | y        |
+=======================
+| &lt;u:Mary&gt; | &lt;u:Jack&gt; |
+| &lt;u:John&gt; | &lt;u:Mary&gt; |
+-----------------------
+
+
+Execute query select ?x ?y ?z WHERE {?x ?y ?z}
+--------------------------------------
+| x        | y            | z        |
+======================================
+| &lt;u:Mary&gt; | &lt;u:parentOf&gt; | &lt;u:Jack&gt; |
+--------------------------------------</pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="quickstart.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="quickstart.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="example1c.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 8. Quick Start for the RDF Graph Feature </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top">  Example1c.java: Create an inferred graph and add/delete triples</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

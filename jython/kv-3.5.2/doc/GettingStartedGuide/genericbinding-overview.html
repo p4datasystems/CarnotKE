@@ -1,0 +1,653 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Generic Binding</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="avrobindings.html" title="Chapter 7. Avro Bindings" />
+    <link rel="prev" href="avrobindings.html" title="Chapter 7. Avro Bindings" />
+    <link rel="next" href="specificbinding-overview.html" title="Specific Binding" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Generic Binding</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="avrobindings.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 7. Avro Bindings</th>
+          <td width="20%" align="right"> <a accesskey="n" href="specificbinding-overview.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="genericbinding-overview"></a>Generic Binding</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="genericbinding-overview.html#generic-single">Using a Single Generic Schema Binding</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="genericbinding-overview.html#generic-multi">Using Multiple Generic Schema Bindings</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="genericbinding-overview.html#generic-embed-record">Using Embedded Records</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="genericbinding-overview.html#avro-generic-dynamicschema">Managing Generic Schemas Dynamically</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+            Generic bindings provide the widest support for the Avro
+            data types. They are also flexible in that your application
+            does not need to know the entire set of schemas in use in
+            the store at compile time. This provides you good
+            flexibility if your store has a constantly expanding set of
+            schema.
+        </p>
+      <p>
+            The downside to generic bindings is that they do not
+            provide compile-time type safety. Generic bindings identify
+            fields using a string (as opposed to getter and setter
+            methods provided by specific bindings), so it is not
+            possible for the compiler to know, for example, whether you
+            are using an integer where a real is expected.
+        </p>
+      <p>
+            Generic binding uses <code class="methodname">AvroCatalog.getGenericBinding()</code>
+            for a single schema binding, and uses 
+            <code class="methodname">AvroCatalog.getGenericMultiBinding()</code>
+            when using multiple schemas.
+        </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="generic-single"></a>Using a Single Generic Schema Binding</h3>
+            </div>
+          </div>
+        </div>
+        <pre class="programlisting">{
+    "type": "record",
+    "name": "PersonInformation",
+    "namespace": "avro",
+    "fields": {"name": "ID", "type": "int"}
+} </pre>
+        <p>
+                Further, suppose you placed that schema in a file
+                named <code class="literal">PersonSchema.avsc</code>. 
+            </p>
+        <p>
+                Then to use that schema, first add it to your store
+                using the <code class="literal">ddl add-schema</code> command:
+            </p>
+        <pre class="programlisting">&gt; java -Xmx256m -Xms256m \
+-jar &lt;kvhome&gt;/kvstore.jar runadmin -port &lt;port&gt; \
+-host &lt;host&gt;
+kv-&gt; ddl add-schema -file PersonSchema.avsc</pre>
+        <p>
+                In your Oracle NoSQL Database client code, you must make the schema
+                available to the code. One way to do this is to read
+                the schema directly from the file where you created it:
+            </p>
+        <a id="avro-java-intro-1"></a>
+        <pre class="programlisting">package avro;
+
+import java.io.File;
+import org.apache.avro.generic.GenericData;
+import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.Schema;
+
+import oracle.kv.avro.AvroCatalog;
+import oracle.kv.avro.GenericAvroBinding;
+
+...
+
+final Schema.Parser parser = new Schema.Parser();
+parser.parse(new File("PersonSchema.avsc")); </pre>
+        <p>
+                Next, you need to make the schema available to your
+                application:
+            </p>
+        <a id="avro-java-intro-2"></a>
+        <pre class="programlisting">final Schema personSchema = 
+    parser.getTypes().get("avro.PersonInformation"); </pre>
+        <p>
+                Finally, before you can begin serializing and
+                deserializing values that use the Avro data format, you
+                must create a binding and then create an Avro record
+                for that binding. In this example, we use the generic
+                binding. But as we explain later in this chapter, there
+                are other bindings and the generic binding may not
+                necessarily be the best one for your purposes.
+            </p>
+        <a id="avro-java-intro-3"></a>
+        <pre class="programlisting">/**
+ * Here, for the sake of brevity, we skip the necessary steps of 
+ * declaring and opening the store handle.
+ */
+final AvroCatalog catalog = store.getAvroCatalog();
+final GenericAvroBinding binding = 
+    catalog.getGenericBinding(personSchema);</pre>
+        <p>
+                Once you have the binding, you need a way for your
+                application to represent the fields in the schema, so that
+                they can be read and written. You do this by creating an
+                <span class="emphasis"><em>Avro record</em></span>, which is a data structure
+                that allows you to read and/or write the fields in the
+                schema. (Do not confuse an Avro record, which is a handle
+                to a binary object containing data, to an Oracle NoSQL Database record,
+                which is a single key-value pair contained in your store. An
+                Oracle NoSQL Database record can contain a value that uses the Avro data
+                format. An instance of the Avro data format, in turn, is
+                managed within your client code using an Avro record.)
+            </p>
+        <p>
+                Because we are using the generic binding for this example,
+                we will use the <code class="classname">GenericRecord</code> to
+                manage the contents of the binding.
+            </p>
+        <p>
+                For example, assume we performed a store read, and now we
+                want to examine the information stored with the Oracle NoSQL Database
+                record.
+            </p>
+        <a id="avro-java-intro-4"></a>
+        <pre class="programlisting">/**
+  * Assume a store read was performed here, and resulted in a 
+  * ValueVersion instance called 'vv'. Then, to deserialize
+  * the value in the returned record:
+  */
+final GenericRecord member;
+final int ID;
+if (vv != null) {
+    /* Deserialize the the value */
+    member = binding.toObject(vv.getValue());
+    /* Retrieve the contents of the ID field. Because we are 
+     * using a generic binding, we must type cast the retrieved
+     * value.
+     */
+     ID = (Integer) member.get("ID");
+} </pre>
+        <p>
+                If we want to write to a field (that is, we want to
+                serialize some data), we use the record's
+                <code class="methodname">put()</code> method. As an example,
+                suppose we wanted to create a brand new Avro object to be
+                written to the store. Then:
+            </p>
+        <a id="avro-java-intro-5"></a>
+        <pre class="programlisting">final GenericRecord person = new GenericData.Record(personSchema);
+final int ID = 100011;
+person.put("ID", ID); 
+
+/**
+  * To serialize this information so that it can be written to 
+  * the store, use GenericBinding.toValue() as the value for the
+  * store put(). That is, assuming you already have a store handle 
+  * and a key:
+  */
+store.put(key, binding.toValue(person)); </pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="generic-multi"></a>Using Multiple Generic Schema Bindings</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                It is unlikely that you will use only one schema with
+                your application. In order to use more than one schema:
+            </p>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p>
+                        Specify each schema individually in separate
+                        files.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        Add all these schemas to your store as
+                        described in
+                        <a class="xref" href="provideschema.html" title="Managing Avro Schema in the Store">Managing Avro Schema in the Store</a>.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        Use <code class="classname">HashMap</code> to organize
+                        your schemas, and then pass that to 
+                        <code class="methodname">AvroCatalog.getGenericMultiBinding()</code>
+                        in order to create your binding.
+                    </p>
+            </li>
+          </ol>
+        </div>
+        <p>
+                For example, suppose you had the following two schemas:
+            </p>
+        <pre class="programlisting">{
+ "type": "record",
+ "namespace": "avro",
+ "name": "PersonInfo",
+ "fields": [
+   { "name": "first", "type": "string" },
+   { "name": "last", "type": "string" },
+   { "name": "age", "type": "int" }
+ ]
+}
+
+
+{
+ "type": "record",
+ "namespace": "avro",
+ "name": "AnimalInfo",
+ "fields": [
+   { "name": "species", "type": "string"},
+   { "name": "name", "type": "string"},
+   { "name": "age", "type": "int"}
+ ]
+} </pre>
+        <p>
+                Then put <code class="literal">Avro.PersonInfo</code> in a file
+                (call it <code class="literal">PersonSchema.avsc</code>) and
+                <code class="literal">Avro.AnimalInfo</code> in a second file 
+                (<code class="literal">AnimalSchema.avsc</code>). Add these
+                schemas to your store using the command line
+                interface.
+            </p>
+        <p>
+                At this point, you could simply create one binding for
+                each schema that you are using, but that can quickly
+                become awkward depending on how many schemas your code
+                is using. Instead, create multiple schemas using
+                <code class="classname">HashMap</code> and (in this case)
+                <code class="methodname">AvroCatalog.getGenericMultiBinding()</code>.
+                To do this, first create a
+                <code class="classname">HashMap</code> that you use to organize
+                your schemas:
+            </p>
+        <pre class="programlisting">package avro;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+
+import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericData;
+import org.apache.avro.generic.GenericRecord;
+
+...
+
+import oracle.kv.ValueVersion;
+import oracle.kv.avro.AvroCatalog;
+import oracle.kv.avro.GenericAvroBinding;
+
+...
+
+HashMap&lt;String, Schema&gt; schemas = new HashMap&lt;String, Schema&gt;(); </pre>
+        <p>
+                Then, parse each schema and add it to the
+                <code class="classname">HashMap</code>:
+            </p>
+        <pre class="programlisting">final Schema.Parser parser = new Schema.Parser();
+
+Schema personSchema = parser.parse(new File("PersonSchema.avsc"));
+schemas.put(personSchema.getFullName(), personSchema);
+
+Schema animalSchema = parser.parse(new File("AnimalSchema.avsc"));
+schemas.put(animalSchema.getFullName(), animalSchema);</pre>
+        <p>
+                Then create your binding. You will only need one,
+                because you are using a multi binding which is capable
+                of using multiple schemas.
+            </p>
+        <pre class="programlisting">/*
+ * Store creation is skipped for brevity
+ */
+
+catalog = store.getAvroCatalog();
+binding = catalog.getGenericMultiBinding(schemas); </pre>
+        <p>
+                To use the binding, you call
+                <code class="methodname">toObject()</code> or
+                <code class="methodname">put()</code> in the same way as you
+                would if you were using an ordinary single-schema
+                binding. The multi-binding is capable of determining
+                which schema you are using, and
+                serializing/deserializing accordingly. For example,
+                suppose you retrieve a record that uses the
+                <code class="literal">Avro.AnimalInfo</code> schema. Then you can
+                deserialize as if you are using a single-schema
+                binding:
+            </p>
+        <pre class="programlisting">/*
+ * Key creation and store retrieval skipped.
+ * Assume we have retrieved a ValueVersion (vv1) that
+ * contains an AnimalInfo value.
+ */
+
+final GenericRecord animalObject;
+if (vv1 != null) {
+    animalObject = binding.toObject(vv1.getValue());
+    final String species = animalObject.get("species").toString();
+    final String name = animalObject.get("name").toString();
+    final int age = (Integer) animalObject.get("age");
+
+    /* Do something with the data */
+} </pre>
+        <p>
+                You can also create a new
+                <code class="literal">Avro.PersonInfo</code> object for placement
+                in the store using the same binding, like this:
+            </p>
+        <pre class="programlisting">final GenericRecord personObject = 
+    new GenericData.Record(personSchema);
+personObject.put("name", "Sam Brown");
+personObject.put("age", 34);
+
+/*
+ * Key creation and store handle creation skipped
+ * for brevity's sake.
+ */
+
+store.put(aKey, binding.toValue(personObject)); </pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="generic-embed-record"></a>Using Embedded Records</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                Suppose you have a schema that looks like this:
+            </p>
+        <pre class="programlisting">{
+    "type" : "record",
+    "name" : "hatInventory",
+    "namespace" : "avro",
+    "fields" : [{"name" : "sku", "type" : "string", "default" : ""},
+                  {"name" : "description",
+                     "type" : {
+                         "type" : "record",
+                         "name" : "hatInfo",
+                         "fields" : [
+                                     {"name" : "style", 
+                                      "type" : "string", 
+                                      "default" : ""},
+
+                                     {"name" : "size", 
+                                      "type" : "string", 
+                                      "default" : ""},
+
+                                     {"name" : "color", 
+                                      "type" : "string", 
+                                      "default" : ""},
+
+                                     {"name" : "material", 
+                                      "type" : "string", 
+                                      "default" : ""}
+                            ]}
+                }
+    ]
+}
+</pre>
+        <p>
+                    In order to address the fields in the embedded record
+                    <code class="literal">hatInfo</code>, you treat it as if it is a
+                    second piece of standalone schema. You only have to
+                    parse the schema file once. You then create
+                    two schemas and two records, but only one binding. For
+                    example, to create a serialized object that uses this
+                    schema:
+                </p>
+        <pre class="programlisting">package avro;
+
+import java.io.File;
+
+import org.apache.avro.generic.GenericData;
+import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.Schema;
+
+import oracle.kv.KVStore;
+import oracle.kv.Key;
+import oracle.kv.ValueVersion;
+import oracle.kv.avro.AvroCatalog;
+import oracle.kv.avro.GenericAvroBinding;
+
+...
+
+// Parse our schema file
+final Schema.Parser parser = new Schema.Parser();
+try {
+    parser.parse(new File("HatSchema.avsc"));
+} catch (IOException io) {
+    io.printStackTrace();
+}
+
+
+// Get two Schema objects. We need two because of the 
+// embedded record.
+final Schema hatInventorySchema =
+    parser.getTypes().get("avro.hatInventory");
+final Schema hatInfoSchema =
+    parser.getTypes().get("avro.hatInfo");
+
+// Get two GenericRecords so we can manipulate both of
+// the records in the schema
+final GenericRecord hatRecord = 
+    new GenericData.Record(hatInventorySchema);
+final GenericRecord hatInfoRecord = 
+    new GenericData.Record(hatInfoSchema);
+
+// Now populate our records. Start with the 
+// embedded record.
+hatInfoRecord.put("style", "western");
+hatInfoRecord.put("size", "medium");
+hatInfoRecord.put("color", "black");
+hatInfoRecord.put("material", "leather");
+
+// Now the top-level record. Notice that we
+// set the embedded record as the value for the 
+// description field.
+hatRecord.put("sku", "289163009");
+hatRecord.put("description", hatInfoRecord);
+
+// Now we need a binding. Only one is required,
+// and we use the top-level schema to create it.
+final AvroCatalog catalog = store.getAvroCatalog();
+final GenericAvroBinding hatBinding =
+    catalog.getGenericBinding(hatInventorySchema);
+
+// Create a Key and write the value to the store.
+final Key key = Key.createKey(Arrays.asList("hats", "0000000033"));
+store.put(key, hatBinding.toValue(hatRecord)); </pre>
+        <p>
+                On retrieval, you edit values of this type in the following
+                way:
+            </p>
+        <pre class="programlisting">// Perform the retrieval
+final ValueVersion vv = store.get(key);
+if (vv != null) {
+    // Deserialize the ValueVersion as normal
+    GenericRecord hatR =      
+        new GenericData.Record(hatInventorySchema);
+    hatR = hatBinding.toObject(vv.getValue());
+
+    // To access the embedded record, create a GenericRecord
+    // using the embedded record's schema. Then get the
+    // embedded record from the field on the top-level
+    // schema that contains it.
+    GenericRecord hatInfoR =
+        new GenericData.Record(hatInfoSchema);
+    hatInfoR = (GenericRecord) hatR.get("description");
+
+    // Finally, you can write to the top-level record and the
+    // embedded record like this:
+
+    // Modify a field on the embedded record:
+    hatInfoR.put("style", "Fedora");
+
+    // Modify the top-level record:
+    hatR.put("sku", "300");
+    hatR.put("description", hatInfoR);
+
+    store.put(key, hatBinding.toValue(hatR)); } </pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="avro-generic-dynamicschema"></a>Managing Generic Schemas Dynamically</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                A special use-case of generic bindings is that you do
+                not necessarily know about all the schemas that will
+                ever be used by your store at the time you write your
+                code. That is, the use of a <code class="classname">HashMap</code>
+                in the previous example is somewhat brittle if you are
+                operating in an environment with a constantly growing
+                list of schemas. In that scenario, whenever you 
+                add to the schemas in use by your store, you
+                potentially might need to
+                rewrite your client code to add the new schemas to the
+                <code class="classname">HashMap</code> used by your client.
+                Otherwise, your code could retrieve a value that uses a
+                schema which is unknown to your code. Depending on what
+                your code is doing, this can cause you problems.
+            </p>
+        <p>
+                If this is a problem for you, you can avoid it by using
+                <code class="classname">AvroCatalog.getCurrentSchemas()</code>
+                with <code class="classname">AvroCatalog.getGenericMultiBinding()</code>
+                so that you do not need to build a
+                <code class="classname">HashMap</code>
+                of all your schemas.
+            </p>
+        <p>
+                For example, in the previous example we showed client
+                code that used two known schemas. We can change the
+                previous example to use
+                <code class="methodname">getCurrentSchemas()</code> in the
+                following way:
+            </p>
+        <pre class="programlisting">package avro;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+
+import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericData;
+import org.apache.avro.generic.GenericRecord;
+
+...
+
+import oracle.kv.ValueVersion;
+import oracle.kv.avro.AvroCatalog;
+import oracle.kv.avro.GenericAvroBinding;
+
+...
+
+final Schema.Parser parser = new Schema.Parser();
+Schema animalSchema = parser.parse(new File("AnimalSchema.avsc"));
+
+<strong class="userinput"><code>
+/*
+ * We skip creating a HashMap of Schemas because
+ * it is not needed.
+ */
+</code></strong>
+
+/*
+ * Store creation is skipped for brevity
+ */
+
+catalog = store.getAvroCatalog();
+binding = catalog.getGenericMultiBinding(<strong class="userinput"><code>catalog.getCurrentSchemas()</code></strong>);</pre>
+        <p>
+                If we then perform a read on the store, there is the
+                possibility that we will retrieve an object that uses a
+                schema which was not in use when our binding was
+                created. (This is particularly true for long-running
+                client code). To handle this problem, we catch
+                <code class="classname">SchemaNotAllowedException</code>.
+            </p>
+        <pre class="programlisting">/*
+ * Key creation and store retrieval skipped.
+ */
+
+final GenericRecord animalObject;
+if (vv1 != null) {
+    try {
+        animalObject = binding.toObject(vv1.getValue());
+    } catch (SchemaNotAllowedException e) {
+        // Take some action here. Potentially you could
+        // recreate your binding, and then retry the
+        // deserialization process
+    }
+
+    /* 
+     * Do something with the data. If your client code is 
+     * using more than one schema, you can identify which
+     * schema the retrieved value is using by testing 
+     * the schema name. That is:
+     *
+     * String sName = animalObject.getSchema().getFullName()
+     * if (sName.equals("avro.animalInfo")) { ... }
+     */
+} </pre>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="avrobindings.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="avrobindings.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="specificbinding-overview.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 7. Avro Bindings </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Specific Binding</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

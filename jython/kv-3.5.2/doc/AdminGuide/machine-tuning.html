@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Appendix C. Tuning</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="prev" href="estimate-total-shards-and-machines.html" title="Estimate total Shards and Machines" />
+    <link rel="next" href="linuxcachepagetuning.html" title="Linux Page Cache Tuning" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Appendix C. Tuning</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="estimate-total-shards-and-machines.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="linuxcachepagetuning.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="appendix" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="machine-tuning"></a>Appendix C. Tuning</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+       The default tuning parameters available for the Oracle NoSQL Database software
+       should in general be acceptable for production systems, and so do not
+       require any tuning. However, the underlying operating system will
+       have default values for various kernel parameters which require
+       modification in order to achieve the best possible performance for
+       your store's installation.
+   </p>
+      <p>
+       This appendix identifies the kernel parameters and other system
+       tuning that you should manage when installing a
+       <span class="emphasis"><em>production</em></span> store. By this, we mean any store
+       whose performance is considered critical. Evaluation systems
+       installed into a lab environment probably do not need this level of
+       tuning unless you are using those systems to measure the store's
+       performance.
+   </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+           Oracle NoSQL Database is most frequently installed on Linux systems, and so
+           that is what this appendix focuses on.
+       </p>
+      </div>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="turnoffswap"></a>Turn off the swap</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+           For best performance on a dedicated Oracle NoSQL Database server machine, turn
+           off the swap on the machine.  Oracle NoSQL Database processes are careful in
+           their management of the memory they use to ensure that they do
+           not exceed the RAM available on the machine.
+       </p>
+        <p>
+           The performance gains come from two sources:
+       </p>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p>
+                   The I/O overhead due to swap is eliminated. This is
+                   especially important if the disk normally used for swap
+                   also holds the store's log files used to persist data.
+               </p>
+            </li>
+            <li>
+              <p>
+                   Reduces the CPU overhead associated with kswapd.
+               </p>
+            </li>
+          </ol>
+        </div>
+        <p>
+           To turn off the swap, do not mount any swap partitions at boot
+           time. You do this by eliminating all swap related mount entries
+           from <code class="literal">/etc/fstab</code>. These are all the rows with
+           the entry "swap" in their mount point (column 2) and file system
+           type (column 3) entries.
+       </p>
+        <p>
+           You can verify that no swap space is being used by running the
+           <code class="literal">free</code> command. Do this after the
+           <code class="literal">/etc/fstab</code> has been modified and the machine
+           has been rebooted:
+       </p>
+        <pre class="programlisting">-bash-4.1$ free -m
+            total      used      free     shared    buffers     cached
+Mem:        72695     72493       202          0        289       2390
+-/+ buffers/cache:    69813      2882
+Swap:           0         0         0 </pre>
+        <p>
+            The <code class="literal">Swap/total</code> cell in the above table
+            should read <code class="literal">0</code>.
+        </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="estimate-total-shards-and-machines.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="linuxcachepagetuning.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Estimate total Shards and Machines </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Linux Page Cache Tuning</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

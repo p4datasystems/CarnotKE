@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Configuring the Firewall</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="installation.html" title="Chapter 1. Installing Oracle NoSQL Database" />
+    <link rel="prev" href="install-config.html" title="Installation Configuration" />
+    <link rel="next" href="plans.html" title="Chapter 2. Plans" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Configuring the Firewall</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="install-config.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 1. Installing Oracle NoSQL Database</th>
+          <td width="20%" align="right"> <a accesskey="n" href="plans.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="config-firewall"></a>Configuring the Firewall</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            To make sure your firewall works with Oracle NoSQL Database, you should
+            set the ports specified by the <code class="literal">servicerange</code> parameter
+            of the makebootconfig command. This parameter is used to constrain a store to a limited
+            set of ports, usually for security or data center policy reasons.
+            By default the services use anonymous ports. 
+        </p>
+      <p>
+            The format of the value string is "startPort,endPort." The value varies with the
+            capacity of the Storage Node. 
+        </p>
+      <p>
+            For more information about the servicePortRange and determining its sizing, see 
+            <a class="xref" href="setstoreparams.html#storagenodeparameters" title="Storage Node Parameters">Storage Node Parameters</a>.
+        </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="install-config.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="installation.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="plans.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Installation Configuration </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 2. Plans</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

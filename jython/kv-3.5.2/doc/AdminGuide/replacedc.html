@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Repairing a Failed Zone by Replacing Hardware</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="procedures.html" title="Chapter 6. Administrative Procedures" />
+    <link rel="prev" href="replacedisk.html" title="Replacing a Failed Disk" />
+    <link rel="next" href="disableservices.html" title="Disabling Storage Node Agent Hosted Services" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Repairing a Failed Zone by Replacing Hardware</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="replacedisk.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Administrative Procedures</th>
+          <td width="20%" align="right"> <a accesskey="n" href="disableservices.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="replacedc"></a>Repairing a Failed Zone by Replacing Hardware</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+          If all of the machines belonging to a <code class="literal">zone</code>
+          fail, and quorum is maintained, you can replace them by using new, different Storage Nodes deployed to the same zone.
+       </p>
+      <p>
+          If a zone fails but quorum is lost, you can perform a failover instead. To do this, see
+          <a class="xref" href="perform_failover.html" title="Performing a failover">Performing a failover</a>.
+       </p>
+      <p>
+          For example, suppose a store consists of three
+          <code class="literal">zones</code>; <code class="literal">zn1</code>, deployed to the
+          machines on the first floor of a physical data center,
+          <code class="literal">zn2</code>, deployed to the machines on the second
+          floor, and <code class="literal">zn3</code>, deployed to the third floor.
+          Additionally, suppose that a fire destroyed all of the machines on
+          the second floor, resulting in the failure of all of the associated
+          Storage Nodes.  In this case, you need to replace the machines in
+          the <code class="literal">zn2</code> zone; which can be accomplished by doing
+          the following:
+        </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+           Replace each individual Storage Node in the failed Zone with
+           new, different Storage Nodes belonging to same Zone (zn2),
+           although located in a new physical location. To do this, follow
+           the instructions in <a class="xref" href="replacefailedsn.html" title="Replacing a Failed Storage Node">Replacing a Failed Storage Node</a>.
+           Make sure to remove each old Storage Node after performing
+           the replacement.
+       </p>
+          </li>
+          <li>
+            <p>
+           After replacing and then removing each of the targeted SNs,
+           the zone to which those SNs belonged should now contain the
+           new SNs.
+       </p>
+          </li>
+        </ol>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="replacedisk.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="procedures.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="disableservices.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Replacing a Failed Disk </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Disabling Storage Node Agent Hosted Services</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

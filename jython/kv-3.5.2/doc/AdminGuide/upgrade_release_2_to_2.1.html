@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Upgrade from Release 2.0 to Release 3.0</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="deploymentupdate.html" title="Chapter 5. Upgrading an Existing Oracle NoSQL Database Deployment" />
+    <link rel="prev" href="upgradeprocedure.html" title="General Upgrade Notes" />
+    <link rel="next" href="upgrade_release_1_to_2.html" title="Upgrade from NoSQL DB Release 1.0 to NoSQL DB Release 2.0" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Upgrade from Release 2.0 to Release 3.0</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="upgradeprocedure.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 5. Upgrading an Existing Oracle NoSQL Database Deployment</th>
+          <td width="20%" align="right"> <a accesskey="n" href="upgrade_release_1_to_2.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="upgrade_release_2_to_2.1"></a>Upgrade from Release 2.0 to Release 3.0</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="upgrade_release_2_to_2.1.html#scriptto21">Using a Script to Upgrade to Release 3</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+              Upgrading a store from release 2 to release 3 can be
+              accomplished one Storage Node at a time because a mix of
+              release 2 and 3 Storage Nodes are permitted to run
+              simultaneously in the same store. This allows you to
+              strategically upgrade Storage Nodes in the most efficient
+              manner.
+          </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+                  Upgrading a 1.0 store directly to release 3 is not
+                  supported. You must upgrade your store from 1.0 to 2.0
+                  before upgrading to release 3. For instructions on how to
+                  upgrade your 1.0 store, see
+                  <a class="xref" href="upgrade_release_1_to_2.html" title="Upgrade from NoSQL DB Release 1.0 to NoSQL DB Release 2.0">Upgrade from NoSQL DB Release 1.0 to NoSQL DB Release 2.0</a>.
+              </p>
+      </div>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+                  If your store contains more than a handful of Storage
+                  Nodes, you may want to perform your upgrade using a
+                  script. See 
+                  <a class="xref" href="upgrade_release_2_to_2.1.html#scriptto21" title="Using a Script to Upgrade to Release 3">Using a Script to Upgrade to Release 3</a>
+                  for more information.
+              </p>
+      </div>
+      <p>
+              To avoid potential problems, new CLI commands are available
+              to identify when nodes can be upgraded at the same time.
+              These commands are described in the following procedure.
+          </p>
+      <p>
+              To upgrade your store, start by installing the release 3
+              software on a Storage Node that is running an admin service.
+              The new CLI commands require an updated admin service in
+              order to function.
+          </p>
+      <p>
+              Do the following:
+          </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                      On a Storage Node running a release 2 admin service:
+                  </p>
+            <div class="orderedlist">
+              <ol type="a">
+                <li>
+                  <p>
+                              Place the updated software in a new KVHOME
+                              directory on a Storage Node running the admin
+                              service. The new KVHOME directory is referred to here as
+                              NEW_KVHOME. If nodes share this directory using
+                              NFS, this only needs to be done once for each
+                              shared directory.
+                          </p>
+                </li>
+                <li>
+                  <p>
+                              Stop the Storage Node using the release 2 CLI. When you do this, this
+                              shuts down the admin service on that Storage Node. 
+                          </p>
+                  <p>
+                              If you have configured the node to automatically
+                              start the Storage Node Agent on reboot using
+                              /etc/init.d, Upstart, or some other mechanism
+                              first modify that script to point to NEW_KVHOME. 
+                          </p>
+                  <p>
+                              Once you have modified that script, shutdown the
+                              Storage Node:
+                          </p>
+                  <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar stop -root &lt;kvroot&gt;</pre>
+                </li>
+                <li>
+                  <p>
+                              Restart the Storage Node using the release
+                              3 code:
+                          </p>
+                  <pre class="programlisting">nohup java -Xmx256m -Xms256m \
+-jar NEW_KVHOME/lib/kvstore.jar start -root &lt;kvroot&gt;&amp; </pre>
+                  <p>
+                              (If the system is configured to
+                              automatically restart the Storage Node Agent,
+                              this step may not be necessary.)
+                          </p>
+                </li>
+                <li>
+                  <p>
+                              Use the CLI to connect to the Storage Node
+                              which is now running the release 3 code:
+                          </p>
+                  <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar NEW_KVHOME/lib/kvstore.jar runadmin -port 5000 -host node1 </pre>
+                </li>
+                <li>
+                  <p>
+                                Verify that all the Storage Nodes in the store are
+                                running the proper software level required to
+                                upgrade to release 3. Note that any patch release
+                                level of 2.0 or 2.1 meets the minimum software level
+                                requirements.
+                          </p>
+                  <pre class="programlisting">kv-&gt; verify prerequisite
+Verify: starting verification of mystore based upon topology 
+sequence #315
+300 partitions and 6 storage nodes. Version: 12.1.3.0.1 Time:
+2014-01-07 08:19:15 UTC
+See node1:&lt;KVROOT&gt;/mystore/log/mystore_{0..N}.log for progress 
+messages
+Verify prerequisite: Storage Node [sn3] on node3:5000
+Zone: [name=Boston id=zn1 type=PRIMARY]   Status: RUNNING   
+Ver: 12cR1.2.1.54 2013-11-11 12:09:35 UTC  Build id: 921c25300b5e
+
+...
+
+Verification complete, no violations.  </pre>
+                  <p>
+                               Note that only a partial sample of the
+                               verification command's output is shown here.
+                               The important part is the last line, which
+                               shows no violations.
+                           </p>
+                  <p>
+                               The most likely reason for a violation is if
+                               you are (accidentally) attempting a
+                               release level downgrade. For example, it is
+                               illegal to downgrade from a
+                               higher minor release to a lower minor
+                               release. Possibly this is occurring simply
+                               because you are running the CLI using a
+                               package at a minor release level that is
+                               lower than the release level at other nodes
+                               in the store. 
+                           </p>
+                  <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                    <h3 class="title">Note</h3>
+                    <p>
+                                   It is legal to downgrade from a higher
+                                   <span class="emphasis"><em>patch</em></span> level to a
+                                   lower patch level. So, for example
+                                   downgrading from 2.1.4 to 2.1.3 would be
+                                   legal, while downgrading from 2.1.3 to
+                                   2.0.39 would not be legal.
+                               </p>
+                  </div>
+                  <p>
+                               Also, a violation will occur if you attempt
+                               to upgrade 1.0 nodes directly to release 3. When
+                               upgrading a 1.0 store, you must first
+                               upgrade to 2.0, and then upgrade to
+                               release 3.
+                               For more information on upgrading a 1.0
+                               store, see
+                               <a class="xref" href="upgrade_release_1_to_2.html" title="Upgrade from NoSQL DB Release 1.0 to NoSQL DB Release 2.0">Upgrade from NoSQL DB Release 1.0 to NoSQL DB Release 2.0</a>.
+                           </p>
+                  <p>
+                               In any case, if the <code class="literal">verify prerequisite</code>
+                               command shows violations, resolve the
+                               situation before you attempt to upgrade the
+                               identified nodes.
+                           </p>
+                </li>
+                <li>
+                  <p>
+                              Obtain an ordered list of the nodes to upgrade.
+                          </p>
+                  <pre class="programlisting">kv-&gt; show upgrade-order
+sn3 sn4
+sn2 sn5
+sn6</pre>
+                  <p>
+                               This command displays one or more Storage Nodes on a line.
+                               Multiple Storage Nodes on a line are separated by a space.
+                               If multiple Storage Nodes appear on a single line, then those nodes
+                               can be safely upgraded at the same time, if desired. When multiple nodes
+                               are upgraded at the same time, the upgrade must be completed on 
+                               all nodes before the nodes next on the list can be upgraded.
+                               If at some point you lose track of which group of nodes should be upgraded 
+                               next, you can always run the show upgrade-order command again.
+                            </p>
+                  <p>
+                                The Storage Nodes combined together on a
+                                single line can be upgraded
+                                together. Therefore, for this output, you
+                                would upgrade sn3 and sn4. Then upgrade sn2
+                                and sn5. And, finally, upgrade sn6.
+                            </p>
+                  <p>
+                                Note that you must completely upgrade a
+                                group of nodes before continuing to the
+                                next group. That is, upgrade sn3 and sn4
+                                before you proceed to upgrading sn2, sn5,
+                                or sn6.
+                            </p>
+                </li>
+              </ol>
+            </div>
+          </li>
+          <li>
+            <p>
+                      For each of the Storage Nodes in the first group of
+                      Storage Nodes to upgrade (sn3 and sn4, in this
+                      example):
+                  </p>
+            <div class="orderedlist">
+              <ol type="a">
+                <li>
+                  <p>
+                              Place the release 3 software in a new KVHOME
+                              directory. The new KVHOME directory is
+                              referred to here as NEW_KVHOME. If nodes
+                              share this directory using NFS, this only
+                              needs to be done once for each shared
+                              directory.
+                          </p>
+                </li>
+                <li>
+                  <p>
+                              Stop the Storage Node using the release 2
+                              utility.
+                          </p>
+                  <p>
+                              If you have configured the node to automatically
+                              start the Storage Node Agent on reboot using
+                              /etc/init.d, Upstart, or some other mechanism
+                              first modify that script to point to NEW_KVHOME. 
+                          </p>
+                  <p>
+                              Once you have modified that script, shutdown the
+                              Storage Node using the old code:
+                          </p>
+                  <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar stop -root &lt;kvroot&gt;</pre>
+                </li>
+                <li>
+                  <p>
+                              Restart the Storage Node using the new code:
+                          </p>
+                  <pre class="programlisting">nohup java -Xmx256m -Xms256m \
+-jar NEW_KVHOME/lib/kvstore.jar start -root &lt;kvroot&gt;&amp; </pre>
+                  <p>
+                              (If the system is configured to
+                              automatically restart the Storage Node Agent,
+                              this step may not be necessary.)
+                          </p>
+                </li>
+              </ol>
+            </div>
+          </li>
+          <li>
+            <p>
+                      Verify the upgrade before upgrading your next set of
+                      nodes. This command shows which nodes have been
+                      successfully upgraded, and which nodes still need to
+                      be upgraded:
+                  </p>
+            <pre class="programlisting">kv-&gt; verify upgrade
+Verify: starting verification of mystore based upon topology 
+sequence #315
+300 partitions and 6 storage nodes. Version: 12.1.3.0.1 Time:  ....
+See node1:&lt;KVROOT&gt;/mystore/log/mystore_{0..N}.log for progress 
+messages
+Verify upgrade: Storage Node [sn3] on node3:5000    
+Zone: [name=Boston id=zn1 type=PRIMARY]    Status: RUNNING   
+Ver: 12cR1.3.0.1 2013-12-18 06:35:02 UTC  Build id: 8e70b50c0b0e
+
+...
+
+Verify: sn2: Node needs to be upgraded from 12.1.2.1.54 to 
+version 12.1.3.0.0 or newer
+
+...
+
+Verification complete, 0 violations, 3 notes found.
+Verification note: [sn2]    Node needs to be upgraded from 
+12.1.2.1.54 to version 12.1.3.0.0 or newer
+Verification note: [sn5]    Node needs to be upgraded from 
+12.1.2.1.54 to version 12.1.3.0.0 or newer
+Verification note: [sn6]    Node needs to be upgraded from 
+12.1.2.1.54 to version 12.1.3.0.0 or newer </pre>
+            <p>
+                      For brevity and space, we only show part of the
+                      output generated by the <code class="literal">verify upgrade</code>
+                      command. Those nodes which have been upgraded are
+                      identified with a verification message that includes
+                      the current software version number:
+                  </p>
+            <pre class="programlisting"> Verify upgrade: Storage Node [sn3] on node3:5000    
+Zone: [name=Boston id=zn1 type=PRIMARY]    
+Status: RUNNING   
+Ver: 12cR1.3.0.1 2013-12-18 06:35:02 UTC  Build id: 8e70b50c0b0e</pre>
+            <p>
+                        Those nodes which still need to be upgraded are
+                        identified in two different ways. First, the
+                        verification message for the node indicates that an
+                        upgrade is still necessary:
+                    </p>
+            <pre class="programlisting">Verify: sn2: Node needs to be upgraded from 12.1.2.1.54 to
+version 12.1.3.0.0 or newer </pre>
+            <p>
+                        Second, the very end of the verification output
+                        identifies all the nodes that still need to be
+                        upgraded:
+                    </p>
+            <pre class="programlisting">Verification complete, 0 violations, 3 notes found.
+Verification note: [sn2]    Node needs to be upgraded from
+12.1.2.1.54 to version 12.1.3.0.0 or newer
+Verification note: [sn5]    Node needs to be upgraded from
+12.1.2.1.54 to version 12.1.3.0.0 or newer
+Verification note: [sn6]    Node needs to be upgraded from
+12.1.2.1.54 to version 12.1.3.0.0 or newer </pre>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+                            If the verification shows nodes you thought
+                            were upgraded as being still in need of an
+                            upgrade, you <span class="emphasis"><em>must</em></span> resolve
+                            that problem before upgrading the other nodes
+                            in your store. As a kind of a sanity check, you
+                            can verify just those nodes you just finished
+                            upgrading:
+                        </p>
+              <pre class="programlisting">kv-&gt; verify upgrade -sn sn3 -sn sn4
+Verify: starting verification of mystore based upon topology 
+sequence #315
+...
+Verification complete, no violations.
+</pre>
+            </div>
+          </li>
+          <li>
+            <p>
+                      You can continue upgrading groups of Storage Nodes,
+                      as identified by the <code class="literal">show upgrade-order</code>
+                      command. Follow the procedure outlined above. Stop
+                      the release 2 Storage Node using the release 2 stop command, then
+                      restart the Storage Node using the release 3 start command.
+                      Continue doing this until all Storage Nodes have been
+                      upgraded.
+                  </p>
+            <p>
+                      If at some point you lose track of which group of
+                      nodes should be upgraded next, you can always run the
+                      <code class="literal">show upgrade-order</code>
+                      command again:
+                  </p>
+            <pre class="programlisting">kv-&gt; show upgrade-order
+Calculating upgrade order, target version: 12.1.3.0.1,
+prerequisite: 11.2.2.0.23
+sn2 sn5
+sn6 </pre>
+          </li>
+          <li>
+            <p>
+                      When you are all done upgrading your Storage Nodes,
+                      the <code class="literal">verify upgrade</code> command will
+                      show no verification notes at the end of its output:
+                  </p>
+            <pre class="programlisting">kv-&gt; verify upgrade
+Verify: starting verification of mystore based upon topology 
+sequence #315
+...
+Verification complete, no violations. </pre>
+          </li>
+        </ol>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="scriptto21"></a>Using a Script to Upgrade to Release 3</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                    For any deployments with more than a handful of Storage
+                    Nodes, the manual upgrade procedure described above
+                    becomes problematic. In that case, you should probably
+                    upgrade your store using a script.
+                </p>
+        <p>
+                    An example script (bash shell script) is available for
+                    you to examine in the release 3 distribution. It can be found
+                    here:
+                </p>
+        <pre class="programlisting">&lt;KVHOME&gt;/examples/upgrade/onlineUpgrade</pre>
+        <p>
+                    This script has the same upgrade restrictions as was
+                    described earlier in this section: it will only upgrade
+                    a release 2 installation to release 3, and your store must have a
+                    replication factor of at least 3 in order for your
+                    store to be available during the upgrade process.
+                </p>
+        <p>
+                    The provided script is an example only. It must be
+                    modified in order for it to properly function for your
+                    installation.
+                </p>
+        <p>
+                    Note that the script does not perform any software
+                    provisioning for you. This means you are responsible
+                    for placing the release 3 package on your host machines in
+                    whatever location you are using for your installation
+                    software. That said, the script communicates with your
+                    host machines using ssh, so you could potentially
+                    enhance the script to provision your machines using
+                    scp. 
+                </p>
+        <p>
+                    Because the script uses ssh, in order for it to
+                    function you must configure your machines to allow
+                    automatic login (that is, login over ssh without a
+                    password). ssh supports public/private key
+                    authentication, so this is generally a secure way to
+                    operate. 
+                </p>
+        <p>
+                    For information on how to configure ssh in
+                    this way, see 
+                    <a class="ulink" href="http://www.linuxproblem.org/art_9.html" target="_top">http://www.linuxproblem.org/art_9.html</a>.
+                    For information on how to install and configure ssh and
+                    the ssh server, see your operating system's documentation. 
+                </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="upgradeprocedure.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="deploymentupdate.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="upgrade_release_1_to_2.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">General Upgrade Notes </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Upgrade from NoSQL DB Release 1.0 to NoSQL DB Release 2.0</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

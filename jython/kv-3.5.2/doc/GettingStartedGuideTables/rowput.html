@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Writing Rows to a Table in the Store</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="storewrites.html" title="Chapter 5. Writing and Deleting Table Rows" />
+    <link rel="prev" href="storewrites.html" title="Chapter 5. Writing and Deleting Table Rows" />
+    <link rel="next" href="recorddelete.html" title="Deleting Rows from the Store" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Writing Rows to a Table in the Store</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="storewrites.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 5. Writing and Deleting Table Rows</th>
+          <td width="20%" align="right"> <a accesskey="n" href="recorddelete.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="rowput"></a>Writing Rows to a Table in the Store</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="rowput.html#writechildtable">Writing Rows to a Child Table</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="rowput.html#putOtherForms">Other put Operations</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+          Writing a new row to a table in the store, and updating an existing
+          row are usually identical operations (although methods exist
+          that work only if the row is being updated, or only if it is
+          being created — these are described a little later in this
+          section). 
+      </p>
+      <p>
+          Remember that you can only write data to a table after it has
+          been added to the store. See
+          <a class="xref" href="tablesapi.html" title="Chapter 3. Introducing Oracle NoSQL Database Tables and Indexes">Introducing Oracle NoSQL Database Tables and Indexes</a>
+          for details. 
+      </p>
+      <p>
+          To write a row to a table in the store:
+      </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                  Construct a handle for the table to which you want to
+                  write. You do this by retrieving a
+                  <code class="classname">TableAPI</code> interface instance using
+                  <code class="methodname">KVStore.getTableAPI()</code>. You then
+                  use that instance to retrieve a handle for the desired table
+                  using the <code class="methodname">TableAPI.getTable()</code>. This
+                  returns a <code class="classname">Table</code> interface instance.
+              </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+                      <code class="methodname">TableAPI.getTable()</code> is an
+                      expensive call that requires server side access. From a
+                      performance point of view, it is a mistake to call this
+                      method whenever you need a table handle. Instead, call
+                      this method for all relevant tables in the set up section
+                      of your code, and then reuse those handles throughout
+                      your application.
+                  </p>
+            </div>
+          </li>
+          <li>
+            <p>
+                  Use the <code class="classname">Table</code> instance
+                  retrieved in the previous step to create a
+                  <code class="classname">Row</code> interface instance.
+                  You use the <code class="methodname">Table.createRow()</code>
+                  method to do this.
+              </p>
+          </li>
+          <li>
+            <p>
+                  Write to each field in the <code class="classname">Row</code>
+                  using <code class="methodname">Row.put()</code>.
+              </p>
+          </li>
+          <li>
+            <p>
+                  Write the new row to the store using
+                  <code class="methodname">TableAPI.put()</code>.
+              </p>
+          </li>
+        </ol>
+      </div>
+      <p>
+          The following is a trivial example of writing a row to the
+          store. It assumes that the <code class="classname">KVStore</code> handle
+          has already been created. 
+      </p>
+      <a id="rowput-1"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+import oracle.kv.KVStore;
+import oracle.kv.table.Row;
+import oracle.kv.table.Table;
+import oracle.kv.table.TableAPI;
+
+...
+
+// KVStore handle creation is omitted for brevity
+
+...
+
+TableAPI tableH = kvstore.getTableAPI();
+
+// The name you give to getTable() must be identical
+// to the name that you gave the table when you created
+// the table using the CREATE TABLE DDL statement.
+Table myTable = tableH.getTable("myTable");
+
+// Get a Row instance
+Row row = myTable.createRow();
+
+// Now put all of the cells in the row. 
+// This does NOT actually write the data to
+// the store.
+
+row.put("item", "Bolts");
+row.put("description", "Hex head, stainless");
+row.put("count", 5);
+row.put("percentage", 0.2173913);
+
+// Now write the table to the store.
+// "item" is the row's primary key. If we had not set that value, 
+// this operation will throw an IllegalArgumentException.
+tableH.put(row, null, null); </pre>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="writechildtable"></a>Writing Rows to a Child Table</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                To write to a child table, first create the row in the
+                parent table to which the child belongs. You do this by
+                populating the parent row with data.  Then you write the
+                child table's row(s). When you do, you must specify the
+                primary key used by the parent table, as well as the
+                primary key used by the child table's rows. 
+            </p>
+        <p>
+                For example, in <a class="xref" href="tablesapi.html#defchildtable" title="Defining Child Tables">Defining Child Tables</a>
+                we showed how to create a child table. To write data to
+                that table, do this:
+            </p>
+        <a id="rowputchild-1"></a>
+        <pre class="programlisting">package kvstore.basicExample;
+
+import oracle.kv.KVStore;
+import oracle.kv.table.Row;
+import oracle.kv.table.Table;
+import oracle.kv.table.TableAPI;
+
+...
+
+// KVStore handle creation is omitted for brevity
+
+...
+
+TableAPI tableH = kvstore.getTableAPI();
+
+// First, populate a row in the parent table 
+Table myTable = tableH.getTable("myInventory");
+
+// Get a Row instance
+Row row = myTable.createRow();
+
+// Now put all of the cells in the row. 
+
+row.put("itemCategory", "Bolts");
+row.put("description", "Metric &amp; US sizes");
+
+// Now write the table row to the store.
+tableH.put(row, null, null); 
+
+// Now populate the corresponding child table 
+Table myChildTable = tableH.getTable("myInventory.itemDetails");
+
+// Get a row instance
+Row childRow = myChildTable.createRow();
+
+// Populate the rows. Because the parent table's "itemCategory"
+// field is a primary key, this must be populated in addition
+// to all of the child table's rows
+childRow.put("itemCategory", "Bolts");
+childRow.put("itemSKU", "1392610");
+childRow.put("itemDescription", "1/4-20 x 1/2 Grade 8 Hex");
+childRow.put("price", new Float(11.99));
+childRow.put("inventoryCount", 1457); </pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="putOtherForms"></a>Other put Operations</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                Beyond the very simple usage of the 
+                    <code class="methodname">TableAPI.put()</code>
+                    
+                method illustrated above, there are three other
+                put operations that you can use:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                        <code class="classname">TableAPI.putIfAbsent()</code>
+                        
+                        
+                    </p>
+              <p>
+                        This method will only put the row if the row's
+                        primary key value DOES NOT currently exist in the
+                        table.  That is, this method is successful only if
+                        it results in a <span class="emphasis"><em>create</em></span>
+                        operation.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="classname">TableAPI.putIfPresent()</code>
+                        
+                        
+                    </p>
+              <p>
+                        This method will only put the row if the row's
+                        primary key value already exists in the table.
+                        That is, this method is only successful if it
+                        results in an <span class="emphasis"><em>update</em></span>
+                        operation.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="classname">TableAPI.putIfVersion()</code>
+                        
+                        
+                    </p>
+              <p>
+                        This method will put the row only if the value
+                        matches the supplied version information. For more
+                        information, see 
+                        <a class="xref" href="versions.html" title="Chapter 9. Using Row Versions">Using Row Versions</a>.
+                    </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="storewrites.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="storewrites.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="recorddelete.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 5. Writing and Deleting Table Rows </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Deleting Rows from the Store</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

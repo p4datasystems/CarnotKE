@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Verifying the Installation</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="kvlite-usage.html" title="Chapter 2. Introduction to Oracle KVLite" />
+    <link rel="prev" href="stopkvlite.html" title="Stopping and Restarting KVLite" />
+    <link rel="next" href="clpoptions.html" title="kvlite Utility Command Line Parameter Options" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Verifying the Installation</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="stopkvlite.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 2. Introduction to Oracle KVLite</th>
+          <td width="20%" align="right"> <a accesskey="n" href="clpoptions.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="verifykvlite"></a>Verifying the Installation</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            There are several things you can do to verify your
+            installation, and ensure that KVLite is running:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    Start another shell and run:
+                </p>
+            <pre class="programlisting">jps -m</pre>
+            <p>
+                    The output should show KVLite (and possibly other
+                    things as well, depending on what you have running on
+                    your machine).
+                </p>
+          </li>
+          <li>
+            <p>
+                    Run the <code class="literal">kvclient</code>
+                    test application:
+                </p>
+            <div class="orderedlist">
+              <ol type="1">
+                <li>
+                  <p>
+                            cd KVHOME
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            java -Xmx256m -Xms256m -jar lib/kvclient.jar
+                        </p>
+                </li>
+              </ol>
+            </div>
+            <p>
+                    This should write the release to stdout:
+                </p>
+            <pre class="programlisting">12cR1.M.N.O...</pre>
+          </li>
+          <li>
+            <p>
+                    Compile and run the example program:
+                </p>
+            <div class="orderedlist">
+              <ol type="1">
+                <li>
+                  <p>
+                            cd KVHOME
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            Compile the example:
+                        </p>
+                  <pre class="programlisting">javac -g -cp lib/kvclient.jar:examples examples/hello/*.java</pre>
+                </li>
+                <li>
+                  <p>
+                            Run the example using all default parameters:
+                        </p>
+                  <pre class="programlisting">java -Xmx256m -Xms256m \
+-cp lib/kvclient.jar:examples hello.HelloBigDataWorld</pre>
+                  <p>
+                            Or run it using non-default parameters, if you
+                            started KVLite using non-default values:
+                        </p>
+                  <pre class="programlisting">java -Xmx256m -Xms256m \
+-cp lib/kvclient.jar:examples hello.HelloBigDataWorld \
+    -host &lt;hostname&gt; -port &lt;hostport&gt; -store &lt;kvstore name&gt;</pre>
+                </li>
+              </ol>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="stopkvlite.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="kvlite-usage.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="clpoptions.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Stopping and Restarting KVLite </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> kvlite Utility Command Line Parameter Options</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>JAAS programming framework integration</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="kerberos.html" title="Chapter 4. Kerberos Authentication Service" />
+    <link rel="prev" href="kerberos_properties.html" title="Kerberos Security Properties" />
+    <link rel="next" href="kerbinstall.html" title="Performing a Secure Oracle NoSQL Database Installation with Kerberos" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">JAAS programming framework integration</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="kerberos_properties.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 4. Kerberos Authentication Service</th>
+          <td width="20%" align="right"> <a accesskey="n" href="kerbinstall.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="jaas"></a>JAAS programming framework integration</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+            Oracle NoSQL Database allows client applications to integrate with programs
+            using ​the Java Authentication and Authorization Service (JAAS)
+            programming framework. 
+        </p>
+      <p> 
+            Use the <code class="literal">oracle.kv.jaas.login.conf.entryName</code>
+            security property to specify the JAAS login configuration.
+        </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+                If a JAAS login configuration file is set, you cannot specify
+                keytab or credential cache in security properties. 
+            </p>
+      </div>
+      <p> 
+            A login configuration file would then contain content like this:
+        </p>
+      <pre class="programlisting">oraclenosql {
+   com.sun.security.auth.module.Krb5LoginModule required
+   useKeyTab=true
+   keyTab=test.keytab
+   storeKey=true
+   principal=krbuser
+   doNotPrompt=false;
+}; </pre>
+      <p>
+            where <code class="literal">oraclenosql</code> is the value for
+                <code class="literal">oracle.kv.jaas.login.conf.entryName</code>. This
+            configuration file can be used for Kerberos login.
+        </p>
+      <p> 
+            In the following example, assume the client application has
+            already obtained the Kerberos credentials for user
+                <code class="literal">krbuser</code> before it tries to connect to Oracle NoSQL Database.
+            You do not have to specify security properties in the login file.
+            You can specify the credentials using the
+            <code class="literal">Subject.doAs</code> method: 
+        </p>
+      <pre class="programlisting">final LoginContext lc =
+    new LoginContext("oraclenosql", new TextCallbackHandler());
+
+// Attempt authentication
+lc.login();
+
+// Get the authenticated Subject
+final Subject subj = lc.getSubject();
+
+// Specify configuration
+final KVStoreConfig kvConfig =
+    new KVStoreConfig("mystore", "nosql1:5000");
+
+// Set security properties SSL needed
+final Properties securityProps = new Properties();
+securityProps.setProperty(KVSecurityConstants.TRANSPORT_PROPERTY,
+                          KVSecurityConstants.SSL_TRANSPORT_NAME);
+securityProps.setProperty(KVSecurityConstants.SSL_TRUSTSTORE_FILE_PROPERTY,
+                          trustStore);
+kvConfig.setSecurityProperties(securityProps);
+
+// Set Kerberos properties
+final Properties krbProperties = new Properties();
+
+// Set service principal associated with helper host
+krbProperties.setProperty(KVSecurityConstants.AUTH_KRB_SERVICES_PROPERTY,
+                          hostName + ":" + servicePrincipal);
+
+// Set default realm name, because the short name
+// for user principal is used.
+krbProperties.setProperty(KVSecurityConstants.AUTH_KRB_REALM_PROPERTY,
+                          "EXAMPLE.COM");
+
+// Specify Kerberos principal
+final KerberosCredentials krbCreds =
+    new KerberosCredentials("krbuser", krbProperties);
+
+// Get store using credentials in subject
+KVStore kvstore = Subject.doAs(
+    subj, new PrivilegedExceptionAction&lt;KVStore&gt;() {
+        @Override
+        public KVStore run() throws Exception {
+            return KVStoreFactory.getStore(kvConfig, krbCreds, null);
+        }
+        });</pre>
+      <p>
+            In this case, a KerberosCredentials instance is used to set the
+            security properties needed to retrieve the credentials of the
+            specified user principal from KDC. 
+        </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="kerberos_properties.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="kerberos.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="kerbinstall.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Kerberos Security Properties </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Performing a Secure Oracle NoSQL Database Installation with Kerberos</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 8. Quick Start for the RDF Graph Feature</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="prev" href="external-reasoner.html" title="Use External Reasoner together with Jena APIs" />
+    <link rel="next" href="example1b.html" title="Example1b.java: Create a named graph and add/delete triples" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 8. Quick Start for the RDF Graph Feature</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="external-reasoner.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="example1b.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="quickstart"></a>Chapter 8. Quick Start for the RDF Graph Feature</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="quickstart.html#example1">Example1.java: Create a default graph and add/delete triples</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example1b.html"> Example1b.java: Create a named graph and add/delete triples</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example1c.html"> Example1c.java: Create an inferred graph and add/delete triples</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example1d.html"> Example1d.java: Create an inferred graph and add/delete triples</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example2.html"> Example2.java: Load an RDF file</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example2b.html"> Concurrent RDF data loading</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example4.html"> Example4.java: Query family relationships on a named graph</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example5.html"> Example5.java: SPARQL query with JOIN_METHOD</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example5b.html">Example5b.java: SPARQL query with ORDERED query option</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example5c.html"> Example5c.java: SPARQL query with TIMEOUT and GRACEFUL TIMEOUT</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example5d.html">  Example5d.java: SPARQL query with DOP</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example5e.html"> Example5e.java: SPARQL query with INFERENCE/ASSERTED ONLY hints</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example5g.html"> Example5g.java: SPARQL query with PLAN query hint</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example6.html"> Example6.java: SPARQL ASK query</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example7.html"> Example7.java: SPARQL Describe query</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example8.html"> Example8.java: SPARQL Construct query</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example9.html"> Example9.java: SPARQL OPTIONAL query</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example10.html">Example10.java: SPARQL query with LIMIT and OFFSET</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example11.html">Example11.java: SPARQL query with SELECT Cast</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example12.html">Example12.java: SPARQL Involving Named Graphs</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example13.html">Example13.java: SPARQL Query with ARQ Built-in Functions</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example14.html">Example14: SPARQL Update</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example15.html">Example15.java: Oracle NOSQL Database Connection Pooling</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="generate-data.html">Generate Data sampling for a graph in the Oracle NoSQL Database</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example16b.html">Example16b. Generate Data sampling for the dataset in the Oracle NoSQL Database</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="example17.html">Build an Ontology Model using Jena OntModel APIs</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+        This section provides examples for the major capabilities of
+        the RDF Graph feature. Each example is self-contained: it
+        typically creates a graph, adds triples, performs a query that
+        may involve inference, displays the result, and drops the
+        model. 
+    </p>
+      <p> 
+        These examples can be found in the <code class="literal">examples/</code> directory.
+    </p>
+      <p> 
+        This section includes examples that do the following: 
+    </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p> 
+                Create a graph (or named graph) and insert/delete
+                triples. 
+            </p>
+          </li>
+          <li>
+            <p> 
+                Create an inferred graph (or inferred named graph)
+                and insert/delete inferred triples belonging to a
+                graph. 
+            </p>
+          </li>
+          <li>
+            <p> 
+                Load a RDF file into the Oracle NoSQL Database.
+            </p>
+          </li>
+          <li>
+            <p> 
+                Run several SPARQL queries using a "family"
+                ontology, including: 
+            </p>
+          </li>
+          <li>
+            <p> 
+                SPARQL query features such as LIMIT, OFFSET, ASK,
+                DESCRIBE, CONSTRUCT. 
+            </p>
+          </li>
+          <li>
+            <p> 
+                RDF Graph feature query options like TIMEOUT, DOP,
+                ORDERED, INF_ONLY, ASSERTED_ONLY.
+            </p>
+          </li>
+          <li>
+            <p>
+                RDF Graph feature hints such as PLAN.
+            </p>
+          </li>
+          <li>
+            <p>
+                Use the Apache Jena ARQ built-in function. 
+            </p>
+          </li>
+          <li>
+            <p>
+                Use a SELECT cast query.
+            </p>
+          </li>
+          <li>
+            <p> 
+                SPARQL Update requests to insert data into the
+                Oracle NoSQL Database.
+            </p>
+          </li>
+          <li>
+            <p>
+                Create a connection to an Oracle NoSQL Database
+                using <code class="literal">OracleNoSqlConnection</code>.
+            </p>
+          </li>
+          <li>
+            <p> 
+                Use Oracle NoSQL Database connection pooling.
+            </p>
+          </li>
+          <li>
+            <p> 
+                Generate sampling data for a specified graph or
+                data set. 
+            </p>
+          </li>
+        </ul>
+      </div>
+      <p> 
+        To run a query, you must do the following:
+    </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p> 
+                Include the code in a Java source file. The
+                examples used in this section are provided as files in
+                the examples directory of the package. 
+            </p>
+          </li>
+          <li>
+            <p>
+                Compile the Java source file. For example:
+            </p>
+            <pre class="programlisting">javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar:./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar:./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example.java</pre>
+          </li>
+          <li>
+            <p>
+                Run the compiled file. For example:
+            </p>
+            <pre class="programlisting">java -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar:./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar:./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example &lt;store_name \
+&gt; &lt;host_name&gt; &lt;host_port&gt;</pre>
+          </li>
+        </ol>
+      </div>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="example1"></a>Example1.java: Create a default graph and add/delete triples</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+            This example shows how to add/remove a set of
+            triples over a default graph stored in an Oracle NoSQL
+            Database.
+        </p>
+        <pre class="programlisting">import com.hp.hpl.jena.graph.*;
+import com.hp.hpl.jena.query.*;
+import com.hp.hpl.jena.rdf.model.Model;
+import oracle.rdf.kv.client.jena.*;
+
+public class Example1 {
+  
+  public static void main(String[] args) throws Exception
+  {
+    
+String szStoreName = args[0];
+String szHostName = args[1];
+String szHostPort = args[2];
+
+OracleNoSqlConnection conn 
+     = OracleNoSqlConnection.createInstance(szStoreName,
+                                            szHostName, 
+                                            szHostPort);
+    
+// This object will handle operations over the default graph
+OracleGraphNoSql graph = new OracleGraphNoSql(conn);
+graph.clearRepository(); //Clear the graph including inferred triples
+    
+graph.add(Triple.create(Node.createURI("u:John"),
+                        Node.createURI("u:parentOf"),
+                        Node.createURI("u:Mary")));
+        
+graph.add(Triple.create(Node.createURI("u:Mary"), 
+                        Node.createURI("u:parentOf"),
+                        Node.createURI("u:Jack")));
+
+String queryString = " select ?x ?y WHERE {?x &lt;u:parentOf&gt; ?y}";
+System.out.println("Execute query " + queryString);
+
+Model model = new OracleModelNoSql(graph);
+Query query = QueryFactory.create(queryString);
+QueryExecution qexec = QueryExecutionFactory.create(query, model);
+    
+try {
+      ResultSet results = qexec.execSelect();
+      ResultSetFormatter.out(System.out, results, query);
+    }
+    
+finally {
+      qexec.close();
+    }
+
+graph.delete(Triple.create(Node.createURI("u:John"), 
+                               Node.createURI("u:parentOf"),
+                               Node.createURI("u:Mary")));
+
+queryString = "select ?x ?y ?z WHERE {?x ?y ?z}";
+System.out.println("Execute query " + queryString);
+
+query = QueryFactory.create(queryString) ;
+qexec = QueryExecutionFactory.create(query, model);
+    
+try {
+      ResultSet results = qexec.execSelect();
+      ResultSetFormatter.out(System.out, results, query);
+    }
+    
+finally {
+      qexec.close();
+    }
+    
+model.close();
+conn.dispose();
+    
+  }
+} </pre>
+        <p>
+            The following are the commands to compile and run
+            this example, as well as the expected output of the java
+            command.
+        </p>
+        <pre class="programlisting">javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar:./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar: ./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example.java
+
+javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar:./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar: ./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar \
+Example1 &lt;store_name&gt; &lt;host_name&gt; &lt;host_port&gt;
+
+
+Execute query select ?x ?y WHERE {?x &lt;u:parentOf&gt; ?y} 
+-----------------------
+| x        | y        |
+=======================
+| &lt;u:Mary&gt; | &lt;u:Jack&gt; |
+| &lt;u:John&gt; | &lt;u:Mary&gt; |
+-----------------------
+
+
+Execute query select ?x ?y ?z WHERE {?x ?y ?z}
+--------------------------------------
+| x        | y            | z        |
+======================================
+| &lt;u:Mary&gt; | &lt;u:parentOf&gt; | &lt;u:Jack&gt; |
+--------------------------------------</pre>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="external-reasoner.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="example1b.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Use External Reasoner
+            together with Jena APIs </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top">  Example1b.java: Create a named graph and add/delete triples</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

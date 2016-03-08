@@ -1,0 +1,12 @@
+{
+    "type": "record",
+    "name": "billinfo",
+    "namespace": "secondaryindex",
+    "fields": [
+        {"name": "name", "type": "string", "default": ""},
+        {"name": "email", "type": "string", "default": ""},
+        {"name": "phone", "type": "string", "default": ""},
+        {"name": "date", "type": "string", "default": ""},
+        {"name": "cost", "type": "long", "default": 0}
+    ]
+}

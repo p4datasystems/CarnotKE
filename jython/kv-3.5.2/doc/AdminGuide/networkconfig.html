@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Linux Network Configuration Settings</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="machine-tuning.html" title="Appendix C. Tuning" />
+    <link rel="prev" href="osuser.html" title="OS User Limits" />
+    <link rel="next" href="offheap.html" title="Managing the Off-heap Cache" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Linux Network Configuration Settings</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="osuser.html">Prev</a> </td>
+          <th width="60%" align="center">Appendix C. Tuning</th>
+          <td width="20%" align="right"> <a accesskey="n" href="offheap.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="networkconfig"></a>Linux Network Configuration Settings</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="networkconfig.html#serversocket">Server Socket Backlog</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="networkconfig.html#isolateha">Isolating HA Network Traffic</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="networkconfig.html#receivepacket">Receive Packet Steering</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+            Before continuing, it is worth checking that the network
+            interface card is configured as expected during the
+            initial setup of each SN, because it is harder to debug
+            these problems later when such configuration problems
+            show up under load.
+        </p>
+      <p>
+            Use the following command to determine which network
+            interface is being used to access a particular subnet on
+            each host. This command is particularly useful for
+            machines with multiple NICs:
+        </p>
+      <pre class="programlisting">$ ip addr ls to 192.168/16
+2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast
+    state UP qlen 1000
+    inet 192.168.1.19/24 brd 192.168.1.255 scope global eth0 </pre>
+      <p>
+            Use the following command to get information about the
+            configuration of the NIC:
+        </p>
+      <pre class="programlisting">$ ethtool -i eth2
+driver: enic
+version: 2.1.1.13
+firmware-version: 2.0(2g)
+bus-info: 0000:0b:00.0 </pre>
+      <p>
+            Use the following command to get information about the
+            NIC hardware:
+        </p>
+      <pre class="programlisting">$ lspci -v | grep "Ethernet controller"
+00:03.0 Ethernet controller: Intel Corporation 82540EM Gigabit 
+Ethernet Controller (rev 02) </pre>
+      <p>
+            Use the following command to get information about the
+            network speed. Note that this command requires sudo:
+        </p>
+      <pre class="programlisting">$ sudo ethtool eth0 | grep Speed
+    Speed: 1000Mb/s </pre>
+      <p>
+            You may want to consider using 10 gigabit Ethernet, or
+            other fast network implementations, to improve
+            performance for large clusters.
+        </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="serversocket"></a>Server Socket Backlog</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                The typical default maximum server socket backlog,
+                typically set at 128, is too small for server style
+                loads. It should be at least 1K for server
+                applications and even a 10K value is not
+                unreasonable for large stores.
+            </p>
+        <p>
+                Set the <code class="literal">net.core.somaxconn</code>
+                property in <code class="filename">sysctl.conf</code> to
+                modify this value.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="isolateha"></a>Isolating HA Network Traffic</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                If the machine has multiple network interfaces, you
+                can configure Oracle NoSQL Database to isolate HA replication
+                traffic on one interface, while client request
+                traffic uses another interface. Use the
+                <code class="literal">-hahost</code> parameter to the
+                <code class="literal">makebootconfig</code> command to specify
+                the interface to be used by HA as in the example
+                below:
+            </p>
+        <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar kvstore.jar makebootconfig -root /disk1/kvroot \
+-host sn10.example.com -port 5000 -harange 5010,5020 \
+-storagedir /disk2/kv -hahost sn10-ha.example.com</pre>
+        <p>
+                In this example, all client requests will use the
+                interface associated with <code class="literal">sn10.example.com</code>, while HA
+                traffic will use the interface associated with
+                <code class="literal">sn10-ha.example.com</code>.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="receivepacket"></a>Receive Packet Steering</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                When multiple RNs are located on a machine with a
+                single queue network device, enabling Receive Packet
+                Steering (RPS) can help performance by distributing
+                the CPU load associated with packet processing (soft
+                interrupt handling) across multiple cores.
+                Multi-queue NICs provide such support directly and
+                do not need to have RPS enabled.
+            </p>
+        <p>
+                Note that this tuning advice is particularly
+                appropriate for customers using Oracle Big Data
+                Appliance.
+            </p>
+        <p>
+                You can determine whether a NIC is multi-queue by
+                using the following command:
+            </p>
+        <pre class="programlisting">sudo ethtool -S eth0</pre>
+        <p>
+                A multi-queue NIC will have entries like this:
+            </p>
+        <pre class="programlisting"> rx_queue_0_packets: 271623830
+     rx_queue_0_bytes: 186279293607
+     rx_queue_0_drops: 0
+     rx_queue_0_csum_err: 0
+     rx_queue_0_alloc_failed: 0
+     rx_queue_1_packets: 273350226
+     rx_queue_1_bytes: 188068352235
+     rx_queue_1_drops: 0
+     rx_queue_1_csum_err: 0
+     rx_queue_1_alloc_failed: 0
+     rx_queue_2_packets: 411500226
+     rx_queue_2_bytes: 206830029846
+     rx_queue_2_drops: 0
+     rx_queue_2_csum_err: 0
+     rx_queue_2_alloc_failed: 0
+... </pre>
+        <p>
+                For a For a 32 core Big Data Appliance using
+                Infiniband, use the following configuration to
+                distribute receive packet processing across all 32
+                cores:
+            </p>
+        <pre class="programlisting">echo ffffffff &gt; /sys/class/net/eth0/queues/rx-0/rps_cpus</pre>
+        <p>
+                where <code class="literal">ffffffff</code> is a bit mask selecting all 32 cores.
+            </p>
+        <p>
+                For more information on RPS please consult:
+            </p>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p>
+                        <a class="ulink" href="http://docs.oracle.com/cd/E37670_01/E37355/html/ol_about_uek.html" target="_top">http://docs.oracle.com/cd/E37670_01/E37355/html/ol_about_uek.html</a>
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <a class="ulink" href="http://lwn.net/Articles/361440/" target="_top">http://lwn.net/Articles/361440/</a>
+                    </p>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="osuser.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="machine-tuning.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="offheap.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">OS User Limits </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Managing the Off-heap Cache</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

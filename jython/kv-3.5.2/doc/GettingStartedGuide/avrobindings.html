@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 7. Avro Bindings</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="prev" href="provideschema.html" title="Managing Avro Schema in the Store" />
+    <link rel="next" href="genericbinding-overview.html" title="Generic Binding" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 7. Avro Bindings</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="provideschema.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="genericbinding-overview.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="avrobindings"></a>Chapter 7. Avro Bindings</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="avrobindings.html#avrobindings-overview">Avro Bindings Overview</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="genericbinding-overview.html">Generic Binding</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="genericbinding-overview.html#generic-single">Using a Single Generic Schema Binding</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="genericbinding-overview.html#generic-multi">Using Multiple Generic Schema Bindings</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="genericbinding-overview.html#generic-embed-record">Using Embedded Records</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="genericbinding-overview.html#avro-generic-dynamicschema">Managing Generic Schemas Dynamically</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="specificbinding-overview.html">Specific Binding</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="specificbinding-overview.html#avro-specific-generate">Generating Specific Avro Classes</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="specificbinding-overview.html#avro-specific-using">Using Avro-specific Bindings</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="specificbinding-overview.html#avro-multispecific">Using Multiple Avro-specific Bindings</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="jsonbinding-overview.html">JSON Bindings</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="jsonbinding-overview.html#avro-jsonbinding-using">Using Avro JSON Bindings</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="jsonbinding-overview.html#avro-json-binding-with-record">Using a JSON Binding with a JSON Record</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+        </dl>
+      </div>
+      <p>
+        Once you have defined your schema (as described in 
+        <a class="xref" href="avroschemas.html" title="Chapter 6. Avro Schemas">Avro Schemas</a>), 
+        you make use of it in your Oracle NoSQL Database application in the following way:
+    </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                Add the schema to your store. See 
+                <a class="xref" href="provideschema.html" title="Managing Avro Schema in the Store">Managing Avro Schema in the Store</a>
+                for information on how to do this. 
+            </p>
+          </li>
+          <li>
+            <p>
+                Identify the schema to your application. 
+            </p>
+          </li>
+          <li>
+            <p>
+                Serialize and/or deserialize Oracle NoSQL Database values which use the
+                Avro data format. You use Avro bindings to perform the
+                serialization functions. There are different bindings
+                available to you, each of which offers pluses and
+                negatives. 
+            </p>
+          </li>
+        </ol>
+      </div>
+      <p>
+        Other than that, the mechanisms you use to
+        read/write/delete records in the store do not change just
+        because you are using the Avro data format with your
+        values. Avro affects your code only where you manage your
+        values.
+    </p>
+      <p>
+        The following sections describe the bindings that you use to
+        serialize and deserialize your data. The binding that you use
+        defines how you provide your schema to the store.
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="avrobindings-overview"></a>Avro Bindings Overview</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+            There are four bindings you can use to serialize and
+            deserialize store values that use the Avro data format.  Each
+            binding has strengths and weaknesses. The following sections
+            go into three of the four in some detail. But, briefly, the
+            four bindings are:
+        </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                    Generic
+                </p>
+              <p>
+                    A generic binding is a general-purpose binding.
+                    Generic bindings identify fields to be read and written
+                    by supplying a simple string that names the field. This
+                    allows you to use the binding in a somewhat generic
+                    way, but it suffers from a lack of type safety at
+                    application compile time.
+                </p>
+              <p>
+                    If you are just starting out with Avro, and have no
+                    initial reason to prefer one of the other bindings,
+                    then you should start with the generic binding. 
+                </p>
+              <p>
+                    Generic bindings are described in
+                    <a class="xref" href="genericbinding-overview.html" title="Generic Binding">Generic Binding</a>.
+                </p>
+            </li>
+            <li>
+              <p>
+                    Specific
+                </p>
+              <p>
+                    Specific bindings make use of classes that are
+                    generated from your schema specifications using an Ant
+                    tool.  The generated classes allow you to manage the
+                    fields in your schema using getter and setter methods.
+                    As a programming methodology, specific schemas might
+                    represent a familiar programming style, depending on
+                    your past experiences.
+                </p>
+              <p>
+                    Unlike generic and JSON bindings, specific bindings
+                    require you to know in advance of compile time what all
+                    of your store schemas will be. This is because specific
+                    bindings make use of classes that are generated from
+                    your schema specifications using an Avro tool that
+                    can be called from Ant, and so there is no way for your
+                    application to dynamically discover the set of all
+                    schemas in use in the store. 
+                </p>
+              <p>
+                    Specific bindings are described in
+                    <a class="xref" href="specificbinding-overview.html" title="Specific Binding">Specific Binding</a>.
+                </p>
+            </li>
+            <li>
+              <p>
+                    JSON
+                </p>
+              <p>
+                    JSON bindings behave similarly to generic bindings, but
+                    offer less support for Avro data types.  JSON bindings
+                    are most useful if you are integrating your Oracle NoSQL Database
+                    client code into a system that is JSON-oriented,
+                    because they expose JSON objects.
+                </p>
+              <p>
+                    JSON bindings are described in
+                    <a class="xref" href="jsonbinding-overview.html" title="JSON Bindings">JSON Bindings</a>.
+                </p>
+            </li>
+            <li>
+              <p>
+                    Raw
+                </p>
+              <p>
+                    Raw bindings is an advanced feature that allows you to
+                    use low-level Avro APIs to serialize and deserialize
+                    objects. Raw bindings should be used when the other three
+                    built-in bindings will not work for you, for whatever
+                    reason. Usage of Raw bindings requires a good
+                    understanding of the Avro API set. As a result, their
+                    usage is beyond the scope of this manual.
+                </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+            Note that you can read using one binding and write using
+            another one. The Avro data format (which is what is actually
+            used for the data placed into the store) is binding
+            independent. Put another way, the bindings know how to read and
+            write the Avro data format; the data format itself has no
+            knowledge of the bindings.
+        </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="provideschema.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="genericbinding-overview.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Managing Avro Schema in the Store </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Generic Binding</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

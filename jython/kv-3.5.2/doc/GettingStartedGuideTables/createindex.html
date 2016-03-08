@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Creating Indexes</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="tablesapi.html" title="Chapter 3. Introducing Oracle NoSQL Database Tables and Indexes" />
+    <link rel="prev" href="tablesapi.html" title="Chapter 3. Introducing Oracle NoSQL Database Tables and Indexes" />
+    <link rel="next" href="primaryshardkeys.html" title="Chapter 4. Primary and Shard Key Design" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Creating Indexes</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tablesapi.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 3. Introducing Oracle NoSQL Database Tables and Indexes</th>
+          <td width="20%" align="right"> <a accesskey="n" href="primaryshardkeys.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="createindex"></a>Creating Indexes</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="createindex.html#indexdtlimits">Indexable Field Types</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+          Indexes represent an alternative way of retrieving table rows.
+          Normally you retrieve table rows using the row's primary key. By
+          creating an index, you can retrieve rows with dissimilar
+          primary key values, but which share some other characteristic.
+      </p>
+      <p>
+          Indexes can be created on any field which is an indexable
+          datatype, including primary key fields. See
+          <a class="xref" href="createindex.html#indexdtlimits" title="Indexable Field Types">Indexable Field Types</a>
+          for information on the types of fields that can be indexed.
+      </p>
+      <p>
+          For example, if you had a table representing types of
+          automobiles, the primary keys for each row might be the
+          automobile's manufacturer and model type. However, if you
+          wanted to be able to query for all automobiles that
+          are painted red, regardless of the manufacturer or model type,
+          you could create an index on the table's field that contains
+          color information.
+      </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+              Indexes can take  a long time to create because Oracle NoSQL Database must
+              examine all of the data contained in the relevant table in your
+              store.  The smaller the data contained in the table, the faster
+              your index creation will complete. Conversely, if a table
+              contains a lot of data, then it can take a long time to create
+              indexes for it.
+          </p>
+      </div>
+      <pre class="programlisting">CREATE TABLE myInventory.itemDetails (
+    itemSKU STRING,
+    itemDescription STRING,
+    price FLOAT,
+    inventoryCount INTEGER,
+    PRIMARY KEY (itemSKU)
+) </pre>
+      <p>
+          To create an index, use the <code class="literal">CREATE INDEX</code>
+          statement. See <a class="xref" href="addindexddl.html" title="CREATE INDEX">CREATE INDEX</a>
+          for details. For example:
+      </p>
+      <pre class="programlisting">CREATE INDEX inventoryIdx on myInventory.itemDetails(inventoryCount)</pre>
+      <p>
+          Similarly, to remove an index, use the
+          <code class="literal">DROP INDEX</code>
+          statement. See <a class="xref" href="deleteindexddl.html" title="DROP INDEX">DROP INDEX</a>
+          for details.
+      </p>
+      <pre class="programlisting">DROP INDEX inventoryIdx on myInventory.itemDetails</pre>
+      <p>
+          Be aware that adding and dropping indexes can take a long time.
+          You might therefore want to run these operations asynchronously
+          using the 
+                <code class="methodname">KVStore.execute()</code>
+                
+                
+          method. 
+      </p>
+      <pre class="programlisting">package kvstore.basicExample;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import oracle.kv.ExecutionFuture;
+import oracle.kv.FaultException;
+import oracle.kv.StatementResult;
+import oracle.kv.KVStore;
+import oracle.kv.KVStoreConfig;
+import oracle.kv.KVStoreFactory;
+import oracle.kv.table.TableAPI;
+
+...
+// Store open skipped
+... 
+
+public void createIndex() {
+    TableAPI tableAPI = store.getTableAPI();
+    ExecutionFuture future = null;
+    StatementResult result = null;
+    String statement = null;
+
+    try {
+
+        statement = "CREATE INDEX inventoryIdx on " +
+                    "myInventory.itemDetails(inventoryCount)"
+        future = store.execute(statement);
+        displayResult(future.getLastStatus(), statement);
+
+        /*
+         * Limit the amount of time to wait for the
+         * operation to finish.
+         */
+        result = future.get(3, TimeUnit.SECONDS);
+        displayResult(result, statement);
+
+    } catch (IllegalArgumentException e) {
+        System.out.println("Invalid statement:\n" + e.getMessage());
+    } catch (FaultException e) {
+        System.out.println
+            ("Statement couldn't be executed, please retry: " + e);
+        cleanupOperation(future);
+    } catch (ExecutionException e) {
+        System.out.println
+            ("Problem detected while waiting for a DDL statement: " +
+             e.getCause());
+        cleanupOperation(future);
+    } catch (InterruptedException e) {
+        System.out.println
+            ("Interrupted while waiting for a DDL statement: " + e);
+        cleanupOperation(future);
+    } catch (TimeoutException e) {
+        System.out.println("Statement execution took too long: " + e);
+        cleanupOperation(future);
+    }
+}
+
+private void cleanupOperation(ExecutionFuture future) {
+    if (future == null) {
+        /* nothing to do */
+        return;
+    }
+
+    System.out.println("Statement:");
+    System.out.println(future.getStatement());
+    System.out.println("has status: ");
+    System.out.println(future.getLastStatus());
+
+    if (!future.isDone()) {
+        future.cancel(true);
+        System.out.println("Statement is cancelled");
+    }
+}
+
+private void displayResult(StatementResult result, String statement) {
+    System.out.println("===========================");
+    if (result.isSuccessful()) {
+        System.out.println("Statement was successful:\n\t" + 
+                            statement);
+        System.out.println("Results:\n\t" + result.getInfo());
+    } else if (result.isCancelled()) {
+        System.out.println("Statement was cancelled:\n\t" + 
+                            statement);
+    } else {
+        /*
+         * statement wasn't successful: may be in error, or may still be
+         * in progress.
+         */
+        if (result.isDone()) {
+            System.out.println("Statement failed:\n\t" + statement);
+            System.out.println("Problem:\n\t" + result.getErrorMessage());
+        } else {
+            System.out.println("Statement in progress:\n\t" + statement);
+            System.out.println("Status:\n\t" + result.getInfo());
+        }
+    }
+} </pre>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="indexdtlimits"></a>Indexable Field Types</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+              Fields can be indexed only if they are declared to be one of
+              the following types. For all complex types (arrays, maps, and
+              records), the field can be indexed if the ultimate target of
+              the index is a scalar datatype. So a complex type that
+              contains a nested complex type (such as an array of records,
+              for example) can be indexed if the index's target is a scalar
+              datatype contained by the embedded record.
+          </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                      Integer
+                  </p>
+            </li>
+            <li>
+              <p>
+                      Long
+                  </p>
+            </li>
+            <li>
+              <p>
+                      Float
+                  </p>
+            </li>
+            <li>
+              <p>
+                      Double
+                  </p>
+            </li>
+            <li>
+              <p>
+                      String
+                  </p>
+            </li>
+            <li>
+              <p>
+                      Enum
+                  </p>
+            </li>
+            <li>
+              <p>
+                      Array
+                  </p>
+              <p>
+                      In the case of arrays, the field can be indexed only
+                      if the array contains values that are of one of the
+                      other indexable scalar types. For example, you can create an
+                      index on an array of Integers.  You can also create
+                      an index on a specific record in an array of records.
+                      Only one array can participate in an index, otherwise
+                      the size of the index can grow exponentially because
+                      there is an index entry for each array entry.
+                  </p>
+            </li>
+            <li>
+              <p>
+                      Maps
+                  </p>
+              <p>
+                      As is the case with Arrays, you can index a map if
+                      the map contains scalar types, or if the map contains
+                      a record that contains scalar types.
+                  </p>
+            </li>
+            <li>
+              <p>
+                      Records
+                  </p>
+              <p>
+                      Like Arrays and Maps, you can index fields in an
+                      embedded record if the field contains scalar
+                      data.
+                  </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+                  See <a class="xref" href="indexnonscalar.html" title="Chapter 8. Indexing Non-Scalar Data Types">Indexing Non-Scalar Data Types</a>
+                  for examples of how to index supported non-scalar types.
+              </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tablesapi.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="tablesapi.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="primaryshardkeys.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 3. Introducing Oracle NoSQL Database Tables and Indexes </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 4. Primary and Shard Key Design</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

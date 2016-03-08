@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Data Models</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Concepts Manual" />
+    <link rel="up" href="introduction.html" title="Chapter 1. Introduction to Oracle NoSQL Database" />
+    <link rel="prev" href="architecture.html" title="Architecture" />
+    <link rel="next" href="consistency.html" title="Consistency" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Data Models</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="architecture.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 1. Introduction to Oracle NoSQL Database </th>
+          <td width="20%" align="right"> <a accesskey="n" href="consistency.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="datamodels"></a>Data Models</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            You can model your data in Oracle NoSQL Database by using Tables, JSON
+            schemas or a raw key-value interface. 
+        </p>
+      <p>
+            Tables are the easiest way to model data. They provide the
+            highest level of abstraction, they are simple to model and
+            should be familiar to any developer. This model also supports
+            secondary indices and table evolution. For more information on
+            the tables API, see <em class="citetitle">Oracle NoSQL Database Getting Started with the Table API</em>. 
+        </p>
+      <p>
+            You can use JSON to model data for your JSON centric
+            applications. If secondary indices or strongly typed keys are
+            not a priority and if keys are going to be modeled manually,
+            then this is a good choice. For more information on JSON, see
+            the <em class="citetitle">Oracle NoSQL Database Administrator's Guide</em>. 
+        </p>
+      <p>
+            Finally, if you want to serialize the data, manage the key
+            structure, manage secondary indices through index views, manage
+            evolution and security through your client code, then you can
+            use the raw key-value interface. This is a good choice if you
+            are willing to write code on to your store to manage things
+            that are either available in the JSON or table interfaces. For
+            more information on the key-value API, see
+                <em class="citetitle">Oracle NoSQL Database Getting Started with the Key/Value API</em>. 
+            </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="architecture.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="introduction.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="consistency.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Architecture </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Consistency</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

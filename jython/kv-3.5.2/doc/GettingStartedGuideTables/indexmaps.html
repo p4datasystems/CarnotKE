@@ -1,0 +1,571 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Indexing Maps</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="indexnonscalar.html" title="Chapter 8. Indexing Non-Scalar Data Types" />
+    <link rel="prev" href="indexnonscalar.html" title="Chapter 8. Indexing Non-Scalar Data Types" />
+    <link rel="next" href="indexrecords.html" title="Indexing Embedded Records" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Indexing Maps</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="indexnonscalar.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 8. Indexing Non-Scalar Data Types</th>
+          <td width="20%" align="right"> <a accesskey="n" href="indexrecords.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="indexmaps"></a>Indexing Maps</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="indexmaps.html#mapindexbykeyvalue">Indexing by Map Keys</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="indexmaps.html#mapindexbyelementvalue">Indexing by Map Values</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="indexmaps.html#mapindexspecifickey">Indexing by a Specific Map Key Name</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="indexmaps.html#mapindexkeyandvalue">Indexing by Map Key and Value</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+            You can create an index on a map field so long as the map
+            contains scalar data, or contains a record with scalar fields.
+        </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+                You cannot index a map or array that is nested beneath
+                another map or array. This is not allowed because of the
+                potential for an excessively large number of index entries.
+            </p>
+      </div>
+      <p>
+            To create the index, define the map as normal. Once the map is
+            defined for the table, there are several different ways to
+            index it:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    Based on the map's keys without regard to the actual
+                    key values.
+                </p>
+          </li>
+          <li>
+            <p>
+                    Based on the map's values, without regard to the
+                    actual key used.
+                </p>
+          </li>
+          <li>
+            <p>
+                    By a specific map key.  To do this, you specify
+                    the name of the map field <span class="emphasis"><em>and</em></span> the
+                    name of a map key using dot notation. If the map key is
+                    ever created using  your client code, then it will be
+                    indexed.
+                </p>
+          </li>
+          <li>
+            <p>
+                    Based on the map's key and value without identifying
+                    a specific value (such as is required by the previous
+                    option in this list).
+                </p>
+          </li>
+        </ul>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="mapindexbykeyvalue"></a>Indexing by Map Keys</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                You can create indexes based on a map's keys without regard
+                to the corresponding values.  
+            </p>
+        <p>
+                Be aware that creating an index like this can potentially
+                result in multiple index entries for each row, which can
+                lead to very large indexes. In addition, the same row can
+                appear in a result set, so the duplicate entries must be
+                handled by your application.
+            </p>
+        <p>
+                First create the table:
+            </p>
+        <pre class="programlisting">CREATE TABLE myMapTable (
+    uid INTEGER,
+    testMap MAP(INTEGER),
+    PRIMARY KEY(uid)
+) </pre>
+        <p>
+                Once the table has been added to the store, create the
+                index using the <code class="literal">KEYOF</code> statement:
+            </p>
+        <pre class="programlisting">CREATE INDEX mapKeyIndex on myMapTable (KEYOF(testMap)) </pre>
+        <p>
+              Data is retrieved if the table row contains the identified
+              map with the identified key. So, for example, if you create a
+              series of table rows like this:
+            </p>
+        <pre class="programlisting">TableAPI tableH = kvstore.getTableAPI();
+
+Table myTable = tableH.getTable("myMapTable");
+
+Row row = myTable.createRow();
+row.put("uid", 12345);
+MapValue mv = row.putMap("testMap");
+mv.put("field1", 1);
+mv.put("field2", 2);
+mv.put("field3", 3);
+tableH.put(row, null, null);
+
+row = myTable.createRow();
+row.put("uid", 12);
+mv = row.putMap("testMap");
+mv.put("field1", 1);
+mv.put("field2", 2);
+tableH.put(row, null, null);
+
+row = myTable.createRow();
+row.put("uid", 666);
+mv = row.putMap("testMap");
+mv.put("field1", 1);
+mv.put("field3", 4);
+tableH.put(row, null, null); </pre>
+        <p>
+              then you can retrieve any table rows that contain the map
+              with any key currently in use by the map. For example, "field3".
+            </p>
+        <p>
+              To retrieve data using a map index, you first
+              retrieve the index using its name, and create an instance of 
+              <code class="classname">IndexKey</code> that you will use to
+              perform the index lookup:
+            </p>
+        <pre class="programlisting">Index mapIndex = myTable.getIndex("mapKeyIndex");
+IndexKey indexKey = mapIndex.createIndexKey(); </pre>
+        <p>
+                  Next you create and populate a
+                  <code class="classname">MapValue</code> instance, using the
+                  <code class="methodname">MapValue.putNull()</code> method. This
+                  method allows you to retrieve the map entry without
+                  regard to the value part of the entry.  When you perform
+                  the index lookup, the only records that will be returned
+                  will be those which have a map with the specified key
+                  name:
+              </p>
+        <pre class="programlisting">MapValue mv = indexKey.putMap("testMap");
+mv.putNull("field3"); </pre>
+        <p>
+                  After that, you retrieve the matching table rows, and
+                  iterate over them in the same way you would any
+                  other index type. For example:
+              </p>
+        <pre class="programlisting">TableIterator&lt;Row&gt; iter = tableH.tableIterator(indexKey, null, null);
+System.out.println("Results for testMap field3: ");
+try {
+    while (iter.hasNext()) {
+        Row rowRet = iter.next();
+        int uid = rowRet.get("uid").asInteger().get();
+        System.out.println("uid: " + uid);
+        MapValue mapRet = rowRet.get("testMap").asMap();
+        System.out.println("testMap: " + mapRet.toString());
+    }
+} finally {
+    if (iter != null) {
+        iter.close();
+    }
+} </pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="mapindexbyelementvalue"></a>Indexing by Map Values</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                You can create indexes based on the values contained in a
+                map without regard to the keys in use.
+            </p>
+        <p>
+                Be aware that creating an index like this can potentially
+                result in multiple index entries for each row, which can
+                lead to very large indexes. In addition, the same row can
+                appear in a result set, so the duplicate entries must be
+                handled by your application.
+            </p>
+        <p>
+                First create the table:
+            </p>
+        <pre class="programlisting">CREATE TABLE myMapTable (
+    uid INTEGER,
+    testMap MAP(INTEGER),
+    PRIMARY KEY(uid)
+) </pre>
+        <p>
+                Once the table has been added to the store, create the
+                index using the <code class="literal">ELEMENTOF</code> statement:
+            </p>
+        <pre class="programlisting">CREATE INDEX mapElementIndex on myMapTable (ELEMENTOF(testMap)) </pre>
+        <p>
+              Data is retrieved if the table row contains the identified map
+              with the identified value. So, for
+              example, if you create a series of table rows like this:
+            </p>
+        <pre class="programlisting">TableAPI tableH = kvstore.getTableAPI();
+
+Table myTable = tableH.getTable("myMapTable");
+
+Row row = myTable.createRow();
+row.put("uid", 12345);
+MapValue mv = row.putMap("testMap");
+mv.put("field1", 1);
+mv.put("field2", 2);
+mv.put("field3", 3);
+tableH.put(row, null, null);
+
+row = myTable.createRow();
+row.put("uid", 12);
+mv = row.putMap("testMap");
+mv.put("field1", 1);
+mv.put("field2", 2);
+tableH.put(row, null, null);
+
+row = myTable.createRow();
+row.put("uid", 666);
+mv = row.putMap("testMap");
+mv.put("field1", 1);
+mv.put("field3", 4);
+tableH.put(row, null, null); </pre>
+        <p>
+              then you can retrieve any table rows that contain the map
+              with any value currently in use by the map. For example, a
+              value of "2".
+            </p>
+        <p>
+              To retrieve data using a map index, you first
+              retrieve the index using its name, and create an instance of 
+              <code class="classname">IndexKey</code> that you will use to
+              perform the index lookup:
+            </p>
+        <pre class="programlisting">Index mapIndex = myTable.getIndex("mapElementIndex");
+IndexKey indexKey = mapIndex.createIndexKey(); </pre>
+        <p>
+                  Next you create and populate a
+                  <code class="classname">MapValue</code> instance, using the
+                  <code class="methodname">MapValue.put()</code> method. For the
+                  <code class="literal">key</code> value for this method, use
+                  <code class="literal">MapValue.ANONYMOUS</code>. For the
+                  <code class="literal">value</code> field, specify
+                  <code class="literal">2</code>.  When you perform the index lookup,
+                  the only records that will be returned will be those
+                  which have a map with a value of
+                  <code class="literal">2</code>.
+              </p>
+        <pre class="programlisting">MapValue mv = indexKey.putMap("testMap");
+mv.put(MapValue.ANONYMOUS, 2); </pre>
+        <p>
+                  After that, you retrieve the matching table rows, and
+                  iterate over them in the same way you would any
+                  other index type. For example:
+              </p>
+        <pre class="programlisting">TableIterator&lt;Row&gt; iter = tableH.tableIterator(indexKey, null, null);
+System.out.println("Results for testMap value 2: ");
+try {
+    while (iter.hasNext()) {
+        Row rowRet = iter.next();
+        int uid = rowRet.get("uid").asInteger().get();
+        System.out.println("uid: " + uid);
+        MapValue mapRet = rowRet.get("testMap").asMap();
+        System.out.println("testMap: " + mapRet.toString());
+    }
+} finally {
+    if (iter != null) {
+        iter.close();
+    }
+} </pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="mapindexspecifickey"></a>Indexing by a Specific Map Key Name</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                You can create an index based on a specified map key name.
+                Any map entries containing the specified key name are
+                indexed. This can create a small and very efficient index
+                because the index does not contain every key/value pair
+                contained by the map fields. Instead, it just contains
+                those map entries using the identified key, which results
+                in at most a single index entry per row.
+            </p>
+        <p>
+                To create the index, first create the table:
+            </p>
+        <pre class="programlisting">CREATE TABLE myMapTable (
+    uid INTEGER,
+    testMap MAP(INTEGER),
+    PRIMARY KEY(uid)
+) </pre>
+        <p>
+                Once the table has been added to the store, create the
+                index by specifying the key name you want indexed using
+                dot notation. In this example, we will index the key name
+                of "field3":
+            </p>
+        <pre class="programlisting">CREATE INDEX mapField3Index on myMapTable (testMap.field3) </pre>
+        <p>
+              Data is retrieved if the table row contains the identified map
+              with the indexed key and a specified value. So, for
+              example, if you create a series of table rows like this:
+            </p>
+        <pre class="programlisting">TableAPI tableH = kvstore.getTableAPI();
+
+Table myTable = tableH.getTable("myMapTable");
+
+Row row = myTable.createRow();
+row.put("uid", 12345);
+MapValue mv = row.putMap("testMap");
+mv.put("field1", 1);
+mv.put("field2", 2);
+mv.put("field3", 3);
+tableH.put(row, null, null);
+
+row = myTable.createRow();
+row.put("uid", 12);
+mv = row.putMap("testMap");
+mv.put("field1", 1);
+mv.put("field2", 2);
+tableH.put(row, null, null);
+
+row = myTable.createRow();
+row.put("uid", 666);
+mv = row.putMap("testMap");
+mv.put("field1", 1);
+mv.put("field3", 4);
+tableH.put(row, null, null); </pre>
+        <p>
+              then you can retrieve any table rows that contain the map
+              with key "field3" (because that is what you indexed) when
+              "field3" maps to a specified value — such as "3". If
+              you try to do an index lookup on, for example, "field2" then
+              that will fail because you did not index "field2".
+            </p>
+        <p>
+              To retrieve data using a map index, you first
+              retrieve the index using its name and create an instance of 
+              <code class="classname">IndexKey</code> that you will use to
+              perform the index lookup:
+            </p>
+        <pre class="programlisting">Index mapIndex = myTable.getIndex("mapField3Index");
+IndexKey indexKey = mapIndex.createIndexKey(); </pre>
+        <p>
+                  Next you create and populate a
+                  <code class="classname">MapValue</code> instance using
+                  <code class="methodname">MapValue.put()</code>.  When you
+                  perform the index lookup, the only records that will be
+                  returned will be those which have a map with the matching
+                  key name and corresponding value.
+              </p>
+        <pre class="programlisting">MapValue mv = indexKey.putMap("testMap");
+mv.put("field3", 3); </pre>
+        <p>
+                  After that, you retrieve the matching table rows, and
+                  iterate over them in the same way you would any
+                  other index type. For example:
+              </p>
+        <pre class="programlisting">TableIterator&lt;Row&gt; iter = tableH.tableIterator(indexKey, null, null);
+System.out.println("Results for testMap field3, value 3: ");
+try {
+    while (iter.hasNext()) {
+        Row rowRet = iter.next();
+        int uid = rowRet.get("uid").asInteger().get();
+        System.out.println("uid: " + uid);
+        MapValue mapRet = rowRet.get("testMap").asMap();
+        System.out.println("testMap: " + mapRet.toString());
+    }
+} finally {
+    if (iter != null) {
+        iter.close();
+    }
+} </pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="mapindexkeyandvalue"></a>Indexing by Map Key and Value</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                In the previous section, we showed how to create a map
+                index by specifying a pre-determined key name. This allows
+                you to perform map index look ups by providing both key and
+                value, but the index lookup will only be successful if the
+                specified key is the key that you indexed.
+            </p>
+        <p>
+                You can do the same thing in a generic way by indexing
+                every key/value pair in your map. The result is a more
+                flexible index, but also an index that is potentially much
+                larger than the previously described method. It is likely
+                to result in multiple index entries per row.
+            </p>
+        <p>
+                To create an index based on every key/value pair used by
+                the map field, first create the table:
+            </p>
+        <pre class="programlisting">CREATE TABLE myMapTable (
+    uid INTEGER,
+    testMap MAP(INTEGER),
+    PRIMARY KEY(uid)
+) </pre>
+        <p>
+                Once the table has been added to the store, create the
+                index by using both the <code class="literal">KEYOF</code> and
+                <code class="literal">ELEMENTOF</code> keywords:
+            </p>
+        <pre class="programlisting">CREATE INDEX mapKeyValueIndex on myMapTable \
+(KEYOF(testMap),ELEMENTOF(testmap)) </pre>
+        <p>
+              Data is retrieved if the table row contains the identified map
+              with the identified key and the identified value. So, for
+              example, if you create a series of table rows like this:
+            </p>
+        <pre class="programlisting">TableAPI tableH = kvstore.getTableAPI();
+
+Table myTable = tableH.getTable("myMapTable");
+
+Row row = myTable.createRow();
+row.put("uid", 12345);
+MapValue mv = row.putMap("testMap");
+mv.put("field1", 1);
+mv.put("field2", 2);
+mv.put("field3", 3);
+tableH.put(row, null, null);
+
+row = myTable.createRow();
+row.put("uid", 12);
+mv = row.putMap("testMap");
+mv.put("field1", 1);
+mv.put("field2", 2);
+tableH.put(row, null, null);
+
+row = myTable.createRow();
+row.put("uid", 666);
+mv = row.putMap("testMap");
+mv.put("field1", 1);
+mv.put("field3", 4);
+tableH.put(row, null, null); </pre>
+        <p>
+              then you can retrieve any table rows that contain the map
+              with specified key/value pairs — for example, key
+              "field3" and value "3".
+            </p>
+        <p>
+              To retrieve data using a map index, you first
+              retrieve the index using its name and create an instance of 
+              <code class="classname">IndexKey</code> that you will use to
+              perform the index lookup:
+            </p>
+        <pre class="programlisting">Index mapIndex = myTable.getIndex("mapKeyValueIndex");
+IndexKey indexKey = mapIndex.createIndexKey(); </pre>
+        <p>
+                  Next you create and populate a
+                  <code class="classname">MapValue</code> instance using
+                  <code class="methodname">MapValue.put()</code>.  When you
+                  perform the index lookup, the only records that will be
+                  returned will be those which have a map with the matching
+                  key/value pair.
+              </p>
+        <pre class="programlisting">MapValue mv = indexKey.putMap("testMap");
+mv.putNull("field3");
+mv.put(MapValue.ANONYMOUS, 3); </pre>
+        <p>
+                  After that, you retrieve the matching table rows, and
+                  iterate over them in the same way you would any
+                  other index type. For example:
+              </p>
+        <pre class="programlisting">TableIterator&lt;Row&gt; iter = tableH.tableIterator(indexKey, null, null);
+System.out.println("Results for testMap field3, value 3: ");
+try {
+    while (iter.hasNext()) {
+        Row rowRet = iter.next();
+        int uid = rowRet.get("uid").asInteger().get();
+        System.out.println("uid: " + uid);
+        MapValue mapRet = rowRet.get("testMap").asMap();
+        System.out.println("testMap: " + mapRet.toString());
+    }
+} finally {
+    if (iter != null) {
+        iter.close();
+    }
+} </pre>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="indexnonscalar.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="indexnonscalar.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="indexrecords.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 8. Indexing Non-Scalar Data Types </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Indexing Embedded Records</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

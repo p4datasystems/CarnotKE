@@ -1,0 +1,310 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<body>
+<h1> Data Definition Language for Tables and Indexes in NoSQL Database </h1>
+<h2> Overview </h2>
+<p>
+This page describes the query language supported by Oracle NoSQL
+Database.  Its initial incarnation is restricted to Data Definition
+Language (DDL).
+<p>
+In this document keywords (tokens in the grammar) are capitalized for
+clarity.  In actual use they are case-insensitive.
+<h4>Executing DDL statements</h4>
+<p>
+Data definition statements can be executed via the Table API in the
+Java and C APIs. In addition, DDL statements can be interactively processed using the
+Admin CLI, using the "execute &lt;statement&gt;" command.
+
+<h2> Data Definition Language Statements </h2>
+
+<h3> Scoping and General Naming Rules </h3>
+<p>
+<ul>
+<li>Tables are named at global scope.
+<li> Index names are scoped to the
+tables on which they are defined.
+<li> Table and index names are limited
+to 32 alphanumeric characters plus underscore ("_").
+<li> Names must start with an alphabetic character. Field names have similar rules but may
+be up to 64 characters in length.
+<li> A child table is specified using a
+''dot'' notation of ''parent''.''child''.  Each component may be up to
+32 characters in length.  Parent tables may not have 2 descendant
+tables with the same name even if they are not siblings (this
+restriction may be lifted at some point).
+<li> Tables may not have 2
+fields with the same name, even at different scopes (again, this may
+be lifted at some point).
+</ul>
+<h3> Declaration Order </h3>
+<p>
+Order of declaration of fields in a table is not significant other
+than the fact that it is maintained when displaying table metadata.
+Order of declaration is very important and significant in declaring
+keys and indexes.
+
+<h3> Comments in DDL </h3>
+
+<p>
+The DDL supports comments which are not persisted as part of the table
+definition and allow users to annotate their DDL statements.  The
+following comment constructs are recognized and have the same
+semantics they would have in a program.
+<p>
+<b>/*  comment */</b>
+<pre>
+  ...
+  /* this is a comment */
+  id INTEGER
+  ...
+</pre>
+<p>
+<b>// comment</b>
+<pre>
+  ...
+  id INTEGER  // id is the primary key
+  ...
+</pre>
+<p>
+<b># comment</b>
+<pre>
+  ...
+  id INTEGER  # id is the primary key
+  ...
+</pre>
+
+<h3> Regex Info </h3>
+
+<p>
+<ul>
+<li> * -- means 0 or more of whatever precedes it.  E.g. ''(field_name)*'' means 0 or more field names.</li>
+<li>  + -- means 1 or more of whatever precedes it.  E.g. ''(field_name)+'' means 1 or more field names.</li>
+<li> ? -- means optional -- zero or 1 of whatever precedes it.  E.g. ''NOT NULL?'' means ''NOT NULL'' may or may not appear.</li>
+<li> [] -- brackets are used like ? to mean whatever is inside the --
+      -- brackets is optional.
+</ul>
+
+<h3> Create Table </h3>
+
+<pre>
+CREATE TABLE [IF NOT EXISTS] table_name (
+   (table_definition (,table_definition)*),
+   primary_key_definition
+)
+</pre>
+
+<pre>
+table_definition :  field_name field_type (field_constraint)* comment? | comment
+</pre>
+
+<pre>
+field_type : ARRAY | BINARY | BOOLEAN | DOUBLE | ENUM | FLOAT | INTEGER | LONG | MAP | RECORD | STRING
+</pre>
+
+<pre>
+comment : COMMENT "string text in quotes"
+</pre>
+
+<pre>
+field_constraint' : NOT NULL DEFAULT default_value
+  | DEFAULT default_value
+  | CHECK (check_expression (AND check_expression)*)
+</pre>
+
+<pre>
+check_expression : (field_name|'_value') <|<=|>|>= value
+</pre>
+<p>
+If the check expression is in the context of a named field the
+field_name must match the field.  If it is in the context of an
+anonymous field, such as that defined as an array or map element, the
+string literal "_value" (case-insensitive) must be provided.
+
+<p>
+At least one field definition is required and PRIMARY KEY is required.
+The order does not matter.  A shard key is specified as part of the
+primary key by using the SHARD key word in the PRIMARY KEY statement
+to indicate the subset of the primary key to use for sharding.
+Specification of a shard key is optional.  By default, for a top-level
+table (a table without a parent) the shard key is the primary key.  A
+child table may not specify a shard key because it inherits its parent
+table's shard key.
+<p>
+NOT NULL indicates that the field is not nullable.  This constraint
+requires a default value be set.  The order of these two constraints
+does not matter.
+<p>
+DEFAULT <b>default_value</b> sets a default value for the field if the
+type supports it.  Default values are only supported for numeric
+types, STRING, BOOLEAN, and ENUM.
+<p>
+CHECK expressions allow setting of minimum and maximum limits on types which support them, which include numeric types and STRING and the expression syntax differs slightly with each type.
+<p>
+COMMENT can apply to the table or an individual field definition and its value becomes part of the table's metadata as uninterpreted text.  This keyword has no relationship to comments described above that can be used to annotate the DDL statement itself.  COMMENT strings are displayed in the output of the "DESCRIBE" statement.
+<p>
+Nested types are defined in the somewhat obvious nested syntax.  In these cases the <b>field_type</b> becomes nested, e.g.
+<pre>
+address RECORD(number INTEGER, street STRING, city STRING, zip INTEGER CHECK (zip < 99999))
+
+map_field MAP(INTEGER) a simple map of INTEGER
+
+months MAP(INTEGER CHECK(_value > 0 AND _value < 13)) a map of INTEGER where the value is constrained
+
+map_of_record MAP(RECORD(a_field DOUBLE))
+
+array_field ARRAY(FLOAT)
+</pre>
+<p>
+The table model's FIXED_BINARY type is supported by adding a size constraint to BINARY, e.g. this is a 4-byte fixed binary:
+<pre>
+fixed_binary_field BINARY(4)
+</pre>
+<p>
+By default if a table with the same name exists the create table statement generates an error indicating that the table exists.  If the optional "IF NOT EXISTS" is specified ''and'' the table exists (or is being created) ''and'' the existing table has the same structure as in the statement, no error is generated.
+
+<h4> Create Table Examples </h4>
+<pre>
+CREATE TABLE users (
+  id INTEGER,
+  firstName STRING,
+  lastName STRING,
+  age INTEGER,
+  PRIMARY KEY (id),
+  COMMENT "this is a users table.  This comment applies to the table itself"
+)
+</pre>
+<pre>
+CREATE TABLE usersNoId (
+  firstName STRING,
+  lastName STRING COMMENT "this is a lastName field.  This comment applies to this field only",
+  age INTEGER CHECK (age > 0 AND age < 150),
+  ssn STRING NOT NULL DEFAULT "xxx-yy-zzzz",
+  PRIMARY KEY (SHARD(lastName), firstName)
+)
+</pre>
+<pre>
+CREATE TABLE users.address (
+  streetNumber INTEGER,
+  streetName STRING,  // this comment is ignored by the DDL parser
+  city STRING,
+  /* this comment is ignored */
+  zip INTEGER CHECK(zip > 11111 AND zip < 99999),
+  type ENUM (home, work, other),
+  PRIMARY KEY (type)
+)
+</pre>
+<pre>
+CREATE TABLE complex (
+  COMMENT "this comment goes into the table metadata"
+  id INTEGER,
+  PRIMARY KEY (id), # id is the primary key.  this comment is just syntax
+  nested MAP(RECORD( m MAP(FLOAT), a ARRAY(RECORD(age INTEGER)))),
+  address RECORD (street INTEGER, streetName STRING, city STRING, zip INTEGER COMMENT "zip comment"),
+  friends MAP (STRING),
+  anArray ARRAY (FLOAT),
+  fixedBinary BINARY(5),
+  days ENUM(monday, tuesday, wednesday, thursday, friday, saturday, sunday) NOT NULL DEFAULT tuesday
+)
+</pre>
+
+<h3> Drop Table </h3>
+<p>
+DROP TABLE [IF EXISTS] <b>table_name</b>
+<p>
+By default if the named table does not exist this statement fails.  If the optional "IF EXISTS" is specified and the table does not exist no error is reported.
+
+<h4> Drop Table Examples </h4>
+<pre>
+DROP TABLE IF EXISTS users
+</pre>
+
+<pre>
+DROP TABLE users.address
+</pre>
+
+<h3> Create Index </h3>
+<p>
+CREATE INDEX [IF NOT EXISTS] <b>index_name</b> ON <b>table_name</b> (fieldName [,fieldName]*)
+<p>
+By default if the named index exists this statement fails.  If the
+optional "IF NOT EXISTS" ''and'' the index exists ''and'' the index
+specification matches that in the statement, not error is reported.
+
+<h4> Create Index Examples </h4>
+<pre>
+CREATE INDEX IF NOT EXISTS LastName ON users (lastName)
+</pre>
+
+<pre>
+CREATE INDEX City ON users.address (city)
+</pre>
+
+<h3> Drop Index </h3>
+<p>
+DROP INDEX [IF EXISTS] <b>index_name</b> ON <b>table_name</b>
+<p>
+By default if the named index does not exist this statement fails.  If the optional "IF EXISTS" is specified and the index does not exist no error is reported.
+
+<h4> Drop Index Examples </h4>
+<p>
+<pre>
+DROP INDEX IF EXISTS name ON users
+</pre>
+
+<pre>
+DROP INDEX city ON users.address
+</pre>
+
+<h3> Alter Table </h3>
+<p>
+<pre>
+ALTER TABLE table_name (
+    ADD field_name field_type
+  | DROP field_name
+)
+</pre>
+<p>
+Note:  At this time MODIFY is not implemented or supported.
+<p>
+<b>field_type</b> has the same syntax as that used in create table.
+
+<h4> Alter Table Examples </h4>
+<p>
+<pre>
+ALTER TABLE users (
+  ADD age INTEGER,
+  DROP firstName
+)
+</pre>
+
+<h3> Describe Statement </h3>
+<pre>
+(DESCRIBE|DESC) [AS JSON]
+        TABLE table_name (field_name (,field_name)*)?
+        | INDEX index_name ON table_name
+</pre>
+<p>
+Describes the named metadata in detail.  By default a tabular output format is used.  If AS JSON is specified the output is a JSON format.  The names of all tables can be listed using ''SHOW TABLES''.
+<p>
+NOTE: not all of the will be implemented for the first release.  Minimally JSON output will be supported for full table metadata as well as the ability to list all tables.
+
+<h3> Show Statement </h3>
+<pre>
+SHOW [AS JSON]
+        TABLES
+        | TABLE table_name
+        | INDEXES ON ON table_name
+</pre>
+<p>
+Show lists names of tables and indexes without detailing the metadata.
+"SHOW TABLES" lists all tables.  "SHOW TABLE table_name" lists the
+table hierarchy for the named table.  In this case the table named can
+be a parent or child; in either case the entire hierarchy is listed.
+"SHOW INDEXES on table_name" lists the names of the indexes on the
+named table.
+<p>
+By default a tabular output format is used (names are separated by
+''\n''.  If AS JSON is specified the output is a JSON format.
+</body>
+</html>

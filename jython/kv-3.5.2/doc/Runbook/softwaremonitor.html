@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 2. Software Monitoring</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Run Book" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Run Book" />
+    <link rel="prev" href="introduction.html" title="Chapter 1. Introduction" />
+    <link rel="next" href="monitorforstoragenodes.html" title="Monitoring Metrics for Storage Nodes" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 2. Software Monitoring </th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="introduction.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="monitorforstoragenodes.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="softwaremonitor"></a>Chapter 2. Software Monitoring </h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="softwaremonitor.html#systemlogfilemonitor">System Log File Monitoring</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="softwaremonitor.html#snmpjmxmonitor">SNMP and JMX Monitoring</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="monitorforstoragenodes.html">Monitoring Metrics for Storage Nodes</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="monitorforrepnodes.html">Monitoring Metrics for Replication Nodes</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="monitoringmetricsforadminnodes.html">Monitoring Metrics for Administration Nodes</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+        Being a distributed system, the Oracle NoSQL Database is composed
+        of several software components and each expose unique
+        metrics that can be monitored, interpreted, and utilized
+        to understand the general health, performance, and
+        operational capability of the NoSQL Database cluster.
+    </p>
+      <p>
+        This section focuses on best practices for monitoring
+        the Oracle NoSQL software components. While there are
+        several software dependencies for the Oracle NoSQL Database itself
+        (for example, Java virtual machine, operating system, NTP),
+        this section focuses solely on the NoSQL components.
+    </p>
+      <p>
+        There are four basic mechanisms for monitoring the health of the
+        NoSQL Database:
+    </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                System Log File Monitoring – Oracle NoSQL Database uses the
+                java.util.logging package to write all trace, information,
+                and error messages to the log files for each component of
+                the store. These files can be parsed using the typical log
+                file probing mechanism supported by the leading system
+                management solutions. 
+            </p>
+          </li>
+          <li>
+            <p>
+                System Monitoring Agents – Oracle NoSQL Database publishes
+                MIBs for integration with SNMP based monitoring solutions
+                as well as JMX Management Beans for integration with JMX
+                based monitoring solutions.
+            </p>
+          </li>
+          <li>
+            <p>
+                Application Monitoring – A good proxy for the “health”
+                of the NoSQL Database rests with application level metrics. 
+                Metrics like average and 90th percentile response times,
+                average and 90th percentile throughput, as well average
+                number of timeout exceptions encountered from NoSQL API
+                calls are all potential indicators that something may be
+                wrong with a component in the NoSQL cluster. In fact,
+                sampling these metrics and looking for deviations from mean
+                values can be the best way to know that something may be 
+                wrong with your environment.
+            </p>
+          </li>
+          <li>
+            <p>
+                Oracle Enterprise Manager – The integration of Oracle NoSQL Database
+                with OEM primarily takes the form of an EM plug-in. The plug-in
+                allows monitoring store components, their availability, performance
+                metrics, and operational parameters through Enterprise Manager.
+                For more information on OEM, see the "Integrating Oracle Enterprise 
+                Manager (OEM) with Oracle NoSQL Database" chapter in the Oracle NoSQL Database Administrator's Guide.
+            </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+        The following sections discuss details of each of these
+        monitoring techniques (except OEM) and illustrate how each of them can be
+        utilized to detect failures in NoSQL Database components.
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="systemlogfilemonitor"></a>System Log File Monitoring</h2>
+            </div>
+          </div>
+        </div>
+        <div class="toc">
+          <dl>
+            <dt>
+              <span class="sect2">
+                <a href="softwaremonitor.html#snmpjmxmonitor">SNMP and JMX Monitoring</a>
+              </span>
+            </dt>
+          </dl>
+        </div>
+        <p>
+            The Oracle NoSQL Database is composed of the following components, and each
+            component produces log files that can be monitored:
+        </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                    Replication Nodes – Service read and write requests
+                    from API calls. Replication nodes for a particular
+                    shard are laid out on different storage nodes
+                    (physical servers) by the topology manager, so the log
+                    files for the nodes in each shard are spread across
+                    multiple machines.
+                </p>
+            </li>
+            <li>
+              <p>
+                    Storage Node Agents – Manage the replication nodes
+                    that are running on each storage node. The SNA maintains
+                    its own log regarding the state of each replication
+                    node it is managing. You can think of the SNA log as a
+                    high level log of the replication node activity on a
+                    particular storage node.
+                </p>
+            </li>
+            <li>
+              <p>
+                    Admin Nodes – Administrative nodes handle the 
+                    execution of commands from the administrative command
+                    line interface. Long running plans are also staged from
+                    the administrative nodes. Administrative nodes also
+                    maintain a consolidated log of all the other logs in
+                    the Oracle NoSQL cluster.
+                </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+            All of the above mentioned log files can be found in the
+            following directory structure <code class="literal">KVROOT/kvstore/log</code>
+            on the machine where the component is running. The following steps 
+            can be used to find the machines that are running the components of
+            the cluster:
+        </p>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p>
+                   java -jar kvstore.jar ping -host &lt;any machine
+                   in the cluster&gt; -port &lt;the port number
+                   used to initialize the KVStore&gt;
+               </p>
+            </li>
+            <li>
+              <p>
+                   Each storage node (snXX) is listed in the output
+                   of the ping command, along with a list of
+                   replication nodes (rgXX-rnXX) running on the
+                   host listed in the ping output. XX denotes the
+                   unique number assigned to that component by
+                   NoSQL Database. For replication nodes, rg denotes
+                   the shard number and stands for replication
+                   group, while rn denotes the replication node
+                   number within that shard.
+               </p>
+            </li>
+            <li>
+              <p>
+                   Admin Nodes – Identifying the nodes in the
+                   cluster that are running administrative services
+                   is a bit more challenging. To identify these
+                   nodes, a script would run ps axww on every host
+                   in the cluster and grep for kvstore.jar and
+                   -class Admin.
+               </p>
+            </li>
+          </ol>
+        </div>
+        <p>
+           The Oracle NoSQL Database maintains a single consolidated log of
+           every node in the cluster, and this can be found on any of the
+           nodes running an administrative service. While this is a
+           convenient and easy single place to monitor for errors, it is not
+           100% guaranteed. The single consolidated view is aggregated by
+           getting log messages over the network, and transient network
+           failures, packet loss, and high network utilization can cause
+           this consolidated log to either be out of date, or have missing
+           entries. Therefore, we recommend monitoring each host in the
+           cluster as well as monitoring each type of log file on each host
+           in the cluster.
+       </p>
+        <p>
+           Generally speaking, any log message with a level of SEVERE
+           should be considered a potentially critical event and worthy of
+           generating a systems management notification. The sections in the
+           later part of this document illustrate how to correlate
+           specific SEVERE exceptions with hardware component failure.
+       </p>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="snmpjmxmonitor"></a>SNMP and JMX Monitoring</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                Oracle NoSQL Database is also monitored through SNMP or
+                JMX based system management tools. For SNMP based tools,
+                the Oracle NoSQL MIB is found in lib directory of the
+                installation along with the JAR files for the product.
+            </p>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="introduction.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="monitorforstoragenodes.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 1. Introduction </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Monitoring Metrics for Storage Nodes</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

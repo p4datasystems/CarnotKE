@@ -1,0 +1,3371 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- Note: RELEASE_VERSION and DATE are set by ant -->
+
+<head>
+  <title>The Oracle NoSQL Database (Release 12cR1.3.5.2 Enterprise Edition) Change Log</title>
+  <meta name="description"
+        content="Oracle NoSQL Database: A Distributed Key-Value Store.">
+  <meta name="keywords"
+        content="distributed,database,key,value,nosql,bigdata,transaction,transactions,java">
+  <style type="text/css">
+    li {margin-top:1em;} <!-- Blank line before each list item -->
+ </style>
+</head>
+<body bgcolor="white">
+
+<h2 align="center">Oracle NoSQL Database Change Log
+</h2>
+<p align="center">Release 12cR1.3.5.2 Enterprise Edition</p>
+
+<h3><a name="Upgrade">Upgrade Requirements</a></h3>
+Upgrading an existing store to release 3.5 requires that the store be
+running with a 2.0 release or later.  If you want to use release 3.5
+with a store created prior to the 2.0 release, be sure to upgrade the
+store to a 2.0 release before upgrading it to the 3.5 release.  Once a
+store has been upgraded to release 3.5, it cannot be downgraded to an
+earlier release.
+<p>
+See the section
+on <a href="http://docs.oracle.com/cd/NOSQL/html/AdminGuide/deploymentupdate.html">
+Updating an Existing Oracle NoSQL Database Deployment</a> in the Admin
+Guide.
+<p>
+Release 3.5 is compatible with Java SE 7 and later, and has been tested
+and certified against Oracle Java SE 8 Update 45. We encourage you to
+upgrade to the latest Java releases to take advantage of the latest bug
+fixes and performance improvements.
+</p>
+<p>
+Attempting to use this release with a version of Java earlier than Java
+7 will produce an error message similar to:
+</p>
+<blockquote>
+<pre>
+Exception in thread "main" java.lang.UnsupportedClassVersionError:
+  oracle/kv/impl/util/KVStoreMain : Unsupported major.minor version 51.0
+</pre>
+</blockquote>
+<!-- ============================================================ -->
+<h3 align="center"><u>Changes in 12cR1.3.5.2 Enterprise Edition</u></h3>
+
+<h3><a name="NewFeatures">New Features</a></h3>
+<ol>
+<li>
+Added support for gathering key distribution statistics. To enable
+statistics gathering, the statistics tables need to be created first by
+executing the runadmin script
+file <code>CreateStatisticTables.kvs</code>, which is located in
+the <code>lib</code> directory of the release package. [#23422]
+</li>
+<li>
+Added support for Kerberos user authentication.
+Users that wish to use this new capability should be aware of the
+following changes:
+<ul>
+<li>
+The makebootconfig utility has a new optional
+<code>-external-auth</code> command-line argument which is used to
+enable external authentication mechanisms. Currently, Kerberos is the
+only supported mechanism. This new flag is only permitted when the value
+of the <code>-store-security</code> flag is specified
+as <code>configure</code> or <code>enable</code>.
+</li>
+<li>
+The securityconfig tool has been enhanced to provide the ability to:
+<ul>
+<li>Add Kerberos configuration information to an existing security
+configuration</li>
+<li>Renew a store's Kerberos service principal keytab for security
+maintenance tasks</li>
+</ul>
+</li>
+<li>
+A new class, KerberosCredentials, which implements LoginCredentials, has
+been introduced, and its instances can be used in the
+KVStoreFactory.getStore method to perform a Kerberos login:
+<ul>
+<li><code>KVStoreFactory.getStore(KVStoreConfig, LoginCredentials, ReauthenticateHandler)</code></li>
+</ul>
+<li>New Kerberos-related security properties have been added that must
+be specified when using a KVStore command-line utility program against a
+secure store that has enabled Kerberos authentication.</li>
+</ul>
+<p>
+There are two approaches that applications can use to authenticate using
+Kerberos. Client applications that use the
+<a href="https://docs.oracle.com/javase/7/docs/technotes/guides/security/jaas/JAASRefGuide.html">
+Java Authentication and Authorization Service (JAAS)</a> programming
+framework can specify credentials by using <code>Subject.doAs</code>.
+Applications that do not use the JAAS framework can use the new security
+properties to specify parameters needed to acquire user credentials from
+the Kerberos Key Distribution Center (KDC).
+<p>
+Kerberos authentication is described in greater depth in the Oracle
+NoSQL Database Security Guide, as well as in the Administrators Guide
+and the Javadoc.  [#24328]
+</li>
+<li>
+The off-heap cache is now enabled by default with a systemPercent setting of
+10%. Please
+review <a href="http://docs.oracle.com/cd/NOSQL/html/AdminGuide/offheap.html">
+Managing the Off-heap Cache</a> for details.
+</li>
+</ol>
+<h3><a name="BugFixes">Bug and Performance Fixes</a></h3>
+<ol>
+<li>
+In earlier versions, a LOB read operation with
+<code>Consistency.NONE_REQUIRED</code> could
+fail in the absence of a master for the shard hosting the LOB metadata. The read
+operation will now use a suitable replica when the read consistency allows for
+it. [#24460]
+</li>
+<li>
+Fixed a bug where a client calling TableAPI.getTable() while an index is being
+created and populated (is not yet ready) could result in a
+ConcurrentModificationException on a RepNode, causing the RepNode to become
+unavailable. [#24691]
+</li>
+<li>
+Corrected a problem in the configuration of the external tables example
+that caused the example to generate errors.  The property name for
+specifying the name of the table in the <code>config.xml</code> file was
+incorrect &mdash; changed from "oracle.kv.table" to
+"oracle.kv.tableName". [#24650]
+</li>
+<li>
+Fixed a problem in the implementation of the <code>show admins</code>
+command in the Administrator CLI that prevented it from authenticating
+correctly when used with a secure store. [#24648]
+</li>
+<li>
+Improved the algorithm used to calculate the maximum number of threads
+used to perform concurrent table requests when the default is requested
+by specifying <code>TableIteratorOptions.maxConcurrentRequests</code>
+as <code>0</code>.  This change affects the behavior of table multi-get
+operations, and table and index iterations. [#24188]
+</li>
+<li>
+Fixed a security flaw in table-level access checking.  Before this
+fix, it might have been possible for an authenticated client to access
+a table without permission if the user had permission to access other
+tables in the store.
+</li>
+</ol>
+<h3><a name="Utilities">Utility Changes</a></h3>
+<ol>
+<li>
+There were several changes made to the ping command to make it easier to
+use in scripts.
+<p>
+First, modified the <code>java -jar kvstore.jar ping</code> command to
+add a new flag, <code>-helper-hosts</code>, which is an alternative to
+the existing <code>-host</code> and <code>-port</code> flags. If
+multiple helper hosts are provided, the ping utility will have multiple
+nodes it can use to make an initial point of contact with the store, and
+will have a greater chance of success if some nodes of the store are
+unavailable.  The new <code>-helper-hosts</code> flag can be specified
+as a comma-separated list of hosts and ports.  For example:
+<pre>
+java -jar kvstore.jar ping -helper-hosts hst1:5000;hst2:5100
+</pre>
+<p>
+Second, ping now generates an exit code which acts as a quick summary of
+the results.  The exit code is returned both as a process exit code, if
+ping is called as a standalone utility, and as part of the JSON
+output. The exit code is meant to direct the caller to perform the
+appropriate follow-on action.  The values, defined in
+the <code>Ping.ExitCode</code> enum, are:
+<dl>
+<dt>0 (EXIT_OK)
+<dd>All services in the store could be located and are in a known, good
+    state (e.g. RUNNING).
+<dt>1 (EXIT_OPERATIONAL)
+<dd>One or more services in the store could not be reached, or are in an
+    unknown or not usable state.  In this case the store should support
+    all data operations across all shards, as well as all administrative
+    operations, but may be in a state of degraded performance.  Some
+    action should be taken to find and fix the problem before part of
+    the store becomes unavailable.
+<dt>2 (EXIT_NO_ADMIN_QUORUM)
+<dd>The Admin Service replication group does not have quorum or is not
+    available at all, and it's not possible to execute administrative
+    operations which modify store configuration. The store supports all
+    normal data operations despite the loss of admin quorum, but this
+    state requires immediate attention to restore full store
+    capabilities.
+<dt>3 (EXIT_NO_SHARD_QUORUM)
+<dd>One or more of the shards does not have quorum and either cannot
+    accept write requests, or is completely unavailable.  This state
+    requires immediate attention to restore store capabilities.  This
+    exit code takes precedence over EXIT_NO_ADMIN_QUORUM, so if this
+    exit code is used it is possible that the admin capabilities are
+    also reduced or unavailable.
+<dt>100 (EXIT_USAGE)
+<dd>A usage error.
+<dt>101 (EXIT_TOPOLOGY_FAILURE)
+<dd>Ping was unable to find a Topology in order to operate.  This could
+    be a store problem, a network problem, or it could be a usage
+    problem with the parameters passed to Ping (e.g. the host and port
+    or helper-hosts list are not part of a store).
+<dt>102 (EXIT_UNEXPECTED)
+<dd>The utility has experienced an unexpected error.
+</dl>
+<p>
+Note that exit codes 1 through 3 may indicate a network connectivity
+issue that should be checked first before concluding that any services
+have a problem.
+<p>
+Finally, the following section has been added to Ping's JSON output,
+which can be requested using the <code>-json</code> flag, and appears
+when ping is called as a standalone command or as part of the Admin CLI.
+For example:
+<pre>
+  "operation" : "ping",
+  "return_code" : 5000,
+  "description" : "No errors found",
+  "exit_code" : 0
+</pre>
+<p>
+[#24407]
+</li>
+<li>
+Some table commands in the Administrative CLI were deprecated in favor
+of using the execute command to perform DDL statements.  The newly
+deprecated commands are:
+<ul>
+<li>table
+<li>plan add-index
+<li>plan add-table
+<li>plan evolve-table
+<li>plan remove-index
+<li>plan remove-table
+</ul>
+<p>
+[#23937]
+</li>
+<li>
+Some additional Admin CLI commands now support displaying output in JSON
+format. If <code>-json</code> is specified when starting the Admin CLI
+using <code>runadmin</code>, or is specified as an argument of a command, the
+execution result of the command will be displayed in a JSON format string
+containing standard NoSQL error messages.  In addition to the
+`configure` command, support has been added for the following commands:
+<ul>
+<li>plan deploy-zone
+<li>plan deploy-sn
+<li>pool create
+<li>pool join
+<li>plan deploy-admin
+<li>topology create
+<li>plan deploy-topology
+<li>show plan
+<li>verify configuration|upgrade|prerequisite
+</ul>
+<p>
+[#24346]
+</li>
+<li>
+The admin CLI command `pool add` is now idempotent.  Calling the command
+with a pool that already exists now returns without error. This change
+is intended to make the command easier to use in scripts. [#24445]
+</li>
+<li>
+The <code>makebootconfig</code> command was modified to support the
+new <code>-dns-cachettl</code> flag.  This flag specifies the number of
+seconds that replication nodes should cache host name to IP address
+mappings.  A value of 0 means mappings should not be cached.  A value of
+-1 means mappings should be cached indefinitely, which is the default.
+The value of the flag is used to set the "networkaddress.cache.ttl" and
+"networkaddress.cache.negative.ttl" security properties.  Note that
+specifying a non-default value can have security implications.  See the
+Java <a href="https://docs.oracle.com/javase/7/docs/api/java/net/doc-files/net-properties.html#AddressCache">
+Networking Properties</a> page for more details. [#24087]
+</li>
+</ol>
+<!-- ============================================================ -->
+<hr>
+<h3 align="center"><u>Changes in 12cR1.3.4.7</u></h3>
+<h3><a name="NewFeatures347">New Features</a></h3>
+<ol>
+<li>
+Added a new command to the CLI for reestablishing Admin service quorum
+that has been lost due to failure:
+<pre>
+repair-admin-quorum {-zn &lt;id&gt;|-znname &lt;name&gt;|-admin &lt;id&gt;}...
+</pre>
+The command repairs admin quorum by reducing membership of the admin
+group to the admins included in the specified zones and in the list of
+the specific admins.  Reestablishing admin quorum is one of the first
+steps in performing disaster recovery. [#23983]
+</li>
+<li>
+Added a new command to the Admin CLI to recover shard quorum lost due to
+failure by change zone types:
+<pre>
+plan failover { {-zn &gt;zone-id&lt;|-znname &gt;zone-name&lt;}
+                -type {primary|offline-secondary} }...
+              ...
+</pre>
+The command repairs shard quorum by changing the type of currently
+offline primary zones to secondary zones and, optionally, changing some
+secondary zones to primary zones.  Failover is one of the final steps in
+performing a disaster recovery. [#23546]
+</li>
+<li>
+Added the ability to change a zone type. Previously a zone could be created as
+either a PRIMARY or SECONDARY zone and once created the type could not be
+changed. With this release the new CLI command:
+<code>topology change-zone-type</code> allows
+the administrator to change a zone in a topology from PRIMARY to SECONDARY or
+from SECONDARY to PRIMARY. Once changed the topology can then be deployed as
+normal with the <code>plan deploy-topology</code> command. [#24308]
+</li>
+<li>
+The Storage Node Agent (SNA) now supports a start-up mode that ensures its
+managed services are disabled before the SNA starts. If the
+<code>-disable-services</code> flag is specified on the SNA command line
+with the kvstore <code>start</code> command, the SNA's services will
+first be disabled before the SNA starts. If there is a failure disabling
+the services the SNA will not start. This ability is useful during
+disaster recovery to prevent unwanted services from starting.
+<p>
+The kvstore <code>disable-services</code> command has been removed. Instead
+use <code>stop -disable-services</code>. The <code>-disable-services</code>
+option can be used with the kvstore <code>start</code>, <code>stop</code>, and
+<code>restart</code> commands.
+[#24337]
+</li>
+<li>
+Improved the <code>plan repair-topology</code> command.  The command now
+can repair parameter differences for Admin and Replication Node services
+between the reference copy maintained by the Admin and the storage node
+configuration files or parameters in the running services. [#23555]
+</li>
+<li>
+Added a new command to the CLI which will wait for replica nodes to
+reach a specified threshold of consistency with their masters. This
+command can be used when performing a switchover to wait for secondary
+nodes to catch up with their masters and to obtain information about
+progress towards reaching consistency. The new command:
+<pre>
+await-consistent -timeout &lt;timeout-secs&gt;
+    [-zn &lt;id&gt; | -znname &lt;name&gt;]...
+    [-replica-delay-threshold &lt;time-millis&gt;]
+</pre>
+will wait up to <code>timeout-secs</code> seconds for the replication
+delay of the replica nodes in the zones specified by <code>-zn</code>
+or <code>-znname</code> to be less than or equal to <code>time-millis</code>
+milliseconds.
+If no zones are specified then the command will wait on all replicas
+in the store.
+If <code>-replica-delay-threshold</code> is not specified the default value
+of 5000 milliseconds (5 seconds) is used.
+<p>
+If any replicas do not reach the threshold within the timeout period
+the command will return with a list of those nodes along with their
+lag time, and information about whether the replica is catching up if known.
+[#23982]
+</li>
+<li>
+Modified the output of the `ping` and `verify configuration` Admin CLI
+commands so that shard and zone status entries are named more clearly
+using non-overlapping categories.  For shard status, the 'total' entry
+has been removed, the 'degraded' entry has been renamed to
+'writable-degraded', and the 'noQuorum' entry has been renamed to
+'read-only'.  For zone status, the 'total' entry has been removed, and
+the 'offline' entry has been added. [#24336]
+</li>
+<li>
+Modified the output of the `ping` and `verify configuration` Admin CLI
+commands to add an entry that provides an overview of the status of the
+Admin service nodes.  Also modified the output of the `show admins` command
+to include information about the status and replication state of each
+admin. [#23984]
+</li>
+<li>
+Modified the classes and interfaces in <code>oracle.kv.hadoop.table</code>
+and <code>oracle.kv.hadoop.hive.table</code> to support the Oracle NoSQL Database
+security model. Specifically, you can now run MapReduce jobs, Hive queries, and
+Big Data SQL queries against table data located in a store configured for secure access.
+In addition to the changes made in <code>oracle.kv.hadoop.table</code> and
+<code>oracle.kv.hadoop.hive.table</code> to support security, example code and
+detailed documentation has also been provided that explains and walks you through
+the details of executing a MapReduce job or Hive/Big Data SQL query against table
+data in a secure store; which can found, respectively, in the sections of
+<a href="examples/hadoop/table/package-summary.html"> <code>The Table API MapReduce Cookbook</code></a>
+and
+<a href="examples/hadoop/hive/table/package-summary.html"> <code>The Table API Hive Cookbook</code></a>.
+[#23714] [#24107] [#24108]
+</li>
+<li>
+Modified the <code>oracle.kv.hadoop.hive.table.TableSerDe</code> and related
+classes to support executing Hive or Big Data SQL queries against data contained
+in tables whose schema may consist of complex (non-<em>primitive</em>) data types;
+that is, <code>Map</code>, <code>Record</code>, <code>Array</code> types.
+Additionally, documentation and examples have been provided that walk you through
+the details of the data model and how it maps to the Hive and Big Data SQL data
+models; which can be found
+<a href="examples/hadoop/hive/table/package-summary.html#mapping_hive_to_ondb_data_model"> <code>here</code></a>
+and
+<a href="examples/hadoop/hive/table/package-summary.html#mapping_ora_to_ondb_data_model"> <code>here</code></a>
+respectively. [#24357] [#24358]
+</li>
+<li>
+Topology candidates with names that contain the dollar sign ('$')
+character are now reserved for use by the system, which may modify or
+remove them.  The `topology create` and `topology clone` commands will
+print a warning if they are called to create topology candidates whose
+names contain the reserved character.  Administrators should avoid
+creating or using topology candidates with names using dollar
+signs. [#24386]
+</li>
+<li>
+The <code>plan start-services</code> and <code>plan stop-services</code>
+commands now support starting and stopping Admin services. Previously,
+these plans only operated on Replication Nodes (RNs). With this release
+the <code>-service</code> option accepts the name of an Admin service.
+In addition, if a zone is specified (with either the <code>-zn</code> or
+<code>-znname</code> flags) and the <code>-all-rns</code> is not
+specified, then all of the services, RNs and Admins, in that zone are affected.
+[#24149]
+</li>
+<li>
+Some commands in the Admin CLI now supports displaying JSON format results. If
+<code>-json</code> is specified when starting the Admin CLI using
+<code>runadmin</code>, or is specified as an argument of a command, the
+execution result of the command will be displayed in a JSON format string
+containing standard NoSQL error messages. In this release, only the `configure`
+command has been changed to support JSON format result.
+[#24444]
+</li>
+<li>
+The admin CLI commands `configure`, `topology create`, `pool join` and
+`plan deploy-admin` are now idempotent to support admin automation scripting.
+[#24445]
+</li>
+<li>
+Added support for configuring replication nodes to use off-heap caches,
+which are disabled by default.  An off-heap cache can be used to utilize
+large memories more efficiently than when using the same memory for the
+file system cache, while avoiding the Java GC overhead associated with
+large Java heaps.  Please see
+<a href="http://docs.oracle.com/cd/NOSQL/html/AdminGuide/offheap.html">
+Managing the Off-heap Cache</a> for details.  [#24370]
+</li>
+</ol>
+<h3><a name="APIChanges347">API Changes</a></h3>
+<ol>
+<li>
+The iterators <code>ParallelScanIterator</code> and <code>TableIterator</code>
+now support both <code>Direction.FORWARD</code> and
+<code>Direction.REVERSE</code>.
+<p>
+Note that, due to the internal changes to support the new iterator options,
+the method <code>getStoreIteratorMetrics</code> on
+<code>oracle.kv.stats.KVStats</code> has been deprecated. This method returns
+an instance of <code>oracle.kv.stats.StoreIteratorMetrics</code> which has
+also been deprecated. All of the methods of the returned
+<code>StoreIteratorMetrics</code> object will return <code>0</code>.
+[#23583]
+</li>
+<li>
+Add Java <code>Map</code> based API for Record and Map field in
+<code>RecordValue</code> interface. Add Java <code>Iterable</code> and
+array based API for Array field in <code>RecordValue</code> interface.
+[#24177]:
+<pre>
+<code>RecordValue putRecord(String fieldName, Map&lt;String, ?&gt; map)</code>
+<code>RecordValue putMap(String fieldName, Map&lt;String, ?&gt; map)</code>
+<code>RecordValue putArray(String name, Iterable&lt;?&gt; list)</code>
+<code>RecordValue putArray(String name, Object[] array)</code>
+</pre>
+</li>
+<li>
+The interfaces for the methods <code>oracle.kv.hadoop.table.TableInputFormat.setKVSecurity</code>
+and <code>oracle.kv.hadoop.hive.table.TableInputSplit.setKVStoreSecurity</code> have
+each been changed to specify new information needed for security-related initialization;
+specifically,
+<ul>
+  <li>The name of the file that specifies the transport properties the client uses when connecting to the store (the <em>login file</em>).
+  <li>The PasswordCredentials containing the username and password the client presents to the store during authentication.
+  <li>The name of the file containing the public keys and/or certificates needed for authentication (the <em>trust file</em>).
+</ul>
+<p>
+[#23714] [#24107] [#24108]
+</li>
+<li>
+A new exception, <code>MetadataNotFoundException</code>, has been added to
+indicate that a client's metadata may be out of sync.  It extends
+<code>FaultException</code> and can be caught by applications to trigger the
+need for a refresh of their metadata, and in particular, <code>Table</code>
+handles obtained via <code>TableAPI.getTable</code>.
+</li>
+<li>
+Added bulk get APIs to fetch large numbers of keys and values efficiently based
+on discrete keys. The APIs can be used with both the Key/Value and Table data
+models. The following is a list of the new methods:
+<ul>
+<li>New methods defined on <code>oracle.kv.KVStore</code>:
+<pre>
+ParallelScanIterator&lt;KeyValueVersion&gt; storeIterator(Iterator&lt;Key&gt;, int, KeyRange, Depth, Consistency, long, TimeUnit, StoreIteratorConfig)
+ParallelScanIterator&lt;Key&gt; storeKeysIterator(Iterator&lt;Key&gt;, int, KeyRange, Depth, Consistency, long, TimeUnit, StoreIteratorConfig)
+ParallelScanIterator&lt;KeyValueVersion&gt; storeIterator(List&lt;Iterator&lt;Key&gt;&gt;, int, KeyRange, Depth, Consistency, long, TimeUnit, StoreIteratorConfig)
+ParallelScanIterator&lt;Key&gt; storeKeysIterator(List&lt;Iterator&lt;Key&gt;&gt;, int, KeyRange, Depth, Consistency, long, TimeUnit, StoreIteratorConfig)
+</pre>
+</li>
+<li>New methods defined on <code>oracle.kv.table.TableAPI</code>:
+<pre>
+TableIterator&lt;Row&gt; tableIterator(Iterator&lt;PrimaryKey&gt;, MultiRowOptions, TableIteratorOptions)
+TableIterator&lt;PrimaryKey&gt; tableKeysIterator(Iterator&lt;PrimaryKey&gt;, MultiRowOptions, TableIteratorOptions)
+TableIterator&lt;Row&gt; tableIterator(List&lt;Iterator&lt;PrimaryKey&gt;&gt;, MultiRowOptions, TableIteratorOptions)
+TableIterator&lt;PrimaryKey&gt; tableKeysIterator(List&lt;Iterator&lt;PrimaryKey&gt;&gt;, MultiRowOptions, TableIteratorOptions)
+</pre>
+</li>
+</ul>
+<p>
+Please review the javadoc associated with these new methods for details.
+<p>
+[#24285]
+</li>
+</ol>
+
+<h3><a name="BugFixes347">Bug and Performance Fixes</a></h3>
+<ol>
+<li>
+Fixed a problem where some plans would enter the INTERRUPTED state.
+This would happen when a plan needed to stop, or restart the master Admin which
+was running the plan. Once in the INTERRUPTED state, user action
+was required to have the plan resume execution. The fix allows the plan to
+automatically restart on the new master Admin (either some other Admin, or the
+original Admin which has restarted).
+<p>
+Along with this fix, the Admin CLI has been updated so that it will wait
+for a plan even if the plan is restarted on an Admin which was not the Admin
+the CLI was originally connected to. This change affects the <code>plan</code>
+command's <code>-wait</code> flag as well as the <code>plan wait</code> command.
+[#24535]
+</li>
+<li>
+Fixed a problem where <code>ArrayValue.set()</code> would result in the same
+behavior as <code>ArrayValue.add()</code>, mistakenly adding to the array
+rather that putting an entry at a specific index. [#24326].
+</li>
+<li>
+Fixed a bug that a release 3.2 replication node cannot resolve the name of a
+role principal created by a new replication node running release 3.3 during an
+upgrade of a NoSQL cluster. This situation works properly when upgrading from
+the 3.2 release to the current release. [#24502].
+</li>
+<li>
+Fixed a bug that caused the <code>makebootconfig</code> utility command
+to fail when it was called with a value for the <code>-capacity</code>
+flag that was greater than 1 when using a 32-bit Java virtual
+machine. [#24550]
+</li>
+<li>
+Improved the performance of topology redistribution by batching
+transactional operations performed during partition migrations. [#24529]
+</li>
+<li>
+Corrected problems where the table API implementation failed to perform
+case insensitive comparisons when comparing field names. [#24553]
+</li>
+<li>
+Modified elasticity operations to provide improved store availability
+during an elasticity change by waiting for replicas to catch up with
+masters before counting them as contributing to the shard quorum.  This
+change reduces the chance of a temporary loss of write availability
+during an elasticity change that moves replication nodes, particularly
+when the store is under heavy write loads. [#24511]
+</ol>
+<h3><a name="Utilities347">Utility Changes</a></h3>
+<ol>
+<li>
+The Admin CLI utility (<code>runadmin</code>) and the Admin
+CLI <code>connect store</code> command now support the following new
+flags to override the default configuration:
+<ul>
+<li><code>-timeout</code> to specify the store request timeout,
+<li><code>-consistency</code> to specify the store request consistency, and
+<li><code>-durability</code> to specify the store request durability.
+</ul>
+<p>
+[#24101]
+</li>
+</ol>
+
+<!-- ============================================================ -->
+<hr>
+<h3 align="center"><u>Changes in 12cR1.3.3.4</u></h3>
+<h3><a name="NewFeatures334">New Features</a></h3>
+<ol>
+<li>
+A number of new security features have been added.
+<p>
+Users are now able to enforce table-level access checks through both
+the API and administrative command line interface (Admin CLI) by using
+the following new series of table-specific privileges:
+<table border="true" summary="List security privileges">
+    <tr>
+        <td><strong>Privilege</strong></td>
+        <td style="text-align: left"><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td>READ_ANY_TABLE</td>
+        <td>Read from any table in kvstore</td>
+    </tr>
+    <tr>
+        <td>DELETE_ANY_TABLE</td>
+        <td>Delete data from any table in kvstore</td>
+    </tr>
+    <tr>
+        <td>INSERT_ANY_TABLE</td>
+        <td>Insert and update data to any tables in kvstore</td>
+    </tr>
+    <tr>
+        <td>READ_TABLE</td>
+        <td>Read from a specific table in kvstore</td>
+    </tr>
+    <tr>
+        <td>DELETE_TABLE</td>
+        <td>Delete data from a specific table in kvstore</td>
+    </tr>
+    <tr>
+        <td>INSERT_TABLE</td>
+        <td>Insert and update data to a specific table in kvstore</td>
+    </tr>
+    <tr>
+        <td>CREATE_ANY_TABLE</td>
+        <td>Create any table in kvstore</td>
+    </tr>
+    <tr>
+        <td>DROP_ANY_TABLE</td>
+        <td>Drop any table in kvstore</td>
+    </tr>
+    <tr>
+        <td>EVOLVE_ANY_TABLE</td>
+        <td>Evolve any table in kvstore</td>
+    </tr>
+    <tr>
+        <td>CREATE_ANY_INDEX</td>
+        <td>Create any index on any table in kvstore</td>
+    </tr>
+    <tr>
+        <td>DROP_ANY_INDEX</td>
+        <td>Drop any index on any table in kvstore</td>
+    </tr>
+    <tr>
+        <td>EVOLVE_TABLE</td>
+        <td>Evolve a specific table</td>
+    </tr>
+    <tr>
+        <td>CREATE_INDEX</td>
+        <td>Create index on a specific table</td>
+    </tr>
+    <tr>
+        <td>DROP_INDEX</td>
+        <td>Drop index on a specific table</td>
+    </tr>
+</table>
+<p>
+Users are now able to create new roles to group together privileges or
+other roles. This provides a way to grant a group of desired
+privileges to a user. New role management commands have been added to
+support create and drop roles, and to grant and revoke privileges or
+roles to and from other roles.
+<p>
+Modifications to the data definition language (DDL) have been added to
+provide a declarative interface to all security operations. The
+language reference is
+in <a href="http://docs.oracle.com/cd/NOSQL/html/SecurityGuide/index.html">
+Security Guide</a>. The language is accessible via the API as well as
+via the "execute" command in the Admin CLI.
+<p>
+Passwords now have lifetimes and will expire when they have been in use beyond
+the specified lifetime. It is also possible now to explicitly expire a
+password when adding a new user or by altering the profile of an existing
+user. Users are required to renew the expired password before they can log in
+to the store successfully.
+[#23951]
+</li>
+<li>
+Admin service configuration has been enhanced to better match the use
+of primary and secondary zones. It is now possible for an Admin
+service to be a <i>primary</i> or a <i>secondary</i>
+Admin. This <i>Admin type</i> is analogous to zone type. A primary
+Admin can serve as a master or replica of the Admin shard, and vote in
+master elections.  Secondary Admins can only serve as replicas and do
+not vote in master elections.  All Admins created in earlier releases
+are primary Admins. With this release new Admins are created with the
+same type as their containing zone.
+<p>
+Admin services created in a secondary zone by previous release will have the
+wrong type (primary). This mismatch will be reported as a <i>violation</i>
+from the <code>verify configuration</code> command. This condition can be
+remedied through the <code>plan repair-topology</code> command.
+<p>
+In addition to the changes in Admin service type behavior, new rules have
+been put in place regarding Admin service deployment. In general it is
+recommended that Admin services follow the same rules as data nodes,
+specifically the number of Admin services in a zone should match the zone's
+replication factor. [#23985][#24182]
+</li>
+<li>
+The Command Line Interface (Admin CLI) now supports a <i>read only</i> mode if
+the Admin shard does not have quorum or if the master Admin is unreachable.
+In this read-only mode any commands which require the Admin to
+update persistent state, such as plan creation and execution, are disabled.
+However, most commands which provide status or configuration information will
+function. In addition to a notification in the CLI informing the user that
+the CLI is in this mode, the <code>show admins</code> command will also
+indicate that the CLI is connected read-only.
+<p>
+Additional re-connect capabilities have been added to the Admin CLI to
+improve robustness of the CLI in the face of Admin node failures.
+[#23943]
+</li>
+</ol>
+
+<h3><a name="APIChanges334">API Changes</a></h3>
+<ol>
+<li>
+The methods <code>oracle.kv.table.TableAPI.execute</code> and
+<code>oracle.kv.table.TableAPI.executeSync</code> have been deprecated in
+favor of the new APIs, <code>oracle.kv.KVStore.execute</code> and
+<code>oracle.kv.KVStore.executeSync</code>. The motivation for the
+change is the introduction of new DDL statements which
+manage objects that are above the scope of a single table, such as
+users and roles. Likewise, the
+classes <code>oracle.kv.table.ExecutionFuture</code> and
+<code>oracle.kv.table.StatementResult</code> are deprecated in favor of
+<code>oracle.kv.ExecutionFuture</code> and
+<code>oracle.kv.StatementResult</code>.
+[#23937]
+</li>
+<li>
+New methods have been added
+to <code>oracle.kv.table.RecordValue</code> to provide the ability to
+use JSON values for complex fields in a table. In the past, JSON could
+be used to specify the entire row, but not portions of a row. The
+following 6 JSON input methods for complex types in RecordValue are
+new: [#24069]
+<pre>
+<code>RecordValue putRecordAsJson(String fieldName, String jsonInput, boolean exact);</code>
+<code>RecordValue putRecordAsJson(String fieldName, InputStream jsonInput, boolean exact);</code>
+<code>RecordValue putArrayAsJson(String fieldName, String jsonInput, boolean exact);</code>
+<code>RecordValue putArrayAsJson(String fieldName, InputStream jsonInput, boolean exact);</code>
+<code>RecordValue putMapAsJson(String fieldName, String jsonInput, boolean exact);</code>
+<code>RecordValue putMapAsJson(String fieldName, InputStream jsonInput,boolean exact);</code>
+</pre>
+</li>
+<li>
+New methods have been added to better support DDL use by stateless
+applications. <code>oracle.kv.ExecutionFuture.toByteArray()</code>
+returns a serialized version of the future that can later be passed to
+<code>oracle.kv.KVStore.getFuture(byte[])</code> to recreate a Future
+instance.
+[#24228]
+</li>
+<li>
+There are changes to the way the results and status of DDL operations
+are reported in the API. Information about the execution of a DDL
+operation continues to be returned
+via <code>oracle.kv.StatementResult</code>. In past releases, both
+return values and execution status were returned
+via <code>StatementResult.getInfo(),
+StatementResult.getInfoAsJson()</code>. Now, results are return via a
+new method, <code>StatementResult.getResult()</code>, while status is
+returned via <code>StatementResult.getInfo(),
+getInfoAsJson</code>. [#24277]
+</li>
+</ol>
+<h3><a name="Utilities334">Utility Changes</a></h3>
+
+<ol>
+<li>
+<code>plan deploy-admin</code> now deploys an Admin with the same
+type (primary or secondary) as the zone in which it resides. Previously
+the Admin was always created as a primary.
+</li>
+<li>
+<code>plan repair-topology</code> will change an Admin's type so that
+the type matches the zone in which it resides.
+</li>
+<li>
+<code>verify configuration</code> will report the following:
+<ul>
+<li>
+A <i>violation</i> for each Admin service whose type does not match the
+type of the zone in which it resides
+<li>
+A <i>violation</i> if the number of Admin services in a zone is less than
+the zone's rep factor
+</li>
+<li>
+A <i>note</i> if the number of Admins services in a zone is greater than
+the zone's rep factor
+</li>
+</ul>
+</li>
+<li>
+The put command in the Admin CLI now has a new <code>-exact</code> flag. When
+true, the input json string or file specified to the command must
+contain values for all columns in the table, and cannot contain
+extraneous fields.
+</li>
+<li>
+The Admin CLI now supports a new "show versions" command, which
+displays client and server version information. [#24005]
+</li>
+<li>
+The Admin CLI now provides the ability to use the semicolon character as a
+command terminator to enter multiple commands, or to enter commands on
+multiple lines.
+<p>
+For example, the following command would have had to be typed in a single line:
+<pre>
+  kv-> execute "create table users(name string, address string, primary key (name))"
+</pre>
+or
+<pre>
+  kv-> execute "create table users \
+    ->                 (name string, \
+    ->                  address string, \
+    ->                  primary key (name))"
+</pre>
+but can now be entered this way:
+<pre>
+  kv-> execute "create table users
+    ->                 (name string,
+    ->                  address string,
+    ->                  primary key (name))";
+</pre>
+In addition, multiple commands can be entered as below, using a semicolon as
+a terminator.
+<pre>
+  kv-> show table -name users; get table -name users;
+</pre>
+[#24119]
+</li>
+<li>
+A new command line utility has been added that disables services
+associated with a storage node.  You can use the new utility when
+starting a storage node whose services had configuration changes while
+the node was offline, to allow the configuration to be updated so that
+the services can be started with the proper configuration.
+<p>
+The new utility is invoked this way:
+<pre>
+  java jar -kvstore.jar disable-services -root ROOT_DIRECTORY [-config CONFIG_FILE]
+</pre>
+[#23988]
+</li>
+<li>
+Improvements have been made to the output of the Admin CLI <code>verify
+configuration</code> command, and both the Admin CLI and top level
+versions of the <code>ping</code> command:
+<ul>
+<li>Output now uses JSON format if the new <code>-json</code> flag is
+specified
+<li>Output now includes summaries of the status of shards and zones in
+the store, and information about the replication status of non-master
+replication nodes
+<li>Output for the ping commands now includes information about admin
+services, to match the information provided by verify configuration
+</ul>
+<p>
+[#23981]
+</li>
+<li>
+A new "verify" option has been added to the  diagnostics command line
+utility. This option does a variety of health and configuration
+checks, such as:
+<ul>
+<li>configuration values are valid</li>
+<li>inter-node clock skew is within the permissible maximum skew value </li>
+<li>all nodes have supported Java versions</li>
+<li>all nodes have correct network connectivity</li>
+<li>all nodes have compatible NoSQL DB versions</li>
+</ul>
+<pre>
+java -jar kvstore.jar diagnostics verify -help
+
+Usage: verify -checkLocal |
+              -checkMulti
+
+</pre>
+</li>
+</ol>
+
+<h3><a name="BugFixes334">Bug and Performance Fixes</a></h3>
+
+<ol>
+<li>
+Changes have been made to transfer the RN master nodes on SN shutdown.
+When a SNA shuts down it checks if any of the RNs managed by the SNA is
+a master for its replication group. If an RN is a master, the SNA causes
+a master-transfer before shutting down the RN. The implementation performs
+the transfers one at a time so that each transfer can take into account the
+results of the previous one, to avoid overloading the target SNs.  [#22426]
+</li>
+<li>
+Modified the replication node and admin services to permit them to start
+up even if other members of a service's replication group were managed
+by storage nodes whose hostnames cannot be resolved via DNS.  This
+change allows the store to continue to function, and in particular to
+support restarting services, if failures of storage nodes cause the
+nodes to have unresolvable DNS names.  [#23120]
+</li>
+<li>
+Modified the 'topology validate' CLI command. In addition to the
+'violations' and 'notes' that are currently displayed by that command,
+it now also notes when the topology contains any zones that are empty;
+that is, the zones that contain no SNs.  [#23222]
+</li>
+<li>
+Currently the 'verify configuration' CLI command performs a
+component-by-component comparison of the store's current state or
+configuration against what is reflected in the store's Admin database,
+and displays any inconsistencies. Modified the command to also note
+when any empty zones exist in the store. With respect to the current
+the flags taken by the 'verify configuration' command, any changes
+related to empty zones should apply to all arguments except the
+optional -sn argument; in which case, the new behavior related to
+identifying empty data centers should not be executed.  [#23223]
+</li>
+<li>
+The CLI 'snapshot' commands currently allow one to collect a snapshot
+from each Admin and RN of every reachable SN in the store, or to
+remove one or all instances of previously collected snapshot
+data. These commands have been modified to take a '-zn' or '-znname'
+flag so that the command applies to all the SNs executing in the zone
+with the specified id or name.  [#23224]
+</li>
+<li>
+A bug has been fixed that could cause the Admin service to hang if the
+Admin web console is enabled, and is displaying log file output within
+the logtail pane, and an administrative command that updates Admin
+service configuration, such as plan deploy-admin, is running. [23907]
+</li>
+<li>
+Clarified an error message that would occur when a field name was
+used instead of <i>elementof()</i> in a CHECK expression involving a map
+or array. [#24055]
+</li>
+<li>
+Relaxed the DDL PRIMARY KEY expression, allowing the statement to
+redundantly specify single primary key fields as a SHARD keys as
+well.  In a top-level (non-child) table the primary key is equivalent
+to the shard key unless otherwise specified.  This change makes statements
+like this legal even though use of "SHARD" is redundant:
+<i>CREATE TABLE mytable(id INTEGER, PRIMARY KEY(SHARD(id)))</i>.
+[#24105]
+</li>
+<li>
+Changes have been made to the request dispatcher to favor more rapid
+request failover on a node failure, reducing the possibility of a
+RequestTimeoutException. As part of this change, the default socket
+open timeouts have been reduced from 5 seconds to 3 seconds to permit
+a redispatch of requests within the request timeout period.  [#24152]
+</li>
+</ol>
+<!-- ============================================================ -->
+<hr>
+<h3 align="center"><u>Changes in 12cR1.3.2.15</u></h3>
+<h3><a name="NewFeatures3215">New Features</a></h3>
+<ol>
+<li>
+A declarative data definition language has been defined that allows
+declarative creation and management of tables and indexes.  The
+language reference is
+in <a href="http://docs.oracle.com/cd/NOSQL/html/GettingStartedGuideTables/ddl_overview.html">Data
+Definition Language for Tables</a>.  The language is accessible via
+APIs in Java as well as the new C driver.  It can also be executed
+using the new "execute" command in the administrative command line
+interface (Admin CLI).
+</li>
+<li>
+The Command Line Interface (Admin CLI) has a new "execute" command that can
+be used to execute data definition language (DDL) statements. The Java
+or C API is the preferred mechanism for defining tables, but if you
+wish to define and manage tables via the Admin CLI, the "execute" command is
+preferred over the previous "table" command.
+</li>
+<li>
+A new C driver has been created to operate on tables and indexes
+in Oracle NoSQL Database.  It is a separately downloadable product on
+the same page as this distribution.  It is source code and must be compiled,
+along with its dependent libraries.  Complete instructions are in its
+distribution.
+</li>
+<li>
+The implementation of indexes on maps has been enhanced so that it is
+now possible to create an index on the key strings of a map as well as
+an index on the values of a map, making these indices much more useful
+for a variety of data models. These indexes result in multiple
+index entries for a given row, up to the number of map
+entries. Additional APIs were added to help use these indexes.
+</li>
+<li>
+When using the Admin CLI interactively, you can now use backslash to
+enter a command on multiple lines. For example, you can now type:
+<pre>
+kv-> show events -type stat
+ or
+kv-> show events \
+> -type stat
+</pre>
+</li>
+<li>
+A new diagnostics command line utility is available to provide support
+for troubleshooting an Oracle NoSQL DB cluster. Currently, the
+"collect" functionality lets a user easily retrieve and package
+logfiles each node in the cluster for further analysis. Additional
+functionality will be rolled out over time. The new utility is invoked
+this way:
+<pre>
+java -jar kvstore.jar diagnostics
+
+diagnostics-> help
+Oracle NoSQL Database Diagnostic Utility Commands:
+	setup
+	collect
+	exit
+	help
+
+diagnostics->
+</pre>
+</li>
+</ol>
+<h3><a name="APIChanges3215">API Changes</a></h3>
+<ol>
+<li>
+<code>oracle.kv.table.TableAPI.execute(String)</code> and
+<code>oracle.kv.table.TableAPI.executeSync(String)</code> were added
+to execute Data Definition Language (DDL) statements.
+</li>
+<li>
+New interfaces, <code>oracle.kv.table.StatementResult</code> and
+<code>oracle.kv.table.ExecutionFuture</code> were added to handle
+results of the new statement execution methods
+on <code>TableAPI</code>.
+</li>
+<li>
+<code>oracle.kv.table.MapValue.putNull(String)</code> and the constant,
+<code>oracle.kv.table.MapValue.ANONYMOUS</code>, were added in order to
+handle new the map indexes.
+</li>
+<li>
+<code>oracle.kv.table.Index.createMapKeyFieldRange(String)</code> and
+<code>oracle.kv.table.Index.createMapValueFieldRange(String)</code> were added
+to create <code>FieldRange</code> instances for the new map indexes.
+</li>
+<li>
+The method
+<code>oracle.kv.table.TableAPI.execute(List&lt;TableOperation&gt;,
+WriteOptions)</code> used to throw
+<code>oracle.kv.OperationExecutionException</code>. However,
+<code>OperationExecutionException</code> provides information that
+applies to the key value API in the <code>oracle.kv</code> package
+rather than the Table API in
+<code>oracle.kv.table</code>.The method has been changed to throw a
+new exception,
+<code>oracle.kv.table.TableOpExecutionException</code>, which provides
+information suitable for the Table API.
+<p>
+Note that this is an incompatible API change. Applications which
+invoked <code>TableAPI.execute(List&lt;TableOperation&gt;,
+WriteOptions)
+</code> must be modified to
+handle <code>TableOpExecutionException</code> instead of
+<code>OperationExecutionException</code>.
+
+</li>
+</ol>
+<h3><a name="BugFixes3215">Bug and Performance Fixes</a></h3>
+<ol>
+<li>
+The CLI verbose and hidden commands have been enhanced so they can be
+specified using on/off parameters in addition to the previous toggle
+type functionality.
+[#23245]
+</li>
+<li>
+Modified the Admin CLI help to not display deprecated commands by
+default.A new -includeDeprecated flag was added for the CLI help
+command. If this flag is used, the deprecated commands are listed along
+with other commands.
+[#23365]
+</li>
+<li>
+The <code>java -jar kvstore.jar load</code> utility did not provide
+proper feedback when there were errors in operation, and incorrectly
+returned "Load succeeded". Now it returns both a non-zero status code
+when an error has been found and an accurate status message. [#23681]
+</li>
+<li>
+Fixed a security weakness that let arbitrary authenticated clients
+modify the store's topology by specifying an altered topology when
+propagating topology changes from one RN to another. A signature-based
+topology integrity check is employed to prevent it. [#23709]
+</li>
+<li>
+A window existed where a secondary index could incorrectly lose
+entries if the store was expanded while updates to the underlying
+table were happening. This window has been closed. [#23724]
+<li>
+Fixed an issue that required users to reauthenticate to the store in
+order for changes made by granting or revoking roles for the current
+user to take effect. A real-time session update mechanism was
+introduced that allows existing login sessions to reflect role changes
+immediately without reauthentication. [#23839]
+</li>
+<li>
+Fixed a bug that sometimes prevented re-execution of interrupted
+change-parameters plans, when Admin parameters were being changed. [#23880]
+</li>
+<li>
+Fixed a problem where a client performing a parallel scan against a
+secure store without having permission to read the store would get a
+timeout exception rather than having the scan return no values. This
+problem could be encountered when using the <code>get kv -all</code>
+command with the administrative CLI:
+<pre>
+kv-> get kv -all
+Error handling command get kv -all: Failed to iterate records :
+Parallel storeIterator Request Queue take timed out.
+(12.1.3.1.3) Timeout: 5000ms
+</pre>
+If the scan was performed via the API using the
+<code>KVStore.storeIterator</code> or <code>storeKeysIterator</code>
+method overloadings that supply a <code>StoreIteratorConfig</code>, the
+problem could cause the method call to throw a
+<code>RequestTimeoutException</code>. In all of these cases, the
+iteration now returns no elements. [#23881]
+</li>
+<li>
+Fixed an issue that would result in duplicate values returned from the
+Hadoop APIs when a complete primary key is specified. [#23958]
+</li>
+<li>
+Fixed a bug where iteration over array indexes when the result set was
+larger than the batch size (default 100) could result in incorrect
+results or a hang. [#23977].
+</li>
+<li>
+Fixed a slow memory leak in the handling of socket timeouts: The socket
+object associated with a failed socket connect operation continued to be
+referenced and could not be garbage collected. [#24039]
+</li>
+</ol>
+
+<!-- ============================================================ -->
+<hr>
+<h3 align="center"><u>Changes in 12cR1.3.1.7</u></h3>
+<h3><a name="NewFeatures317">New Features</a></h3>
+<ol>
+<li>Added a convenience method on the Table interface to construct a
+  MultiRowOptions instance from a single list of table names and
+  optional FieldRange. [#23807]
+</li>
+<li>Added FieldRange.getField() to return the FieldDef instance that
+was used to construct the FieldRange object. [#23908]</li>
+</ol>
+<h3><a name="BugFixes317">Bug and Performance Fixes</a></h3>
+<ol>
+<li>
+Fixed a problem that caused index creation on an empty table to take as
+much as 10 minutes to complete. [#23826]
+</li>
+<li>
+Fixed a performance regression in the CLI delete command.  This fix
+may result in some delete commands being slower because the problem
+was an optimization for some delete cases, but in the general
+case delete will have the same performance it had in release
+3.0.5. [#23918]
+</li>
+<li>
+Removed unnecessary non-topology metadata broadcasts to replica rep nodes.
+Since only a master rep node can update the metadata for the shard there is no
+point in attempting to update a replica. With this change two new admin
+parameters have been added to control the metadata broadcast:
+<ul>
+    <li>
+    <i>broadcastMetadataDelay</i> specifies the broadcast metadata retry delay.
+    This delay is the time between attempts to update RNs when trying to meet
+    the metadata threshold. If not specified, the default delay is 10 seconds.
+    </li><li>
+    <i>broadcastMetadataThreshold</i> specifies the broadcast metadata
+    threshold. The threshold is the percent of shards that must be successfully
+    updated during a broadcast. If not specified, the default threshold is 20%.
+    </li>
+</ul>
+<br>
+Note that this fix only affects the broadcast of table and security metadata.
+The topology broadcast parameters and behavior remain unchanged. [#23362]
+</li>
+</ol>
+<!-- ============================================================ -->
+<hr>
+<h3 align="center"><u>Changes in 12cR1.3.1.5</u></h3>
+<h3><a name="NewFeatures315">New Features</a></h3>
+<ol>
+<li>
+Added support for role-based authorization for both the API and the
+administrative CLI. Authorization is built on the authentication mechanism
+introduced in release 3.0. Each authenticated user of the KVStore can be
+granted roles which determine which APIs and CLI commands the user can
+access. This release only supports built-in roles, including the "read" and
+"write" roles for data access control, and the "sysadmin" and "dbadmin" roles
+for system and database operation control, respectively. More details of this
+feature are described in the Oracle NoSQL Database Security Guide.
+<p>
+The KVStore logging system has also been enhanced to log security
+sensitive events.  Two new logging levels named SEC_WARNING and
+SEC_INFO have been introduced.  Messages logged at SEC_WARNING level
+will produce critical events in the CLI.  High level security events
+like failed login attempts and unauthorized operations will be
+recorded as SEC_WARNING KVStore events. Execution of CLI commands
+which require sysadmin or dbadmin roles will be recorded as SEC_INFO
+events. Logging messages of all security sensitive events have
+"<i>timestamp</i> KVAuditInfo" as the prefix for the ease of grepping
+and filtering. [#23423]
+</li>
+
+<li>
+The makebootconfig command has been enhanced to do validity checking
+of all parameters. The -force flag has been added to let the user
+manually override the default validity checks if desired.
+[#23422]
+</li>
+</ol>
+
+<h3><a name="BugFixes315">Bug and Performance Fixes</a></h3>
+<ol>
+  <li>Fixed a bug that could cause the plan change-parameters command
+  to fail in some cases, reporting a NullPointerException in the plan
+  history. This could only come about in some situations where the
+  parameter change requires restarting all nodes, but not all nodes
+  are available.
+  [#22673]
+  </li>
+
+  <li>
+  Modified heap size calculations for replication nodes to reduce heap
+  sizes in some cases to permit using compressed object references.
+  <p>
+  The supported Java environments can use compressed object references
+  when the heap size is smaller than a certain size, currently between
+  25 and 32 GB depending on the implementation. Because the space
+  savings provided by compressed references are substantial, using a
+  larger heap size typically results in less usable space unless the
+  heap size is at least 50% larger than the largest size that supports
+  compressed references.
+  <p>
+  The system now automatically reduces the replication node heap size if
+  the value of the memoryMB storage node parameter produces a heap size
+  that is too large to support compressed references but not large
+  enough to provide more usable space. The heap size is not reduced if
+  the application specifies a javaMiscParams replication node parameter
+  that explicitly specifies either non-compressed references or the
+  maximum heap size. Note that, if the memoryMB parameter is not
+  specified explicitly, or is set to zero, the system sets it to the
+  amount of physical memory available on the host, and will reduce the
+  heap size in the same way as when memoryMB is set explicitly to a
+  non-zero value. [#22695]
+  </li>
+
+  <li>The Version.getVersion method has been deprecated and removed from
+  the public documentation.  It will probably be removed entirely in a
+  future release.  The getVersion method returns an internal version
+  number which is only meaningful relative to a particular shard.  For
+  that reason, it is not a safe to compare the method results for
+  arbitrary versions, and so it has been removed.  Applications can
+  continue to use the equals method to compare versions for identity,
+  but there is currently no official way to compare versions to
+  determine which is newer.  We could add that capability in the future
+  if applications have a need for it.  [#23526]
+  </li>
+
+  <li> The plan add-index command has been changed to check for
+  index creation status more promptly, which lets the command finish sooner.
+  [#23568]
+  </li>
+
+  <li>Added additional type validation when JSON input is used to
+  construct Row and PrimaryKey instances.  Previously it was possible
+  to provide incorrect types that were silently cast to the correct
+  type based on the table schema, possibly resulting in loss of
+  information. [#23765].
+  </li>
+
+  <li>Fixed a problem that could be encountered during the
+  configuration of a NoSQL Database cluster hosted within an IBM J9
+  JVM environment.  If the Storage Nodes were deployed without
+  providing an explicit value for the optional memory_mb parameter,
+  the available memory calculation for the Replication Node hosted on
+  that SN was incorrect, which might cause an "OutOfMemoryError" for
+  that replication node when the plan deploy-topology command was
+  run. This could only happen on the J9
+  JVM, and has been fixed. [#23737].
+  </li>
+
+  <li>
+  Both Hadoop and Oracle External Tables employ independent processes to
+  read data from a store in parallel. A change has been made to the way work is
+  distributed among these processes. The new algorithm attempts to distribute
+  work in a way that minimizes contention on a single replication node, while
+  maximizing the amount of parallelism across the store. The number of shards,
+  the replication factor, and the requested consistency, are input into the
+  calculation. This change may also affect the number of Hadoop processes, or
+  splits which are generated. In addition to the change in work distribution,
+  both Hadoop and external table processes may use the Parallel Scan APIs,
+  allowing multiple threads to operate in a single process. [#23749]
+  <br>
+  Note that the public method
+  <code>oracle.kv.hadoop.KVInputFormatBase.setDirection(Direction)</code>
+  has been deprecated since only <code>Direction.UNORDERED</code> is supported.
+  </li>
+
+  <li>Fixed a problem where, if an index was created on an array, or
+  field in an array, and the array itself is null in a Row, a
+  ClassCastException could be thrown during index key extraction on a server
+  node. [#23757].
+  </li>
+
+  <li> Modified the Ant build script so that the default target, which
+  builds the JAR files, works for the Community Edition.  You can now
+  use ant to build new versions of the JAR files after making
+  modifications to the source code. [#23764]
+  </li>
+
+  <li>
+  If a client program made an unexpected, non-secure call to the trusted
+  login service of an Storage Node, a flaw in the service implementation caused the
+  service to hang, causing future user logins to fail. This bug has been
+  fixed. [#23786]
+  </li>
+
+  <li>Fixed an issue with a runaway number of client threads when multiple
+  index iterators are opened and closed in quick succession. Specifically,
+  the iterator's close() method will now wait for its threads to exit before
+  returning. This is the same behavior as the parallel scan iterators,
+  though it is documented that it does not wait. The documentation has
+  been corrected. [#23797]
+  </li>
+
+  <li> Fixed a bug which could result in a deadlock situation when an index
+  iterator is closed. As part of this fix the Javadoc for the
+  <code>oracle.kv.KVStore</code> and <code>oracle.kv.table.TableAPI</code>
+  interfaces have been updated to make it clear that the iterators returned by
+  those interfaces can only be used safely by one thread at a time unless
+  synchronized externally.
+  [#23799]
+  </li>
+
+  <li>
+  In the course of upgrading a NoSQL cluster from R2.X to R3.x, when
+  the first Storage Node upgrade occurs, the Replication Node it hosts
+  will transition into "STARTING" status and will wait until more nodes
+  are upgraded. If the user runs the "verify upgrade" command at this
+  point, they would see the following, misleading error:
+  <pre>
+   kv-> verify upgrade
+   Unknown Exception: class oracle.kv.impl.rep.admin.RepNodeAdminFaultException
+   RepNode is not RUNNING, current status is STARTING (12.1.3.1.2)
+   oracle.kv.impl.rep.admin.IllegalRepNodeServiceStateException:
+   RepNode is not RUNNING, current status is STARTING
+  </pre>
+  This has been fixed. [#23859]
+  </li>
+
+  <li>The following parameters used by the Berkeley DB JE storage
+  engine used within NoSQL Database have been changed to reflect
+  changes in the updated version of JE used by this release:
+  <ul>
+  <li>EnvironmentConfig.EVICTOR_MAX_THREADS which was previously set to 2
+  now uses the default JE value.
+  </li>
+  <li>EnvironmentConfig.CHECKPOINTER_BYTES_INTERVAL has been changed from
+  200000000 to 500000000.
+  </li>
+  </ul>
+  </li>
+
+  <li>
+  Fixed a performance issue where
+  the <a href="http://docs.oracle.com/cd/NOSQL/html/AdminGuide/independent_commands.html#stopagent">
+  stop</a> utility command resulted in an incomplete checkpoint
+  if the checkpoint took more than 10 seconds. The incomplete checkpoint could
+  result in the replication node taking longer to restart than it would
+  with a complete checkpoint. The <i>stop</i> command has also been modified to
+  initiate checkpoints in parallel across all the replication nodes hosted by
+  the storage node being shutdown, thus making the command run faster.
+  </li>
+  <li>
+  Fixed a problem that caused upgrading from earlier releases to a 3.0
+  release to fail in some cases, with the following stack trace in the
+  Admin log. [#23879]
+  <pre>
+com.sleepycat.persist.evolve.IncompatibleClassException: (JE 6.2.5) Changes to the fields or superclass were detected when evolving class:
+oracle.kv.impl.admin.plan.task.StopAdmin version: 1 to class: oracle.kv.impl.admin.plan.task.StopAdmin version:
+1 Error: A new higher version number must be assigned
+---
+(Note that when upgrading an application in a replicated environment, this exception may indicate that the Master was mistakenly upgraded
+before this Replica could be upgraded, and the solution is to upgrade this Replica.)
+    at com.sleepycat.persist.impl.PersistCatalog.init(PersistCatalog.java:512)
+    at com.sleepycat.persist.impl.PersistCatalog.initAndRetry(PersistCatalog.java:268)
+    at com.sleepycat.persist.impl.PersistCatalog.&lt;init&gt;(PersistCatalog.java:228)
+    at com.sleepycat.persist.impl.Store.&lt;init&gt;(Store.java:202)
+    at com.sleepycat.persist.EntityStore.&lt;init&gt;(EntityStore.java:190)
+    at oracle.kv.impl.admin.Admin.initEstore(Admin.java:2126)
+</pre>
+  </li>
+</ol>
+<!-- ============================================================ -->
+<hr>
+<h3 align="center"><u>Changes in 12cR1.3.0.14</u></h3>
+<h3><a name="NewFeatures3014">New Features</a></h3>
+<ol>
+<li>
+When using the Table API, it is now possible to create indices on
+fields in records, maps, and arrays. [#23091]
+</li>
+<li>
+The integration of Oracle NoSQL Database with Oracle Coherence has been updated to
+support Coherence 12c (12.1.2). As of Coherence 12.1.2, cache configuration
+parameters are specified within a custom XML namespace and are processed by the
+NoSQL Database namespace handler at runtime. Though it's possible to use this
+updated module with Coherence version 3.7.1, we highly recommend that you upgrade
+Coherence to the latest version. Please see the javadoc for
+<code>oracle.kv.coherence</code> package for information on how to configure a NoSQL Database
+backed cache with Coherence 12.1.2, or the earlier Coherence 3.7.1. [#23350]
+</li>
+<li>
+It is now possible to use Oracle External Tables to access Oracle NoSQL Database tables created with the Table API.
+In addition to the usual required properties, users need to specify the
+table name in the external table configuration file.
+Please see KVHOME/examples/externaltables/cookbook.html for details.[#23605]
+</li>
+<li>
+Added a new "size" option to the Admin CLI table command, to estimate
+the in-memory size of the given table. The results of the size command
+can be used as inputs when planning resource requirements for a store.
+[#23444]
+</li>
+<li>
+Oracle Enterprise Manager can now monitor instances of Oracle NoSQL Database.
+For more information, please see
+<a href="http://docs.oracle.com/cd/NOSQL/html/AdminGuide/oem-integration.html">
+Integrating Oracle Enterprise Manager with Oracle NoSQL Database</a> in the Admin Guide.
+</li>
+<li>
+It is now possible to access data written to an Oracle NoSQL Database via the
+Table API from within a Hadoop MapReduce job. In addition to the usual required
+properties, users now need to specify the table name in the command line used
+to initiate the MapReduce job. Please refer to the javadoc of the class,
+KVHOME/examples/hadoop/table/CountTableRows.java for additional details.[#23714]
+</li>
+<li>
+It is now possible to execute Hive queries against data written to an Oracle
+NoSQL Database via the Table API. To employ this feature, one must create a
+Hive external table that is 'STORED BY' the new oracle.kv.hadoop.hive.table.TableStorageHandler
+class, with fields similar to the fields with which the Oracle NoSQL Database
+table was created; that is, same number and types. Additionally, the Hive
+TBLPROPERTIES must specify the store name, the helper host and ports, and the
+table name (which does not have to be equal to the Hive table name).[#23714]
+</li>
+</ol>
+<h3><a name="BugFixes3014">Bug and Performance Fixes</a></h3>
+<ol>
+<li>
+Added more sanity checking and improved error messages for the
+securityconfig add/remove-security commands.  [#23311]
+</li>
+<li>
+Fixed a bug where specifying an invalid value for the Storage Node
+parameter, "mgmtClass" could cause a crash in the Admin service.
+[#23227]
+</li>
+
+<li>
+Modified the oracle.kv.RequestLimitConfig constructor to improve
+bounds checking and correct problems with integer overflow. [#23244]
+</li>
+
+<li>
+Fixed a bug that sometimes caused Admin parameters not to take effect
+until the Admin's hosting SNA was rebooted. [#23429]
+</li>
+
+<li>
+Added a new attribute (String replicationState) in the RepNode MBean
+presented via JMX, to indicate the state of the RepNode's membership
+in its replication group.  Typically the value will show "MASTER" or
+"REPLICA", but it can also report "DETACHED" or "UNKNOWN".  This same
+value is reported via SNMP in the repNodeReplicationState object, as
+defined in nosql.mib. [#23459]
+</li>
+
+<li>
+Modified the Durability, RequestLimitConfig, and Version classes to
+implement Serializable to permit serializing instances of
+oracle.kv.KVStoreConfig, which was already serializable.  [#23474]
+</li>
+
+<li>
+Fixed a bug where an operation using the Table API might see a
+SecondaryIntegrityException if there is a replication node failover
+while secondary index is populated. [#23520]
+</li>
+
+<li>
+Prior to this release, it was not possible use the Load utility to create
+a new store from snapshot files that had been taken against a store
+with security enabled, or a store that was using the Table API.  This
+has been fixed. The -security, -username, -load-admin, and -force
+flags were added to the load utility to use in this case. See the
+Administrator's Guide for more information. [#23528]
+</li>
+
+<li>
+Fixed a bug where invoking the "history" command in the Admin CLI with
+the "-last" option and a value that is greater than the total number
+of commands executed in the store could result in a
+java.lang.ArrayIndexOutOfBoundsException. [#23579]
+</li>
+
+<li>
+Fixed a bug where an Admin service might exit with the following
+exception. Before the fix, administrative functionality would
+seamlessly fail over to another admin service, but the process exit
+was unnecessary and would show up as an alertable event.
+<pre>
+com.sleepycat.je.rep.UnknownMasterException:
+Transaction -XXX cannot execute write operations because this node is no longer a master
+</pre>
+[#23580]
+</li>
+
+<li>
+Fixed a bug in the Table API so that enum fields may have names that begin
+      with an underscore.
+</li>
+
+<li>
+In rare cases, when a store has been deployed with Storage Nodes with
+capacity > 1 and there are concurrent delete operations, table iteration operations,
+and a transfer of mastership roles in a shard, it could be possible
+for the iteration operation to incorrectly skip a value that should
+have been returned by the iterator. This has been fixed. [#23608]
+</li>
+
+<li>
+Fixed a GC configuration issue that could cause the CMS phase of the Java GC to
+run repeatedly, consuming CPU resources on an otherwise idle RepNode. The fix
+changed the default JVM CMSInitiatingOccupancyFraction from 77 to
+80. Our testing indicates that this is a better configuration under a broad
+range of application access patterns. However, if you need to override this new
+configuration in some unusual circumstance, you can use the Admin's
+<i>change-policy</i> command and, if it's an existing store, the <i>plan
+change-parameter</i> command, as below:
+<pre>
+change-policy -params "javaMiscParams=-XX:CMSInitiatingOccupancyFraction=77"
+plan change-parameters -all-rns -params "javaMiscParams=-XX:CMSInitiatingOccupancyFraction=77"
+</pre>
+[#23652]
+</li>
+<li>
+Fixed the following bugs which could occur in a store with security
+enabled:
+<ul>
+<li>
+The following error could be reported after a deploy-topology command
+which deploys a new replication node in a security enabled store:
+[#23682]
+<pre>
+Task 23/DeployNewRN on sn1(slc06tyu:5000) ended in state ERROR
+oracle.kv.impl.fault.RNUnavailableException: Security metadata
+database is not opened yet.
+</pre>
+<li>
+The following exception could be seen after an elasticity change in a
+          security enabled store: [#23703]
+<pre>
+Insufficient access rights : client host: xx.xxx.xxx.xx:
+attempt to call RepNodeAdmin.updateMetadata(MetadataInfo,AuthContext,short)
+</pre>
+<li>
+The following problem might be logged after an elasticity change in a
+          security enabled store: [#23704]
+<pre>
+ProcessMonitor: java.lang.NullPointerException
+ProcessMonitor: at oracle.kv.impl.api.rgstate.RepNodeState$ReqHandlerRef.resolve(RepNodeState.java:649)
+ProcessMonitor: at oracle.kv.impl.api.rgstate.RepNodeState$ReqHandlerRef.get(RepNodeState.java:709)
+</pre>
+</ul>
+</li>
+<li>
+Fixed a bug where application requests might unnecessarily time out
+for a brief period of time directly after an elasticity change [#23705]
+</li>
+</ol>
+<!-- ========================================================= -->
+<h3><a name="Packaging3014">Packaging and Documentation Changes:</a></h3>
+<!-- ========================================================= -->
+<ol>
+<li>
+The version of the Oracle Coherence library bundled with Oracle NoSQL
+Database has been upgraded to the more recent Coherence 12.1.2. This
+requires a change in the way cache configuration parameters are
+specified for the NoSQL Database backed cache.
+</li>
+<li>
+New documentation has been added on how to use the Large Object
+API. See the index page, and "Oracle NoSQL Database Large Object API".
+</li>
+</ol>
+<!-- ============================================================ -->
+<hr>
+<h3 align="center"><u>Changes in 12cR1.3.0.9</u></h3>
+<h3><a name="NewFeatures309">New Features</a></h3>
+<ol>
+<li>
+Modified the administrative CLI to save its command line history to a
+file so that it is available after restart.  If you want to disable this
+feature, the following Java property should be set while running
+runadmin:
+<pre>
+java -Doracle.kv.shell.jline.disable=true -jar KVHOME/kvstore.jar runadmin -host &lt;hostname&gt; -port &lt;portname&gt;
+</pre>
+<p>
+The CLI attempts to save the history in a
+<code>KVHOME/.jlineoracle.kv.impl.admin.client.CommandShell.history</code>
+file, which is created and opened automatically. The default history
+saved is 500 lines.  If the history file cannot be opened, it will fail
+silently and the CLI will run without saved history.
+<p>
+The default history file path can be overridden by setting
+the <code>oracle.kv.shell.history.file=</code><i>path</i> Java property.
+<p>
+The default number of lines to save to the file can be modified by
+setting the <code>oracle.kv.shell.history.size=</code><i>int_value</i> Java
+property. [#22690]
+</li>
+<li>
+Modified the admin CLI <code>aggregate</code> command to provide
+subcommands for tables and key/value entries.  The <code>aggregate
+table</code> subcommand performs simple data aggregation operations on
+numeric fields of a table, while the <code>aggregate kv</code>
+subcommand performs aggregation operations on keys. [#23258]
+</li>
+</ol>
+<h3><a name="BugFixes309">Bug and Performance Fixes</a></h3>
+<ol>
+<li>
+Modified the implementation of index iterators to use weak references so
+that the garbage collector can remove the resources associated with
+unused index iterators. [#23306]
+</li>
+<li>
+Improved the handling of metadata propagation and other
+internal operations. [#23355] [#23368] [#23385]
+</li>
+<li>
+Modified the external tables integration to distribute the concurrent
+processing load more evenly across processes. [#23363]
+</li>
+<li>
+Fixed a problem where a failure during a partition migration performed
+during a topology redistribution for a store that has indexes resulted
+in <code>SecondaryIntegrityException</code>s being thrown when the
+migration was restarted. [#23392]
+</li>
+<li>
+Removed the <code>FieldRange.setEndDate</code> method, in favor of the
+existing <code>setEnd</code> method. [#23399]
+</li>
+<li>
+Modified schema evolution to prevent changes that could resurrect an old
+field using a different type. Such a change would cause old data to
+become unreadable by the current table. This fix prevents resurrection
+of a field name unless it exactly matches the previous
+definition. [#23403]
+</li>
+<li>
+Fixed a problem with handling network timeouts that could result
+in <code>FaultException</code> being thrown from KVStore operations
+instead of <code>RequestTimeout</code> when a timeout occurs.  Here's a
+sample stack trace:
+<pre>
+Caused by: oracle.kv.FaultException: Problem during unmarshalling (12.1.2.1.24)
+Fault class name: java.rmi.UnmarshalException
+    at oracle.kv.impl.api.RequestDispatcherImpl.faultIfWrite(RequestDispatcherImpl.java:968)
+    at oracle.kv.impl.api.RequestDispatcherImpl.handleRemoteException(RequestDispatcherImpl.java:883)
+    at oracle.kv.impl.api.RequestDispatcherImpl.handleDispatchException(RequestDispatcherImpl.java:736)
+    at oracle.kv.impl.api.RequestDispatcherImpl.execute(RequestDispatcherImpl.java:572)
+    at oracle.kv.impl.api.RequestDispatcherImpl.execute(RequestDispatcherImpl.java:1031)
+    at oracle.kv.impl.api.KVStoreImpl.executeRequest(KVStoreImpl.java:1251)
+    at oracle.kv.impl.api.KVStoreImpl.putIfVersion(KVStoreImpl.java:990)
+    at oracle.kv.impl.api.KVStoreImpl.putIfVersion(KVStoreImpl.java:968)
+    [...]
+    ... 41 more
+Caused by: java.rmi.UnmarshalException: Error unmarshaling return header; nested exception is:
+    java.net.SocketException: Socket closed
+    at sun.rmi.transport.StreamRemoteCall.executeCall(StreamRemoteCall.java:228)
+    at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:161)
+    at java.rmi.server.RemoteObjectInvocationHandler.invokeRemoteMethod(RemoteObjectInvocationHandler.java:194)
+    at java.rmi.server.RemoteObjectInvocationHandler.invoke(RemoteObjectInvocationHandler.java:148)
+    at com.sun.proxy.$Proxy21.execute(Unknown Source)
+    at oracle.kv.impl.api.RequestHandlerAPI.execute(RequestHandlerAPI.java:94)
+    at oracle.kv.impl.api.RequestDispatcherImpl.execute(RequestDispatcherImpl.java:560)
+    ... 46 more
+Caused by: java.net.SocketException: Socket closed
+    at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:121)
+    at java.net.SocketOutputStream.write(SocketOutputStream.java:159)
+    at java.io.BufferedOutputStream.flushBuffer(BufferedOutputStream.java:82)
+    at java.io.BufferedOutputStream.flush(BufferedOutputStream.java:140)
+    at java.io.ObjectOutputStream$BlockDataOutputStream.flush(ObjectOutputStream.java:1822)
+    at java.io.ObjectOutputStream.flush(ObjectOutputStream.java:718)
+    at sun.rmi.transport.StreamRemoteCall.releaseOutputStream(StreamRemoteCall.java:114)
+    at sun.rmi.transport.StreamRemoteCall.executeCall(StreamRemoteCall.java:212)
+    ... 52 more
+</pre>
+[#23411]
+</li>
+<li>
+Modified table iteration to optimize performance when all matching
+entries fall within a single shard. [#23412]
+</li>
+<li>
+Fixed an issue where the index scan iterator would fail to return
+records from a shard if there was a record that compared equal to a
+record from another shard.  This situation occurred when there was more
+than one shard in a store and there were equivalent index entries for a
+given index in both shards.  The symptom was index iteration returning
+fewer rows than expected. [#23421]
+</li>
+<li>
+Added several interfaces to the table package:
+  <ul>
+    <li> <code>List&lt;String&gt;IndexKey.getFields()</code> to return the
+    fields used to define the index.</li>
+    <li> <code>List&lt;String&gt;PrimaryKey.getFields()</code> to return the
+    fields used to define the primary key.</li>
+    <li> <code>List&lt;String&gt;RecordValue.getFields()</code> to return the
+    fields used to define the record, in declaration order.</li>
+    <li> <code>Map&lt;String, FieldValue&gt; MapValue.getFields()</code> to
+    return an immutable view of the map.</li>
+  </ul>
+The related javadoc was also updated to indicate that the lists and
+maps returned from these, and similar interfaces, are immutable.
+[#23433]
+</li>
+<li>
+The data Command Line Interface (CLI) has a method to input table rows
+from a file with a JSON representation.  This input method had an
+issue where a blank line could cause an infinite loop in the input
+path.  This has been fixed in a way that will result in silently
+skipping blank lines as well as comment lines (those whose first
+non-whitespace character is "#").
+[#23449]
+</li>
+<li>
+Fixed handling of null values in indexed fields and in IndexKey.
+Previously, a null value in an indexed field could cause a server side
+exception.  During a put, null values in indexed fields will result in
+no index entries for indexes in which that field participates.  Further,
+null values are not allowed in IndexKey instances.
+IllegalArgumentException is thrown if an attempt is made to set a null
+value in an IndexKey. [#23588]
+</li>
+<li>
+Modified the Admin Service to listen on all interfaces on a host. This
+change permits deployment of KVStore in heterogeneous network
+environments, where a hostname may be resolved to different IP
+addresses to make the best possible use of the available network
+hardware.  [#23524]
+</li>
+</ol>
+<!-- ============================================================ -->
+<hr>
+<h3 align="center"><u>Changes in 12cR1.3.0.5</u></h3>
+<h3><a name="NewFeatures305">New Features</a></h3>
+<ol>
+<li>
+  A new client interface has been added that includes a set of
+  datatypes and a tabular data model using those types. The tabular
+  data model is used to provide support for secondary indexes which
+  are defined on fields in a  table.  The model is discussed in the
+  <a
+  href="http://docs.oracle.com/cd/NOSQL/html/GettingStartedGuideTables/index.html">
+  Getting Started Guide for Tables</a>
+  <p>
+  Tables and indexes are defined using the administrative CLI and
+  accessed via programmatic API.  The data CLI has been enhanced to
+  perform operations on tables and indexes as well.  The API is
+  documented in the <a href="http://docs.oracle.com/cd/NOSQL/html/javadoc/index.html">
+  Oracle NoSQL Database javadoc</a>, and is primarily in  the
+  <i>oracle.kv.table</i> package.
+  <p>
+  It is possible to define tables that overlay data created with NoSQL
+  DB Release 2 if that data was created using a conforming Avro
+  schema.  This overlay is required in order to create secondary
+  indexes on conforming Release 2 data.
+  <p>
+  The existing key/value interface remains available.
+</li>
+<li>
+It is now possible to define secondary indexes for records.  See the previous
+changelog entry about tables.  Index entries for a given record have
+transactional consistency with their corresponding primary records.
+Index iteration operations are part of the new table API.  Index scan
+operations allow applications to iterate over raw indexes in 3
+ways -- forward order, reverse order, and unordered.  It is possible
+to define exact match and range scans in indexes.  Indexes can be on
+single fields or defined as composite indexes on multiple fields in a
+table.
+</li>
+<li>
+Support for username/password authentication and secure network communications
+has been added.  Existing applications that do not require this feature are not
+impacted except for a change to makebootconfig, which adds a new required
+argument (<code>-store-security</code>). Users that wish to use the new
+capabilities should be aware of the following areas of change:
+<ul>
+<li>
+The makebootconfig utility has a new required
+<code>-store-security</code> command-line argument, which is used to
+enable security for a new KVStore deployment. The -store-security flag
+is also used to enable a non-secure deployment, and is actually
+required in that case (-store-security none).
+</li>
+<li>
+A new securityconfig tool has been added, which provides the ability to:
+<ul>
+<li>Create security configurations</li>
+<li>Create/modified password stores</li>
+<li>Enable security on a pre-existing, non-secure KVStore</li>
+<li>Perform security maintenance tasks</li>
+</ul>
+</li>
+<li>
+Additional methods on the KVStoreConfig class:
+<ul>
+<li><code>setSecurityProperties()</code></li>
+<li><code>getSecurityProperties()</code></li>
+</ul>
+</li>
+<li>
+An additional method on the KVStoreFactory class supporting authentication:
+<ul>
+<li><code>KVStoreFactory.getStore(KVStoreConfig, LoginCredentials, ReauthenticateHandler)</code></li>
+</ul>
+<p>
+This new method utilizes the new interfaces
+<ul>
+<li><code>LoginCredentials</code></li>
+<li><code>ReauthenticateHandler</code></li>
+</ul>
+<p>
+As well as the new class <code>PasswordCredentials</code>.
+</li>
+<li>
+Additional methods on the KVStore interface:
+<ul>
+<li><code>login()</code></li>
+<li><code>logout()</code></li>
+</ul>
+</li>
+<li>
+New exception classes:
+<ul>
+<li><code>UnauthorizedException</code></li>
+<li><code>AuthenticationFailureException</code></li>
+<li><code>AuthenticationRequiredException</code></li>
+</ul>
+</li>
+</ul>
+<p>
+Users should also familiarize themselves with security property files, which
+are required when using a KVStore command-line utility program against a secure
+store, and which may also be useful when running an application against a secure
+store.
+<p>
+This feature is described in much greater depth in the Oracle NoSQL Database Security Guide, as well as in the Administrators Guide and product Javadoc.
+</li>
+<li>
+The administrative CLI has been modified to use new terminology to refer
+to data centers.  Data centers are now called <i>zones</i>.  The new
+terminology is meant to clarify that these node groupings may not always
+coincide with physical data centers.  A zone is a collection of nodes
+that have good network connectivity with each other and have some level
+of physical separation from nodes in other zones.  That physical
+separation may mean that different zones are located in different
+physical data center buildings, but could also represent different
+floors, rooms, pods, or racks, depending on the particular deployment.
+<p>
+Commands that contained the word "datacenter" have been deprecated, and
+are replaced with commands using the word "zone". The previous commands
+will continue to work in this release. New commands are:
+<ul>
+<li><code>plan deploy-zone</code>
+<li><code>plan remove-zone</code>
+<li><code>show zones</code>
+</ul>
+<p>
+Command flags that specify a zone have been changed to <code>-zn</code>,
+for a zone ID, and <code>-znname</code>, for a zone name. The
+earlier <code>-dc</code> and <code>-dcname</code> flags have been
+deprecated but will continue to work in this release.  In addition, zone
+IDs can now be specified using the "zn" prefix, with the earlier "dc"
+prefix still currently supported.
+<p>
+The administrative GUI has also been modified to use the new Zone
+terminology. [#22878]
+</li>
+<li>
+There are now two types of zones.  <i>Primary</i> zones contain
+electable nodes, which can serve as masters or replicas, and vote in
+master elections.  All zones (or data centers) created in earlier
+releases are primary zones, and new zones are created as primary zones
+by default.  <i>Secondary</i> zones contain nodes of the
+new <i>secondary node</i> type, which can only serve as replicas and do
+not vote in master elections.  Secondary zones can be used to make a
+copy of the data available at a distant location, or to maintain an
+extra copy of the data to increase redundancy or read capacity. [#22483]
+</li>
+<li>
+The <code>show plan</code> command now provides an estimated migration completion time. For example:
+<pre>
+Plan Deploy Topo (12)
+State:                 RUNNING
+Attempt number:        1
+Started:               2014-01-14 17:35:09 UTC
+Ended:                 2014-01-14 17:35:27 UTC
+Total tasks:           27
+ Successful:           12
+ Incomplete:           15
+Incomplete tasks
+   3 partition migrations queued
+   1 partition migrations running
+   11 partition migrations succeeded, avg migration time = 550164 ms.
+<b>Estimated completion:  2014-01-14 19:57:37 UTC</b>
+</pre>
+[#22183]
+</li>
+<li>
+A new read consistency option has been added for this release.
+<code>oracle.kv.Consistency.NONE_REQUIRED_NO_MASTER</code> can now be
+used to specify that the desired read operations must always be serviced
+by a replica, never the master. For read-heavy applications (ex. analytics),
+it may be desirable to isolate read requests so that they are performed
+only on replicas, never a master; reducing the load on the master. The
+preferred mechanism for achieving this sort of read isolation is the new
+secondary zone feature; which users are encouraged to employ for this
+purpose. But for cases where the use of secondary zones is not desired
+or impractical, <code>oracle.kv.Consistency.NONE_REQUIRED_NO_MASTER</code>
+can be used to achieve a similar effect, without the additional resources
+that secondary zones may require. [#22338]
+</li>
+<li>
+The following methods have been added:
+<ul>
+<li><code>KVStoreConfig.setReadZones()</code></li>
+<li><code>KVStoreConfig.getReadZones()</code></li>
+</ul>
+<p>
+These methods make it possible to require that read operations only be
+performed on nodes located in the specified zones.
+</li>
+<li>
+The <i>show plans</i> command has been changed so that a range of plan
+history can be specified.  With no arguments, <i>show plans</i> now
+displays only the ten most recently created plans, but new arguments
+can be used to select ranges by creation time and by plan id.  Issue
+the command "show plans -help" to see the complete set of options.
+</li>
+<li>
+The makebootconfig utility has a new optional <code>-runadmin</code>
+command-line argument, which allows the SNA to force the start of a bootstrap
+admin even if the value of <code>-admin</code> is set to 0.
+<p>
+The option <code>-port</code> of <i>plan deploy-admin</i> within the admin CLI
+has been changed to be able to control the start of the admin web service. No
+web service of the admin will be started if the <code>-port</code> is set to
+0 in deploying.
+<p>
+Users can also change the http port of an admin after deployment via
+<i>plan change-param</i> command of admin CLI to change the setting for whether
+an admin runs a web server. [#22344]
+</li>
+<li>
+The <i>plan change-param</i> command has been changed to allow changing the
+parameters for a single admin service. [#22244]
+</li>
+<li>
+NoSQL topology information is stored both in the Admin services and on
+Storage Nodes, and can become inconsistent if topology changing plans
+such as deploy-topology and migrate-sn are canceled before
+completion. Inconsistencies can be repaired by redeploying the target
+topology. In this release, a "plan repair-topology" command is also provided
+as an additional way of repairing topology inconsistencies. The verify
+configuration command now generates recommendations for when it may be
+beneficial to use repair-topology. [#22753]
+</li>
+</ol>
+<h3><a name="BugFixes305">Bug and Performance Fixes</a></h3>
+<ol>
+<li>
+The makebootconfig command now prints a message when it declines to
+overwrite existing configuration files. [#23012]
+</li>
+<li>
+The "plan remove-admin" now permits removal of an Admin that is hosted
+by Storage Node that is not running. [#23061]
+</li>
+<li>
+Fixed a bug that sometimes caused a duplication of the admin section
+in a Storage Node's config.xml file. As a result, the "plan
+change-parameters" command, when applied to an Admin service with this
+configuration irregularity, could unexpectedly have no effect.  The
+bug could be provoked by attempting to deploy an Admin that is already
+deployed; but it could also happen when re-executing a failed
+"plan migrate-storagenode" command. [#23152]
+</li>
+<li>
+Fixed a problem that caused the <code>topology redistribute</code>
+command to ignore storage directory settings when creating new
+replication nodes. [#23161]
+</li>
+<li>
+Previously, when there was no activity during a RepNode's
+metrics-gathering period (the <i>statsInterval</i>), the previous
+period's metric values would be reported via JMX and SNMP.  This
+behavior has changed so that the metrics are updated at every
+interval. [#22842][#22537]
+</li>
+<li>
+NoSQL DB automatically adjusts mastership identity so that master
+nodes are distributed across a store for optimal performance.
+Fixed a problem that prevented Master Balancing from being performed
+across multiple zones. [#22857]
+</li>
+<li>
+Modified the LOB implementation to repeat calls to
+<code>InputStream.skip</code> as needed to position the input stream to
+the start location, so long as the calls return non-zero values.
+An <code>IllegalArgumentException</code> will be thrown if the calls do
+not advance the stream to the required start location.
+</li>
+</ol>
+<!-- ========================================================= -->
+<h3><a name="Utilities305">Utility Changes:</a></h3>
+<!-- ========================================================= -->
+<ol>
+<li>
+The administrative and data command line interfaces (CLI) have been
+merged into a single program.  The usage of the merged CLI is
+compatible with most old usage but has additional options that allow
+it to work for administrative operations, data operations, or both.
+This change requires the use of kvstore.jar for data operations where
+in previous releases, the data CLI only required kvcli.jar, which
+depended on kvclient.jar.
+</li>
+<li>
+The CLI has been enhanced with commands necessary to manage tables,
+indexes, security information, and zones.
+</li>
+</ol>
+<!-- ========================================================= -->
+<h3><a name="Documentation305">Documentation Changes:</a></h3>
+<!-- ========================================================= -->
+<ol>
+<li>
+  With the introduction of the tabular data model and secondary
+  indexes, a new <a
+  href="http://docs.oracle.com/cd/NOSQL/html/GettingStartedGuideTables/index.html">
+  Getting Started with the Table API</a> guide has been added.
+</li>
+<li>
+  With the introduction of the new security features, a new <a
+  href="http://docs.oracle.com/cd/NOSQL/html/SecurityGuide/index.html">Security
+  Guide</a> has been added.
+</li>
+</ol>
+<!-- ========================================================= -->
+<h3><a name="Packaging305">Packaging Changes:</a></h3>
+<!-- ========================================================= -->
+<ol>
+<li>
+  The versions of the Avro and Jackson libraries bundled with Oracle
+  NoSQL database have been upgraded to the more recent Avro 1.7.6 and
+  Jackson 1.9.3.  These versions are compatible with the previous API
+  versions.
+</li>
+</ol>
+<!-- ============================================================ -->
+<hr>
+<h3 align="center"><u>Changes in 12cR1.2.1.57</u></h3>
+<h3><a name="NewFeatures2157">New Features</a></h3>
+<ol>
+<li>
+The new method <code>KVStore.appendLOB()</code> now permits appending to an
+existing LOB (Large Object). As part of this change, the
+method <code>PartialLOBException.isPartiallyDeleted()</code> has been deprecated
+in favor of the new
+method: <code>PartialLOBException.getPartialState()</code>. Please consult the
+javadoc associated with these new methods, as well as the updated doc for the
+interface <code>KVLargeObject</code>, for a detailed description of this new
+functionality.
+<p>
+This release is backwards compatible with LOBs created in previous releases,
+with one exception: Only LOBs created in this, or a later, release support the
+append operation. Attempts to use the append operation on LOBs created in
+previous releases will result in the method throwing an
+UnsupportedOperationException.
+<p>
+LOBs created in this release cannot be read or deleted by clients using earlier
+releases. Such operations will typically fail with a ConcurrentModificationException.
+Please ensure that all clients are updated to this release before creating new
+LOBs.
+[#22876]
+</li>
+<li>
+GC log files for the Admin and RepNode services are now generated by default and
+placed in the <code>KVROOT/&lt;storename&gt;/log</code> directory (the standard
+location for all NoSQL related logging information). This default behavior only
+applies when using JDK release 1.7 or a later release, since gc log rotation is
+only supported in the more recent JDKs. The logging has minimal resource
+overheads. Having these log files readily available, conforms to deployment best
+practices for production java applications making it simpler to diagnose GC
+issues should the need arise. [#22858]
+</li>
+</ol>
+<h3><a name="BugFixes2157">Bug and Performance Fixes</a></h3>
+<ol>
+<li>
+The heap requirement of the Admin service, when operating on a store that has
+undergone numerous changes, has been reduced. [#21143]
+</li>
+<li>
+Fixed a bug in the Admin CLI "show plan -id &lt;id&gt;" command, which
+resulted in the omission of information about partition migration
+tasks from the plan history report. The command now correctly includes
+information about partition migrations. [#22611]
+</li>
+<li>
+Reduce internal timeout values, associated with the network connection
+between a master and a replica, to permit faster master failover upon
+encountering a network hardware failure. [#22861]
+</li>
+<li>
+An attempt to resume a failed put operation on a LOB larger than 3968K bytes
+could result in an incorrect ConcurrentModificationException in some
+circumstances. The bug has been fixed in this release. [#22876]
+</li>
+<li>
+Changed the way plans are represented in the Admin's memory.
+Previously, there was no limit on the potential size of the in-memory
+representation of currently active and historical plans.  With this
+fix, only active plans are kept in memory. [#22963]
+</li>
+<li>
+Eliminated deadlocks in plan management in the Admin. [#22992]
+</li>
+<li>
+A bug in the argument checking for the
+<code>StoreIteratorConfig</code> setter methods has been
+fixed. [#23010]
+</li>
+<li>
+The makebootconfig command now prints a message when it declines to
+overwrite existing configuration files. [#23012]
+</li>
+<li>
+The Replication Node configuration has been tuned to reduce CPU
+utilization when the Replication Node's cache is smaller than
+required, and cache eviction is taking place.  [#23026]
+</li>
+<li>
+The remove-admin command now permits removal of an Admin that is
+hosted by Storage Node that is not running. [#23061]
+</li>
+<li>
+The show plans command could sometimes cause a crash in the Admin CLI
+because it would consume too much memory. This has been fixed. [#23105].
+</li>
+</ol>
+<!-- ============================================================ -->
+<hr>
+<h3 align="center"><u>Changes in 12cR1.2.1.54</u></h3>
+<h3><a name="NewFeatures2154">New Features</a></h3>
+<ol>
+<li>
+Oracle NoSQL Database now offers a client only package. Oracle NoSQL
+Database Client Software Library is licensed pursuant to the Apache
+2.0 License (Apache 2.0).  The Apache License and third party notices
+for the NoSQL DB Client Software Library may be viewed at this
+<a href="http://www.oracle.com/technetwork/products/nosqldb/documentation/nosql-db-agpl-license-1432845.txt"> location </a>
+or in the downloaded software.
+</li>
+<li>
+A new overloading of the <code>KVStore.storeIterator()</code>
+and <code>KVStore.storeKeysIterator()</code> implements <i>Parallel
+Scans</i>. The other <code>storeIterator()</code> methods scan all
+shards and Replication Nodes in serial order. The new Parallel
+Scan methods allow the programmer to specify a number of client-side
+threads that are used to scan Replication Nodes in parallel. [#22146]
+</li>
+</ol>
+<h3><a name="BugFixes2154">Bug and Performance Fixes</a></h3>
+<ol>
+<li>
+Improved error messages in the Data Command Line Interface
+(kvshell). For example, a put command with invalid inputs might have
+returned this error message in the past:
+<pre>
+kvshell-> put -key /test -value ./emp.insert -file -json Employee
+  Could not create JSON from input:
+  Unable to serialize JsonNode
+</pre>
+but will now produce this more useful response:
+<pre>
+kvshell-> put -key /test -value ./emp.insert -file -json Employee
+Exception handling command put -key /test -value ./emp.insert -file -json Employee:
+  Could not create JSON from input:
+  Expected Avro type STRING but got JSON value: null in field Address of Employee
+</pre>
+[#22791]
+</li>
+<li>
+Fixed a bug when using the plan deploy-admin command. In some cases,
+if an Admin service encountered an error at start up, the process would
+become unresponsive. The correct behavior is for the process to shut
+down and be restarted by its owning Storage Node. [#22908]
+</li>
+</ol>
+<!-- ============================================================ -->
+<hr>
+<h3 align="center"><u>Changes in 12cR1.2.1.25</u></h3>
+
+<h3><a name="BugFixes2125">Bug Fixes</a></h3>
+<ol>
+<li>
+If a Storage Node Agent process received a <i>master balancing</i> related
+remote request while shutting down, it could in rare instances throw an
+exception that would disable the master balancing function in the Storage Node
+Agent that initiated the request. This problem can be identified via the
+following (or similar) output in the log of the Storage Node Agent that
+initiated the request:
+
+<pre>
+
+2014-03-28 12:13:34.544 UTC SEVERE [sn2] MasterRebalanceThread thread exiting due to exception.
+null (12.1.2.1.24) java.lang.NullPointerException
+    at oracle.kv.impl.sna.StorageNodeAgentImpl$27.execute(StorageNodeAgentImpl.java:838)
+    at oracle.kv.impl.sna.StorageNodeAgentImpl$27.execute(StorageNodeAgentImpl.java:831)
+    at oracle.kv.impl.fault.ProcessFaultHandler.execute(ProcessFaultHandler.java:119)
+    at oracle.kv.impl.sna.StorageNodeAgentImpl.getMDInfo(StorageNodeAgentImpl.java:829)
+    at sun.reflect.GeneratedMethodAccessor12.invoke(Unknown Source)
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    at java.lang.reflect.Method.invoke(Method.java:606)
+    ...
+    at com.sun.proxy.$Proxy1.getMDInfo(Unknown Source)
+    at oracle.kv.impl.sna.StorageNodeAgentAPI.getMDInfo(StorageNodeAgentAPI.java:492)
+    at oracle.kv.impl.sna.masterBalance.RebalanceThread.orderMSCNs(RebalanceThread.java:580)
+    at oracle.kv.impl.sna.masterBalance.RebalanceThread.candidateTransfers(RebalanceThread.java:485)
+    at oracle.kv.impl.sna.masterBalance.RebalanceThread.run(RebalanceThread.java:301)
+2014-03-28 12:13:34.546 UTC INFO [sn2] Master balance manager shutdown
+2014-03-28 12:13:34.546 UTC INFO [sn2] MasterRebalanceThread thread exited.
+
+</pre>
+[#23419]
+</li>
+</ol>
+<!-- ============================================================ -->
+<hr>
+<h3 align="center"><u>Changes in 12cR1.2.1.24</u></h3>
+
+<h3><a name="BugFixes2124">Bug and Performance Fixes</a></h3>
+<ol>
+<li>
+Under certain circumstances, a replication node which was on the verge
+of shutting down or in the midst of transitioning from master to
+replica state could experience this failure while cleaning up
+outstanding requests. Since the node would automatically restart,
+and the operation would be retried, the failure was transparent to the
+application, but could cause an unnecessary node failover. This has
+been fixed.
+<pre>
+java.lang.IllegalStateException: Transaction 30 detected open cursors while aborting
+    at com.sleepycat.je.txn.Txn.abortInternal(Txn.java:1190)
+    at com.sleepycat.je.txn.Txn.abort(Txn.java:1100)
+    at com.sleepycat.je.txn.Txn.abort(Txn.java:1073)
+    at com.sleepycat.je.Transaction.abort(Transaction.java:207)
+    at oracle.kv.impl.util.TxnUtil.abort(TxnUtil.java:80)
+    at oracle.kv.impl.api.RequestHandlerImpl.executeInternal(RequestHandlerImpl.java:469)
+    at oracle.kv.impl.api.RequestHandlerImpl.access$300(RequestHandlerImpl.java:122)
+    at oracle.kv.impl.api.RequestHandlerImpl$2.execute(RequestHandlerImpl.java:301)
+    at oracle.kv.impl.api.RequestHandlerImpl$2.execute(RequestHandlerImpl.java:290)
+    at
+oracle.kv.impl.fault.ProcessFaultHandler.execute(ProcessFaultHandler.java:135>
+</pre>
+[#22152]
+</li>
+<li>
+In past releases of NoSQL DB, a replication node which transitioned
+from master to replica state would have to close and reopen its
+database environment as part of the change in status. This transition
+has now been streamlined so that in the majority of cases, the
+database environment is not perturbed, the transition requires fewer
+resources, and the node is more available.
+[#22627]
+</li>
+<li>
+The <code>plan deploy-topology</code> command has additional
+safeguards to increase the reliability of the topology rebalance and
+redistribute plans. When moving a replication node from one Storage
+Node to another, the command will now check that the Storage Nodes
+involved in the operation are up and running before any action is
+taken. [#22850]
+</li>
+<li>
+Under certain circumstances it was possible for a replication node to
+use out of date master identity information when joining a
+shard. This could cause a delay if the targeted node was
+unavailable. This has been fixed. [#22851]
+</li>
+<li>
+Under certain circumstances operations would end prematurely
+with oracle.kv.impl.fault.TTLFaultException. This exception is now
+handled internally by the server and client library and the operation
+is retried. If the fault condition continues the operation will
+eventually fail with a oracle.kv.RequestTimeoutException. [#22860]
+</li>
+<li>
+Previously, there were cases where a replication node would require
+the transfer of a copy of the shard data in order to come up and join
+the shard, even though it was unnecessary. This has been
+fixed. [#22782]
+</li>
+<li>
+When new storage nodes are added to an Oracle NoSQL DB deployment and
+a new topology is deployed, the store takes that opportunity to
+redistribute master roles for optimal performance. In some cases, the
+store might not notice the new storage nodes until other events, such
+as failovers or mastership changes had occurred, which caused a delay
+in master balancing. This has been fixed. [#22888]
+</li>
+<li>
+The setting of the JE configuration parameter:
+je.evictor.criticalPercentage used by the store has been corrected. It
+used to be set to 105 and has been changed to 20. This new setting
+will provide better cache management behavior in cases where the data
+set size exceeds the optimal memory settings. [#22899]
+</li>
+</ol>
+<h3><a name="UtilityAndDocChanges2124">Utility and Documentation Changes</a></h3>
+<ol>
+<li>
+A timestamp has been added to the output of the CLI "ping" command. [#22859]
+</li>
+</ol>
+
+<!-- ============================================================ -->
+<hr>
+<h3 align="center"><u>Changes in 12cR1.2.1.19</u></h3>
+
+<h3><a name="documentation2119">Documentation Changes</a></h3>
+<ol>
+<li>
+This release includes a new document, Oracle NoSQL Database
+Availability and Failover. It explains the general concepts and
+issues surrounding data availability when using Oracle NoSQL Database.
+The intended audiences for this document are system architects and
+developers. The new information can be found under the "For the
+Developer" section in the documentation index page.
+</li>
+<li>
+Clarify the instructions for adding .avsc files to the classpath for
+the example on Avro bindings in &lt;KVHOME&gt;/examples/avro.
+Improve the error message when the .avsc files are not properly available.
+</li>
+</ol>
+
+<h3><a name="BugFixes2119">Bug and Performance Fixes</a></h3>
+<ol>
+<li>
+Increased an internal parameter for lock timeouts from 500ms to 10
+seconds. Since NoSQL DB ensures that data access is deadlock free, the
+small timeout values were unnecessary and could cause spurious errors
+in the face of transient network failures. [#22583]
+</li>
+<li>
+Changing the store topology through the <code>plan
+deploy-topology</code> command could result in the following
+error if there was a transient network failure, or if the movement of
+the replication node took longer than a few seconds. Although the store
+state was still consistent, and the command could be manually retried,
+the command should be more resilient to communication glitches.
+<pre>
+... [admin1] Task 2/RelocateRN ended in state ERROR with
+java.lang.RuntimeException: Time out while waiting for rg4-rn1 to come
+up on sn1 and become consistent with the master of the shard before
+deleting the RepNode from its old home on sn4 2/RelocateRN failed.
+
+java.lang.RuntimeException: Time out while waiting for rg4-rn1 to come
+up on sn1 and become consistent with the master of the shard before
+deleting the RepNode from its old home
+</pre>
+<p>
+The command will now adjust waiting times and retry appropriately to
+ascertain whether the movement of a
+replication node has finished.[#22596]
+</li>
+<li>
+Fixed a bug where a replication node would not restart automatically if
+the directory containing its data files was removed, or its data files
+were corrupted, but were later repaired. [#22626]
+</li>
+<li>
+Added additional testing to reinforce the existing, correct behavior
+that a client directs write requests to the authoritative master in a
+segmented network split brain scenario. [#22636]
+</li>
+<li>
+In some cases, the <code>java -jar kvstore.jar ping</code> command
+could generate spurious messages about components that are no longer
+legitimately within the store.
+<pre>
+Failed to connect to service commandService
+
+Connection refused to host: 10.32.17.12; nested exception is:
+  java.net.ConnectException: Connection refused
+        SNA at hostname:localhost registry port: 6000 has no available
+        Admins or RNs registered.
+</pre>
+In particular, these messages could happen for bootstrap Admins on
+Storage Nodes that do not host deployed Admin Services. While the
+store was consistent, the error messages were confusing and have been
+removed. [#22639]
+</li>
+
+<li>
+Fixed a small timing window in Replication Node master transfer that
+could incorrectly cause the transfer transaction catch up point to
+regress, when a master transfer is occurring under heavy application
+load. The result is that shard mastership can take too long a time or
+too short a time to transfer. If the transfer time is too short, the
+target master may not be optimally caught up, and a third member of
+the shard may detect this and throw an exception.
+[#22658]
+</li>
+<li>
+Preemptively shut down and restart the replication node when a node
+transitions from master to replica, to reduce GC cost from refreshing
+the database environment.
+[#22658]
+</li>
+<li>
+Made changes to the NoSQL client library to adapt to replication node
+failures more rapidly, by retrying or forwarding data requests when it
+detects that its original target is unavailable sooner.
+[#22661]
+</li>
+<li>
+A NoSQL deployment could see this transient error when
+undergoing topology changes. Although the store remained consistent, the
+error messages were confusing and could incorrectly cause a <code>plan
+deploy-topology</code> command to fail. This has been corrected.
+<pre>
+ ... INFO [rg1-rn1] Failed pushing entire topology push to rg1-rn3
+updating from topo seq#: 0 to 1001 Problem:Update to topology seq#
+1001 failed ... oracle.kv.impl.fault.OperationFaultException:
+  Update to topology seq# 1001 failed
+    at oracle.kv.impl.rep.admin.RepNodeAdminImpl$6.execute(RepNodeAdminImpl.java:261)
+    at oracle.kv.impl.fault.ProcessFaultHandler.execute(ProcessFaultHandler.java:169)
+    at oracle.kv.impl.rep.admin.RepNodeAdminFaultHandler.execute(RepNodeAdminFaultHandler.java:117)
+
+ ...INFO [rg1-rn3] Topology update skipped. Current seq #: 1001 Update seq #: 1001
+</pre>
+[#22678]
+</li>
+<li>
+Fixed a bug where a replication node which experiences an out of
+memory error did not restart automatically.
+[#22679]
+</li>
+<li>
+Corrected the default calculation of available Storage Node memory when
+the Storage Node has been configured without a value for the bootstrap
+memory_mb parameter. In the past, the calculation was done using units
+of decimal megabytes, rather than MB, resulting in an overestimation
+of the appropriate replication node heap size. This default
+calculation is only used if the store has been configured without any
+bootstrap value for the memory_mb property, and the memory_mb storage node
+parameter has never been set.
+[#22687]
+</li>
+<li>
+Update the Storage Node more quickly about the replica/master status
+of the replication nodes it hosts. The fix applies when executing the
+<code>plan deploy-topology</code> command on a store that contains Storage Nodes
+that have capacity values greater than 1, and can host multiple
+Replication Nodes. A delay in notifying the Storage Node of its
+replication nodes status can make the distribution of mastership
+responsibilities less optimal.
+[#22689]
+</li>
+<li>
+Fixed a bug where the Admin service became unresponsive when executing
+a <code>plan deploy-topology</code> command. During this time, the
+admin service process appeared idle, only burning a second or two of
+CPU time once in a while and would not respond to new attempts to
+connect with the Admin CLI. The problem would likely only occur in
+large clusters with hundreds of components.  [#22694]
+</li>
+<li>
+Topology changes invoked by the <code>plan deploy-topology</code>
+which result in the movement of a replication node from one storage
+node to another are now more resilient to transient network failures.
+There are now more advance checks to ensure that the shard and storage
+nodes involved in the movement are available and ready to accept the
+change. In the advent of a network failure mid-move, the command is
+better at handling retries issued by the system administrator.
+[#22722]
+</li>
+<li>
+Fixed a bug where application requests failed to be processed while the
+store is executing topology changes that require partition migration
+under heavy load.
+[#22778]
+</li>
+<li>
+Adjust the default replication node garbage collection parameters to
+be more optimal, reducing CPU utilization in some cases.
+[#22779]
+</li>
+<li>
+Reduce the time taken for a replica Replication Node to become up to
+date and available to handle application requests when it has fallen
+significantly behind due to downtime or to network communication
+failures. Previously, it exited and restarted the process before
+starting the catch up stage, but will now skip the restart.
+[#22783]
+</li>
+<li>
+Fixed a bug where an internal queue in the Storage Node could fill up
+if its Replication Node repeatedly and unsuccessfully attempts to
+restart, as might happen when a resource is unavailable. In that case,
+the Storage Node was no longer able to automatically restart
+the replication node, and would have to be rebooted.
+[#22786]
+</li>
+<li>
+Fixed a bug where a Replication Node that has been stopped due to
+repeated errors, perhaps due to a lack of resource, and then
+re-enabled with the "plan start-service" command, still did not
+restart. [#22828]
+</li>
+<li>
+Fixed a bug where the following null pointer exception could happen
+for a restarting Replication Node. The problem was transient.
+<pre>
+   INFO [sn1] rg2-rn2: ProcessMonitor: startProcess
+   INFO [sn1] rg2-rn2: ProcessMonitor: stopProcess
+   SEVERE [sn1] rg2-rn2: ProcessMonitor: Unexpected exception in
+MonitorThread:
+        java.lang.NullPointerExceptionjava.lang.NullPointerException
+        at oracle.kv.impl.sna.ProcessMonitor$MonitorThread.run(ProcessMonitor.java:404)
+</pre>
+[#22830]
+</li>
+<li>
+Improve the client library's interpretation of UnknownHostException
+and ConnectIOException so that it more rapidly detects a network
+problem and updates its set of unavailable replication nodes.
+[#22841]
+</li>
+
+<!--
+Fixed a bug in the unadvertised command "topology move-repnode". In
+the past, the move-repnode command did not use available storage
+directories on the target SN. This has been fixed, so a RN that is
+moved will use any available storage dirs on the target SN. The fix
+is not documented because this in an undocumented command. [#22648]
+-->
+</ol>
+<!-- ============================================================ -->
+<hr>
+<h3 align="center"><u>Changes in 12cR1.2.1.8</u></h3>
+<h3><a name="Features218">New Features</a></h3>
+<ol>
+<li>
+This release includes support for upgrading the NoSQL DB software (client or
+server) without taking the store offline or without significant impact to
+ongoing operations. In addition, upgrades can be made incrementally, that is,
+it should not be necessary to update the software on every component at the
+same time. This support includes client and server code changes and new
+command line interface (CLI) commands. [#22421]
+<p>
+The new CLI commands provide the
+administrator tools to help with the upgrade process. Using these commands, the
+general upgrade procedure is:
+<ol>
+    <li>Install the new software on a Storage Node running an admin
+        service<sup>1</sup>.
+    <li>Install the new client and connect to the store.
+    <li>Use the <code>verify prerequisite</code> command to verify that the
+        entire store is at the proper software version to be upgraded (All
+        2.0 versions of NoSQL DB will qualify as prerequisites).
+    <li>Use <code>show upgrade-order</code> to get an ordered list of nodes to
+        upgrade.
+    <li>Install the new software on the Storage Nodes (individually or in groups
+        based on the ordered list).
+    <li>Use the <code>verify upgrade</code> to monitor progress and verify that
+        the upgrade was successful.
+</ol><br>
+<sup>1</sup> In future releases this step will not be necessary
+<p>
+If the upgrade procedure is interrupted steps 4-6 can be repeated as necessary
+to complete the upgrade.
+</li>
+</ol>
+
+<h3><a name="BugFixes218">Bug and Performance Fixes:</a></h3>
+<ol>
+<li>
+Unless configured specifically by the application, NoSQL DB specifies the
+-XX:ParallelGCThread jvm flag for each Replication Node process to
+indicate the number of garbage collector threads that the process
+should use. In the past, the algorithm in use generated a minimum
+value of 1 thread. After more testing, the minimum value has been
+raised to the min(4, &lt;the number of cores on the node&gt;). [#22475]
+</li>
+</ol>
+
+<h3><a name="APIChanges218">API Changes</a></h3>
+<ol>
+<li>
+
+The admin command line interface (CLI) provides the following new
+commands [#22422]:
+<p>
+<code>verify prerequisite [-silent] [-sn snX]*</code>
+<p>
+This command will verify that a set of storage nodes in the store meets the
+required prerequisites for upgrading to the current version and display the
+components which do not meet prerequisites or cannot be contacted. It will also
+check and report an illegal downgrade situation where the installed software is
+of a newer minor release than the current version. In this command the current
+version is the version of the software running the command line interface. If no
+storage nodes are specified, all of the nodes in the store will be checked.
+<p>
+<code>verify upgrade [-silent] [-sn snX]*</code>
+<p>
+This command will verify that a set of storage nodes in the store has been
+successfully upgraded to the current version and display the components which
+have not yet been upgraded or cannot be contacted. In this command the current
+version is the version of the software running the command line interface. If no
+storage nodes are specified, all of the nodes in the store will be checked.
+<p>
+<code>show upgrade-order</code>
+<p>
+This command will display the list of storage nodes in the order that they
+should be upgraded to maintain the store's availability. This command will
+display one or more storage nodes on a line. Multiple storage nodes on a line
+are separated by a space. If multiple storage nodes appear on a single line,
+then those nodes can be safely upgraded at the same time. When multiple nodes
+are upgraded at the same time, the upgrade must be completed on all nodes
+before the nodes next on the list can be upgraded.
+<p>
+The <code>verify [-silent]</code> command has been deprecated and is replaced by
+<code>verify configuration [-silent]</code>. The <code>verify [-silent]</code>
+command will continue to work in this release.
+</li>
+</ol>
+
+<h3><a name="UtilityAndDocChanges218">Utility and Documentation Changes</a></h3>
+<ol>
+<li>In this release, the sample code provided by the utility
+  class <a href="examples/schema/WriteOperations.html"> <code>WriteOperations</code></a>
+  (located in the <code>examples</code> directory) now includes methods that
+  perform write operations for <em>large objects</em> (or <em>LOB</em>,
+  see <a href="javadoc/oracle/kv/lob/KVLargeObject.html"> <code>KVLargeObject</code></a>). The
+  new utility methods added in this release will properly retry the associated
+  LOB operation when
+  a  <a href="javadoc/oracle/kv/FaultException.html"> <code>FaultException</code></a>
+  is encountered. Prior to this release,
+  the <a href="examples/schema/WriteOperations.html"> <code>WriteOperations</code></a>
+  utility only provided retry methods for objects that are not large
+  objects. [#21966]
+</li>
+<li>
+The number of JE lock tables used by Replication Nodes (controlled via
+the <i>je.lock.nLockTables</i> JE configuration parameter) has been increased from
+1 to 97. This change helps improve performance of applications characterized by
+very high levels of concurrent updates, by reducing lock contention. [#22373]
+</li>
+<li>
+The Administration CLI now permits the creation of multiple Datacenters.
+By choosing Datacenter replication factors so that each Datacenter holds
+less than a quorum of replicas, this change makes it possible to create
+store layouts where the failure of a single Datacenter does not result
+in the loss of write availability for any shards in the store.  In the
+current release, nodes in any Datacenter can participate in master
+elections and contribute to durability acknowledgments.  As a
+consequence, master failover and durability acknowledgments will take
+longer if they involve datacenters that are separated by large
+distances.  Future releases will provide greater flexibility in this
+area.  [#20905]
+</li>
+</ol>
+
+<!-- ========================================================= -->
+<hr>
+<h3 align="center"><u>Changes in 11gR2.2.0.39</u></h3>
+<h3><a name="Features2039">New Features</a></h3>
+<ol>
+<li>
+An integration with Oracle Coherence has been provided that allows
+Oracle NoSQL Database to be used as a cache for Oracle Coherence
+applications, also allowing applications to directly access cached
+data from Oracle NoSQL Database.  This integration is a feature of the
+Enterprise Edition of the product and implemented as a new, independent jar
+file.  It requires installation of the Oracle Coherence product as
+well.  The feature is described in the
+<a href="ConceptsManual/integration.html#coherence">Concepts Manual</a> as well as the <a
+href="javadoc/oracle/kv/coherence/package-summary.html">javadoc</a>. [#22291].
+</li>
+<li>
+The Enterprise Edition now has support for semantic technologies.
+Specifically, the Resource Description Framework (RDF), SPARQL query
+language, and a subset of the Web Ontology Language (OWL) are now
+supported.  These capabilities are referred to as the RDF Graph
+feature of Oracle NoSQL Database.  The RDF Graph feature provides a
+Java-based interface to store and query semantic data in Oracle NoSQL
+Database Enterprise Edition. The feature is described in the
+<a href="RDFGraph/index.html">RDF Graph</a> manual.
+</li>
+</ol>
+<h3><a name="BugsPatch2039">Bug Fixes</a></h3>
+<ol>
+<li>
+The preferred approach for setting NoSQL DB memory resources is to
+specify the memory_mb parameter for each SN when running the
+makebootconfig utility, and to let the system calculate the ideal
+Replication Node heap and cache sizes. However, it is possible to override the
+standard memory configurations by explicitly setting heap and cache
+sizes using the Replication Node javaMiscParams and cacheSize
+parameters. In past releases, setting the explicit values worked
+correctly when using the plan change-parameters command, but did not
+work correctly when using the change-policy command. This has been
+fixed, so that if desired, one can use the change-policy command for
+the javaMiscParams and cacheSize parameters to override the default
+memory allocation heuristics. [#22097]
+</li>
+<li>
+A NoSQL DB deployment that executes on a node with no network
+available, as might happen when running a NoSQL DB demo or tutorial,
+would fail with this error:
+<pre>
+java.net.InetAddress.getLocalHost() returned loopback address:&lt;hostname&gt; and
+  no suitable address associated with network interfaces.
+</pre>
+This has been fixed. [#22252]
+</li>
+</ol>
+<h3><a name="APIPatch2039">API Changes</a></h3>
+<ol>
+<li>
+Prior to this release, if a write operation encountered an exception from the underlying persistent store indicating that the write completed on the shard's master but not necessarily on the desired combination of replicas within the specified time interval, then that exception would be swallowed and thus never propagated to the client. Originally, this behavior was considered desirable because not only is that exception rare (because of various preceding checks performed by the implementation), but swallowing the exception would keep the API simple by avoiding the introduction of an additional exception and/or additional communication at the API level. After further thought and discussion, the team concluded that clients should know when a write operation fails to complete because of such an exception. As a result, when such a condition occurs during a write operation, a <a href="javadoc/oracle/kv/RequestTimeoutException.html"> <code>RequestTimeoutException</code></a> will now be propagated to the client; wrapping the original exception from the underlying persistent store as the cause. For additional information, including strategies one might employ when this exception is encountered, refer to the <a href="javadoc/oracle/kv/RequestTimeoutException.html"> <code>RequestTimeoutException</code> <em>javadoc</em></a>.
+<p>
+This has been fixed. [#21210]
+</li>
+<li>
+A new parameter has been added which controls the display of records
+in exception and error messages. When <code>hideUserData</code> is set
+to true, as it is by default, error messages which are printed to the
+server side logs or are displayed via the show CLI commands replace
+any key/values with the string "[hidden]". To see the actual record content
+in errors, set the parameter to false. [#22376]
+</li>
+</ol>
+<h3><a name="UtilityPatch2039">Utility and Documentation Changes</a></h3>
+<ol>
+<li>
+In previous releases, information about errors that occurred during
+NoSQL DB component start up as a result of a <code>plan
+deploy-topology</code> command would often be visible only within
+the NoSQL DB logs, which made
+installation troubleshooting difficult. In this
+release, such start up errors can now be seen via the Admin CLI
+<code>show plan -id &lt;id&gt;</code> command. [#22101]
+</li>
+<li>
+The Storage Node Agent exposes MBeans on a non-default MBeanServer
+instance.  In this release, the non-default MBeanServer now exposes
+the standard JVM platform MBeans as well as those relating only to
+Oracle NoSQL Database.
+</li>
+<li>
+In both SNMP and JMX interfaces, the new totalRequests metric is now available.  This metric counts the number of multi-operation sequences that occurred during the sampling period.
+</li>
+<li>
+Prior to this release, the product was compiled and built against the 1.x version of Hadoop (CDH3). Thus, when employing a previous release, if one were to run the <code>examples.hadoop.CountMinorKeys</code> example against a cluster based on the 2.x version of Hadoop (CDH4), the MapReduce job initiated by that example would fail as a result of an <code>IncompatibleClassChangeError</code>; which is caused by an incompatibility introduced in <code>org.apache.hadoop.mapreduce.JobContext</code> between Hadoop 1.x and Hadoop 2.x. This failure occurs whether the example is compiled and built against Hadoop 1.x or Hadoop 2.x. Because the product's customer base almost exclusively uses Hadoop 2.x, this release will provide support for Hadoop 2.x instead of 1.x. Future releases may revisit support for both Hadoop version paths, but doing so will involve refactoring the codebase and its associated release artifacts, as well as substantial changes to the product's current build process.
+<p>
+Support of Hadoop 2.x (CDH4) has been provided. [#22157]
+</li>
+<li>
+The java -jar kvstore.jar makebootconfig -mount flag has been changed
+to -storagedir. The "plan change-mountpoints -path &lt;storage
+directory&gt;" command is deprecated in favor of "plan
+change-storagedir -storagedir &lt;storage directory&gt;". [#21880]
+</li>
+<li>
+The concept of Storage Node capacity is better explained in the
+Administrator's Guide.
+</li>
+<li>
+The Administrator's Guide has a revamped section on how to calculate the
+resources needed for operating a NoSQL DB deployment.
+</li>
+</ol>
+<!-- ========================================================= -->
+<hr>
+<h3 align="center"><u>Changes in 11gR2.2.0.26</u></h3>
+<h3><a name="Features2026">New Features:</a></h3>
+<ol>
+
+<li>
+This release adds the capability to remove an Admin service replica.
+If you have deployed more than one Admin, you can remove one of them
+using the following command:
+<blockquote>
+<pre>
+plan remove-admin -admin &lt;adminId&gt;
+</pre>
+</blockquote>
+<p>
+You cannot remove the sole Admin if only one Admin instance is
+configured.
+</p><p>
+For availability and durability reasons, it is highly recommended that
+you maintain at least three Admin instances at all times.  For that
+reason, if you try to remove an Admin when the removal would result in
+there being fewer than three, the command will fail unless you give
+the <i>-force</i> flag.
+</p><p>
+If you try to remove the Admin that is currently the master,
+mastership will transfer to another Admin.  The plan will be
+interrupted, and subsequently can be re-executed on the new master
+Admin.  To re-execute the interrupted plan, you would use this command:
+</p>
+<blockquote>
+<pre>
+plan execute -id &lt;planId&gt;
+</pre>
+</blockquote>
+</li>
+
+<li>
+The Admin CLI verify has an added check to verify that the Replication
+Nodes hosted on a single Storage Node have memory settings that fit
+within the Storage Node's memory budget. This guards against mistakes
+that may occur if the system administrator overrides defaults and
+manually sets Replication Node heap sizes.[#21727]
+</li>
+
+<li>
+The Admin CLI verify command now labels any verification issues as
+violations or notes. Violations are of greater importance, and the
+system administrator should determine how to adjust the system to
+address the problem. Notes are warnings, and are of lesser
+importance. [#21950]
+</li>
+
+</ol>
+
+<h3><a name="BugFixes2026">Bug fixes:</a></h3>
+<!-- ========================================================= -->
+<ol>
+
+<li>
+Several corrections were made to latency statistics. These corrections apply
+to the service-side statistics in the Admin console, CLI <code>show perf</code>
+command, .perf files and .csv files, as well as the client-side statistics
+returned by KVStore.getStats. However, corrections to the 95% and 99% values do
+not apply to the client-side statistics, since these values do not appear in
+the client-side API.
+  <ul>
+      <li>The definition of latency has been corrected for the "multi"
+      operation requests (multiGet, multiDelete, execute, etc).  These are
+      labeled "multi" in the <code>Op Type</code> column where latency
+      information is displayed.  The previous definition was "latency in
+      milliseconds per <em>operation</em>" while the new definition is "latency
+      in milliseconds per <em>request</em>".  In other words, for a "multi"
+      operation request, latency now applies to the entire request rather than
+      to each operation.  For "single" operation requests, the definition of
+      latency has not changed.
+      </li>
+      <li>To go along with the change above, a new column containing the number
+      of requests in the sample has been added to all latency information
+      displays: <code>TotalReq</code>.  This is also available for client-side
+      statistics using the new <code>OperationMetrics.getTotalRequests</code>
+      method.  For "multi" operation requests, the total number of requests is
+      normally smaller than the total number of operations (the
+      <code>TotalOps</code> column).  For "single" operation requests, the
+      total number of requests and operations are equal.
+      </li>
+      <li>Improved the consistency of the values reported in each sample so
+      that, for example, the minimum latency is always less than the maximum
+      latency.  However, note that statistics are collected without
+      synchronization to avoid impacting performance, and for small sample
+      sizes the values in a sample are not always accurate or self-consistent.
+      </li>
+      <li>Fixed a bug that caused the 95% and 99% values to show the maximum
+      latency recorded (within 1000 ms), rather than the lowest 95% or 99% as
+      intended.  This bug only applied to the "multi" operation requests.
+      </li>
+      <li>Fixed a bug that caused the 95% and 99% values to sometimes
+      mistakenly appear as -1.  These values should only appear as -1 when
+      there were no operations in the sample with a latency below 1000 ms.
+      </li>
+  </ul>
+[#21763]
+</li>
+
+<li>
+Modified the Administration Process to allocate ports from within a port range
+if one is specified by the <i>-servicerange</i> argument to
+the <i>makebootconfig</i> utility. If the argument is not specified the
+Administration Process will use any available port. Please see
+the <a href="http://docs.oracle.com/cd/NOSQL/html/AdminGuide/"> Admin Guide</a>
+for details regarding the configuration of ports used by Oracle NoSQL
+Database.  [#21962]
+</li>
+
+<li>
+Modified the replication node to handle the unlikely case that the locally
+stored topology is missing. A missing topology results in a
+java.lang.NullPointerException being thrown in the TopologyManager and will
+prevent the replication node from starting. [#22015]
+</li>
+
+<li>
+Replication Node memory calculations are more robust for Storage Nodes
+that host multiple Replication Nodes. In previous releases, using the
+plan change-params command to reduce the capacity parameter for a
+Storage Node which hosts multiple Replication Nodes could result in an
+over aggressive increase in RN heap, which would make the Replication
+Nodes fail at start up. The problem would be fixed when a topology was
+rebalanced, but until that time, the Replication Nodes were
+unavailable. The default memory sizing calculation now factors in the
+number of RNs resident on a Storage Node, and adjusts RN heap sizes as
+Replication Nodes are relocated by the deploy-topology
+command. [#21942]
+</li>
+
+<li>
+Fixed a bug that could cause a NullPointerException, such as the one below,
+during RN start-up.  The exception would appear in the RN log and the RN would
+fail to start.  The conditions under which this problem occurred include
+partition migration between shards along with multiple abnormal RN shutdowns.
+If this bug is encountered, it can be corrected by upgrading to the current
+release, and no data loss will occur.
+<pre>
+Exception in thread "main" com.sleepycat.je.EnvironmentFailureException: (JE
+5.0.XX) ...  last LSN=.../... LOG_INTEGRITY: Log information is incorrect,
+problem is likely persistent. Environment is invalid and must be closed.
+    at com.sleepycat.je.recovery.RecoveryManager.traceAndThrowException(RecoveryManager.java:2793)
+    at com.sleepycat.je.recovery.RecoveryManager.undoLNs(RecoveryManager.java:1097)
+    at com.sleepycat.je.recovery.RecoveryManager.buildTree(RecoveryManager.java:587)
+    at com.sleepycat.je.recovery.RecoveryManager.recover(RecoveryManager.java:198)
+    at com.sleepycat.je.dbi.EnvironmentImpl.finishInit(EnvironmentImpl.java:610)
+    at com.sleepycat.je.dbi.DbEnvPool.getEnvironment(DbEnvPool.java:208)
+    at com.sleepycat.je.Environment.makeEnvironmentImpl(Environment.java:246)
+    at com.sleepycat.je.Environment.&lt;init&gt;(Environment.java:227)
+    at com.sleepycat.je.Environment.&lt;init&gt;(Environment.java:170)
+    ...
+Caused by: java.lang.NullPointerException
+    at com.sleepycat.je.log.entry.LNLogEntry.postFetchInit(LNLogEntry.java:406)
+    at com.sleepycat.je.txn.TxnChain.&lt;init&gt;(TxnChain.java:133)
+    at com.sleepycat.je.txn.TxnChain.&lt;init&gt;(TxnChain.java:84)
+    at com.sleepycat.je.recovery.RollbackTracker$RollbackPeriod.getChain(RollbackTracker.java:1004)
+    at com.sleepycat.je.recovery.RollbackTracker$Scanner.rollback(RollbackTracker.java:477)
+    at com.sleepycat.je.recovery.RecoveryManager.undoLNs(RecoveryManager.java:1026)
+    ... 10 more
+</pre>
+[#22052]
+</li>
+
+<li>
+Fixed a bug that causes excess memory to be used in the storage engine cache on
+an RN, which could result in poor performance as a result of cache eviction and
+additional I/O.  The problem occurred only when the
+<code>KVStore.storeIterator</code> or <code>KVStore.storeKeysIterator</code>
+method was used.  [#21973]
+</li>
+
+</ol>
+
+<!-- ========================================================= -->
+<h3><a name="General2026">Performance and other General Changes:</a></h3>
+<!-- ========================================================= -->
+<ol>
+
+<li>
+The replicas in a shard now dynamically configure the JE property
+<i>RepParams.REPLAY_MAX_OPEN_DB_HANDLES</i> which controls the size of the cache
+used to hold database handles during replication. The cache size is determined
+dynamically based upon the number of partitions currently hosted by the
+shard. This improved cache sizing can result in better write performance for
+shards hosting large numbers of partitions. [#21967]
+</li>
+
+<li>
+The names of the client and server JAR files no longer include release
+version numbers.  The files are now called:
+<blockquote>
+<pre>
+lib/kvstore.jar
+lib/kvclient.jar
+</pre>
+</blockquote>
+<p>
+This change should reduce the amount of work needed to switch to a new
+release because the names of JAR files will no longer change between
+releases.  Note that the name of the installation directory continues to
+include the release version number. [#22034]
+</li>
+
+<li>
+A SEVERE level message is now logged and an admin alert is fired when the
+storage engine's average log cleaner (disk reclamation) backlog increases over
+time.  An example of the message text is below.
+<pre>
+121215 13:48:57:480 SEVERE [...] Average cleaner backlog has grown from 0.0 to
+6.4. If the cleaner continues to be unable to make progress, the JE cache size
+and/or number of cleaner threads are probably too small. If this is not
+corrected, eventually all available disk space will be used.
+</pre>
+For more information on setting the cache size appropriately to avoid such
+problems, see "Determining the Per-Node Cache Size" in the Administrator's
+Guide.
+[#21111]
+</li>
+
+<li>
+The storage engine's log cleaner will now delete files in the latter portion of
+the log, even when the application is not performing any write operations.
+Previously, files were prohibited from being deleted in the portion of the log
+after the last application write.  When a log cleaner backlog was present (for
+example, when the cache had been configured too small, relative to the data set
+size and write rate), this could cause the cleaner to operate continuously
+without being able to delete files or make forward progress.  [#21069]
+</li>
+
+<li>
+NoSQL DB 2.0.23 introduced a performance regression over R1.2.23. The
+kvstore client library and Replication Node consumed a greater
+percentage of system CPU time. This regression has been fixed. [#22096]
+</li>
+</ol>
+
+<!-- ============================================================ -->
+<hr>
+<h3 align="center"><u>Changes in 11gR2.2.0.23</u></h3>
+
+<!-- ========================================================= -->
+<h3><a name="Features2023">New Features:</a></h3>
+<ol>
+<li>
+This release provides the ability to add storage nodes to the system
+after it has been deployed. The system will rebalance and redistribute
+the data onto the new nodes without stopping operations. See Chapter
+6, of the Admin
+Guide, <a href="AdminGuide/managing-topology.html">Determining
+your Store's Configuration</a>, for more details.
+<li>
+A new <code>oracle.kv.lob</code> package provides operations that can
+be used to read and write Large Objects (LOBs) such as audio and video
+files. As a general rule, any object larger than 1 MB is a good
+candidate for representation as a LOB. The LOB API permits access to
+large values without having to materialize the value in its entirety
+by providing streaming APIs for reading and writing these objects.
+<li>
+A C API has been added. The implementation uses Java JNI and requires
+a Java virtual machine to run on the client. It is available as a
+separate download.
+<li>
+Added a new remove-storagenode plan. This command will
+remove a storage node which is not hosting any NoSQL Database components
+from the system's topology. Two examples of when this might be useful
+are:
+<blockquote>
+A storage node was incorrectly configured, and cannot be deployed.<br>
+A storage node was once part of a NoSQL Database, but all components have
+been migrated from it using the migrate-storagenode command, and the
+storage node should be decommissioned.
+</blockquote>
+[#20530]
+</li>
+<li>
+Added the ability to specify additional physical configuration
+information about storage nodes including:
+<ul>
+  <li>Capacity - the number of RepNodes the SN may host</li>
+  <li>Number of CPUs</li>
+  <li>Amount of memory to use</li>
+  <li>Specific directory paths (mount points) to use for RepNodes</li>
+</ul>
+This information is used by the system to make more intelligent
+choices about resource allocation and consumption.  The administration
+documentation discusses how these parameters are set and used.
+[#20951]
+</li>
+<li>Added Avro support.  The value of a kv pair can now be stored in Avro
+binary format.  An Avro schema is defined for each type of data stored.  The
+Avro schema is used to efficiently and compactly serialize the data, to
+guarantee that the data conforms to the schema, and to perform automatic
+evolution of the data as the schema changes over time.  Bindings are supplied
+that allow representing Avro data as a POJO (Plain Old Java Object), a JSON
+object, or a generic Map-like data structure. For more information, see
+<a href="GettingStartedGuide/avroschemas.html">Chapter 7 - Avro Schemas</a> and
+<a href="GettingStartedGuide/avrobindings.html">Chapter 8 - Avro Bindings</a>
+in the <i>Getting Started Guide</i>. The <code>oracle.kv.avro</code> package is
+described in the Javadoc.  The use of the Avro format is strongly
+recommended.  NoSQL DB will leverage Avro in the future to provide additional
+features and capabilities.  [#21213]
+</li>
+<li>Added Avro support for the Hadoop <code>KVInputFormat</code> classes.
+A new <code>oracle.kv.hadoop.KVAvroInputFormat</code> class returns Avro
+<code>IndexedRecord</code>s to the caller. When this class is  used in
+conjunction with Oracle Loader for Hadoop, it is possible to read data
+directly from NoSQL Database using OLH without using an interim Map-Reduce
+job to store data in HDFS. [#21157]
+</li>
+<li>Added a feature which allows Oracle Database External Tables to be
+used to access Oracle NoSQL Database records. There is more
+information in javadoc for the
+<a href="javadoc/index.html?oracle/kv/exttab/package-summary.html">
+<code>oracle.kv.exttab</code></a> package and an "cookbook" example in the
+<a href="examples/index.html?externaltables/package-summary.html">
+<code>examples/externaltables</code></a> directory. [#20981]
+</li>
+</ol>
+<!-- ========================================================= -->
+<h3><a name="General2023">Performance and other General Changes:</a></h3>
+<!-- ========================================================= -->
+<ol>
+<li>
+The following new methods:
+<ul>
+<li><code>KVStoreConfig.setOpenTimeout()</code></li>
+<li><code>KVStoreConfig.getOpenTimeout()</code></li>
+<li><code>KVStoreConfig.setReadTimeout()</code></li>
+<li><code>KVStoreConfig.getReadTimeout()</code></li>
+</ul>
+have been added to allow clients to configure the socket timeouts used to make
+client requests. Please review the javadoc for details.
+<p>
+R1 installations must ensure that the software on the storage nodes has
+been upgraded as described in the upgrade documentation
+accompanying this release before using the above APIs on the client.
+[#20997]
+</li>
+
+<li>
+New service parameters have been added to control the backlog
+associated with sockets created by NoSQL Database. These are
+controllable for the Rep Node and Storage Nodes' Monitor, Admin, and
+Registry Handler interfaces. The parameters
+are <code>rnRHSOBacklog</code> (default
+1024), <code>rnMonitorSOBacklog</code> (default 0), rnAdminSOBacklog
+(default 0), <code>rnAdminSOBacklog</code> (default 0),
+<code>snAdminSOBacklog</code> (default
+0), <code>snMonitorSOBacklog</code> (default 0), and
+<code>snRegistrySOBacklog</code> (default 1024).
+[#21322]
+</li>
+
+<li>
+  Previously, calling <code>Key.isPrefix</code> with an argument containing
+  a smaller major or minor path than the target Key object caused an
+  IndexOutOfBoundsException in certain cases.  This has been fixed.
+</li>
+<li>
+The <code>KeyRange()</code> constructor now checks that the start
+<code>Key</code> is less than the end <code>Key</code> if both are specified,
+otherwise an <code>IllegalArgumentException</code> is thrown.
+<code>KeyRange</code> also has <code>toString()</code> and
+<code>fromString()</code> methods for encoding and decoding
+<code>KeyRange</code> instances, similar to the same methods in
+<code>Key</code>. [#21470]
+</li>
+</ol>
+<!-- ========================================================= -->
+<h3><a name="Utilities2023">Utility Changes:</a></h3>
+<!-- ========================================================= -->
+<ol>
+<li>
+Many new commands have been added to the CLI. See
+<a href="AdminGuide/cli_command_reference.html">
+    Appendix A - Command Line Interface (CLI) Command Reference
+</a> of the <i>Administrator's Guide</i>
+for details.
+<li>
+The Admin Console is now for monitoring only.
+<li>
+Administration CLI commands have been changed so that component ids
+match the ids used in the topology display. Previously Datacenters,
+Storage Nodes, Admin instances and Replication Nodes were identified
+only by number. For example, the syntax to add Storage Node 17 to a
+Storage Node pool, or to show the parameters for a given Replication Node was:
+<blockquote>
+<pre>
+joinPool myStorageNodePool 17
+show repnode-params 5,3
+</pre>
+</blockquote>
+Datacenters can now be expressed as # or dc#<br>
+Admin instances can now be expressed as # or admin#<br>
+Storage Nodes can now be expressed as # or sn#<br>
+Replication Nodes can now be expressed as groupNum,nodeNum, or rgX-rnY<br>
+<p>
+The commands shown above are still valid, but can also be expressed as:
+<blockquote>
+<pre>
+joinPool myStorageNodePool sn17
+show repnode-params rg5-rn3
+</pre>
+</blockquote>
+[#21099]
+</li>
+</ol>
+
+<!-- ========================================================= -->
+<h3><a name="IandI2023">Documentation, Installation and
+    Integration:</a></h3>
+<!-- ========================================================= -->
+
+<ol>
+<li>
+ The javadoc for the <code>Key.createKey</code> methods has been improved to
+ warn that List instances passed as parameters are owned by the Key object
+ after calling the method.  To avoid unpredictable results, they must not be
+ modified.  [#20530]
+</li>
+</ol>
+
+<!-- ============================================================ -->
+<hr>
+<h3 align="center"><u>Changes in 11gR2.1.2.123</u></h3>
+
+<!-- ========================================================= -->
+<h3><a name="BugFixes12">Bug fixes:</a></h3>
+<!-- ========================================================= -->
+<ol>
+<li>
+  Previously, executing a change-repnode-params plan in order to
+  change Replication Node parameters for a node other than the one
+  running the Admin service would fail. This operation will now
+  succeed. [#20901]
+</li>
+<li>
+  A deploy-storage-node plan which ran into problems when attempting
+  to deploy a new storage node would leave the problematic SN in the
+  store. This would require that the user either take manual action to
+  remove the bad SN, or fix the problem and retry the plan. For
+  convenience, the deploy-storage-node plan will now clean up if it
+  runs into errors, and will not leave the failed SN behind. [#20530]
+</li>
+</ol>
+
+<!-- ========================================================= -->
+<h3><a name="General12">Performance and other General Changes:</a></h3>
+<!-- ========================================================= -->
+<ol>
+<li>
+  The command line interface's <code>snapshot create</code> command
+  has been made significantly faster. Previously, it could take
+  minutes if executed on a store with a large amount of data.  This
+  should be reduced to seconds. [#20772]
+</li>
+
+</ol>
+
+<!-- ========================================================= -->
+<h3><a name="Utilities12">Utility Changes:</a></h3>
+<!-- ========================================================= -->
+<ol>
+<li>
+The two scripts for starting kvlite and executing control commands,
+<code>bin/run-kvlite.sh</code> and <code>bin/kvctl</code>, have been replaced
+by a <code>java -jar lib/kvstore-M.N.P.jar</code> command.  This provides portability
+to all Java platforms, including Windows.  The two scripts are deprecated, but
+will be supported for at least one release cycle.
+<p>
+The translation from the old script commands to the new -jar commands is as
+follows:</p>
+<table border="1" summary="Compare script and jar commands">
+    <tr><th>Old script command</th><th>New -jar command</th></tr>
+    <tr>
+        <td><code>bin/run-kvlite.sh args...</code></td>
+        <td><code>java -jar lib/kvstore-M.N.P.jar kvlite args...</code></td>
+    </tr>
+    <tr>
+        <td><code>bin/kvctl command args...</code></td>
+        <td><code>java -jar lib/kvstore-M.N.P.jar command args...</code></td>
+    </tr>
+</table>
+<p>
+There are a few differences to be aware of between the old and new commands.
+<ul>
+    <li><p><code>nohup</code>, if desired, must be explicitly specified.  In
+    the <code>bin/kvctl</code> script, nohup was added automatically for the
+    <code>start</code> and <code>restart</code> commands.  To specify the
+    equivalent command, use:</p>
+    <p><code>nohup java -jar lib/kvstore-M.N.P.jar start args... &gt; /dev/null &lt;
+    /dev/null 2&lt;&amp;1 &amp;</code></p>
+    </li>
+    <li><p>The logging configuration file for kvlite is now specified using
+    standard Java syntax.  Previously, the
+    <code>examples/logging.properties</code> configuration file was added
+    automatically when passing <code>-logging</code> to the
+    <code>run-kvlite.sh</code> script.  The new equivalent is:</p>
+    <p><code>java -Djava.util.logging.config.file=examples/logging.properties
+    -jar lib/kvstore-M.N.P.jar kvlite args...</code></p>
+    </li>
+    <li><p>Previously, the <code>-host</code> argument defaulted to
+    the local machine name (via the <code>`hostname`</code> command) when
+    running the <code>kvctl</code> script.  Now, for all control commands, no
+    default hostname is used and the <code>-host</code> argument must be
+    specified explicitly.  This change was made for two reasons: 1)
+    consistency, since the port and other arguments have no default value for
+    control commands, and 2) safety, since specifying an explicit hostname
+    guards against accidental errors.</p>
+    </li>
+    <li><p>Previously, the <code>-host</code> argument defaulted to
+    <code>localhost</code> when running the <code>run-kvlite.sh</code> script.
+    Now, the default is the local machine name rather than (literally)
+    <code>localhost</code>.  Note that the kvlite command, unlike the control
+    commands, has default values for all arguments.  This is because the kvlite
+    command is designed for ease-of-use during development on a single machine.
+    kvlite should not be used in production or for performance testing.</p>
+    </li>
+    <li><p>Previously, running <code>java -jar lib/kvstore-M.N.P.jar</code>, with or
+    without arguments, printed the product version.  Now, if no arguments are
+    specified, a usage message is printed.  To print the version, use the
+    version command:</p>
+    <p><code>java -jar lib/kvstore-M.N.P.jar version</code></p>
+    </li>
+</ul>
+</li>
+</ol>
+
+</body>
+</html>

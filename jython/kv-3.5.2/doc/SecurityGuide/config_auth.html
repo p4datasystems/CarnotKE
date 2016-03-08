@@ -1,0 +1,617 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 8. Configuring Authentication</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="prev" href="ssl_comm.html" title="SSL communication properties" />
+    <link rel="next" href="sessions.html" title="Sessions" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 8. Configuring Authentication</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ssl_comm.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="sessions.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="config_auth"></a>Chapter 8. Configuring Authentication</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="config_auth.html#user_management">User Management</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="config_auth.html#user_creation">User Creation</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="config_auth.html#user_modification">User Modification</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="config_auth.html#user_removal">User Removal</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="config_auth.html#user_status">User Status</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="config_auth.html#user_login">User Login</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="config_auth.html#password_management">Password Management</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="sessions.html">Sessions</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+        Authentication means verifying the identity of someone (a user,
+        server, or other entity) who wants to use data, resources, or
+        applications. Validating that identity establishes a trust relationship
+        for further interactions. Authentication also enables accountability by
+        making it possible to link access and actions to specific identities.
+    </p>
+      <p> 
+        Within a secure Oracle NoSQL Database, access to the database and internal APIs is
+        generally limited to authenticated users. When a secure Oracle NoSQL Database is first
+        started, there are no users defined, and login to the administrative
+        interface is allowed without authentication. However, no data access
+        operations can be performed without user authentication. 
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="user_management"></a>User Management</h2>
+            </div>
+          </div>
+        </div>
+        <div class="toc">
+          <dl>
+            <dt>
+              <span class="sect2">
+                <a href="config_auth.html#user_creation">User Creation</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="config_auth.html#user_modification">User Modification</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="config_auth.html#user_removal">User Removal</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="config_auth.html#user_status">User Status</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="config_auth.html#user_login">User Login</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="config_auth.html#password_management">Password Management</a>
+              </span>
+            </dt>
+          </dl>
+        </div>
+        <p> 
+            Users can be created, modified or removed in the Oracle NoSQL Database through
+            the admin CLI. The administrative commands of manipulating users are
+            exposed in SQL format via DDL API. Information about a specific user
+            account as well as a summary listing of registered users can also be
+            displayed. For more information, see the next sections describing
+            each user management operation
+            . </p>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="user_creation"></a>User Creation</h3>
+              </div>
+            </div>
+          </div>
+          <p> 
+                To create a user, use the following command: 
+            </p>
+          <pre class="programlisting">CREATE USER user_name (IDENTIFIED BY password
+[PASSWORD EXPIRE] [PASSWORD LIFETIME duration] | IDENTIFIED EXTERNALLY)
+[ACCOUNT LOCK|UNLOCK] [ADMIN] </pre>
+          <p>
+                where: 
+            </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+                        <code class="literal">user_name</code>
+                    </p>
+                <p> 
+                        The name of the user. If specifying a Kerberos user,
+                        the name must match the fully qualified principal name
+                        created in KDC. 
+                    </p>
+                <p>
+                        Kerberos users need to have different names from
+                        existing users, as you cannot change the authentication
+                        type of an existing user.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">IDENTIFIED Clause</code>
+                    </p>
+                <p> 
+                        Indicate how Oracle NoSQL Database authenticates the users
+                        (currently by password). Kerberos users can be identified
+                        by using the IDENTIFIED EXTERNALLY clause instead.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">BY password</code>
+                    </p>
+                <p> 
+                        Create an Oracle NoSQL Database local user and indicates that the
+                        user must specify password to log on to the Oracle NoSQL Database.
+                    </p>
+                <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                  <h3 class="title">Note</h3>
+                  <p> 
+                            The password must be quoted by double-quotation
+                            marks, for example, "123@abc". 
+                        </p>
+                </div>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">IDENTIFIED EXTERNALLY</code>
+                    </p>
+                <p> 
+                        Indicate that Oracle NoSQL Database will use an external mechanism
+                        to authenticate the user. 
+                    </p>
+                <p>
+                        Kerberos is supported as an external authentication
+                        service.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">ACCOUNT Clause</code>
+                    </p>
+                <p> 
+                        Specify ACCOUNT LOCK to lock the user's account and
+                        disable access. Specify ACCOUNT UNLOCK to enable the
+                        user. 
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">ADMIN Clause</code>
+                    </p>
+                <p> 
+                        Specify ADMIN to make the user granted with
+                            <code class="literal">sysadmin</code> role by default. 
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">PASSWORD EXPIRE </code>
+                    </p>
+                <p>
+                        Specify PASSWORD EXPIRE if you want the user's
+                        password to expire immediately on first login. This
+                        setting forces the user or the user having sysadmin role
+                        to change the password before the user can log in to the
+                        database. 
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">PASSWORD LIFETIME duration</code>
+                    </p>
+                <p>
+                        Specify the duration that current password can be
+                        used for authentication. 
+                    </p>
+                <pre class="programlisting">duration: [0-9]+ unit 
+unit: S | M | H | SECONDS | MINUTES | HOURS | DAYS</pre>
+                <p> A simple example to create an admin user Kate with
+                        password of "123": </p>
+                <pre class="programlisting">kv-&gt; execute 'CREATE USER Kate IDENTIFIED BY \”123\” ADMIN'</pre>
+              </li>
+            </ul>
+          </div>
+          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+            <h3 class="title">Note</h3>
+            <p>
+                    To create the first user in an Oracle NoSQL Database instance, you need
+                    to log in to the Admin CLI as an anonymous user and use the
+                    “plan create-user” command. To do this, see, <a class="xref" href="secure_installation.html" title="Chapter 3. Performing a Secure Oracle NoSQL Database Installation">Performing a Secure Oracle NoSQL Database Installation</a>. 
+                </p>
+          </div>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="user_modification"></a>User Modification</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                To alter a user, use the following command: 
+            </p>
+          <pre class="programlisting">ALTER USER user_name [IDENTIFIED BY password
+[RETAIN CURRENT PASSWORD]] [CLEAR RETAINED PASSWORD] [PASSWORD EXPIRE]
+[PASSWORD LIFETIME duration] [ACCOUNT UNLOCK|LOCK] </pre>
+          <p>
+                where: 
+            </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+                        <code class="literal">user_name</code>
+                    </p>
+                <p>
+                        Name of user to alter. If specifying a Kerberos user,
+                        you can only alter the ACCOUNT clause options. 
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">IDENTIFIED Clause </code>
+                    </p>
+                <p>
+                        Specify <code class="literal">BY password</code> to specify a
+                        new password for the user.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">RETAIN CURRENT PASSWORD</code>
+                    </p>
+                <p>
+                        Used with <code class="literal">BY password</code> clause. If
+                        specified, causes the current password defined for the
+                        user to be remembered as a valid alternate password for
+                        a limited duration (24 hours by default), or until the
+                        password is explicitly cleared. Only one alternate
+                        password may be retained at a time. This option allows a
+                        password to be changed while an application is still
+                        running without affecting its operation.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">CLEAR RETAINED PASSWORD Clause</code>
+                    </p>
+                <p>
+                        Erases the current alternate retained password.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">PASSWORD EXPIRE </code>
+                    </p>
+                <p> 
+                        Causes the user's password to expire immediately,
+                        then the user or the user having sysadmin role must
+                        change the password before attempting to log in to the
+                        database following the expiration. 
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">PASSWORD LIFETIME duration</code>
+                    </p>
+                <p> 
+                        Specify the duration that current password can be
+                        used for authentication. 
+                    </p>
+                <pre class="programlisting">duration: [0-9]+ unit 
+unit: S | M | H | SECONDS | MINUTES | HOURS | DAYS </pre>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">ACCOUNT Clause </code>
+                    </p>
+                <p> 
+                        Specify ACCOUNT LOCK to lock the user's account and
+                        disable access. Specify ACCOUNT UNLOCK to enable the
+                        user.
+                    </p>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="user_removal"></a>User Removal</h3>
+              </div>
+            </div>
+          </div>
+          <pre class="programlisting">DROP USER user_name </pre>
+          <p>
+                Use the <code class="literal">DROP USER user_name</code> command to
+                remove the specified user account (users cannot remove
+                themselves):
+            </p>
+          <p>
+                where, <code class="literal">user_name</code> is the name of user to
+                drop.
+            </p>
+          <p>
+                For example:
+            </p>
+          <pre class="programlisting">kv-&gt;execute 'DROP USER Kate'</pre>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="user_status"></a>User Status</h3>
+              </div>
+            </div>
+          </div>
+          <pre class="programlisting">SHOW [AS JSON] USERS| USER user_name </pre>
+          <p> 
+                Use the <code class="literal">SHOW USERS</code> command to list all
+                existing users in the system. </p>
+          <p> where, <code class="literal">user_name</code> is the name of the
+                registered user. 
+            </p>
+          <p>
+                For example, we have created 3 users in the system: 
+            </p>
+          <pre class="programlisting">kv-&gt; execute 'SHOW USERS'
+user: id=u1 name=Ken
+user: id=u2 name=Kate
+user: id=u3 name=Alice </pre>
+          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+            <h3 class="title">Note</h3>
+            <p>
+                    These IDs are an internal mechanism for ensuring
+                    uniqueness, which will be increased sequentially.
+                </p>
+          </div>
+          <p> 
+                If a user name is specified, view the detailed information of
+                a user using the <code class="literal">SHOW USER user_name</code> command.
+                For example:
+            </p>
+          <pre class="programlisting">kv-&gt; execute 'SHOW USER Kate'
+id=u2 name=kate enabled=true auth-type=LOCAL retain-passwd=inactive
+granted-role=[public]</pre>
+          <p>
+			   If a Kerberos user is specified, then the auth-type field
+			   shows EXTERNAL:
+			</p>
+          <pre class="programlisting">kv-&gt; execute 'SHOW USER krbuser@EXAMPLE.COM'
+user: id=u4 name=krbuser@EXAMPLE.COM enabled=true auth-type=EXTERNAL 
+retain-passwd=inactive granted-roles=[readwrite, public, sysadmin]</pre>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="user_login"></a>User Login</h3>
+              </div>
+            </div>
+          </div>
+          <p> 
+                You can use either the <code class="literal">-username
+                    &lt;user&gt;</code> or the <code class="literal">-security &lt;path to
+                    security file&gt;</code> runadmin argument to login to
+                the admin CLI:
+            </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+                        -username &lt;user&gt; 
+                    </p>
+                <p> 
+                        Specifies the username to log in as. This option is
+                        used in conjunction with security properties like
+                        oracle.kv.transport.
+                    </p>
+              </li>
+              <li>
+                <p> 
+                        -security &lt;path-to-security-file&gt; 
+                    </p>
+                <p>
+                        Specifies the security file that contains property
+                        settings for the login. Relative filename references
+                        within the security file are interpreted relative to the
+                        location of the security properties file. For example,
+                        if a security properties file contains the setting
+                            <code class="literal">oracle.kv.ssl.truststore=client.trust</code>
+                        then, the client.trust file should be in the same
+                        directory as the security properties file. If the file
+                        is named with an absolute path then it can be anywhere
+                        in the file system. 
+                    </p>
+                <p> 
+                        The following properties can be set in the file in
+                        addition to any of the SSL communication properties
+                        documented in the previous chapter: 
+                    </p>
+                <pre class="programlisting">oracle.kv.auth.username
+oracle.kv.auth.wallet.dir
+oracle.kv.auth.pwdfile.file </pre>
+                <p> 
+                        where the oracle.kv.auth.wallet.dir and
+                        oracle.kv.auth.pwdfile.file properties in this file
+                        indicate the location of an EE wallet directory or CE
+                        password store file, respectively.
+                    </p>
+                <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                  <h3 class="title">Note</h3>
+                  <p>
+                            The oracle.kv.security Java system property can
+                            be used as an alternative mechanism for providing a
+                            security file path. Setting this system property is
+                            equivalent to adding the
+                                <code class="literal">-security</code> option to the
+                            command line. This property is supported by all
+                            tools as well as by the KVStore client library.
+                        </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="password_management"></a>Password Management</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                The user can configure the lifetime of users’ passwords, or
+                make them expire immediately. When a password expires, the user
+                needs to renew it to log in Oracle NoSQL Database successfully.
+                The two ways to manage passwords from expiring are as follows:
+            </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+                        Explicit Expiration 
+                    </p>
+                <p>
+                        It makes current password expire immediately as well
+                        as retained password if it exists. For this user, the
+                        password must be changed before attempting to log in the
+                        database. 
+                    </p>
+                <p> 
+                        For example:
+                    </p>
+                <pre class="programlisting">kv-&gt;execute 'CREATE USER John IDENTIFIED BY \”123\” PASSWORD EXPIRE'</pre>
+              </li>
+              <li>
+                <p> 
+                        Password Lifetime Configuration
+                    </p>
+                <p>
+                        If a user logs into the database with John’s account,
+                        the user must input the new password for John.
+                    </p>
+                <pre class="programlisting">Logged in admin as John
+The password of John has expired, it is required to change the password.
+Enter the new password:
+Re-enter the new password:</pre>
+                <p>
+                        Password lifetime limits the duration that current
+                        password can be used for authentication. 
+                    </p>
+                <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                  <h3 class="title">Note</h3>
+                  <p>
+                            This configuration only works for current
+                            password but not the retained one.
+                        </p>
+                </div>
+                <p>
+                        For example:
+                    </p>
+                <pre class="programlisting">kv-&gt;execute 'ALTER USER John PASSWORD LIFETIME 15 days'</pre>
+                <p> 
+                        In the example above, the current password for the
+                        user John will expire after 15 days. After expiration,
+                        if the user attempts to log into the database, the user
+                        will be prompted with a notification to change the
+                        password. 
+                    </p>
+                <p> 
+                        A retained password is used to allow a password to be
+                        changed while an application is still running without
+                        affecting its operation. It is only remembered by the
+                        system for a limited duration (24 hours) and there is no
+                        way to specify individual duration for each user. For
+                        retained password, only explicit expiration is supported
+                        using the following command:
+                    </p>
+                <pre class="programlisting">kv-&gt;execute 'ALTER USER John CLEAR RETAINED PASSWORD' </pre>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ssl_comm.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="sessions.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">SSL communication properties </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Sessions</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

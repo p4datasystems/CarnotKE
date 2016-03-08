@@ -1,0 +1,15 @@
+- Oracle NoSQL
+in a terminal window, download the zip file from the link above
+make sure you have java 1.8 on your system
+unzip kv-ee-3.5.2.zip
+cd kv-3.5.2/lib
+java -jar kvstore.jar kvlite
+you should see the following:
+./kvroot -store kvstore -host Phils-MacBook-Pro.local -port 5000 -admin 5001
+
+- Carnot dist
+in a new termianl window, download the zip file from the link above
+make sure you have java 1.8 on your system
+unzip dist.zip
+dist/bin/jython -S
+you should see the following:

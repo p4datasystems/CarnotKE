@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Example5c.java: SPARQL query with TIMEOUT and GRACEFUL TIMEOUT</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="quickstart.html" title="Chapter 8. Quick Start for the RDF Graph Feature" />
+    <link rel="prev" href="example5b.html" title="Example5b.java: SPARQL query with ORDERED query option" />
+    <link rel="next" href="example5d.html" title="Example5d.java: SPARQL query with DOP" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center"> Example5c.java: SPARQL query with TIMEOUT and GRACEFUL TIMEOUT</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="example5b.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 8. Quick Start for the RDF Graph Feature</th>
+          <td width="20%" align="right"> <a accesskey="n" href="example5d.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="example5c"></a> Example5c.java: SPARQL query with TIMEOUT and GRACEFUL TIMEOUT</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+            This example shows the SPARQL query from 
+            <a class="xref" href="example5.html" title="Example5.java: SPARQL query with JOIN_METHOD"> Example5.java: SPARQL query with JOIN_METHOD</a>
+            with additional features including a timeout setting
+            (TIMEOUT=1, in seconds). You can modify this code by
+            adding a graceful timeout setting (BEST_EFFORT_QUERY=T) in
+            order to avoid getting an error and retrieve all triples
+            found until timeout.
+        </p>
+      <pre class="programlisting">import com.hp.hpl.jena.query.*;
+import org.openjena.riot.Lang;
+import com.hp.hpl.jena.sparql.core.DatasetImpl;
+import oracle.rdf.kv.client.jena.*;
+
+public class Example5c
+{
+  
+  public static void main(String[] args) throws Exception
+  {
+    
+String szStoreName  = args[0];
+String szHostName   = args[1];
+String szHostPort   = args[2];
+   
+// create connection
+OracleNoSqlConnection conn 
+= OracleNoSqlConnection.createInstance(szStoreName,
+                                       szHostName, 
+                                       szHostPort);
+
+// Create datasetgraph  
+OracleGraphNoSql graph = new OracleGraphNoSql(conn);
+DatasetGraphNoSql datasetGraph = DatasetGraphNoSql.createFrom(graph);
+   
+// Close graph, as it is no longer needed
+graph.close();
+    
+// Clear the dataset
+datasetGraph.clearRepository();
+    
+Dataset ds = DatasetImpl.wrap(datasetGraph);
+    
+// Load data from file into the dataset
+DatasetGraphNoSql.load("example.nt", Lang.NQUADS, conn, 
+                       "http://example.com");    
+   
+// Add a hint best_effort_query=t to use a graceful timeout policy   
+String szQuery = 
+" PREFIX ORACLE_SEM_FS_NS: "                         +
+" &lt;http://oracle.com/semtech#timeout=1&gt;"             +
+" PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;"         +
+" SELECT ?name1 ?name2 ?homepage2 "                  +
+" WHERE { "                                          +
+"   graph &lt;http://example.org/alice/foaf.rdf&gt; { "    +
+"     ?person1 foaf:knows ?person2 . "               +
+"     ?person1 foaf:name ?name1 . "                  +
+"     ?person2 foaf:name ?name2 . "                  +
+"     ?person2 foaf:homepage ?homepage2 . "          +
+"   } "                                              +
+" } ";
+    
+System.out.println("Execute query " + szQuery);
+    
+Query query = QueryFactory.create(szQuery);
+QueryExecution qexec = QueryExecutionFactory.create(query, ds);
+    
+try {
+      ResultSet results = qexec.execSelect();
+      ResultSetFormatter.out(System.out, results, query);
+    }
+    
+finally {
+      qexec.close();
+    }
+    
+ds.close();
+conn.dispose();    
+  }
+}
+</pre>
+      <p>
+            The following are the commands to compile and run
+            this example, as well as the expected output of the java
+            command if no graceful timeout is set.
+        </p>
+      <pre class="programlisting">javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar:./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar: ./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example5c.java
+
+javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar:./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar:./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: 
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example5c &lt;store_name&gt; \
+&lt;host_name&gt; &lt;host_port&gt;
+Exception in thread "main" com.hp.hpl.jena.shared.JenaException: 
+com.hp.hpl.jena.shared.JenaException: Timeout exceeded, user requested to 
+end data retrieval</pre>
+      <p> 
+            The following represents the expected output of the
+            java command if a graceful timeout is set. 
+        </p>
+      <pre class="programlisting">-----------------------------------------------
+| name1   | name2 | homepage2                 |
+===============================================
+| "Alice" | "Bob" | &lt;http://example.org/bob/&gt; |
+-----------------------------------------------</pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="example5b.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="quickstart.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="example5d.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Example5b.java: SPARQL query with ORDERED query option </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top">   Example5d.java: SPARQL query with DOP</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

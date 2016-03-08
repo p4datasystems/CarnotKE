@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Indexing Embedded Records</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="indexnonscalar.html" title="Chapter 8. Indexing Non-Scalar Data Types" />
+    <link rel="prev" href="indexmaps.html" title="Indexing Maps" />
+    <link rel="next" href="versions.html" title="Chapter 9. Using Row Versions" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Indexing Embedded Records</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="indexmaps.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 8. Indexing Non-Scalar Data Types</th>
+          <td width="20%" align="right"> <a accesskey="n" href="versions.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="indexrecords"></a>Indexing Embedded Records</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            You can create an index on an embedded record field so long as
+            the record field contains scalar data.  To create the index,
+            define the record as normal. To index the field, you specify
+            the name of the embedded record <span class="emphasis"><em>and</em></span> the
+            name of the field using dot notation.
+        </p>
+      <p>
+            To create the index, first create the table:
+        </p>
+      <pre class="programlisting">CREATE Table myRecordTable (
+    uid INTEGER,
+    myRecord RECORD (firstField STRING, secondField INTEGER),
+    PRIMARY KEY (uid)
+) </pre>
+      <p>
+            Once the table has been added to the store, create the index:
+        </p>
+      <pre class="programlisting">CREATE INDEX recordFieldIndex on myRecordTable (myRecord.secondField) </pre>
+      <p>
+              Data is retrieved if the table row contains the identified
+              record field with the specified value.  So, for example, if
+              you create a series of table rows like this:
+          </p>
+      <pre class="programlisting">TableAPI tableH = kvstore.getTableAPI();
+Table myTable = tableH.getTable("myRecordTable");
+
+Row row = myTable.createRow();
+row.put("uid", 12345);
+RecordValue rv = row.putRecord("myRecord");
+rv.put("firstField", "String field for 12345");
+rv.put("secondField", 3388);
+tableH.put(row, null, null);
+
+row = myTable.createRow();
+row.put("uid", 345);
+rv = row.putRecord("myRecord");
+rv.put("firstField", "String field for 345");
+rv.put("secondField", 3388);
+tableH.put(row, null, null);
+
+row = myTable.createRow();
+row.put("uid", 111);
+rv = row.putRecord("myRecord");
+rv.put("firstField", "String field for 111");
+rv.put("secondField", 12);
+tableH.put(row, null, null); </pre>
+      <p>
+              then you can retrieve any table rows that contain the
+              embedded record where "secondField" is set to a specified
+              value. (The embedded record index that we specified, above,
+              indexed myRecord.secondField.)
+          </p>
+      <p>
+              To retrieve data using a record index, you first
+              retrieve the index using its name, and create an instance of 
+              <code class="classname">IndexKey</code> that you will use to
+              perform the index lookup:
+          </p>
+      <pre class="programlisting">Index recordIndex = myTable.getIndex("recordFieldIndex");
+IndexKey indexKey = recordIndex.createIndexKey(); </pre>
+      <p>
+              Next you create a <code class="classname">RecordValue</code>
+              instance, and assign a value to it. When you perform the
+              index lookup, the only records that will be returned will be
+              those which have an embedded record with the specified field
+              and field value.
+          </p>
+      <p>
+              To set a <code class="classname">RecordValue</code>,
+              construct it using <code class="methodname">IndexKey.putRecord()</code>.
+              Pass the method the name of the record field. Then add
+              the index value to the <code class="classname">RecordValue</code>
+              instance:
+          </p>
+      <pre class="programlisting">RecordValue rv = indexKey.putRecord("myRecord");
+rv.put("secondField", 3388); </pre>
+      <p>
+              After that, you retrieve the matching table rows, and
+              iterate over them in the same way you would any
+              other index type. For example:
+          </p>
+      <pre class="programlisting">TableIterator&lt;Row&gt; iter = tableH.tableIterator(indexKey, null, null);
+System.out.println("Results for testRecord.secondField, value 3388: ");
+try {
+    while (iter.hasNext()) {
+        Row rowRet = iter.next();
+        int uid = rowRet.get("uid").asInteger().get();
+        System.out.println("uid: " + uid);
+        RecordValue recordRet = rowRet.get("myRecord").asRecord();
+        System.out.println("myRecord: " + recordRet.toString());
+    }
+} finally {
+    if (iter != null) {
+        iter.close();
+    }
+} </pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="indexmaps.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="indexnonscalar.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="versions.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Indexing Maps </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 9. Using Row Versions</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

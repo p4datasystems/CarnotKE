@@ -1,0 +1,993 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Setting Store Parameters</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="procedures.html" title="Chapter 6. Administrative Procedures" />
+    <link rel="prev" href="monitoring.html" title="Monitoring the Store" />
+    <link rel="next" href="removestore.html" title="Removing an Oracle NoSQL Database Deployment" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Setting Store Parameters</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="monitoring.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Administrative Procedures</th>
+          <td width="20%" align="right"> <a accesskey="n" href="removestore.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="setstoreparams"></a>Setting Store Parameters</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="setstoreparams.html#changeparamcli">Changing Parameters</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="setstoreparams.html#settingpolicycli">Setting Store Wide Policy Parameters</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="setstoreparams.html#adminparameters">Admin Parameters</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="setstoreparams.html#storagenodeparameters">Storage Node Parameters</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="setstoreparams.html#replicationnodeparameters">Replication Node Parameters</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="setstoreparams.html#securityparameters">Security Parameters</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="setstoreparams.html#admin_restart">Admin Restart</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="setstoreparams.html#rn_restart">Replication Node Restart</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+            The three Oracle NoSQL Database service types; Admin, Storage Node and
+            Replication Node; have configuration parameters, some of which
+            can be tweaked after the service is deployed. To see the
+            parameter values that can be changed, you use the following
+            command in the CLI:
+        </p>
+      <pre class="programlisting">show parameters -service &lt;id&gt;</pre>
+      <p>
+            This command allows you to display service parameters and state
+            for the specified service. The service may be a Replication
+            Node, a Storage Node, or Admin service, as identified by any
+            valid string. You can use the <code class="literal">-policy</code>
+            optional flag to show global policy parameters.
+        </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="changeparamcli"></a>Changing Parameters</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+              All of the CLI commands used for creating parameter-changing
+              plans share a similar syntax: 
+            </p>
+        <pre class="programlisting">plan change-parameters -service &lt;id&gt;...</pre>
+        <p>
+                All such commands can have multiple
+                <code class="literal">ParameterName=NewValue</code> assignment
+                arguments on the same command line. If NewValue contains
+                spaces, then the entire assignment argument must be quoted
+                within double quote marks. For example, to change the Admin
+                parameter collectorPollPeriod, you would issue the command: 
+            </p>
+        <pre class="programlisting">kv-&gt; plan change-parameters -all-admins -params \
+    "collectorPollPeriod=20 SECONDS" 
+</pre>
+        <p>
+              The following commands are used to change service parameters: 
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                        <code class="literal">plan change-parameters -service &lt;shardId-nodeId&gt; -params [assignments]</code>
+                    </p>
+              <p>
+                        This command is used to change the parameters of a
+                        single Replication Node, which must be identified
+                        using the shard and node numbers. The
+                        <code class="literal">shardId-nodeId</code> identifier must
+                        be given as a single argument with one embedded
+                        hyphen and no spaces. The <code class="literal">shardId</code> 
+                        identifier is represented by <code class="literal">rgX</code>, where 
+                        <code class="literal">X</code> refers to the shard number.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">plan change-parameters -all-rns -params [assignments]</code>
+                    </p>
+              <p>
+                        This command is used to change the parameters of all
+                        Replication Nodes in a store. No Replication Node
+                        identifier is needed in this case. 
+                    </p>
+            </li>
+            <li>
+              <p>
+                      <code class="literal">plan change-parameters -service &lt;storageNodeId&gt; -params [assignments]</code>
+                    </p>
+              <p>
+                        This command is used to change the parameters of a
+                        single Storage Node instance. The storageNodeId is
+                        a simple integer. 
+                    </p>
+            </li>
+            <li>
+              <p>
+                      <code class="literal">plan change-parameters -all-admins -params [assignments]</code>
+                    </p>
+              <p>
+                        This command is used to change Admin parameters.
+                        Because each instance of Admin is part of the same
+                        replicated service, all instances of the Admin are
+                        changed at the same time, so no Admin identifier is
+                        needed in this command.
+                    </p>
+              <p>
+                        If an Admin parameter change requires the restarting of
+                        the Admin service, KVAdmin loses its connection to the
+                        server. Under normal circumstances, KVAdmin
+                        automatically reconnects after a brief pause, when the
+                        next command is given. At this point the plan is in the
+                        <code class="literal">INTERRUPTED</code> state, and must be
+                        completed manually by issuing the 
+                        <code class="literal">plan execute</code> command. 
+                    </p>
+            </li>
+            <li>
+              <p>
+                      <code class="literal">plan change-parameters -security &lt;id&gt; </code>
+                    </p>
+              <p>
+                        This command is used to change security parameters.
+                        The parameters are applied implicitly and uniformly across all
+                        SNs, RNs and Admins.
+                    </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+                In all cases, you can choose to create a plan and execute
+                it; or to create the plan and execute it in separate steps
+                by using the <code class="literal">-noexecute</code> option of the 
+                plan command. 
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="settingpolicycli"></a>Setting Store Wide Policy Parameters</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                Most admin, Storage Node, and replication node parameters
+                are assigned to default values when a store is deployed. It
+                can be inconvenient to adjust them after deployment, so
+                Oracle NoSQL Database provides a way to set the defaults that are used
+                during deployment. These defaults are called store-wide
+                Policy parameters. 
+            </p>
+        <p>
+                You can set policy parameters in the CLI by using this
+                command: 
+            </p>
+        <pre class="programlisting">change-policy -params [name=value]</pre>
+        <p>
+                
+                The parameters to change follow the
+                <code class="literal">-params</code> flag and are separated by
+                spaces. Parameter values with embedded spaces must be
+                separated by spaces. Parameter values with embedded spaces
+                must be quoted. For example: name = "value with spaces".
+                If the optional <code class="literal">dry-run</code> flag is
+                specified, the new parameters are returned without changing
+                them.
+           </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="adminparameters"></a>Admin Parameters</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                The following parameters can be set for the Admin service:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                      <code class="literal">adminLogFileCount=&lt;Integer&gt;</code>
+                  </p>
+              <p>
+                      Sets the number of log files that are kept. This value 
+                      defaults to "20". It is used to control the amount of
+                      disk space devoted to logging history.
+                  </p>
+            </li>
+            <li>
+              <p>
+                      <code class="literal">adminLogFileLimit=&lt;Integer&gt;</code>
+                  </p>
+              <p>
+                      Limits the size of log files. After reaching this
+                      limit, the logging subsystem switches to a new log
+                      file. This value defaults to "4,000,000" bytes. The limit
+                      specifies an approximate maximum amount to write (in bytes)
+                      to any one file. If the value is zero, then there is no limit.
+                  </p>
+            </li>
+            <li>
+              <p>
+                      <code class="literal">collectorPollPeriod=&lt;Long TimeUnit&gt;</code>
+                  </p>
+              <p>
+                      Sets the Monitor subsystem's delay for polling the
+                      various services for status updates. This value defaults
+                      to "20" seconds. Units are supplied as a string in the 
+                      <code class="literal">change-parameters</code> command,
+                      for example: -params collectorPollPeriod="2 MINUTES"
+                  </p>
+            </li>
+            <li>
+              <p>
+                      <code class="literal">loggingConfigProps=&lt;String&gt;</code>
+                  </p>
+              <p>
+                      Property settings for the Logging subsystem in
+                      the Admin process. Its format is
+                      <code class="literal">property=value;property=value...</code>.
+                      Standard java.util.logging properties can be set by this
+                      parameter.
+                  </p>
+            </li>
+            <li>
+              <p>
+                      <code class="literal">eventExpiryAge=&lt;Long TimeUnit&gt;</code>
+                  </p>
+              <p>
+                      You can use this parameter to adjust how long the
+                      Admin stores critical event history. The default
+                      value is "30 DAYS".
+                  </p>
+            </li>
+            <li>
+              <p>
+                      <code class="literal">configProperties=&lt;String&gt;</code>
+                  </p>
+              <p>
+                      This is an omnibus string of property settings for
+                      the underlying BDB JE subsystem. Its format is
+                      <code class="literal">property=value;property=value...</code>.         
+                  </p>
+            </li>
+            <li>
+              <p>
+                      <code class="literal">javaMiscParams=&lt;String&gt;</code>
+                  </p>
+              <p>
+                      This is an omnibus string that is added to the
+                      command line when the Admin process is started. It is
+                      intended for setting Java VM properties, such as -Xmx and -Xms
+                      to control the heap size. If the string is not a valid 
+                      sequence of tokens for the JVM command line, the Admin 
+                      process fails to start. 
+                  </p>
+            </li>
+            <li>
+              <p>
+                      <code class="literal">adminHttpPort=&lt;Integer&gt;</code>
+                  </p>
+              <p>
+                      Sets the port on which the Oracle NoSQL Database web-based Admin Console
+                      is contacted. Examples in this book use port 5001.
+                      If the value is 0, the web interface is disabled.
+                  </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="storagenodeparameters"></a>Storage Node Parameters</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                The following parameters can be set for Storage Nodes:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                        <code class="literal">serviceLogFileCount=&lt;Integer&gt;</code>
+                    </p>
+              <p>
+                        Sets the number of log files that are kept, for
+                        this Storage Node and for all Replication Nodes
+                        hosted on this Storage Node. This value 
+                        defaults to "20". It is used to control the amount of
+                        disk space devoted to logging history.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">serviceLogFileLimit=&lt;Integer&gt;</code>
+                    </p>
+              <p>
+                        Limits the size of log files. After reaching this
+                        limit, the logging subsystem switches to a new log
+                        file. This setting applies to this Storage Node and
+                        to all Replication Nodes hosted on this Storage
+                        Node. This value defaults to "2,000,000" bytes. The limit
+                        specifies an approximate maximum amount to write (in bytes)
+                        to any one file. If the value is zero, then there is 
+                        no limit.
+                    </p>
+            </li>
+            <li>
+              <p>
+                          <code class="literal">haPortRange=&lt;String&gt;</code>
+                    </p>
+              <p>
+                          Defines the range of port numbers available for
+                          assigning to Replication Nodes that are hosted on
+                          this Storage Node. A port is allocated automatically
+                          from this range when a Replication Node is deployed.
+                          The format of the value string is "lowport,highport".                        
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">haHostname=&lt;String&gt;</code>
+                    </p>
+              <p>
+                        Sets the name of the network interface used by the
+                        HA subsystem. A valid string for a <code class="literal">hostname</code>
+                        can be a DNS name or an IP address.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">capacity=&lt;Integer&gt;</code>
+                    </p>
+              <p>
+                        Sets the number of Replication Nodes that can be
+                        hosted on this Storage Node.  This value is used to
+                        inform decisions about where to place new
+                        Replication Nodes.  Capacity can be set to values
+                        greater than 1 when the Storage Node has sufficient
+                        disk, CPU, and memory to support multiple
+                        Replication Nodes.  Default value: "1". 
+                    </p>
+            </li>
+            <li>
+              <p>
+                      <code class="literal">memoryMB=&lt;Integer&gt;</code>
+                    </p>
+              <p>
+                        Sets the amount of memory known to be available on
+                        this Storage Node, in megabytes.  
+                        Defaults to "0", which means "unknown." and is
+                        determined automatically by the store as the total
+                        amount of RAM available on the machine. 
+                    </p>
+              <p>
+                        You should not need to change this parameter under
+                        normal circumstances. Set it to a value less than
+                        the amount of RAM, if the machine has other
+                        applications running on it (not a recommended
+                        configuration) in order to reserve some memory for
+                        the other applications. 
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">numCPUs=&lt;Integer&gt;</code>
+                    </p>
+              <p>
+                        Sets the number of CPUs known to be available on
+                        this Storage Node.  Default value: 1.
+                    </p>
+            </li>
+            <li>
+              <p>
+                      <code class="literal">rnHeapPercent=&lt;Integer&gt;</code>
+                    </p>
+              <p>
+                        Sets the percentage of a Storage Node's memory
+                        reserved for heap, for all RN processes hosted on
+                        this SN.  Default value: 85.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">rnHeapMaxMB=&lt;Integer&gt;</code>
+                    </p>
+              <p>
+                        Sets a hard limit for the maximum size of the
+                        Replication Node's Java VM heap. Default value is
+                        <code class="literal">0</code>, which means the VM-specific
+                        limit is used. (Currently, this is roughly 32 GB.)
+                    </p>
+              <p>
+                        Do not set this value to greater than 32 GB. Doing
+                        so can adversely impact your Replication Node's
+                        performance.
+                    </p>
+              <p>
+                        Normally the Replication Node's heap size is
+                        determined by the amount of memory available to
+                        the Storage Node, and the
+                        <code class="literal">rnHeapPercent</code> parameter value.
+                        The value set for <code class="literal">rnHeapMaxMB</code>
+                        indicates an upper limit beyond which the heap will
+                        not grow regardless of the value set for
+                        <code class="literal">rnHeapPercent</code> or the amount of
+                        memory available to the Replication Node.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">systemPercent=&lt;Integer&gt;</code>
+                    </p>
+              <p>
+                        Sets the percentage of the Storage Node's
+                        memory which will be used for operating system
+                        purposes. This memory is used by the operating
+                        system for purposes such as the file system cache,
+                        page mapping tables, file system handles, thread
+                        stacks, and so forth.
+                    </p>
+              <p>
+                        If this parameter is set to a value less than 100,
+                        then the off-heap cache might be used if there is
+                        memory left over after allowing for the heap and
+                        system use. See
+                        <a class="xref" href="offheap.html" title="Managing the Off-heap Cache">Managing the Off-heap Cache</a>
+                        for details.
+                    </p>
+              <p>
+                        Default value is 100.
+                    </p>
+            </li>
+            <li>
+              <p>
+                      <code class="literal">mgmtClass=&lt;String&gt;</code>
+                    </p>
+              <p>
+                        The name of the class that provides the Management
+                        Agent implementation. See
+                        <a class="xref" href="standardized-monitoring.html" title="Chapter 8.  Standardized Monitoring Interfaces">
+      Standardized Monitoring Interfaces
+   </a>
+                        for more information. The port cannot be a privileged
+                        port number (&lt;1024).
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">mgmtPollPort=&lt;Integer&gt;</code>
+                    </p>
+              <p>
+                        Sets the port on which the SNMP agent listens.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">mgmtTrapHost=&lt;String&gt;</code>
+                    </p>
+              <p>
+                        Sets the host to which SNMP notifications are sent.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">mgmtTrapPort=&lt;Integer&gt;</code>
+                    </p>
+              <p>
+                        Sets the port to which SNMP notifications are sent.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">servicePortRange=&lt;String&gt;</code>
+                    </p>
+              <p>                 
+                        Sets the range of ports used for communication among
+                        administrative services running on a Storage Node and 
+                        its managed services.  This parameter is optional. By default
+                        the services use anonymous ports.  The format of the value
+                        string is "startPort,endPort."  
+                    </p>
+              <p>
+                        The range should be large enough to accommodate the Storage Node
+                        and all the Replication Nodes (as defined by the capacity parameter)
+                        hosted on the machines. The number of ports required depends on
+                        whether the system is configured for security. For a non-secure 
+                        system, each Storage Node consumes three ports (including the 
+                        Registry Service) and each Replication Node consumes three ports 
+                        in the range. An Admin, if configured consumes 2 ports. On a secure
+                        system, one additional port is required for each Storage Node, 
+                        Replication Node and Admin. As a general rule, it is good practice 
+                        to specify a range that is significantly larger than the minimum to
+                        allow for increases in Storage Node capacity or network problems
+                        that may render ports temporarily unavailable.
+                    </p>
+              <p>
+                       For a non-secure system, as a rough rule of thumb,
+                       you can use the following formula to arrive at an estimate for the port
+                       range size number:
+                    </p>
+              <pre class="programlisting">3 (Storage Nodes, adding one for safety) +
+3 * capacity (the number of replication nodes) \
++ 2 (added only if the Storage Node is hosting an admin process as well) </pre>
+              <p>
+                      For example, if a Storage Node has capacity 1 and is hosting an admin
+                      process, the range size must be at least 8. You may want to increase
+                      the range size beyond this minimum (in increments of 3).
+                      Doing so allows for safety and expansion of the Storage Node
+                      without requiring future changes to this parameter. If capacity were 2, the 
+                      the range size must be greater than or equal to 11. It is best to find
+                      a range on the machine that is contiguous. If other services 
+                      on the host use ports in the range, those will be skipped and 
+                      the range must be larger.
+                    </p>
+              <p>
+                      If you are deploying a secure Oracle NoSQL Database then you can use
+                      the following formula to arrive at an estimate for the
+                      port range size number:
+</p>
+              <pre class="programlisting">4 (Storage Nodes, adding one for safety) +
+4 * capacity (the number of replication nodes) \
++ 3 (added only if the Storage Node is hosting an admin process as well) </pre>
+              <p>
+                    </p>
+              <p>
+                      where an additional port was added for each Storage Node, 
+                      Replication Node or the Admin (if configured).
+                    </p>
+              <p>
+                       For more information on configuring Oracle NoSQL Database securely, see
+                       the Oracle NoSQL Database Security Guide.
+                    </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="replicationnodeparameters"></a>Replication Node Parameters</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                The following parameters can be set for Replication Nodes:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                        <code class="literal">collectEnvStats=&lt;Boolean&gt;</code>
+                    </p>
+              <p>
+                        If true, then the underlying BDB JE subsystem dumps
+                        statistics into the .stat file. This information is useful
+                        for tuning JE performance. Oracle Support may request
+                        these statistics to aid in tuning or to investigate 
+                        a problem. 
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">maxTrackedLatency=&lt;Long TimeUnit&gt;</code>
+                    </p>
+              <p>
+                        The highest latency that is included in the
+                        calculation of latency percentiles.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">configProperties=&lt;String&gt;</code>
+                    </p>
+              <p>
+                        Contains property settings for the underlying BDB
+                        JE subsystem. Its format is
+                        <code class="literal">property=value;property=value...</code>.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">javaMiscParams=&lt;String&gt;</code>
+                    </p>
+              <p>
+                        A string that is added to the command line when the
+                        Replication Node process is started. It is intended
+                        for setting Java VM properties, such as -Xmx and -Xms
+                        to control the heap size. If the string is not a valid 
+                        sequence of tokens for the JVM command line, the Admin 
+                        process fails to start. 
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">loggingConfigProps=&lt;String&gt;</code>
+                    </p>
+              <p>
+                        Contains property settings for the Logging
+                        subsystem.  The format of this string is like that
+                        of configProperties, above. Standard java.util.logging properties
+                        can be set by this parameter.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">statsInterval=&lt;Long TimeUnit&gt;</code>
+                    </p>
+              <p>
+                        Sets the collection period for latency statistics
+                        at this Replication Node. This value defaults to "60"
+                        seconds. Values like average interval latencies
+                        and throughput are averaged over this period of time.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">cacheSize=&lt;Long&gt;</code>
+                    </p>
+              <p>
+                        Sets the cache size in the underlying BDB JE subsystem.
+                        The units are bytes. The size is limited by the java heap size, 
+                        which in turn is limited by the amount of memory available
+                        on the machine. You should only ever change this
+                        low level parameter under explicit directions from 
+                        Oracle support. 
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">latencyCeiling=&lt;Integer&gt;</code>
+                    </p>
+              <p>
+                        If the Replication Node's average latency exceeds
+                        this number of milliseconds, it is considered an
+                        "alertable" event. Such an event produces a popup
+                        in the Admin Console, and it is stored in the
+                        Admin's database as a critical event.  If SNMP or
+                        JMX monitoring is enabled, the event also causes an
+                        appropriate notification to be sent.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">throughputFloor=&lt;Integer&gt;</code>
+                    </p>
+              <p>
+                        Similar to latencyCeiling, throughputFloor sets a
+                        lower bound on Replication Node throughput. Lower
+                        throughput reports are considered alertable. This
+                        value is given in operations per second.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">rnCachePercent=&lt;Integer&gt;</code>
+                    </p>
+              <p>
+                        The portion of an RN's memory set aside for the JE
+                        environment cache.
+                    </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="securityparameters"></a>Security Parameters</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                The following parameters can be implicitly and uniformly set
+                across all Storage Nodes, Replication Nodes and Admins:
+            </p>
+        <div class="itemizedlist">
+          <p>
+               For more information on top-level and transport security
+               parameters see the Oracle NOSQL Database Security Guide.
+            </p>
+          <ul type="disc">
+            <li>
+              <p> 
+                    sessionTimeout=&lt;Long TimeUnit&gt;
+                </p>
+              <p>
+                    Specifies the length of time for which a login
+                    session is valid, unless extended. The default
+                    value is 24 hours. 
+                </p>
+            </li>
+            <li>
+              <p> 
+                    sessionExtendAllowed=&lt;Boolean&gt;
+                </p>
+              <p> 
+                    Indicates whether session extensions should be
+                    granted. Default value is true.
+                </p>
+            </li>
+            <li>
+              <p>
+                    accountErrorLockoutThresholdInterval=&lt;Long
+                    TimeUnit&gt; 
+                </p>
+              <p>
+                    Specifies the time period over which login
+                    error counts are tracked for account lockout
+                    monitoring. The default value is 10 minutes.
+                </p>
+            </li>
+            <li>
+              <p>
+                    accountErrorLockoutThresholdCount=&lt;Integer&gt; 
+                </p>
+              <p>
+                    Number of invalid login attempts for a user
+                    account from a particular host address over the
+                    tracking period needed to trigger an automatic
+                    account lockout for a host. The default value is
+                    10 attempts. 
+                </p>
+            </li>
+            <li>
+              <p>
+                    accountErrorLockoutTimeout=&lt;Long
+                    TimeUnit&gt;
+                </p>
+              <p>
+                    Time duration for which an account will be
+                    locked out once a lockout has been triggered. The
+                    default value is 30 minutes. 
+                </p>
+            </li>
+            <li>
+              <p>
+                    loginCacheTimeout=&lt;Long TimeUnit&gt;
+                </p>
+              <p> 
+                    Time duration for which KVStore components
+                    cache login information locally to avoid the need
+                    to query other servers for login validation on
+                    every request. The default value is 5 minutes.
+                </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="admin_restart"></a>Admin Restart</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                Changes to the following Oracle NoSQL Database parameters will result in a
+                Admin restart by the Storage Node Agent: 
+            </p>
+        <p>
+                Admin parameters:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                        adminLogFileCount
+                    </p>
+            </li>
+            <li>
+              <p>
+                        adminLogFileLimit
+                    </p>
+            </li>
+            <li>
+              <p>
+                        configProperties
+                    </p>
+            </li>
+            <li>
+              <p>
+                        javaMiscParams
+                    </p>
+            </li>
+            <li>
+              <p>
+                        loggingConfigProps
+                    </p>
+            </li>
+            <li>
+              <p>
+                        adminHttpPort
+                    </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+                For example:
+            </p>
+        <pre class="programlisting">kv-&gt; plan change-parameters -all-admins -params adminLogFileCount=10
+Started plan 14. Use show plan -id 14 to check status.
+        To wait for completion, use plan wait -id 14
+kv-&gt; show plan -id 14
+Plan Change Admin Params (14)
+Owner: null
+State:                 INTERRUPTED                   
+Attempt number:        1                             
+Started:               2013-08-26 20:12:06 UTC       
+Ended:                 2013-08-26 20:12:06 UTC       
+Total tasks:           4                             
+ Successful:           1                             
+ Interrupted:          1                             
+ Not started:          2                             
+Tasks not started
+   Task StartAdmin start admin1
+   Task WaitForAdminState waits for Admin admin1 to reach RUNNING state
+kv-&gt; plan execute -id 14
+Started plan 14. Use show plan -id 14 to check status.
+        To wait for completion, use plan wait -id 14
+kv-&gt; show plan -id 14
+Plan Change Admin Params (14)
+State:                 SUCCEEDED                     
+Attempt number:        1                             
+Started:               2013-08-26 20:20:18 UTC       
+Ended:                 2013-08-26 20:20:18 UTC       
+Total tasks:           2                             
+ Successful:           2 </pre>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+              When you change a parameter that requires an Admin restart using
+              the <code class="literal">plan change-parameters</code> command, the plan ends in
+              an <code class="literal">INTERRUPTED</code> state. To transition it to a <code class="literal">SUCCESSFUL</code> state,
+              re-issue the plan a second time using the <code class="literal">plan execute -id &lt;id&gt;</code> command.
+            </p>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="rn_restart"></a>Replication Node Restart</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                Changes to the following Oracle NoSQL Database parameters will result in a
+                Replication Node restart by the Storage Node Agent: 
+            </p>
+        <p>
+                Storage Node parameters:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                        serviceLogFileCount
+                    </p>
+            </li>
+            <li>
+              <p>
+                        serviceLogFileLimit
+                    </p>
+            </li>
+            <li>
+              <p>
+                        servicePortRange
+                    </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+                Replication Node parameters:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                        configProperties
+                    </p>
+            </li>
+            <li>
+              <p>
+                        javaMiscParams
+                    </p>
+            </li>
+            <li>
+              <p>
+                        loggingConfigProps
+                    </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="monitoring.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="procedures.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="removestore.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Monitoring the Store </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Removing an Oracle NoSQL Database Deployment</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>
