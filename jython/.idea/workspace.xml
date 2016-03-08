@@ -105,8 +105,8 @@
       <file leaf-file-name="SQLVisitor.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.49778762">
-              <caret line="758" column="18" selection-start-line="758" selection-start-column="18" selection-end-line="758" selection-end-column="18" />
+            <state vertical-scroll-proportion="0.27654868">
+              <caret line="754" column="17" selection-start-line="754" selection-start-column="17" selection-end-line="754" selection-end-column="17" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -888,12 +888,12 @@
       <workItem from="1456637218677" duration="49092000" />
       <workItem from="1457391713566" duration="1667000" />
       <workItem from="1457418256255" duration="3044000" />
-      <workItem from="1457421342334" duration="6088000" />
+      <workItem from="1457421342334" duration="6206000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="59891000" />
+    <option name="totallyTimeSpent" value="60009000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-11" y="-11" width="1942" height="1042" extended-state="6" />
@@ -908,7 +908,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32902467" sideWeight="0.504315" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.37367803" sideWeight="0.495685" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.37367803" sideWeight="0.495685" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33254993" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24973032" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -1261,8 +1261,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.49778762">
-          <caret line="758" column="18" selection-start-line="758" selection-start-column="18" selection-end-line="758" selection-end-column="18" />
+        <state vertical-scroll-proportion="0.27654868">
+          <caret line="754" column="17" selection-start-line="754" selection-start-column="17" selection-end-line="754" selection-end-column="17" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
