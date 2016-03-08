@@ -1,0 +1,185 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Oracle NoSQL Database - A Quickstart In 5 Minutes</title>
+<style type="text/css">
+  li { margin-top: 1em }
+</style>
+</head>
+<body>
+<h3>Oracle NoSQL Database - A Quickstart In 5 Minutes</h3>
+<hr>
+<h4>Install Oracle NoSQL Database</h4>
+<ul>
+<li>Download the tar.gz file from <a href="http://www.oracle.com/technetwork/database/nosqldb/downloads/index.html">http://www.oracle.com/technetwork/database/database-technologies/nosqldb/downloads/index.html</a>.</li>
+<li>
+gunzip and untar the <code>.tar.gz</code> package (or unzip if you
+downloaded the <code>.zip</code> package).  Oracle NoSQL
+Database version 3.0.5 Community Edition is used in this example.
+The actual package names and directory names will change, depending upon
+the release version you are using, and whether you are using Community
+Edition (CE) or Enterprise Edition (EE).
+
+<pre>
+$ gunzip kv-ce-3.0.5.tar.gz
+$ tar xvf kv-ce-3.0.5.tar
+kv-3.0.5/
+...
+kv-3.0.5/README.txt
+$
+</pre>
+</li>
+</ul>
+<h4>Start  up KVLite</h4>
+<p>
+KVLite is a single
+process version of Oracle NoSQL Database.  KVLite is not tuned for
+performance, but does give you easy access to a simple Key/Value store
+so that you can test the APIs.
+</p>
+<ul>
+<li>
+cd into the kv-3.0.5 directory to start the NoSQL Database server.
+
+<pre>
+$ cd kv-3.0.5
+$ java -jar lib/kvstore.jar kvlite
+Created new kvlite store with args:
+-root ./kvroot -store kvstore -host myhost -port 5000 -admin 5001
+</pre>
+</li>
+<li>
+
+In a second shell, cd into the kv-3.0.5 directory and ping your
+KVLite instance to test that it's alive.  The details of the output
+will vary but you should see a running store.
+
+<pre>
+$ cd kv-3.0.5
+$ java -jar lib/kvstore.jar ping -host myhost -port 5000
+Pinging components of store kvstore based upon topology sequence #14
+Time: ...
+kvstore comprises 10 partitions and 1 Storage Nodes
+Storage Node [sn1] on myhost:5000    Zone: [name=KVLite id=zn1 type=PRIMARY]    Status: RUNNING  ...
+        Rep Node [rg1-rn1]      Status: RUNNING,MASTER at sequence number: 38 haPort: 5011
+</pre>
+</li>
+<li>
+
+<p>
+Compile and run the Hello World example. This opens the Oracle NoSQL
+Database and writes a single record.
+</p>
+
+<pre>
+$ javac -cp examples:lib/kvclient.jar examples/hello/HelloBigDataWorld.java
+$ java -cp examples:lib/kvclient.jar hello.HelloBigDataWorld
+Hello Big Data World!
+$
+</pre>
+</li>
+<li>
+Peruse the Hello World example code and expand it to experiment more
+with the Oracle NoSQL Database APIs.  If you would like to learn about
+using the Tables API, or using schemas and Avro, look at the examples
+in the examples/table or examples/avro directories.  The Getting
+Started guides and Javadoc have additional information about Tables
+and Avro.
+</li>
+</ul>
+<h4>Learn more about Oracle NoSQL Database</h4>
+<p>
+Open the doc landing page (either locally
+in <code>kv-3.0.5/doc/index.html</code> or
+on <a href="http://download.oracle.com/docs/cd/NOSQL/html/index.html">OTN</a>).
+From there, the Getting Started with the Key/Value API guide
+(<a href="GettingStartedGuide/index.html">HTML</a>
+| <a href="GettingStartedGuide/Oracle-NoSQLDB-GSG.pdf">PDF</a>) or 
+the Getting Started with the Tables API guide
+(<a href="GettingStartedGuideTables/index.html">HTML</a>
+| <a href="GettingStartedGuideTables/Oracle-NoSQLDB-GSG-Tables.pdf">PDF</a>)
+and <a href="javadoc/index.html">Javadoc</a>
+will introduce you to the NoSQL Database APIs.  The Oracle NoSQL
+Database Administrator's Guide
+(<a href="AdminGuide/index.html">HTML</a>
+| <a href="AdminGuide/Oracle-NoSQLDB-Admin.pdf">PDF</a>)
+will help you understand how to plan and deploy a larger installation.
+</p>
+<p>
+Oracle NoSQL Database is available in two licensing options: Community Edition (CE) 
+and Enterprise Edition (EE). CE is available under the AGPL license. If you cannot 
+comply with the terms of the AGPL license, you should consider purchasing Oracle NoSQL
+Database Enterprise Edition. EE provides additional warranties and indemnifications.
+The primary benefit of Oracle NOSQL Database Enterprise Edition is integration with the Oracle stack. 
+</p>
+<p>
+Remember, KVLite should only be used to become familiar with the
+NoSQL Database APIs.  Any serious evaluation of the system should be
+done with a multi-process, multi-node configuration.  Here are some
+basic instructions for installing a simple multi-node system with 1
+shard replicated across 3 hosts.  The host names and port numbers are
+for example only.  You should substitute appropriate values.
+</p>
+<ul>
+<li>
+Repeat the instructions above on how to unpack the package on any
+nodes that do not yet have the software accessible. Then follow a few
+additional steps, described in the Admin Guide
+<a href="AdminGuide/install.html">Installation</a> chapter.  The next
+steps assume that Storage Node Agents are running on the 3
+nodes used for the example.
+</li>
+<li>Be sure to run ntp on all nodes.  Time synchronization problems
+among nodes will cause unexpected failures.</li>
+<li>
+Use the Command Line Interface (CLI) to configure and deploy the
+store.  In this sample interaction the hosts are named host01, host02,
+and host03. Host "host01" will be used for the administrative
+service.
+<pre>
+$ java -jar lib/kvstore.jar runadmin -host host01 -port 5000
+kv-> configure -name "mystore"
+kv-> plan deploy-zone -name MyZone -rf 3 -wait
+kv-> plan deploy-sn -znname MyZone -host host01 -port 5000 -wait
+kv-> plan deploy-admin -sn sn1 -port 5001 -wait
+kv-> pool create -name MyPool
+kv-> pool join -name MyPool -sn sn1
+kv-> plan deploy-sn -znname MyZone -host host02 -port 5000 -wait
+kv-> pool join -name MyPool -sn sn2
+kv-> plan deploy-sn -znname MyZone -host host03 -port 5000 -wait
+kv-> pool join -name MyPool -sn sn3
+kv-> topology create -name MyStoreLayout -pool MyPool -partitions 100
+kv-> topology preview -name MyStoreLayout
+kv-> plan deploy-topology -name MyStoreLayout -wait
+kv-> show plans
+kv-> show topology
+kv-> verify
+kv-> quit
+</pre>
+</li>
+</ul>
+<p>
+For more information about the CLI see the <a
+href="AdminGuide/cli_command_reference.html">NoSQL Database CLI
+reference</a>. In addition to administrative commands, the CLI also
+lets you add, delete, and modify data in your store from the command
+line. This tool is intended as an aid for developing store
+applications, but it can also be helpful in evaluating the store.
+</p>
+<p>
+To evaluate performance, you will want to be sure to configure
+sufficient memory on the target host machines.  This is done by specifying the
+available memory for each Storage Node, either when initially installing and
+deploying the Storage Nodes, or by setting the Storage Node configuration parameter after deployment.
+See
+<a href="AdminGuide/initialcapacityplanning.html">Initial Capacity
+    Planning</a> for an explanation on sizing your store. In particular, 
+<a href="AdminGuide/initialcapacityplanning.html#mem-network-config">
+    Memory and Network Configuration</a> in that chapter describes
+how to size the memory available to a Storage Node.
+</p>
+<p>
+You can ask questions, or make comments on the <a href="http://forums.oracle.com/forums/forum.jspa?forumID=1388">Oracle NoSQL Database OTN forum</a>.
+</p>
+</body>
+</html>

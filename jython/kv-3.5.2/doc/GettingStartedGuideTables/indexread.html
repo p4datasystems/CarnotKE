@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Reading Indexes</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="tableget.html" title="Chapter 6. Reading Table Rows" />
+    <link rel="prev" href="childparenttableiter.html" title="Iterating with Nested Tables" />
+    <link rel="next" href="parallelscan.html" title="Parallel Scans" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Reading Indexes</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="childparenttableiter.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Reading Table Rows</th>
+          <td width="20%" align="right"> <a accesskey="n" href="parallelscan.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="indexread"></a>Reading Indexes</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            You use 
+            <code class="classname">TableIterator</code> 
+            
+            
+            to retrieve table
+            rows using a table's indexes. Just as when you use
+            <code class="classname">TableIterator</code> 
+             
+            to read table rows using a
+            table's primary key(s), when reading using indexes you can set
+            options such as field ranges, traversal direction, and so
+            forth. By default, index scans return entries in forward order.
+        </p>
+      <p>
+            In this case, rather than provide <code class="classname">TableIterator</code>
+            with a <code class="classname">PrimaryKey</code> instance, you use an
+            instance of <code class="classname">IndexKey</code>.
+        </p>
+      <p>
+            For example, suppose you defined a table like this:
+        </p>
+      <pre class="programlisting">CREATE TABLE myTable (
+    surname STRING,
+    familiarName STRING,
+    userID STRING,
+    phonenumber STRING,
+    address STRING,
+    email STRING,
+    dateOfBirth STRING,
+    PRIMARY KEY (SHARD(surname, familiarName), userID)
+) </pre>
+      <pre class="programlisting">CREATE INDEX DoB ON myTable (dateOfBirth) </pre>
+      <p>
+            This creates an index named <code class="literal">DoB</code> for table
+            <code class="literal">myTable</code> based on the value of the
+            <code class="literal">dateOfBirth</code> field. 
+            
+            <span>
+                To read using that index,
+                you use <code class="methodname">Table.getIndex()</code> to retrieve
+                the index named <code class="literal">Dob</code>. You then create an
+                <code class="classname">IndexKey</code> from the
+                <code class="classname">Index</code> object. 
+                For example:
+            </span>
+            
+            
+        </p>
+      <a id="index-1"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.KVStore;
+import oracle.kv.table.Index;
+import oracle.kv.table.IndexKey;
+import oracle.kv.table.Row;
+import oracle.kv.table.Table;
+import oracle.kv.table.TableAPI;
+import oracle.kv.table.TableIterator;
+
+...
+
+// KVStore handle creation is omitted for brevity
+
+...
+
+TableAPI tableH = kvstore.getTableAPI();
+
+Table myTable = tableH.getTable("myTable");
+
+// Construct the IndexKey. The name we gave our index when 
+// we created it was 'DoB'.
+Index dobIdx = myTable.getIndex("DoB");
+IndexKey dobIdxKey = dobIdx.createIndexKey();
+
+// Exception handling is omitted, but in production code
+// ConsistencyException, RequestTimeException, and FaultException
+// would have to be handled.
+TableIterator&lt;Row&gt; iter = tableH.tableIterator(dobIdxKey, null, null);
+try {
+    while (iter.hasNext()) {
+        Row row = iter.next();
+        // Examine your row's fields here
+    } 
+} finally {
+    if (iter != null) {
+        iter.close(); 
+    }
+}</pre>
+      <p>
+        In the previous example, the code examines every row indexed by the
+        <code class="literal">DoB</code> index. A more likely, and useful, example in
+        this case would be to limit the rows returned through the use of a
+        field range. 
+
+        <span>
+            You do that by using
+            <code class="methodname">Index.createFieldRange()</code> to create a
+            <code class="classname">FieldRange</code> object. 
+        </span>
+        
+            When you do this, you must specify the field to base the range
+            on. Recall that an index can be based on more than one table
+            field, so the field name you give the 
+            <span> method </span>
+            
+            must be one of the indexed fields.
+    </p>
+      <p>
+        For example, if the rows hold dates in the form of
+        <code class="literal">yyyy-mm-dd</code>, you could retrieve all the people
+        born in the month of May, 1994 in the following way.  This index
+        only examines one field, <code class="literal">dateOfBirth</code>, so we give
+        that field name to
+        <code class="methodname">Index.createFieldRange():</code>
+        
+    </p>
+      <a id="index-2"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.KVStore;
+import oracle.kv.table.FieldRange;
+import oracle.kv.table.Index;
+import oracle.kv.table.IndexKey;
+import oracle.kv.table.MultiRowOption;
+import oracle.kv.table.Row;
+import oracle.kv.table.Table;
+import oracle.kv.table.TableAPI;
+import oracle.kv.table.TableIterator;
+
+...
+
+// KVStore handle creation is omitted for brevity
+
+...
+
+TableAPI tableH = kvstore.getTableAPI();
+
+Table myTable = tableH.getTable("myTable");
+
+// Construct the IndexKey. The name we gave our index when 
+// we created it was 'DoB'.
+Index dobIdx = myTable.getIndex("DoB");
+IndexKey dobIdxKey = dobIdx.createIndexKey();
+
+// Create the field range.
+<strong class="userinput"><code>FieldRange fh = dobIdx.createFieldRange("dateOfBirth");
+fh.setStart("1994-05-01", true);
+fh.setEnd("1994-05-30", true);
+MultiRowOptions mro = fh.createMultiRowOptions();</code></strong>
+
+// Exception handling is omitted, but in production code
+// ConsistencyException, RequestTimeException, and FaultException
+// would have to be handled.
+TableIterator&lt;Row&gt; iter = tableH.tableIterator(dobIdxKey, <strong class="userinput"><code>mro</code></strong>, null);
+try {
+    while (iter.hasNext()) {
+        Row row = iter.next();
+        // Examine your row's fields here
+    } 
+} finally {
+    if (iter != null) {
+        iter.close(); 
+    }
+}</pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="childparenttableiter.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="tableget.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="parallelscan.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Iterating with Nested Tables </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Parallel Scans</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

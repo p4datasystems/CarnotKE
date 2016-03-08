@@ -1,0 +1,385 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+  <title>Oracle NoSQL Database Release Notes</title>
+</head>
+
+<body>
+
+<div class="docMain">
+<center>
+<h1>Oracle NoSQL Database 12c R1<br>
+Release Notes</h1>
+</center>
+
+<!-- Note: RELEASE_VERSION and DATE are set by ant -->
+<p class="releaseInfo">Release 12cR1.3.5.2 Enterprise Edition, 2015-12-03 08:36:49 UTC</p>
+
+<h2><a name="overview">Overview</a></h2>
+<p>
+Oracle NoSQL Database is a distributed key-value store capable of scaling
+horizontally to handle very large amounts of data.
+</p>
+<p>
+Oracle NoSQL Database is compatible with Java SE 7 and later, and has
+been tested and certified against Oracle Java SE 8 Update 45. We
+encourage you to upgrade to the latest Java releases to take advantage
+of the latest bug fixes and performance improvements.
+</p>
+<p>
+Attempting to use this release with a version of Java earlier than Java
+7 will produce an error message similar to:
+</p>
+<blockquote>
+<pre>
+Exception in thread "main" java.lang.UnsupportedClassVersionError:
+  oracle/kv/impl/util/KVStoreMain : Unsupported major.minor version 51.0
+</pre>
+</blockquote>
+<p>
+This is release 12cR1.3.5.2 Enterprise Edition of Oracle NoSQL Database. It follows
+major release 3.0.5, patch releases 3.0.9 and 3.0.14, minor release
+3.1.5, patch release 3.1.7, and minor releases 3.2.15, 3.3.4, and 3.4.7.
+</p>
+<h3>Differences Between Release 12cR1.3.5.2 Enterprise Edition and Release 3.4.7</h3>
+<p>
+Oracle NoSQL Database 12cR1.3.5.2 Enterprise Edition is a minor release. We strongly
+recommend that users of earlier versions upgrade to this release.
+Please see the changelog for a detailed list of changes.
+</p>
+<h3>New in Release 3.5</h3>
+For a complete listing of all the changes made to Oracle NoSQL
+Database for this release (including all bug fixes) see
+the <a href="changelog.html">change log</a>.
+<h4>Kerberos</h4>
+<p>
+Support has been added for user authentication using Kerberos.  The
+store can be configured to support Kerberos as an external
+authentication mechanism.  Applications or users of the administrative
+CLI can supply credentials to authenticate using an existing Kerberos
+user name.  Kerberos support is only available in the EE version.
+</p>
+<h4>Key Distribution Statistics</h4>
+<p>
+Added support for gathering key distribution statistics.  These
+statistics are stored in system tables within the store.  The
+information can be used to help identify unexpected key hotspots in the
+store.
+</p>
+<h3>New in Release 3.4</h3>
+<h4>Failover and Switchover</h4>
+<p>
+New administrative commands are available to support failover and
+switchover operations for use in recovering from failure and performing
+zone-wide maintenance tasks.
+<p>
+New commands include:
+</p>
+<ul>
+<li>
+<code>repair-admin-quorum</code>, to reestablish admin quorum lost due
+to zone failure
+<li>
+<code>plan failover</code>, to reestablish shard quorum lost due to zone
+failure
+<li>
+<code>topology change-zone-type</code>, to change zone types to support
+both failure recovery and zone-wide maintenance
+</ul>
+<h3>New in Release 3.3</h3>
+<h4>Enhancements to Authorization</h4>
+<p>
+Role-based authorization in KVStore has been enhanced to support
+table-level authorization, user-defined roles, and security operations
+in the data definition language (DDL).
+<p>
+New features include:
+</p>
+<ul>
+<li>
+Table-related privileges that provide table-level access checking via
+both the API and the administrative CLI.
+</li>
+<li>
+User-defined roles to group together privileges and roles, for granting
+a group of privileges to a user.
+</li>
+<li>
+Role management commands to create and drop roles, and to grant and revoke
+privileges or roles to and from roles.
+</li>
+<li>
+Additions to the DDL to provide a declarative interface to all security
+operations.
+</li>
+<li>
+Password lifetimes to control password expiration. Passwords expire when
+they have been in use beyond the specified password lifetime. Users are
+required to renew expired passwords before they can log in to the store
+successfully.
+</li>
+</ul>
+<h4>Admin Improvements</h4>
+<p>
+Admin service configuration has been enhanced to allow Admin services to
+match the type of the zone in which they are deployed. Newly deployed
+Admin service will match the type of the zone in which they are
+deployed. The <code>verify configuration</code> and <code>plan
+repair-topology</code> commands have been modified to check and repair
+Admin service types to follow this configuration. To provide for better
+availability, those tools now also expect the number of Admin services
+deployed in a zone to match that zone's replication factor.
+<p>
+In addition, the administrative Command Line Interface has been modified
+to permit it to operate, with reduced functionality, when it can only
+reach an Admin service that is a non-master replica.
+<h4>Other changes</h4>
+<p>
+New diagnostic utilities have been added and the Admin CLI has several
+new commands and supports multi-line and semi-colon terminated input.
+There are minor changes and additions to the DDL APIs to better manage
+complex types and obtain status on DDL operations.
+<h3>New in Release 3.2</h3>
+<h4>C Language Driver</h4>
+<p>
+A new C language driver is available which provides APIs for Oracle
+NoSQL Database Tables.  This new driver is C-only and does not rely on
+a Java JNI interface as the older driver does.
+<h4>Declarative Language for Table Definition</h4>
+<p>
+A new data definition language (DDL) has been added to provide a
+declarative interface to create and manage Oracle NoSQL Database
+tables and indexes.  This new language is accessible from APIs
+in Java and the new C driver, as well via a new "execute" command in
+the administrative command line interface (Admin CLI).
+<h4>Enhanced Indexes</h4>
+<p>
+The implementation of indexes on maps has been enhanced so that it is now
+possible to create an index on the key strings of a map as well as an index
+on the values of a map.  These indexes result in multiple index entries for
+a given row, up to the number of map entries.  Additional APIs were added to
+help use these indexes.
+<h3>New in Release 3.1</h3>
+<h4>Authorization</h4>
+<p>
+Support for role-based authorization for both the API and the administrative
+CLI. Each authenticated user of the KVStore can be granted roles which
+determine which APIs and CLI commands the user can access.
+<p>
+New features include:
+<ul>
+<li>
+A set of built-in roles for data access control, and for system and database
+operation control.
+</li><li>
+Role management commands to grant and revoke roles to and from users.
+</li><li>
+New logging levels and auditing messages to record sensitive security events.
+</li>
+</ul>
+<p>
+This feature is described in greater depth in the Security Guide, as
+well as in the Administrators Guide and product javadoc.
+
+<h3>New in Release 3.0</h3>
+<p>
+This release of Oracle NoSQL Database adds several new features
+including user/password authentication and network security,
+secondary zones, and support for typed data, a tabular data model,
+and secondary indexes on table fields.
+</p>
+<h4>Security</h4>
+<p>
+Support for password-based authentication of NoSQL clients and for
+secure communications using SSL to both the CE and EE versions of the
+product.
+<p>
+New features include:
+<ul>
+<li>
+A security configuration utility to configure and add security to a new
+or existing Oracle NoSQL Database installation.
+</li><li>
+Authentication methods to provide password authentication for users and systems.
+</li><li>
+Encryption of data on the network to prevent unauthorized access to that data.
+</li><li>
+External password storage to support unattended application
+start-up. Passwords may be stored on disk. The EE version of the
+product also includes the ability to use the Oracle Wallet mechanism
+for password storage.
+</li><li>
+Security policies for ensuring a secure environment.
+</li>
+</ul>
+<p>
+This feature is described in greater depth in the Security Guide, as
+well as in the Administrators Guide and product Javadoc.
+
+<h4>Secondary Zones</h4>
+<p>
+Support for secondary zones has been added.
+<p>
+Zone is the new name for datacenter, with the new name meant to
+clarify that these node groupings may not always coincide with
+physical data centers.  A zone is a collection of nodes that have good
+network connectivity with each other and have some level of physical
+separation from nodes in other zones.
+<p>
+The new secondary zone feature permits the deployment of zones which
+can be used to make a copy of the data available at a distant
+location, or to maintain an extra copy of the data to increase
+redundancy or read capacity.
+<p>
+This feature is described in greater depth in the Administrators Guide.
+</p>
+
+<h4>Table API</h4>
+<p>
+The new Table API includes a set of data types and a tabular data
+model using those types. It lets you manipulate data using a tables
+metaphor, which organizes data in columns. An unlimited number of
+subtables are supported by this API. It is possible to create
+secondary indices to improve query speeds against your tables.
+<p>
+Tables and indexes are defined using the administrative CLI and
+accessed via programmatic API. The data CLI has been enhanced to
+perform operations on tables and indexes as well. The API is
+documented in the Oracle NoSQL Database javadoc, and is found primarily in
+the oracle.kv.table package.
+<p>
+It is possible to define tables that overlay data created with NoSQL
+DB Release 2 if that data was created using a conforming Avro
+schema. This overlay is required in order to create secondary indexes
+on conforming Release 2 data.
+<p>
+This feature is described in greater depth in the Getting Started with
+the Tables API guide.
+</p>
+<h3>Distributions</h3>
+<p>
+    Oracle NoSQL Database comes in three distributions:
+    Community Edition (CE), Enterprise Edition (EE), and Client.
+</p>
+<p>
+    The CE version is open source. It ships with source code and is
+    released under the Affero General Public License (aGPL v3). It
+    includes the client and server distribution, but does not include
+    some server features.
+</p>
+<p>
+    The EE version does not include source code and it ships with an
+    Oracle license. The EE version includes the client and server
+    distribution, and includes several features not found in the CE version:
+    SNMP support for monitoring the store, Oracle External Tables
+    support, and Oracle Wallet support for external password storage.
+</p>
+<p>
+    The Client version is open source. It ships with source code and is
+    released under the Apache 2.0 License (Apache 2.0).  The Client
+    version only contains the implementation of the client API, which
+    may be used to access servers running under either CE or EE.
+</p>
+
+<h3>Building from Source Code in the Community Edition</h3>
+<p>
+If you have downloaded the Community Edition, as of release 3.1 you
+can use the included Ant build script to rebuild JAR files if you make
+source changes.
+</p>
+<p>
+You need Apache Ant version 1.8.0 or later in order to do builds.  You
+can download Ant from:
+</p>
+<blockquote>
+http://ant.apache.org/
+</blockquote>
+<p>
+You also need Apache Ivy for loading dependencies.  You can download Ivy
+from:
+</p>
+<blockquote>
+http://ant.apache.org/ivy/
+</blockquote>
+<p>
+Make sure to add the ivy JAR file to your <tt>~/.ant/lib</tt> directory
+or specify the ivy directory using the ant <tt>-lib</tt> option.
+</p>
+<p>
+The default Ant target will rebuild all JAR files.
+</p>
+
+<h3>Known Issues</h3>
+<h4>Weak quorum checks when changing zone types</h4>
+<p>
+When you change the type of a zone by using the <code>topology
+change-zone-type</code> and <code>plan deploy-topology</code> commands
+in the Admin CLI, the plan command only checks for shard quorum at the
+time that nodes within a shard are updated, not when the plan begins
+executing.  As a result, if one or more shards do not have quorum when
+the plan executes, some of modifications needed to change the type of
+the zone may be performed before the plan fails due to a lack of shard
+quorum.  If this happens, you should correct the problems that produced
+the lack of quorum and then retry the command. [#24503]
+</p>
+<h4>Dropping users and tables</h4>
+<p>
+When you drop a user, it is required to drop tables owned by the user
+before dropping the user. Similarly, when dropping a table, it is
+required to revoke privileges related to a table before dropping the
+table. These requirements will be removed in future release. [#24273]
+</p>
+<h4>Admin unavailable during upgrade</h4>
+<p>
+In some cases during an upgrade, an Admin service that has not yet been
+upgraded may become unavailable. The log file will show the following exception:
+</p>
+
+<pre>
+2014-09-16 07:29:36.591 UTC SEVERE [admin1] Exception creating service admin1:
+(JE 5.0.68) Mutation is missing to evolve class:
+oracle.kv.impl.api.table.TableMetadata version: 0
+Error: java.lang.ClassNotFoundException: oracle.kv.impl.api.table.TableMetadata
+</pre>
+
+<p>
+If you encounter this problem, you can use the host and port values of
+one of the other Admin service nodes to connect and start the Admin
+CLI.  The failed Admin service will return to service when its hosting
+Storage Node is upgraded. [#23856]
+</p>
+
+<h4>Some recent versions of Hive contain a bug that breaks Hive/NoSQL integration</h4>
+<p>
+A bug was introduced in the Hive 1.1.0 source of the Cloudera's 5.4.5
+release; that is, hive-1.1.0-cdh5.4.5. This bug prevents the creation and
+mapping of Hive external tables to corresponding NoSQL tables. Although
+Cloudera has created a patch for this bug, as of this writing, the bug
+currently exists in the following CDH releases:
+<ul>
+  <li>hive-1.1.0-cdh5.4.5
+  <li>hive-1.1.0-cdh5.4.7
+  <li>hive-1.1.0-cdh5.4.8
+  <li>hive-1.1.0-cdh5.5.0
+</ul>
+
+(Note that Cloudera produced no 5.4.6 or 5.4.9 releases.)
+<p>
+For information on the specifics of the change that was introduced, refer to
+Hive bugs <a href="https://issues.apache.org/jira/browse/HIVE-12406">HIVE-12406</a>
+and <a href="https://issues.apache.org/jira/browse/HIVE-9500">HIVE-9500</a>.
+<p>
+If you are using a version of CDH Hive prior to hive-1.1.0-cdh5.4.5,
+this bug will not affect you. On the other hand, if you are using one
+of the versions listed above, then rather than installing an older
+version, you can obtain the patch from Cloudera and apply it to
+your current Hive installation. The patch can be obtained from
+<a href="https://issues.apache.org/jira/secure/attachment/12773587/HIVE-12406.2.patch">this link</a>.
+</p>
+
+<font size="1">Copyright (c) 1996, 2015 Oracle and/or its affiliates.  All rights reserved.</font>
+</div>
+<!-- end docMain -->
+</body>
+</html>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Access and Security</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Concepts Manual" />
+    <link rel="up" href="introduction.html" title="Chapter 1. Introduction to Oracle NoSQL Database" />
+    <link rel="prev" href="troubleshooting.html" title="Troubleshooting" />
+    <link rel="next" href="integration.html" title="Integration" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Access and Security</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="troubleshooting.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 1. Introduction to Oracle NoSQL Database </th>
+          <td width="20%" align="right"> <a accesskey="n" href="integration.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="kvstore-access"></a>Access and Security</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+            Access to the KVStore and its data is performed in two
+            different ways. Routine access to the data is performed using
+            Java APIs that the application developer uses to allow his
+            application to interact with the Oracle NoSQL Database Driver, which
+            communicates with the store's Storage Nodes in order to perform
+            whatever data access the application developer requires. 
+        </p>
+      <p> 
+            In addition, administrative access to the store is performed
+            using a command line interface or a browser-based graphical
+            user interface. System administrators use these interfaces to
+            perform the few administrative actions that are required by
+            Oracle NoSQL Database. You can also monitor the store using these interfaces. 
+        </p>
+      <p>
+            For most production stores, authentication over SSL is
+            normally required by both the command line interface and the
+            Java APIs. It is possible to install a store such that
+            authentication is not required, but this is not recommended.
+            For details on Oracle NoSQL Database's security features, see the
+                <em class="citetitle">Oracle NoSQL Database Security Guide</em>. 
+        </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p> 
+                Oracle NoSQL Database is intended to be installed in a secure location
+                where physical and network access to the store is
+                restricted to trusted users. For this reason, at this time
+                Oracle NoSQL Database's security model is designed to prevent accidental
+                access to the data. It is <span class="emphasis"><em>not</em></span> designed
+                to prevent denial-of-service attacks. 
+            </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="troubleshooting.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="introduction.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="integration.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Troubleshooting </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Integration</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

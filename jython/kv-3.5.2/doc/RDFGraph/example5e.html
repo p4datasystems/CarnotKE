@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Example5e.java: SPARQL query with INFERENCE/ASSERTED ONLY hints</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="quickstart.html" title="Chapter 8. Quick Start for the RDF Graph Feature" />
+    <link rel="prev" href="example5d.html" title="Example5d.java: SPARQL query with DOP" />
+    <link rel="next" href="example5g.html" title="Example5g.java: SPARQL query with PLAN query hint" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center"> Example5e.java: SPARQL query with INFERENCE/ASSERTED ONLY hints</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="example5d.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 8. Quick Start for the RDF Graph Feature</th>
+          <td width="20%" align="right"> <a accesskey="n" href="example5g.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="example5e"></a> Example5e.java: SPARQL query with INFERENCE/ASSERTED ONLY hints</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+            Example 8.12 shows the SPARQL query with additional
+            features including an inference only setting (INF_ONLY).
+            It inserts triples that assert the following: 
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p> 
+                    John is a parent of Mary.
+                </p>
+          </li>
+          <li>
+            <p>
+                    John is a parent of Jack. 
+                </p>
+          </li>
+          <li>
+            <p> 
+                    Amy is a parent of Mary.
+                </p>
+          </li>
+          <li>
+            <p>
+                    Jack is a sibling of Mary (specified as
+                    inferred). 
+                </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+            It then finds all the triples in the Oracle NoSQL Database.
+            Example 5f in the RDF Graph feature package describes the same
+            exercise using an asserted only setting (ASSERTED_ONLY).
+            Note that Example 5f is not shown in this manual.
+        </p>
+      <pre class="programlisting">import com.hp.hpl.jena.graph.*;
+import com.hp.hpl.jena.query.*;
+import com.hp.hpl.jena.rdf.model.Model;
+import oracle.rdf.kv.client.jena.*;
+
+public class Example5e
+{
+  
+  public static void main(String[] args) throws Exception 
+  {
+    
+String szStoreName  = args[0];
+String szHostName   = args[1];
+String szHostPort   = args[2];
+int iRuleBaseId     = Integer.parseInt(args[3]);
+    
+// Create Oracle NoSQL connection 
+OracleNoSqlConnection conn 
+     = OracleNoSqlConnection.createInstance(szStoreName,
+                                            szHostName, 
+                                            szHostPort);
+    
+// Create model from default graph 
+Model model = OracleModelNoSql.createOracleDefaultModelNoSql(conn);
+OracleGraphNoSql graph = (OracleGraphNoSql) model.getGraph();
+    
+// Clear model
+model.removeAll();
+
+// Add triples
+    
+graph.add(Triple.create(Node.createURI("u:John"), 
+                        Node.createURI("u:parentOf"),
+                        Node.createURI("u:Mary")));
+    
+graph.add(Triple.create(Node.createURI("u:John"), 
+                        Node.createURI("u:parentOf"),
+                        Node.createURI("u:Jack")));
+    
+graph.add(Triple.create(Node.createURI("u:Amy"), 
+                        Node.createURI("u:parentOf"),
+                        Node.createURI("u:Jack")));   
+    
+// Create Oracle NoSQL inferred graph
+    
+InferredGraphNoSql inferredGraph = 
+                        new InferredGraphNoSql(conn,
+                                               iRuleBaseId);
+
+// Add inferred triples    
+inferredGraph.add(Triple.create(Node.createURI("u:Jack"),
+                                    Node.createURI("u:siblingOf"),
+                                    Node.createURI("u:Mary")));
+    
+// Close inferred graph;
+inferredGraph.close();
+
+String prefix = " PREFIX ORACLE_SEM_FS_NS: " +
+                " &lt;http://oracle.com/semtech#" +
+                "include_rulebase_id=" + iRuleBaseId + 
+                ",inf_only&gt;";
+String szQuery = prefix + " select ?x ?y ?z WHERE {?x ?y ?z} ";
+System.out.println("Execute query " + szQuery);
+    
+Query query = QueryFactory.create(szQuery);
+QueryExecution qexec = QueryExecutionFactory.create(query, model);
+    
+try {
+      ResultSet results = qexec.execSelect();
+      ResultSetFormatter.out(System.out, results, query);
+    }
+    
+finally {
+      qexec.close();
+    }
+    
+
+model.close();
+conn.dispose();        
+  }
+} </pre>
+      <p> 
+            The following are the commands to compile and run
+            this example, as well as the expected output of the java
+            command with an inference only setting.
+        </p>
+      <pre class="programlisting">javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-
+2.9.4.jar:./sdordfnosqlclient.jar:./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar:./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example5e.java
+
+javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar:./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar:./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example5e &lt;store_name&gt; \
+&lt;host_name&gt; &lt;host_port&gt; &lt;rule_baseID&gt;
+
+Execute query PREFIX ORACLE_SEM_FS_NS: 
+&lt;http://oracle.com/semtech#inf_only&gt; 
+select ?x ?y ?z WHERE {?x ?y ?z} 
+
+---------------------------------------
+| x        | y             | z        |
+=======================================
+| &lt;u:Jack&gt; | &lt;u:siblingOf&gt; | &lt;u:Mary&gt; |
+---------------------------------------</pre>
+      <p>
+            The following represents the expected output of the
+            java command if an asserted only setting is specified.
+        </p>
+      <pre class="programlisting">--------------------------------------
+| x        | y            | z        |
+======================================
+| &lt;u:John&gt; | &lt;u:parentOf&gt; | &lt;u:Jack&gt; |
+| &lt;u:John&gt; | &lt;u:parentOf&gt; | &lt;u:Mary&gt; |
+| &lt;u:Amy&gt;  | &lt;u:parentOf&gt; | &lt;u:Jack&gt; |
+--------------------------------------</pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="example5d.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="quickstart.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="example5g.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">  Example5d.java: SPARQL query with DOP </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top">  Example5g.java: SPARQL query with PLAN query hint</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

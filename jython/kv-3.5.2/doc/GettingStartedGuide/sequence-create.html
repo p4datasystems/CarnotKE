@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Creating a Sequence</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="multiop.html" title="Chapter 12. Executing a Sequence of Operations" />
+    <link rel="prev" href="multiop.html" title="Chapter 12. Executing a Sequence of Operations" />
+    <link rel="next" href="sequence-exec.html" title="Executing a Sequence" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Creating a Sequence</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="multiop.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 12. Executing a Sequence of Operations</th>
+          <td width="20%" align="right"> <a accesskey="n" href="sequence-exec.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="sequence-create"></a>Creating a Sequence</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            You create a sequence by using the <code class="classname">OperationFactory</code>
+            class to create <code class="classname">Operation</code> class
+            instances, each of which represents exactly one operation in
+            the store. You obtain an instance of
+            <code class="classname">OperationFactory</code> by using 
+            <code class="methodname">KVStore.getOperationFactory()</code>.
+        </p>
+      <p>
+            For example, suppose you are using the following keys:
+        </p>
+      <pre class="programlisting">/Products/Hats/-/baseball
+/Products/Hats/-/baseball/longbill
+/Products/Hats/-/baseball/longbill/blue
+/Products/Hats/-/baseball/longbill/red
+/Products/Hats/-/baseball/shortbill
+/Products/Hats/-/baseball/shortbill/blue
+/Products/Hats/-/baseball/shortbill/red
+/Products/Hats/-/western
+/Products/Hats/-/western/felt
+/Products/Hats/-/western/felt/black
+/Products/Hats/-/western/felt/gray
+/Products/Hats/-/western/leather
+/Products/Hats/-/western/leather/black
+/Products/Hats/-/western/leather/gray</pre>
+      <p>
+            And further suppose each of the following records has some
+            information (such as a price refresh date) that you want to
+            update in such a fashion as to make sure that the information
+            is consistent for all of the records:
+        </p>
+      <pre class="programlisting">/Products/Hats/-/western
+/Products/Hats/-/western/felt
+/Products/Hats/-/western/leather</pre>
+      <p>
+            Then you can create a sequence in the following way:
+        </p>
+      <a id="sequence-create-1"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.Key;
+import oracle.kv.Value;
+import oracle.kv.Operation;
+import oracle.kv.OperationFactory;
+import java.util.ArrayList;
+
+import org.apache.avro.Schema;
+import oracle.kv.avro.GenericAvroBinding;
+import oracle.kv.avro.GenericRecord;
+
+...
+
+// Get the operation factory. Note that we do not show the 
+// creation of the kvstore handle here.
+
+OperationFactory of = kvstore.getOperationFactory();
+
+// We need a List to hold the operations in the
+// sequence.
+ArrayList&lt;Operation&gt; opList = new ArrayList&lt;Operation&gt;();
+
+...
+
+ArrayList&lt;String&gt; majorComponents = new ArrayList&lt;String&gt;();
+ArrayList&lt;String&gt; minorComponents1 = new ArrayList&lt;String&gt;();
+ArrayList&lt;String&gt; minorComponents2 = new ArrayList&lt;String&gt;();
+ArrayList&lt;String&gt; minorComponents3 = new ArrayList&lt;String&gt;();
+
+...
+
+// Define the major and minor path components for our keys
+majorComponents.add("Products");
+majorComponents.add("Hats");
+
+minorComponents1.add("western");
+minorComponents2.add("western");
+minorComponents2.add("felt");
+minorComponents3.add("western");
+minorComponents3.add("leather");
+
+// Create the three keys that we will need
+Key key1 = Key.createKey(majorComponents, minorComponents1);
+Key key2 = Key.createKey(majorComponents, minorComponents2);
+Key key3 = Key.createKey(majorComponents, minorComponents3);
+
+...
+
+// Binding and schema creation omitted
+
+...
+
+final GenericRecord hat1 = new GenericData.Record(hatSchema);
+hat1.put("randomHatData", "someRandomData");
+final Value value1 = binding.toValue(hat1);
+
+final GenericRecord hat2 = new GenericData.Record(hatSchema);
+hat2.put("randomHatData", "someMoreRandomData");
+final Value value2 = binding.toValue(hat2);
+
+final GenericRecord hat3 = new GenericData.Record(hatSchema);
+hat3.put("randomHatData", "someMoreRandomData");
+final Value value3 = binding.toValue(hat3);
+
+...
+
+// Here we would perform whatever actions we need to create
+// our record values. We won't show how the values get created, 
+// but assume it results in three Value objects: value1, value2,
+// and value3.
+
+...
+
+// Now create our list of operations for the key pairs
+// key1/value1, key2/value2, and key3/value3. In this 
+// trivial example we will put store all three records 
+// in a single atomic operation.
+
+
+opList.add(of.createPut(key1, value1));
+opList.add(of.createPut(key2, value2));
+opList.add(of.createPut(key3, value3)); </pre>
+      <p>
+            Note in the above example that we create three unique keys that
+            differ only in their minor path components. If the major path
+            components were different for any of the three keys, we could
+            not successfully execute the sequence.
+        </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="multiop.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="multiop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="sequence-exec.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 12. Executing a Sequence of Operations </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Executing a Sequence</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

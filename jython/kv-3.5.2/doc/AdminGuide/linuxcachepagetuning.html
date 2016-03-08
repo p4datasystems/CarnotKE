@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Linux Page Cache Tuning</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="machine-tuning.html" title="Appendix C. Tuning" />
+    <link rel="prev" href="machine-tuning.html" title="Appendix C. Tuning" />
+    <link rel="next" href="osuser.html" title="OS User Limits" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Linux Page Cache Tuning</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="machine-tuning.html">Prev</a> </td>
+          <th width="60%" align="center">Appendix C. Tuning</th>
+          <td width="20%" align="right"> <a accesskey="n" href="osuser.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="linuxcachepagetuning"></a>Linux Page Cache Tuning</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+           Tune your page cache to permit the OS to write asynchronously to
+           disk whenever possible. This allows background writes, which
+           minimize the latency resulting from serial write operations such
+           as fsync. This also helps with write stalls which occur when the
+           file system cache is full and needs to be flushed to disk to
+           make room for new writes. We have observed significant speedups
+           (15-20%) on insert-intensive benchmarks when these parameters
+           are tuned as described below.
+       </p>
+      <p>
+           Place the following commands in <code class="filename">/etc/sysctl.conf</code>. 
+           Run 
+       </p>
+      <pre class="programlisting">sysctl -p</pre>
+      <p>
+           to load the new settings so they can take effect without
+           needing to reboot the machine.
+       </p>
+      <pre class="programlisting"># Set vm.dirty_background_bytes to 10MB to ensure that
+# on a 40MB/sec hard disk a fsync never takes more than 250ms and takes
+# just 125ms on average. The value of vm.dirty_background_bytes 
+# should be increased on faster SSDs or I/O subsytems with higher
+# throughput. You should increase this setting by the same proportion 
+# as the relative increase in throughput. For example, for a typical SSD 
+# with a throughput of 160MB/sec, vm.dirty_background_bytes should be set 
+# to 40MB so fsync takes ~250ms. In this case, the value was increased by
+# a factor of 4.
+vm.dirty_background_bytes=10485760
+
+# IO calls effectively become synchronous(waiting for the underlying
+# device to complete them). This setting helps minimize the
+# possibility of a write request stalling in JE while holding the
+# write log latch. 
+vm.dirty_ratio=40 
+
+# Ensures that data does not hang around in memory longer than
+# necessary. Given JE's append-only style of writing, there is
+# typically little benefit from having an intermediate dirty page
+# hanging around, because it is never going to be modified. By
+# evicting the dirty page earlier, its associated memory is readily
+# available for reading or writing new pages, should that become
+# necessary.
+vm.dirty_expire_centisecs=1000 </pre>
+      <p>
+            Earlier versions of the Linux kernel may not support
+            <code class="literal">vm.dirty_background_bytes</code>.
+            On these older kernels you can
+            use <code class="literal">vm.dirty_background_ratio</code>
+            instead. Pick the ratio that gets you closest to 10MB.
+            On some systems with a lot of memory this may not be
+            possible due to the large granularity associated with
+            this configuration knob. A further impediment is that a
+            ratio of 5 is the effective minimum in some kernels.
+        </p>
+      <pre class="programlisting">vm.dirty_background_ratio=5</pre>
+      <p>
+            Use <code class="literal">sysctl -a</code> to verify that the
+            parameters described here are set as expected.
+        </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="machine-tuning.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="machine-tuning.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="osuser.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Appendix C. Tuning </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> OS User Limits</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

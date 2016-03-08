@@ -1,0 +1,11 @@
+{
+    "type": "record",
+    "name": "Person",
+    "namespace": "coherence",
+    "fields": [
+        {"name": "firstname", "type": "string", "default": ""},
+        {"name": "lastname", "type": "string", "default": ""},
+        {"name": "phone", "type": "string", "default": ""},
+	{"name": "age", "type": "int", "default": 0}
+    ]
+}

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Integration</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Concepts Manual" />
+    <link rel="up" href="introduction.html" title="Chapter 1. Introduction to Oracle NoSQL Database" />
+    <link rel="prev" href="kvstore-access.html" title="Access and Security" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Integration</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="kvstore-access.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 1. Introduction to Oracle NoSQL Database </th>
+          <td width="20%" align="right"> </td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="integration"></a>Integration</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="integration.html#hadoopintegration">Hadoop Integration</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="integration.html#exttab">Oracle External Tables Integration</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="integration.html#coherence">Coherence Integration</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p> 
+            Oracle NoSQL Database can be integrated with Apache Hadoop and products in
+            the Oracle stack. In the following sections you will learn more
+            about this. 
+        </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="hadoopintegration"></a>Hadoop Integration</h3>
+            </div>
+          </div>
+        </div>
+        <p> 
+                Oracle NoSQL Database can be integrated with Apache Hadoop systems
+                using the
+                    <code class="classname">oracle.kv.hadoop.KVInputFormat</code>
+                class. This class allows you to read data from Oracle NoSQL Database and
+                then prepare it for insertion into a Hadoop system. To move
+                data in the reverse, you can read data from the Hadoop
+                system using the standard mechanisms, and then write the
+                records to Oracle NoSQL Database using the APIs described in this book.
+            </p>
+        <p> 
+                An example of using <code class="classname">KVInputFormat</code>
+                to read data from Oracle NoSQL Database in a Map/Reduce job can be found
+                in the <code class="literal">&lt;KVHOME&gt;/examples/hadoop</code>
+                directory. 
+            </p>
+        <p> 
+                In addition, Oracle NoSQL Database provides the
+                    <code class="classname">oracle.kv.AvroFormatter</code>
+                interface. This is used to support Oracle Loader for Hadoop
+                (OLH), which can read data directly from Oracle NoSQL Database and write
+                it to Oracle Database as a Map/Reduce job. OLH is described
+                in the <span class="emphasis"><em>Oracle Loader for Hadoop</em></span>
+                chapter of the <em class="citetitle">Oracle Big Data Connectors User's
+                    Guide</em>, which you can find here: 
+            </p>
+        <p>
+                <a class="ulink" href="http://docs.oracle.com/cd/E37231_01/doc.20/e36961/olh.htm#CBHGEJDE" target="_top">http://docs.oracle.com/cd/E37231_01/doc.20/e36961/olh.htm#CBHGEJDE</a>
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="exttab"></a>Oracle External Tables Integration</h3>
+            </div>
+          </div>
+        </div>
+        <p> 
+                Oracle NoSQL Database data can be accessed using Oracle
+                Database's External Tables feature. This capability allows
+                NoSQL Database data to be read into Oracle Database. NoSQL
+                Database data cannot be modified using the External Tables
+                feature.
+            </p>
+        <p> 
+                Note that this is a feature which is only available to
+                users of the Oracle NoSQL Database Enterprise Edition. 
+            </p>
+        <p>
+                To use the Oracle Database External Table feature to
+                read Oracle NoSQL Database data, you must use the
+                    <code class="literal">&lt;KVHOME&gt;/exttab/bin/nosql_stream</code>
+                preprocessor to populate our Oracle tables with the data.
+                You must then configure your Oracle Database to use the
+                External Tables feature. 
+            </p>
+        <p> 
+                For information on how to use the
+                    <code class="literal">nosql_stream</code> preprocessor, and how
+                to configure Oracle Database to use External Tables, see
+                the <a class="ulink" href="../javadoc/oracle/kv/exttab/package-summary.html" target="_top">
+                    oracle.kv.exttab package summary.</a>
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="coherence"></a>Coherence Integration</h3>
+            </div>
+          </div>
+        </div>
+        <p> 
+                Oracle Coherence is a middleware application that
+                provides data management support for clustered
+                applications. The data that an application delegates to
+                Oracle Coherence are automatically available to and
+                accessible by all servers in the application cluster. By
+                distributing data across multiple machines, Oracle
+                Coherence solves problems related to achieving
+                availability, reliability, scalability, performance,
+                serviceability and manageability of clustered applications.
+            </p>
+        <p> 
+                Oracle Coherence is described here: <a class="ulink" href="http://docs.oracle.com/cd/E24290_01/index.htm" target="_top">http://docs.oracle.com/cd/E24290_01/index.htm</a>
+            </p>
+        <p> 
+                To provide these solutions, Oracle Coherence implements
+                a cache. This cache can be customized to use a number of
+                different data repositories to store the cached data. One
+                such data repository is Oracle NoSQL Database. 
+            </p>
+        <p> 
+                Note that this is a feature which is only available to
+                users of the Oracle NoSQL Database Enterprise Edition. 
+            </p>
+        <p> 
+                To integrate with Oracle NoSQL Database, Oracle
+                Coherence must be customized using a combination of
+                configuration XML, stock Coherence code, and custom Oracle
+                NoSQL Database code. The Oracle NoSQL Database code is
+                implemented using classes provided by the
+                    <code class="literal">oracle.kv.coherence</code> package.
+            </p>
+        <p> 
+                Oracle NoSQL Database can be used to support two
+                different caching strategies for Oracle Coherence. The
+                first of these is implemented by <a class="ulink" href="../javadoc/oracle/kv/coherence/NoSQLBinaryStore.html" target="_top"> oracle.kv.coherence.NoSQLBinaryStore. </a> This
+                class allows you to implement cache data that is not meant
+                to be shared with non-cache-based applications, and so uses
+                a data format that is fairly opaque. This is an efficient
+                and easy-to-configure caching option. 
+            </p>
+        <p> 
+                Alternatively, you can implement a caching strategy that
+                results in data which is meant to be shared with
+                non-cache-based applications. You do this using <a class="ulink" href="../javadoc/oracle/kv/coherence/NoSQLAvroCacheStore.html" target="_top"> oracle.kv.coherence.NoSQLAvroCacheStore. </a>
+                This caching mechanism is Avro-aware, and so any
+                Avro-compliant application will be able to read and write
+                these data records. 
+            </p>
+        <p> 
+                In order for Oracle Coherence to use these Avro-based
+                objects, it must be able to serialize the Avro records for
+                transmission over its network. To enable this, you use the
+                    <a class="ulink" href="../javadoc/oracle/kv/coherence/NoSQLAvroSerializer.html" target="_top"> oracle.kv.coherence.NoSQLAvroSerializer </a>
+                class. 
+            </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="kvstore-access.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="introduction.html">Up</a>
+          </td>
+          <td width="40%" align="right"> </td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Access and Security </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,1148 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 3. Hardware Monitoring</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Run Book" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Run Book" />
+    <link rel="prev" href="monitoringmetricsforadminnodes.html" title="Monitoring Metrics for Administration Nodes" />
+    <link rel="next" href="servers.html" title="Servers" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 3. Hardware Monitoring</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="monitoringmetricsforadminnodes.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="servers.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="hardwaremonitoring"></a>Chapter 3. Hardware Monitoring</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="hardwaremonitoring.html#monitorforhardwarefaults">Monitoring for Hardware Faults</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="hardwaremonitoring.html#network">The Network</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="hardwaremonitoring.html#persistent_storage">Persistent Storage</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="servers.html">Servers</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="servers.html#detec_correlating_server_fail">
+            Detecting and Correlating Server Failures to NoSQL Log Events
+            </a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="servers.html#resolv_server_failures">
+            Resolving Server Failures
+            </a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="servers.html#terminology_review">Terminology Review</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="servers.html#assumptions">Assumptions</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="servers.html#replace_sn_with_identical_sn">
+            Replacement Procedure 1: Replace SN with Identical SN
+            </a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="servers.html#new_sn_takes_overduties_removed_sn">
+            Replacement Procedure 2: New SN Takes Over Duties of Removed SN
+            </a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="servers.html#examples">
+            Examples
+            </a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="servers.html#setup">
+            Setup
+            </a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="servers.html#example_1_replace_failed_sn_with_ident_sn">
+            Example 1: Replace a Failed SN with an Identical SN
+            </a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="servers.html#example_2_new_sn_takes_over_duties_existing_sn">
+            Example 2: New SN Takes Over Duties of Existing SN
+            </a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+        </dl>
+      </div>
+      <p>
+        While software component monitoring is central to insuring that
+        high availability service levels are met, hardware monitoring,
+        fault isolation, and ultimately the replacement of a failed
+        component and how to recover from that failure are equally
+        important. The following sections cover guidelines on what
+        to monitor and how to detect potential hardware failures. It
+        also discusses the replacement procedures of replacing
+        failed hardware components and how to bring the Oracle NoSQL
+        Database components (that were utilizing the components
+        that were replaced) back online .
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="monitorforhardwarefaults"></a>Monitoring for Hardware Faults</h2>
+            </div>
+          </div>
+        </div>
+        <div class="toc">
+          <dl>
+            <dt>
+              <span class="sect2">
+                <a href="hardwaremonitoring.html#network">The Network</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="hardwaremonitoring.html#persistent_storage">Persistent Storage</a>
+              </span>
+            </dt>
+          </dl>
+        </div>
+        <p>
+            There are several different hardware scenarios/failures that
+            are considered when monitoring the environment for Oracle
+            NoSQL Database. The sections below cover the monitoring of
+            network, disk, and machine failures as well as the correlation
+            of these failures with log events in the Oracle NoSQL Database.
+            Finally, it discusses how to recover from these failure
+            scenarios.
+          </p>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="network"></a>The Network</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                Monitoring packet loss, round trip average latencies, and
+                network utilization provides a glimpse into critical network
+                activity that can affect the performance as well as the
+                ongoing functioning of the Oracle NoSQL Database. There are
+                two critical types of network activity in the Oracle NoSQL
+                Database. The client driver will utilize Java RMI over TCP/IP 
+                to communicate between the machine running the application, 
+                and the machines running the nodes of the NoSQL Database cluster. 
+                Secondly, each node in the cluster must be able to communicate
+                with each other. Replication nodes will utilize Java RMI over
+                TCP/IP and will also utilize streams based communication over
+                TCP/IP. Administrative nodes and storage node agents will only
+                utilize RMI over TCP/IP. The key issue in insuring an operational
+                store that is able to maintain predictable latencies and throughput
+                is to monitor the health of the network through which all of these
+                nodes communicate.
+            </p>
+          <p>
+                The following tools are recommended for monitoring the health of the
+                network interfaces that the Oracle NoSQL Database relies on:
+            </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+                     <span class="emphasis"><em>Sar, ping, iptraf</em></span> – These operating system
+                     tools display critical network statistics such as # of packets
+                     lost, round trip latency, and network utilization. It is recommended
+                     to use <code class="literal">ping</code> in a scripted fashion to monitor round
+                     trip latency as well as packet loss and use either <code class="literal">sar</code>
+                     or <code class="literal">iptraf</code> in a scripted fashion to monitor network
+                     utilization. A good rule of thumb is to raise an alert if network
+                     utilization goes above 80%.
+                  </p>
+              </li>
+              <li>
+                <p>
+                     <span class="emphasis"><em>Oracle NoSQL Ping</em></span> command – The Oracle NoSQL
+                     Administrative console contains a ping command that attempts to
+                     contact each node of the cluster. Directions on how to run and
+                     script this command can be found here:
+                     <a class="ulink" href="http://docs.oracle.com/cd/NOSQL/html/AdminGuide/cli_command_reference.html#commands_subcommands" target="_top">http://docs.oracle.com/cd/NOSQL/html/AdminGuide/cli_command_reference.html#commands_subcommands</a>
+                  </p>
+              </li>
+            </ul>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="network_failure_to_logevents"></a>
+                    Correlating Network Failure to NoSQL Log Events
+                    </h4>
+                </div>
+              </div>
+            </div>
+            <p>
+                         Network failures that affect the runtime operation of NoSQL Database
+                         is ultimately logged as instances of Java runtime exceptions.
+                         Using log file monitoring, the following exception strings are
+                         added to a list of regular expressions that are recognized as
+                         critical events. Correlating the timestamps of these events with the
+                         timestamps of whatever network monitoring tool is being utilized.
+                    </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+                          While searching the log file for any of the exceptions stated below,
+                          the log level must also be checked such that only log levels of SEVERE
+                          is considered. These exceptions are logged at a level of INFO 
+                          which indicates no errors will be encountered by the application.
+                       </p>
+            </div>
+            <div class="itemizedlist">
+              <ul type="disc">
+                <li>
+                  <p>
+                               <span class="emphasis"><em>UnknownHostException</em></span> – A DNS lookup of a 
+                               node in the NoSQL Database failed due to either a misconfigured
+                               NoSQL Database or a DNS error. Encountering this error after a
+                               NoSQL cluster has been operational for some time indicates
+                               a network failure between the application and the DNS server.
+                          </p>
+                </li>
+                <li>
+                  <p>
+                               <span class="emphasis"><em>ConnectException</em></span> – The client driver cannot
+                               open a connection to the NoSQL Database node. Either the node is
+                               not listening on the port being contacted or the port is
+                               blocked by a firewall.
+                          </p>
+                </li>
+                <li>
+                  <p>
+                               <span class="emphasis"><em>ConnectIOException</em></span> – Indicates a possible
+                               handshake error between the client and the server or an I/O error
+                               from the network layer.
+                          </p>
+                </li>
+                <li>
+                  <p>
+                               <span class="emphasis"><em>MarshalException</em></span> – Indicates a possible I/O
+                               error from the network layer.
+                          </p>
+                </li>
+                <li>
+                  <p>
+                               <span class="emphasis"><em>UnmarshalException</em></span> – Indicates a possible
+                               I/O error from the network layer.
+                          </p>
+                </li>
+                <li>
+                  <p>
+                               <span class="emphasis"><em>NoSuchObjectException</em></span> – Indicates a possible
+                               I/O error from the network layer.
+                          </p>
+                </li>
+                <li>
+                  <p>
+                               <span class="emphasis"><em>RemoteException</em></span> – Indicates a possible I/O
+                               error from  the network layer.
+                          </p>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="recovering_network_failure"></a>Recovering from Network Failure</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+                         In general, the NoSQL Database will retry and recover from
+                         network failures and no intervention at the database level
+                         is necessary. It is possible that a degraded level of
+                         service is encountered due to the network failure;
+                         however, the failure of network partitions will not cause
+                         the NoSQL Database to fail.
+                    </p>
+          </div>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="persistent_storage"></a>Persistent Storage</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                One of the most common failure scenarios you can expect to encounter
+                while managing a deployed Oracle NoSQL Database instance (sometimes
+                referred to as KVStore) is a disk that fails and needs to be replaced; 
+                where the disk is typically a hard disk drive (HDD), or a solid state
+                drive (SSD). Because HDDs employ many moving parts that are continuously
+                in action when the store performs numerous writes and reads, moving huge
+                numbers of bytes on and off the disk, parts of the disk can easily wear
+                out and fail. With respect to SSDs, although the absence of moving parts
+                makes SSDs a bit less failure prone than HDDs, when placed under very
+                heavy load, SSDs will also generally fail with regularity. As a matter of
+                fact, when such stores scale to a very large number of nodes (machines),
+                a point can be reached where disk failure is virtually guaranteed; much
+                more than other hardware components making up a node. For example,
+                disks associated with such systems generally fail much more frequently
+                than the system's mother board, memory chips, or even the network
+                interface cards (NICs).
+            </p>
+          <p>
+                Since disk failures are so common, a well-defined procedure is provided
+                for replacing a failed disk while the store continues to run; 
+                providing data availability.
+            </p>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="detecting_corelating_storage_failure"></a>
+                Detecting and Correlating Persistent Storage Failures to NoSQL Log Events
+                    </h4>
+                </div>
+              </div>
+            </div>
+            <p>
+                         There are many vendor specific tools for detecting the failure of 
+                         persistent storage devices as well as SNMP monitoring agents that
+                         perform similar functionality. It is beyond the scope of this book
+                         to recommend any vendor specific mechanism or SNMP based monitoring 
+                         mechanism. There are however, some general things that can be done
+                         to identify a failed persistent storage device;
+                    </p>
+            <div class="itemizedlist">
+              <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                <h3 class="title">Note</h3>
+                <p>
+                               Using log file monitoring, the following exception string
+                               is to a list of regular expressions that should be
+                               recognized as critical events. Correlating the timestamps of
+                               these events with the timestamps of whatever storage device
+                               monitoring tool is being utilized. When searching the log
+                               file for any of the exception stated below, the log level
+                               must also be checked such that only log levels of SEVERE
+                               is considered.
+                           </p>
+              </div>
+              <ul type="disc">
+                <li>
+                  <p>
+                               <span class="emphasis"><em>I/O errors in /var/log/messages</em></span> – 
+                               Monitoring /var/log/messages for I/O errors indicate that
+                               something is wrong with the device and it may be failing.
+                          </p>
+                </li>
+                <li>
+                  <p>
+                               <span class="emphasis"><em>Smartctl</em></span> – If available, the
+                               smartctl tool detects a failure with a persistent storage
+                               device and displays the serial number of the specific
+                               device that is failing.
+                          </p>
+                </li>
+                <li>
+                  <p>
+                               <span class="emphasis"><em>EnvironmentFailureException</em></span> – The
+                               storage layer of NoSQL Database (Berkeley DB Java Edition)
+                               converts Java IOExceptions detected from the storage device
+                               into an EnvironmentFailureException and this exception is
+                               written to the log file.
+                          </p>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="resolving_storage_device_failure"></a>
+                    Resolving Storage Device Failures
+                    </h4>
+                </div>
+              </div>
+            </div>
+            <p>
+                     The sections below describe that procedure for two common machine 
+                     configurations.
+                    </p>
+            <p>
+                         In order to understand how a failed disk can be replaced while the
+                         KVStore is running, review what and where data is stored by the
+                         KVStore; which is dependent on each machine's disk configuration,
+                         as well as how the store's capacity and storage directory location
+                         is configured. Suppose a KVStore is distributed among 3 machines
+                         – or storage nodes (SNs) — and is configured with
+                         replication factor (RF) equal to 3, each SN's capacity equal to 2,
+                         KVROOT equal to /opt/ondb/var/kvroot, and store name equal to
+                         "store-name". Since the capacity or each SN is 2, each machine
+                         will host 2 replication nodes (RNs). That is, each SN will execute 2
+                         Java VMs and each run a software service (an RN service) responsible
+                         for storing and retrieving a replicated instance of the key/value data
+                         maintained by the store.
+                    </p>
+            <p>
+                         Suppose in one deployment, the machines themselves (the SNs)
+                         are each configured with 3 disks; whereas in another deployment, the
+                         SNs each have only a single disk on which to write and read data. 
+                         Although the second (single disk) scenario is fine for experimentation
+                         and "tire kicking", that configuration is strongly discouraged for
+                         production environments, where it is likely to have disk failure and
+                         replacement. In particular, one rule deployers are encouraged to follow
+                         in production environments is that multiple RN services should never be
+                         configured to write data to the same disk. That said, there may be some
+                         uncommon circumstances in which a deployer may choose to violate this
+                         rule. For example, in addition to being extremely reliable (for
+                         example, a RAID device), the disk may be a device with such high
+                         performance and large capacity that a single RN service would never
+                         be able to make use of the disk without exceeding the recommended 32GB
+                         heap limit. Thus, unless the environment consists of disks that satisfy
+                         such uncommon criteria, deployers always prefer environments that
+                         allow them to configure each RN service with its own disk; separate from
+                         all configuration and administration information, as well as the data
+                         stored by any other RN services running on the system.
+                    </p>
+            <p>
+                         As explained below, to configure a KVStore use multiple disks on each
+                         SN, the storagedir parameter must be employed to exploit the separate
+                         media that is available. In addition to encouraging deployers to use
+                         the storagedir parameter in the multi-disk scenario, this note is also
+                         biased toward the use of that parameter when discussing the single disk
+                         scenario; even though the use of that parameter in the single disk
+                         case provides no substantial benefit over using the default location
+                         (other than the ability to develop common deployment scripts). To
+                         understand this, first compare the implications of using the default
+                         storage location with a non-default location specified with the
+                         storagedir parameter.
+                    </p>
+            <p>
+                         Thus, suppose the KVStore is deployed – in either the multi-disk
+                         scenario or the single disk scenario – using the default location;
+                         that is, the storagedir parameter is left unspecified. This means
+                         that data will be stored in either scenario under the KVROOT; which
+                         is <code class="literal">/opt/ondb/var/kvroot</code> in the examples below.
+                         For either scenario, a directory structure like the following
+                         is created and populated:
+                    </p>
+            <pre class="programlisting"> - Machine 1 (SN1) -     - Machine 2 (SN2) -    - Machine 3 (SN3) -
+/opt/ondb/var/kvroot   /opt/ondb/var/kvroot  /opt/ondb/var/kvroot
+  log files             log files             log files
+  /store-name           /store-name           /store-name
+    /log                   /log                  /log
+    /sn1                   /sn2                  /sn3
+      config.xml             config.xml            config.xml
+      /admin1                /admin2               /admin3
+        /env                   /env                  /env
+
+  /rg1-rn1                 /rg1-rn2                /rg1-rn3
+    /env                     /env                    /env
+
+  /rg2-rn1                 /rg2-rn2                /rg2-rn3
+    /env                     /env                    /env </pre>
+            <p>
+                         Compare this with the structure that is created when a KVStore is
+                         deployed to the multi-disk machines; where each machine's 3 disks
+                         are named /opt, /disk1, and/disk2. Assume that the makebootconfig
+                         utility (described in Chapter 2 of the Oracle NoSQL Database 
+                         Administrator's Guide, section, "Installation
+                         Configuration") is used to create an initial boot config with
+                         parameters such as the following:
+                    </p>
+            <pre class="programlisting">&gt; java -jar KVHOME/lib/kvstore.jar makebootconfig \
+       -root /opt/ondb/var/kvroot \
+       -port 5000  \
+       -admin 5001 \
+       -host &lt;host-ip&gt;
+       -harange 5010,5020 \
+       -num_cpus 0  \
+       -memory_mb 0 \
+       -capacity 2  \
+       -storagedir /disk1/ondb/data \
+       -storagedir /disk2/ondb/data
+</pre>
+            <p>
+                         With a boot config such as that shown above, the directory structure
+                         that is created and populated on each machine would then be:
+                    </p>
+            <pre class="programlisting"> - Machine 1 (SN1) -     - Machine 2 (SN2) -    - Machine 3 (SN3) -
+/opt/ondb/var/kvroot   /opt/ondb/var/kvroot  /opt/ondb/var/kvroot
+  log files             log files             log files
+  /store-name           /store-name           /store-name
+    /log                   /log                  /log
+    /sn1                   /sn2                  /sn3
+      config.xml             config.xml            config.xml
+      /admin1                /admin2               /admin3
+        /env                   /env                  /env
+
+/disk1/ondb/data         /disk1/ondb/data        /disk1/ondb/data
+  /rg1-rn1                 /rg1-rn2                /rg1-rn3
+    /env                     /env                    /env
+
+/disk2/ondb/data         /disk2/ondb/data        /disk2/ondb/data
+  /rg2-rn1                 /rg2-rn2                /rg2-rn3
+    /env                     /env                    /env </pre>
+            <p>
+                         In this case, the configuration information and administrative
+                         data is stored in a location that is separate from all of the
+                         replication data. Furthermore, the replication  data itself is
+                         stored by each distinct RN service on separate, physical media
+                         as well. That is, the data stored by a given member of each
+                         replication group (or shard) is stored on a disk that separate
+                         from the disks employed by the other members of the group.
+                    </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+                              Storing the data in these different locations as described above,
+                              provides for failure isolation and will typically make disk
+                              replacement less complicated and less time consuming. That is,
+                              by using a larger number of smaller disks, it is possible to
+                              recover much more quickly from a single disk failure because of
+                              the reduced amount of time it will take to repopulate the smaller
+                              disk. This is why both this note and Chapter 2 of the Oracle
+                              NoSQL Database Administrator's Guide, section,
+                              "Installation Configuration" strongly encourage configurations
+                              like that shown above; configurations that exploit separate
+                              physical media or disk partitions.
+                        </p>
+            </div>
+            <p>
+                         Even when a machine has only a single disk, nothing prevents
+                         the deployer from using the storagedir parameter in a manner similar to
+                         the multi-disk case; storing the configuration and administrative data
+                         under a parent directory that is different than the parent(s) under
+                         which the replicated data is stored. Since this non-default strategy
+                         may allow to create deployment scripts that can be more easily shared
+                         between single disk and multi-disk systems, some may prefer this
+                         strategy over using the default location (KVROOT); or may simply view
+                         it as a good habit to follow. Employing this non-default strategy
+                         is simply a matter of taste, and provides no additional benefit
+                         other than uniformity with the multi-disk case. 
+                    </p>
+            <p>
+                         Hence, such a strategy applied to a single disk system will not
+                         necessarily make disk replacement less complicated; because, if that
+                         single disk fails and needs to be replaced, not only is all the data
+                         written by the RN(s) unavailable, but the configuration (and admin)
+                         data is also unavailable. As a result, since the configuration 
+                         information is needed during the (RN) recovery process after the disk
+                         has been replaced, that data must be restored from a previously captured
+                         backup; which can make the disk replacement process much more complicated.
+                         This is why multi-disk systems are generally preferred in production
+                         environments; where, because of sheer use, the data disks are far more
+                         likely to fail than the disk holding only the configuration and other
+                         system data.
+                     </p>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="proc_replacing_failed_storage_device_failure"></a>
+                Procedure for Replacing a Failed Persistent Storage Device
+                </h4>
+                </div>
+              </div>
+            </div>
+            <p>
+                         Suppose a KVStore has been deployed to a set of machines, each with
+                         3 disks, using the 'storagedir' parameter as described above. Suppose
+                         that disk2 on SN3 fails and needs to be replaced. In this case, the
+                         administrator would do the following:
+                     </p>
+            <div class="orderedlist">
+              <ol type="1">
+                <li>
+                  <p>
+                               Execute the KVStore administrative command line interface
+                               (CLI), connecting via one of the healthy admin services.
+                          </p>
+                </li>
+                <li>
+                  <p>
+                               From the CLI, execute the following command:
+                          </p>
+                  <pre class="programlisting">kv-&gt; plan stop-service-service rg2-rn3
+</pre>
+                  <p>
+                               This stops the service so that attempts by the
+                               system to communicate with that particular service are
+                               no longer necessary; resulting in a reduction in the
+                               amount of error output related to a failure the
+                               administrator is already aware of.
+                          </p>
+                </li>
+                <li>
+                  <p>
+                               Remove disk2, using whatever procedure is dictated by
+                               the OS, the disk manufacture, and/or the hardware platform.
+                          </p>
+                </li>
+                <li>
+                  <p>
+                               Install a new disk using the appropriate procedures.
+                          </p>
+                </li>
+                <li>
+                  <p>
+                               Format the new disk to have the same storage directory as
+                               before; that is, <code class="literal">/disk2/ondb/var/kvroot</code>
+                          </p>
+                </li>
+                <li>
+                  <p>
+                               From the CLI, execute the following commands; where the 
+                               <code class="literal">verify configuration</code> command simply
+                               verifies that the desired RN is now up and running:
+                          </p>
+                  <pre class="programlisting">kv-&gt; plan start-service -service rg2-rn3 -wait
+kv-&gt; verify configuration
+</pre>
+                </li>
+                <li>
+                  <p>
+                               Verify that the recovered RN data file(s) have the expected 
+                               content; that is, <code class="literal">/disk2/ondb/var/kvroot/rg2-rn3/env/*.jdb
+                               </code>
+                          </p>
+                </li>
+              </ol>
+            </div>
+            <p>
+                         In step 2, the RN service with id equal to 3, belonging to 
+                         the replication group with id2, is stopped (rg2-rn3). To determine
+                         which specific RN service to stop when using the procedure outlined
+                         above, the administrator combines knowledge of which disk has failed
+                         on which machine with knowledge about the directory structure created
+                         during deployment of the KVStore. For this particular case, the 
+                         administrator has first used standard system monitoring and
+                         management mechanisms to determine that disk2 has failed on the machine
+                         corresponding to the SN with id equal to 3 and needs to be replaced.
+                         Then, given the directory structure shown previously, the administrator
+                         knows that – for this deployment – the store writes
+                         replicated data to disk2 on the SN3 machine using files located
+                         under, <code class="literal">/disk2b/data/rg2-rn3/en</code>. As a result, the
+                         administrator determined that the RN service with name equal to
+                         rg2-rn3 must be stopped before replacing the failed disk.
+                    </p>
+            <p>
+                         In step 6, if the RN service that was previously stopped has successfully
+                         restarted when the <code class="literal">verify configuration</code> command is
+                         executed, and although the command's output indicates that the service is
+                         up and healthy, it is not necessary that the restarted RN has
+                         completely repopulated the new disk with that RN's data. This is because,
+                         it could take a considerable amount of time for the disk to recover all
+                         its data; depending on the amount of data that previously resided on
+                         the disk before failure. The system may encounter additional network
+                         traffic and load while the new disk is being repopulated.
+                    </p>
+            <p>
+                         Finally, it should be noted that step 7 is just a sanity check, and
+                         therefore optional. That is, if the RN service is successfully restarted
+                         and the <code class="literal">verify configuration</code> command reports RN
+                         as healthy, the results of that command is viewed as sufficient
+                         evidence for declaring the disk replacement a success. As indicated above,
+                         even if some data is not yet available on the new disk, that data will
+                         continue to be available via the other members of the recovering RN's
+                         replication group (shard), and will eventually be replicated to, and
+                         available from, the new disk as expected.
+                    </p>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="example_disk_replace"></a>
+                Example
+                </h4>
+                </div>
+              </div>
+            </div>
+            <p>
+                         Below, an example is presented that allows you to gain some
+                         practical experience with the disk replacement steps presented
+                         above. This example is intended to simulate the multi-disk scenario
+                         using a single machine with a single disk. Thus, no disks will
+                         actually fail or be physically replaced. But you should still 
+                         feel how the data is automatically recovered when a disk
+                         is replaced.
+                     </p>
+            <p>
+                         For simplicity, assume that the KVStore is installed under
+                         <code class="literal">/opt/ondb/kv</code>; that is, <code class="literal">
+                         KVHOME=/opt/ondb/kv</code>, and that 
+                         <code class="literal">KVROOT=/opt/ondb/var/kvroot</code>; that is,
+                         if you have not done so already, create the directory:
+                     </p>
+            <pre class="programlisting">&gt; mkdir -p /opt/ondb/var/kvroot
+</pre>
+            <p> 
+                         To simulate the data disks, create the following directories:
+                     </p>
+            <pre class="programlisting">&gt; mkdir -p /tmp/sn1/disk1/ondb/data
+&gt; mkdir -p /tmp/sn1/disk2/ondb/data
+
+&gt; mkdir -p /tmp/sn2/disk1/ondb/data
+&gt; mkdir -p /tmp/sn2/disk2/ondb/data
+
+&gt; mkdir -p /tmp/sn3/disk1/ondb/data
+&gt; mkdir -p /tmp/sn3/disk2/ondb/data
+</pre>
+            <p>
+                         Next, open 3 windows; Win_A, Win_B, and Win_C, which will represent
+                         the 3 machines (SNs). In each window, execute the 
+                         <code class="literal">makebootconfig</code> command, creating a different, but
+                         similar, boot config for each SN that will be configured.
+                     </p>
+            <p>
+                         <span class="emphasis"><em>On Win_A</em></span>
+                      </p>
+            <pre class="programlisting">java -jar /opt/ondb/kv/lib/kvstore.jar makebootconfig \
+     -root /opt/ondb/var/kvroot \
+     -host &lt;host-ip&gt; \
+     -config config1.xml \
+     -port 13230 \
+     -harange 13232,13235 \
+     -admin 13231 \
+     -memory_mb 100 \
+     -capacity 2 \
+     -storagedir /tmp/sn1/disk1/ondb/data \
+     -storagedir /tmp/sn1/disk2/ondb/data
+</pre>
+            <p>
+                         <span class="emphasis"><em>On Win_B</em></span>
+                      </p>
+            <pre class="programlisting">java -jar /opt/ondb/kv/lib/kvstore.jar makebootconfig \
+     -root /opt/ondb/var/kvroot \
+     -host &lt;host-ip&gt; \
+     -config config2.xml \
+     -port 13240 \
+     -harange 13242,13245 \
+     -admin 13241 \
+     -memory_mb 100 \
+     -capacity 2 \
+     -storagedir /tmp/sn2/disk1/ondb/data \
+     -storagedir /tmp/sn2/disk2/ondb/data
+</pre>
+            <p>
+                         <span class="emphasis"><em>On Win_C</em></span>
+                      </p>
+            <pre class="programlisting">java -jar /opt/ondb/kv/lib/kvstore.jar makebootconfig \
+     -root /opt/ondb/var/kvroot \
+     -host &lt;host-ip&gt; \
+     -config config3.xml \
+     -port 13250 \
+     -harange 13252,13255 \
+     -admin 13251 \
+     -memory_mb 100 \
+     -capacity 2    \
+     -storagedir /tmp/sn3/disk1/ondb/data \
+     -storagedir /tmp/sn3/disk2/ondb/data
+</pre>
+            <p>
+                         This will produce 3 configuration files:
+                     </p>
+            <pre class="programlisting">/opt/ondb/var/kvroot
+     /config1.xml
+     /config2.xml
+     /config3.xml
+</pre>
+            <p>
+                         Using the different configurations just generated, start a
+                         corresponding instance of the KVStore storage node agent (SNA)
+                         from each window.
+                     </p>
+            <p>
+                         <span class="emphasis"><em>On Win_A</em></span>
+                      </p>
+            <pre class="programlisting">&gt; nohup java -jar /opt/ondb/kv/lib/kvstore.jar start \
+             -root /opt/ondb/var/kvroot -config config1.xml &amp;
+</pre>
+            <p>
+                         <span class="emphasis"><em>On Win_B</em></span>
+                      </p>
+            <pre class="programlisting">&gt; nohup java -jar /opt/ondb/kv/lib/kvstore.jar start \
+             -root /opt/ondb/var/kvroot -config config2.xml &amp;
+</pre>
+            <p>
+                         <span class="emphasis"><em>On Win_C</em></span>
+                      </p>
+            <pre class="programlisting">&gt; nohup java -jar /opt/ondb/kv/lib/kvstore.jar start \
+             -root /opt/ondb/var/kvroot -config config3.xml &amp;
+</pre>
+            <p>
+                         Finally, from any window (Win_A, Win_B, Win_C, or a new window),
+                         use the KVStore administrative CLI to configure and deploy the
+                         store.
+                      </p>
+            <p>
+                          To start the administrative CLI, execute the following
+                         command:
+                      </p>
+            <pre class="programlisting">&gt; java -jar /opt/ondb/kv/lib/kvstore.jar runadmin \
+       -host &lt;host-ip&gt; -port 13230
+</pre>
+            <p>
+                         To configure and deploy the store, type the following commands from
+                         the administrative CLI prompt (remembering to substitute the actual
+                         IP address or hostname for the string &lt;host-ip&gt;):
+                      </p>
+            <pre class="programlisting">configure -name store-name
+plan deploy-zone -name Zone1 -rf 3 -wait
+plan deploy-sn -zn 1 -host &lt;host-ip&gt; -port 13230 -wait
+plan deploy-admin -sn 1 -port 13231 -wait
+pool create -name snpool
+pool join -name snpool -sn sn1
+plan deploy-sn -zn 1 -host &lt;host-ip&gt; -port 13240 -wait
+plan deploy-admin -sn 2 -port 13241 -wait
+pool join -name snpool -sn sn2
+plan deploy-sn -zn 1 -host &lt;host-ip&gt; -port 13250 -wait
+plan deploy-admin -sn 3 -port 13251 -wait
+pool join -name snpool -sn sn3
+change-policy -params "loggingConfigProps=oracle.kv.level=INFO;"
+change-policy -params cacheSize=10000000
+topology create -name store-layout -pool snpool -partitions 100
+plan deploy-topology -name store-layout -plan-name RepNode-Deploy -wait
+</pre>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+                          The CLI command prompt (<code class="literal">kv-&gt;</code>) was
+                          excluded from the list of commands above to facilitate
+                          cutting and pasting the commands into a CLI load script.
+                          </p>
+            </div>
+            <p>
+                         When the above commands complete (use <code class="literal">show plans</code>),
+                         the store is up and running and ready for data to be written to it. 
+                         Before proceeding, verify that a directory like that shown above for
+                         the multi-disk scenario has been laid out. That is:
+                      </p>
+            <pre class="programlisting">   - Win_A -                 - Win_B -                - Win_C -
+
+/opt/ondb/var/kvroot      /opt/ondb/var/kvroot      /opt/ondb/var/kvroot
+  log files                 log files                 log files
+  /example-store            /example-store            /example-store
+    /log                      /log                      /log
+    /sn1                      /sn2                      /sn3
+      config.xml                config.xml                config.xml
+      /admin1                   /admin2                   /admin3
+        /env                      /env                      /env
+/tmp/sn1/disk1/ondb/data  /tmp/sn2/disk1/ondb/data /tmp/sn3/disk1/ondb/data
+  /rg1-rn1                  /rg1-rn2                  /rg1-rn3
+    /env                      /env                      /env
+      00000000.jdb              00000000.jdb              00000000.jdb </pre>
+            <p>
+                         When a key/value pair is written to the store, it is
+                         stored in each of the (rf=3) files named, 00000000.jdb
+                         that belong to a given replication group (shard); for
+                         example, when a single key/value pair is written
+                         to the store, that pair would be stored in either
+                         these files:
+                      </p>
+            <pre class="programlisting">/tmp/sn1/disk2/ondb/data/rg2-rn1/env/00000000.jdb
+/tmp/sn2/disk2/ondb/data/rg2-rn2/env/00000000.jdb
+/tmp/sn3/disk2/ondb/data/rg2-rn3/env/00000000.jdb </pre>
+            <p>
+                         Or in these files:
+                      </p>
+            <pre class="programlisting">/tmp/sn1/disk1/ondb/data/rg1-rn1/env/00000000.jdb
+/tmp/sn2/disk1/ondb/data/rg1-rn2/env/00000000.jdb
+/tmp/sn3/disk1/ondb/data/rg1-rn3/env/00000000.jdb </pre>
+            <p>
+                         At this point, each file should contain no key/value pairs.
+                         Data can be written to the store in the most convenient
+                         way. But a utility that is quite handy for doing
+                         this is the KVStore client shell utility; which is a
+                         process that connects to the desired store and then
+                         presents a command line interface that takes interactive
+                         commands for putting and getting key/value pairs. To
+                         start the KVStore shell, type the following from a
+                         window:
+                      </p>
+            <pre class="programlisting">&gt; java -jar /opt/ondb/kv/lib/kvstore.jar runadmin\
+       -host &lt;host-ip&gt; -port 13230 -store store-name
+
+kv-&gt; get -all
+  0 Record returned.
+
+kv-&gt; put -key /FIRST_KEY -value "HELLO WORLD"
+  Put OK, inserted.
+
+kv-&gt; get -all
+  /FIRST_KEY
+  HELLO WORLD </pre>
+            <p>
+                         A quick way to determine which files the key/value pair was
+                         stored in is to simply grep for the string "HELLO WORLD";
+                         which should work with binary files on most linux systems.
+                         Using the <code class="literal">grep </code> command in this way is
+                         practical for examples that consist of only a small amount
+                         of data.
+                      </p>
+            <pre class="programlisting">&gt; grep "HELLO WORLD" /tmp/sn1/disk1/ondb/data/rg1-rn1/env/00000000.jdb
+&gt; grep "HELLO WORLD" /tmp/sn2/disk1/ondb/data/rg1-rn2/env/00000000.jdb
+&gt; grep "HELLO WORLD" /tmp/sn3/disk1/ondb/data/rg1-rn3/env/00000000.jdb
+
+&gt; grep "HELLO WORLD" /tmp/sn1/disk2/ondb/data/rg2-rn1/env/00000000.jdb
+  Binary file /tmp/sn1/disk2/ondb/data/rg2-rn1/env/00000000.jdb matches
+&gt; grep "HELLO WORLD" /tmp/sn2/disk2/ondb/data/rg2-rn2/env/00000000.jdb
+  Binary file /tmp/sn2/disk2/ondb/data/rg2-rn2/env/00000000.jdb matches
+&gt; grep "HELLO WORLD" /tmp/sn3/disk2/ondb/data/rg2-rn3/env/00000000.jdb
+  Binary file /tmp/sn3/disk2/ondb/data/rg2-rn3/env/00000000.jdb matches
+</pre>
+            <p>
+                         In the example above, the key/value pair that was written to
+                         the store was stored by each RN belonging to the second shard;
+                         that is, each RN is a member of the replication group with id
+                         equal to 2 (rg2-rn1, rg2-rn2, and rg2-rn3).
+                      </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+                              With which shard a particular key is associated depends on
+                              the key's value (specifically, the hash of the key's value)
+                              as well as the number of shards maintained by the store. It
+                              is also worth noting that although this example shows log
+                              files with the name 00000000.jdb, those files are only the
+                              first of possibly many such log files containing data written
+                              by the corresponding RN service.
+                          </p>
+            </div>
+            <p>
+                         As the current log file reaches its maximum capacity, a new file
+                         is created to receive all new data written. That new file's name
+                         is derived from the previous file by incrementing the prefix of
+                         the previous file. For example, you might see files with names
+                         such as, "..., 00000997.jdb, 00000998.jdb, 00000999.jdb,
+                         00001000.jdb,00001001.jdb, ...".
+                      </p>
+            <p>
+                         After the data has been written to the store, a failed disk can be
+                         simulated, and the disk replacement process can be performed. To
+                         simulate a failed disk, pick one of the storage directories where
+                         the key/value pair was written and, from a command window, delete
+                         the storage directory. For example:
+                      </p>
+            <pre class="programlisting">&gt; rm -rf /tmp/sn3/disk2
+</pre>
+            <p>
+                         At this point, if the log file for SN3 is examined, you should see
+                         repeated exceptions being logged. That is:
+                      </p>
+            <pre class="programlisting">&gt; tail /opt/ondb/var/kvroot/store-name/log/sn3_0.log
+
+rg2-rn3: ProcessMonitor: java.lang.IllegalStateException: Error occurred
+accessing statistic log file
+  /tmp/sn3/disk2/ondb/data/rg2-rn3/env/je.stat.csv.
+.......
+</pre>
+            <p>
+                         But if the client shell is used to retrieve the previously
+                         stored key/value pair, the store is still operational, and the
+                         data that was written is still available. That is:
+                      </p>
+            <pre class="programlisting">kvshell-&gt; get -all
+  /FIRST_KEY
+  HELLO WORLD
+</pre>
+            <p>
+                         The disk replacement process can now be performed. From
+                         the command window in which the KVStore administrative CLI is
+                         running, execute the following (step 2 from above):
+                      </p>
+            <pre class="programlisting">kv-&gt; plan stop-service -service rg2-rn3
+  Executed plan 9, waiting for completion...
+  Plan 9 ended successfully
+
+kv-&gt; verify configuration
+  .........
+  Rep Node [rg2-rn3] Status: UNREACHABLE
+</pre>
+            <p>
+                         If you attempt to restart the RN service that was just
+                         stopped, the attempt would not succeed. This can be seen
+                         via the contents of SN3's log
+                         <code class="literal">file/opt/ondb/var/kvroot/store-name/log/sn3_0.log</code>. 
+                         The contents of that file indicate repeated attempts to restart
+                         the service, but due to the missing directory – that is,
+                         because of the "failed" disk – each attempt to start the
+                         service fails, until the process reaches an ERROR state;
+                         for example:
+                      </p>
+            <pre class="programlisting">kv-&gt; show plans
+  1 Deploy Zone (1) SUCCEEDED
+  ......
+  9 Stop RepNodes (9) SUCCEEDED
+  10 Start RepNodes (10) ERROR
+</pre>
+            <p>
+                         Now, the disk should be "replaced". To simulate disk
+                         replacement, we must create the original parent directory
+                         of rg2-rn3; which is intended to be analogous to installing
+                         and formatting the replacement disk:
+                      </p>
+            <pre class="programlisting">&gt; mkdir -p /tmp/sn3/disk2/ondb/data
+</pre>
+            <p>
+                        From the administrative CLI, attempt to restart the RN
+                        service should succeed since the disk has been "replaced".
+                      </p>
+            <pre class="programlisting">kv-&gt; plan start-service -service rg2-rn3 -wait
+  Executed plan 11, waiting for completion...
+  Plan 11 ended successfully
+
+kv-&gt; verify configuration
+  .........
+  Rep Node [rg2-rn3] Status: RUNNING,REPLICA at sequence
+  number 327 haPort:13254
+</pre>
+            <p>
+                         To verify that the data has been recovered as expected,
+                         grep for "HELLO WORLD" again.
+                      </p>
+            <pre class="programlisting">&gt; grep "HELLO WORLD" /tmp/sn3/disk2/ondb/data/rg2-rn3/env/00000000.jdb
+  Binary file /tmp/sn3/disk2/ondb/data/rg2-rn3/env/00000000.jdb matches
+</pre>
+            <p>
+                         To see why the disk replacement process outlined above might be
+                         more complicated for the default – and by extension, the single
+                         disk – case than it is for the  multi-disk case, try running the
+                         example above using default storage directories; that is, remove the
+                         storagedir parameters from the invocation of the <code class="literal">makebootconfig
+                         </code> command above. This will result in a directory
+                         structure such as:
+                      </p>
+            <pre class="programlisting">/opt/ondb/var/kvroot   /opt/ondb/var/kvroot  /opt/ondb/var/kvroot
+  log files              log files             log files
+  /store-name            /store-name           /store-name
+    /log                   /log                  /log
+    /sn1                   /sn2                  /sn3
+      config.xml             config.xml            config.xml
+      /admin1                /admin2               /admin3
+      /rg1-rn1               /rg1-rn2              /rg1-rn3
+      /rg2-rn1               /rg2-rn2              /rg2-rn3</pre>
+            <p>
+                         In a similar example, to simulate a failed disk in this case,
+                         you would delete the directory <code class="literal">/opt/ondb/var/kvroot/sn3
+                         </code>; which is the parent of the <code class="literal">/admin3</code>
+                         database, the <code class="literal">/rg1-rn3</code> database, and the
+                         <code class="literal">/rg2-rn3</code> database.
+                      </p>
+            <p>
+                         It is important to note that the directory also contains the
+                         configuration for SN3. Since SN3's configuration information
+                         is contained under the same parent – which is analogous
+                         to that information stored on the same disk – as the
+                         replication node databases; when the "failed" disk is
+                         "replaced" as it was in the previous example, the step where
+                         the RN service(s) are restarted will fail because SN3's
+                         configuration is no longer available. While the replicated data
+                         can be automatically recovered from the other nodes in the
+                         system when a disk is replaced, the SN's configuration
+                         information cannot. That data must be manually restored
+                         from a previously backed up copy. This extends to the
+                         non-default, single disk case in which different storagedir
+                         parameters are used to separate the KVROOT location from the
+                         location of each RN database. In that case, even though the
+                         replicated data is stored in separate locations, that data is
+                         still stored on the same physical disk. Therefore, if that disk
+                         fails, the configuration information is still not available on
+                         restart, unless it has been manually reinstalled on the
+                         replacement disk. 
+                      </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="monitoringmetricsforadminnodes.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="servers.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Monitoring Metrics for Administration Nodes </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Servers</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

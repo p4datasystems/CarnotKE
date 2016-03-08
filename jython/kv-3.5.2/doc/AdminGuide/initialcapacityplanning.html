@@ -1,0 +1,771 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Appendix B. Initial Capacity Planning</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="prev" href="independent_commands.html" title="Utility commands" />
+    <link rel="next" href="estimate-total-shards-and-machines.html" title="Estimate total Shards and Machines" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Appendix B. Initial Capacity Planning</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="independent_commands.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="estimate-total-shards-and-machines.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="appendix" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="initialcapacityplanning"></a>Appendix B. Initial Capacity Planning</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+     To deploy a store, the user must specify a replication factor, the desired
+     number of partitions, and the Storage Nodes on which to deploy the
+     store. The following sections describe how to calculate these values based
+     upon the application's requirements and the characteristics of the hardware
+     available to host the store.
+   </p>
+      <p>
+     The resource estimation is a two step process:
+   </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+         Determine the storage and I/O throughput capacity of a representative
+         shard, given the characteristics of the application, the disk
+         configuration on each machine, and disk throughput. The amount of
+         physical memory required by each machine and its network throughput
+         capacity is also estimated as part of this step.
+       </p>
+          </li>
+          <li>
+            <p>
+         Use the shard level storage and I/O throughput capacities as a basis
+         for extrapolating throughput from one shard to the required number of
+         shards and machines, given the storewide application requirements. 
+       </p>
+          </li>
+        </ol>
+      </div>
+      <p>
+     There is an accompanying spreadsheet that should be used in the planning
+     process. You can find the spreadsheet in your Oracle NoSQL Database distribution here:
+     <code class="literal">&lt;KVHOME&gt;/doc/misc/InitialCapacityPlanning.xls</code>.
+   </p>
+      <p>               
+     The sections in this appendix correspond to named sections in the
+     spreadsheet. 
+     Column A of the spreadsheet lists cell names that are associated with the values
+     in column B. Cell names in red represent values that must 
+     be provided as input. Column C describes the value or the computation
+     associated with the value in column B. The sections: 
+     <a class="xref" href="initialcapacityplanning.html#application-characteristics" title="Application Characteristics">Application
+        Characteristics</a>,
+     <a class="xref" href="initialcapacityplanning.html#hardware-characteristics" title="Hardware Characteristics">Hardware
+        Characteristics</a>,
+     and <a class="xref" href="initialcapacityplanning.html#machine-physical-memory" title="Machine Physical Memory">Machine Physical Memory</a> contain required
+     inputs. Green cell names denote optional inputs; the default values supplied 
+     in the spreadsheet should be adequate for most estimates. All other cells
+     are computed by the spreadsheet using the formulas described below.
+   </p>
+      <p>
+     After filling in the required inputs, the cell
+     <span class="emphasis"><em>StoreMachines</em></span> value will tell you how many Storage
+     Nodes should be available in the storage node pool. The
+     <span class="emphasis"><em>StorePartitions</em></span> value will tell you how many 
+     partitions should be specified when creating the store.
+   </p>
+      <p>
+     Please keep in mind that the computations below yield estimates. The
+     underlying model used as a basis for the estimation makes simplifying
+     assumptions since it's hard to come up with a simple single underlying model
+     that will work well under a wide range of application requirements. So these
+     estimates should only be used as the basis for an initial starting point and
+     refined under simulated or actual load. 
+   </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="shard-capacity"></a>Shard Capacity</h2>
+            </div>
+          </div>
+        </div>
+        <div class="toc">
+          <dl>
+            <dt>
+              <span class="sect2">
+                <a href="initialcapacityplanning.html#application-characteristics">Application
+        Characteristics</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="initialcapacityplanning.html#hardware-characteristics">Hardware
+        Characteristics</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="initialcapacityplanning.html#shard-capacities">Shard Storage and Throughput Capacities</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="initialcapacityplanning.html#mem-network-config">Memory and Network Configuration</a>
+              </span>
+            </dt>
+          </dl>
+        </div>
+        <p>
+        To determine the shard capacity first determine the application and
+        hardware characteristics described in this section. Having determined
+        these characteristics, enter them into the accompanying spreadsheet. The
+        spread sheet will then calculate the capacity of a shard on the basis of
+        the supplied application and hardware characteristics. 
+    </p>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="application-characteristics"></a>Application
+        Characteristics</h3>
+              </div>
+            </div>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="rep-factor"></a>Replication Factor</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+            In general, a <span class="emphasis"><em>Primary Replication Factor</em></span> of 3 is adequate for most
+            applications and is a good starting point, because 3 replicas allow write 
+            availability if a single primary zone fails. It can be refined if
+            performance testing suggests some other number works better for the
+            specific workload. Do not select a <span class="emphasis"><em>Primary Replication Factor</em></span>
+            of 2 because doing so means that even a single failure results in too few sites
+            to elect a new master. A <span class="emphasis"><em>Primary Replication Factor</em></span> of 1 is to be 
+            avoided in general since Oracle NoSQL Database has just a single copy of the data; 
+            if the storage device hosting the data were to fail the data could
+            be lost. 
+          </p>
+            <p>
+            Larger <span class="emphasis"><em>Primary Replication Factors</em></span> provide two benefits:
+            </p>
+            <div class="orderedlist">
+              <ol type="1">
+                <li>
+                  <p>
+                  Increased durability to better withstand disk or machine
+                  failures.
+                  </p>
+                </li>
+                <li>
+                Increased read request throughput, because there are more nodes per
+                shard available to service those requests.
+              </li>
+              </ol>
+            </div>
+            <p>
+          </p>
+            <p>
+            However, the increased durability and read throughput has costs associated
+            with it: more hardware resources to host and serve the additional copies of
+            the data and slower write performance, because each shard has more
+            nodes to which updates must be replicated.
+          </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+             Only the Primary Replication Factor affects write availability, but 
+             both Primary and Secondary Replication Factors, and therefore
+             the Store Replication Factor, have an effect on read availability.
+          </div>
+            <p>
+            The <span class="emphasis"><em>Primary Replication Factor</em></span> is defined by the cell <span class="emphasis"><em>RF</em></span>.
+          </p>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="average-key-size"></a>Average Key Size</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+            Use knowledge of the application's key schema and the relative
+            distributions of the various keys to arrive at an average key
+            length. The length of a key on disk is the number of UTF-8 bytes
+            needed to represent the components of the key, plus the number of
+            components, minus one. 
+          </p>
+            <p>
+            This value is defined by the cell <span class="emphasis"><em>AvgKeySize</em></span>.
+          </p>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="average-value-size"></a>Average Value Size</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+            Use knowledge of the application to arrive at an average serialized
+            value size. The value size will vary depending upon the particular
+            serialization format used by the application.
+          </p>
+            <p>
+            This value is defined by the cell <span class="emphasis"><em>AvgValueSize</em></span>.
+          </p>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="read-write-operation-percentages"></a> Read and Write
+          Operation Percentages</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+            Compute a rough estimate of the relative frequency of store level
+            read and write operations on the basis of the KVS API operations used
+            by the application.
+          </p>
+            <p>
+            At the most basic level, each KVS get() call results in a store level
+            read operation and each put() operation results in a store level
+            write operation. Each KVS multi key operation (KVStore.execute(),
+            multiGet(), or multiDelete()) can result in multiple store level
+            read/write operations. Again, use application knowledge about the
+            number of keys accessed in these operations to arrive at an
+            estimate. 
+          </p>
+            <p>
+            Express the estimate as a read percentage, that is, the percentage of the total
+            operations on the store that are reads. The rest of the operations are assumed
+            to be write operations. 
+          </p>
+            <p>
+            This value is defined by the cell <span class="emphasis"><em>ReadOpsPercent</em></span>.
+          </p>
+            <p>
+            Estimate the percentage of read operations that will likely be satisfied from the 
+            file system cache. The percentage depends primarily upon the application's data 
+            access pattern and the size of the file system cache.
+            <a class="xref" href="initialcapacityplanning.html#cache-size-advice" title="Sizing Advice">Sizing Advice</a> contains a 
+            discussion of how this cache is used. 
+          </p>
+            <p>
+            This value is defined by the cell <span class="emphasis"><em>ReadCacheHitPercent</em></span>.
+          </p>
+          </div>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="hardware-characteristics"></a>Hardware
+        Characteristics</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+          Determine the following hardware characteristics based on a rough idea
+          of the type of the machines that will be used to host the store:
+        </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+              The number of disks per machine that will be used for storing KV
+              pairs. This value is defined by the cell
+              <span class="emphasis"><em>DisksPerMachine</em></span>. The number of disks per
+              machine typically determines the Storage Node Capacity as
+              described in <a class="xref" href="setstoreparams.html#storagenodeparameters" title="Storage Node Parameters">Storage Node Parameters</a>. 
+            </p>
+              </li>
+              <li>
+                <p>
+              The usable storage capacity of each disk. This value is defined by
+              the cell <span class="emphasis"><em>DiskCapacityGB</em></span>.
+            </p>
+              </li>
+              <li>
+                <p>
+              The IOPs capacity of each disk. This information is typically available
+              in the disk spec sheet as the number of sustained random IO
+              operations/sec that can be delivered by the disk. This value is defined
+              by the cell <span class="emphasis"><em>DiskIopsPerSec</em></span>. 
+            </p>
+              </li>
+            </ul>
+          </div>
+          <p>
+          The following discussion assumes that the system will be configured with
+          one RN per disk. 
+        </p>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="shard-capacities"></a>Shard Storage and Throughput Capacities</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+           There are two types of capacity that are relevant to this discussion: 1) Storage
+           Capacity 2) Throughput Capacity. The following sections describe how these
+           two measures of capacity are calculated. The underlying calculations are
+           done automatically by the attached spreadsheet based upon the 
+           application and hardware characteristics supplied earlier.
+         </p>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="shard-storage-capacity"></a>Shard Storage Capacity</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+           The storage capacity is the maximum number of KV pairs that can be stored in a
+           shard. It is calculated by dividing the storage actually available for
+           live KV pairs (after accounting for the storage set aside as a safety
+           margin and cleaner utilization) by the storage (including a rough
+           estimation of Btree overheads) required by each KV pair. 
+        </p>
+            <p>
+          The KV Storage Capacity is computed by the cell:
+          <span class="emphasis"><em>MaxKVPairsPerShard</em></span>.
+        </p>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="shard-io-throughput-capacity"></a>Shard I/O Throughput capacity</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+          The throughput capacity is a measure of the read and write ops that can be
+          supported by a single shard. In the calculations below, the logical
+          throughput capacity is derived from the disk IOPs capacity based upon
+          the percentage of logical operations that actually translate into disk
+          IOPs after allowing for cache hits. The <a class="xref" href="initialcapacityplanning.html#machine-physical-memory" title="Machine Physical Memory">Machine Physical Memory</a> section contains more detail
+          about configuring the caches used by Oracle NoSQL Database.
+        </p>
+            <p>
+          For logical read operations, the shard-wide IOPs is computed as:
+        </p>
+            <pre class="programlisting">(ReadOpsPercent * (1 - ReadCacheHitPercent))</pre>
+            <p>
+          Note that all percentages are expressed as fractions.
+        </p>
+            <p>
+          For logical write operations, the shard-wide IOPs is computed as:
+        </p>
+            <pre class="programlisting">(((1 - ReadOpsPercent) / WriteOpsBatchSize) * RF)</pre>
+            <p>
+          The writeops calculations are very approximate. Write operations make a much
+          smaller contribution to the IOPs load than do the read ops due to the sequential
+          writes used by the log structured storage system. The use of WriteOpsBatchSize
+          is intended to account for the sequential nature of the writes to the underlying
+          JE log structured storage system. The above formula does not work well when
+          there are no reads in the workload, that is, under pure insert or pure update
+          loads. Under pure insert, the writes are limited primarily by acknowledgement
+          latency which is not modeled by the formula. Under pure update loads, both the
+          acknowledgement latency and cleaner performance play an important role.
+        </p>
+            <p>
+          The sum of the above two numbers represents the percentage of logical operations
+          that actually result in disk operations (the
+          <span class="emphasis"><em>DiskIopsPercent</em></span> cell). The shard's 
+          logical throughput can then be computed as:
+        </p>
+            <pre class="programlisting">(DiskIopsPerSec * RF)/DiskIopsPercent</pre>
+            <p>
+          and is calculated by the cell <span class="emphasis"><em>OpsPerShardPerSec</em></span>.
+        </p>
+          </div>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="mem-network-config"></a>Memory and Network Configuration</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+        Having established the storage and throughput capacities of a shard, the
+        amount of physical memory and network capacity required by each machine
+        can be determined. Correct configuration of physical memory and network
+        resources is essential for the proper operation of the store. If your
+        primary goal is to determine the total size of the
+        store, skip ahead to  <a class="xref" href="estimate-total-shards-and-machines.html" title="Estimate total Shards and Machines">Estimate total Shards and Machines</a> but make sure to
+        return to this section later when it is time to finalize the machine
+        level hardware requirements.
+      </p>
+          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+            <h3 class="title">Note</h3>
+            <p>
+            You can also set the memory size available for each Storage Node
+            in your store, either through the <code class="literal">memory_mb</code> parameter of the
+            <code class="literal">makebootconfig</code> utility or through the 
+            <code class="literal">memorymb</code> Storage Node parameter. For more information, see 
+            <a class="xref" href="install-config.html" title="Installation Configuration">Installation Configuration</a> and
+            <a class="xref" href="setstoreparams.html#storagenodeparameters" title="Storage Node Parameters">Storage Node Parameters</a> respectively. 
+         </p>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="machine-physical-memory"></a>Machine Physical Memory</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+          The shard storage capacity (computed by the cell
+          <span class="emphasis"><em>MaxKVPairsPerShard</em></span>) and the average key size
+          (defined by the cell<span class="emphasis"><em>AvgKeySize</em></span> cell) can be used
+          to estimate the physical memory requirements of the machine. The
+          physical memory on the machine backs up the caches used by Oracle NoSQL Database.
+        </p>
+            <p>
+          Sizing the in-memory cache correctly is essential for
+          meeting  store's performance goals. Disk I/O is an expensive
+          operation from a performance point of view; the more operations
+          that can be serviced from the cache, the better the store's
+          performance.
+        </p>
+            <p>
+          Before continuing, it is worth noting that there are two caches
+          that are relevant to this discussion:
+        </p>
+            <div class="orderedlist">
+              <ol type="1">
+                <li>
+                  <p>
+              The JE cache. The underlying storage engine used by
+              Oracle NoSQL Database is Berkeley DB Java Edition (JE). JE provides 
+              an in-memory cache. For the most part, this is the cache
+              size that is most important, because it is the one that is
+              simplest to control and configure. 
+            </p>
+                </li>
+                <li>
+                  <p>
+              The file system (FS) cache. Modern operating systems
+              attempt to improve their I/O subsystem performance
+              by providing a cache, or buffer, that is dedicated to
+              disk I/O. By using the FS cache, read operations can be
+              performed very quickly if the reads can be satisfied by
+              data that is stored there.
+            </p>
+                </li>
+              </ol>
+            </div>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="cache-size-advice"></a>Sizing Advice</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+            JE uses a Btree to organize the data that it stores. Btrees
+            provide a tree-like data organization structure that allows
+            for rapid information lookup. These structures consist of
+            interior nodes (INs) and leaf nodes (LNs). INs are used to
+            navigate to data. LNs are where the data is actually stored
+            in the Btree.
+          </p>
+            <p>
+            Because of the very large data sets that an Oracle NoSQL Database
+            application is expected to use, it is unlikely that you can
+            place even a small fraction of the data into JE's in-memory
+            cache. Therefore, the best strategy is to size the cache such
+            that it is large enough to hold most, if not all, of the
+            database's INs, and leave the rest of the node's memory
+            available for system overhead (negligible) and the FS cache.
+          </p>
+            <p>
+            Both INs and LNs can take advantage of the FS cache. Because
+            INs and LNs do not have Java object overhead when present in
+            the FS cache (as they would when using the JE cache), they can
+            make more effective use of the FS cache memory than the JE cache
+            memory.
+          </p>
+            <p>
+            Of course, in order for the FS cache to be truly effective, the
+            data access patterns should not be completely random. Some subset
+            of your key-value pairs must be favored over others in order to
+            achieve a useful cache hit rate. For applications where the
+            access patterns are not random, the high file system cache hit
+            rates on LNs and INs can increase throughput and decrease average
+            read latency.  Also, larger file system caches, when properly
+            tuned, can help reduce the number of stalls during sequential
+            writes to the log files, thus decreasing write latency. Large
+            caches also permit more of the writes to be done asynchronously,
+            thus improving throughput. 
+          </p>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="cache-size-numbers"></a>Determine JE Cache Size</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+            To determine an appropriate JE cache size, use the
+            <code class="classname">com.sleepycat.je.util.DbCacheSize</code>
+            utility. This utility requires as input the number of
+            records and the size of the application keys. You can also optionally
+            provide other information, such as the expected data size.
+            The utility then provides a short table of information. The
+            number you want is provided in the <code class="literal">Cache Size</code>
+            column, and in the <code class="literal">Internal nodes and record versions</code>
+            row.
+          </p>
+            <p>
+            For example, to determine the JE cache size for an
+            environment consisting of 100 million records, with an
+            average key size of 12 bytes, and an average value size of
+            1000 bytes, invoke <code class="classname">DbCacheSize</code>
+            as follows:
+          </p>
+            <pre class="programlisting">java -Xmx256m -Xms256m \
+-d64 -XX:+UseCompressedOops -jar je.jar DbCacheSize \
+-key 12 -data 1000 -records 100000000 -replicated \
+-je.rep.preserveRecordVersion true
+
+          === Environment Cache Overhead ===
+
+          3,163,085 minimum bytes
+
+          To account for JE daemon operation and record locks,
+          a significantly larger amount is needed in practice.
+
+          === Database Cache Size ===
+
+          Number of Bytes  Description
+          ---------------  -----------
+           3,558,319,072  Internal nodes only
+           4,322,364,352  Internal nodes and record versions
+           108,969,601,408  Internal nodes and leaf nodes </pre>
+            <p>
+            Please make note of the following jvm arguments (they have a
+            special meaning when supplied to DbCacheSize):
+          </p>
+            <div class="orderedlist">
+              <ol type="1">
+                <li>
+              The -d64 argument is used to ensure a 64 bit jvm environment
+              that is capable of supporting heap size greater than 4GB.  
+            </li>
+                <li>
+              The -XX:+UseCompressedOops is used to ensure use of more
+              efficient 32 bit pointers in the 62 bit environment thus
+              permitting better utilization of the JE cache.  
+            </li>
+                <li>
+              The -replicated is used to ensure use of a ReplicatedEnvironment. 
+            </li>
+                <li>
+              The -je.rep.preserveRecordVersion allows using record versions in
+			  operations such as "put if version", "delete if version", etc.
+              This feature performs best when the cache is sized large enough
+              to hold the record versions.			  
+            </li>
+              </ol>
+            </div>
+            <p>
+            These arguments when supplied to <code class="literal">Database Cache
+            Size</code> serve as an indication that the JE application will
+            also be supplied these arguments and <code class="literal">Database Cache
+            Size</code> adjusts its calculations appropriately. The
+            arguments are used by Oracle NoSQL Database when starting up the Replication
+            Nodes which uses these caches.
+          </p>
+            <p>
+            Because -je.rep.preserveRecordVersion is specified, the number you
+			want is in the <code class="literal">Database Cache Size</code>
+            section of the output, under the "Number of Bytes" column in the
+            "Internal nodes and record versions" row. The output indicates that a cache size of
+            4.4 GB is sufficient to hold all the internal nodes and record versions 
+			representing the Btree in the JE cache. With a JE cache of this size, 
+			the IN nodes will be fetched from the JE cache and the LNs will be fetched 
+			from the FS cache or the disk.  
+          </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+		      If -je.rep.preserveRecordVersion is not specified, the number you want
+			  is in the <code class="literal">Database Cache Size</code> section of the output,
+			  under the "Number of Bytes" column in the "Internal nodes only" row.
+			  The output indicates that a cache size of 3.6GB is sufficient to hold 
+			  all the internal nodes.
+		  </p>
+            </div>
+            <p>
+            For more information on using the <code class="literal">DbCacheSize</code>
+            utility, see this Javadoc page:
+            <a class="ulink" href="http://docs.oracle.com/cd/E17277_02/html/java/com/sleepycat/je/util/DbCacheSize.html" target="_top">http://docs.oracle.com/cd/E17277_02/html/java/com/sleepycat/je/util/DbCacheSize.html</a>.
+            Note that in order to use this utility, you must add the
+            <code class="literal">&lt;KVHOME&gt;/lib/je.jar</code> file to your Java classpath.
+            &lt;KVHOME&gt; represents the directory where you placed the Oracle NoSQL Database
+            package files.
+          </p>
+            <p>
+            Having used <code class="classname">DbCacheSize</code> to obtain the JE
+            cache size, the heap size can be calculated from it. To do this,
+            enter the number obtained from <code class="classname">DbCacheSize</code>
+            into the cell named <span class="emphasis"><em>DbCacheSizeMB</em></span> making sure
+            to convert the units from bytes to MB. The heap size is computed by
+            the cell <span class="emphasis"><em>RNHeapMB</em></span> as below:
+          </p>
+            <pre class="programlisting">(DBCacheSizeMB/RNCachePercent)</pre>
+            <p>
+            where <span class="emphasis"><em>RNCachePercent</em></span> is the percentage of the
+            heap that is used for the JE cache. 
+            The computed heap size
+            should not exceed 32GB, so that the java VM can use its efficient
+            CompressedOops format to represent the java objects in memory.
+            Heap sizes with values exceeding 32GB will appear with a
+            strikethrough in the <span class="emphasis"><em>RNHeapMB</em></span> cell to emphasize
+            this requirement. If the heap size exceeds 32GB, try to reduce the size
+            of the keys to reduce the JE cache size in turn and bring the overall heap
+            size below 32GB. 
+          </p>
+            <p>
+            The heap size is used as the basis for computing the memory required by the machine as below: 
+          </p>
+            <pre class="programlisting">(RNHeapMB * DisksPerMachine)/SNRNHeapPercent</pre>
+            <p>
+            where <span class="emphasis"><em>SNRNHeapPercent</em></span> is the percentage of the
+            physical memory that is available for use by the RN's hosted on the
+            machine. The result is available in the cell
+            <span class="emphasis"><em>MachinePhysicalMemoryMB</em></span>.  
+          </p>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="machine-network-throughput"></a>Machine Network Throughput</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+          We need to ensure that the NIC attached to the machine is capable of delivering
+          the application I/O throughput as calculated earlier in 
+          <a class="xref" href="initialcapacityplanning.html#shard-io-throughput-capacity" title="Shard I/O Throughput capacity">Shard I/O Throughput capacity</a>, because otherwise it could prove
+          to be a bottleneck.
+        </p>
+            <p>
+          The number of bytes received by the machine over the network as a
+          result of write operations initiated by the client is calculated as:
+        </p>
+            <pre class="programlisting">(OpsPerShardPerSec * (1 - ReadOpsPercent) * 
+ (AvgKeySize + AvgValueSize)) * DisksPerMachine</pre>
+            <p>
+          and is denoted by <span class="emphasis"><em>ReceiveBytesPerSec</em></span> in the spreadsheet. Note that whether a
+          node is a master or a replica does not matter for the purposes of this
+          calculation; the inbound write bytes come from the client for the master and
+          from the masters for the replicas on the machine.
+        </p>
+            <p>
+          The number of bytes received by the machine as a result of read requests is computed as:
+        </p>
+            <pre class="programlisting">((OpsPerShardPerSec * ReadOpsPercent)/RF) * 
+ (AvgKeySize + ReadRequestOverheadBytes) * DisksPerMachine</pre>
+            <p>
+          where <span class="emphasis"><em>ReadRequestOverheadBytes</em></span> is a fixed constant overhead of 100 bytes.
+        </p>
+            <p>
+          The bytes sent out by the machine over the network as a result of the read
+          operations has two underlying components:
+        </p>
+            <div class="orderedlist">
+              <ol type="1">
+                <li>
+                  <p>
+              The bytes sent out in direct response to application read requests and
+              can be expressed as:
+            </p>
+                  <pre class="programlisting">((OpsPerShardPerSec *  ReadOpsPercent)/RF) * 
+ (AvgKeySize + AvgValueSize) * DisksPerMachine</pre>
+                </li>
+                <li>
+                  <p>
+              The bytes sent out as replication traffic by the masters on the machine expressed as:
+            </p>
+                  <pre class="programlisting">(OpsPerShardPerSec * (1 - ReadOpsPercent) * 
+ (AvgKeySize + AvgValueSize) * (RF-1)) * MastersOnMachine</pre>
+                </li>
+              </ol>
+            </div>
+            <p>
+          The sum of the above two values represents the total outbound traffic denoted by
+          SendBytesPerSec in the spreadsheet.
+        </p>
+            <p>
+          The total inbound and outbound traffic must be comfortably within the NIC's
+          capacity. The spreadsheet calculates the kind of network card, GigE or 10GigE,
+          which is required to support the traffic.
+        </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="independent_commands.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="estimate-total-shards-and-machines.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Utility commands </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Estimate total Shards and Machines</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

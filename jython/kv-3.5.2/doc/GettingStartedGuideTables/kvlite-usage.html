@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 2. Introduction to Oracle KVLite</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="prev" href="authentication.html" title="Using the Authentication APIs" />
+    <link rel="next" href="stopkvlite.html" title="Stopping and Restarting KVLite" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 2. Introduction to Oracle KVLite</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="authentication.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="stopkvlite.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="kvlite-usage"></a>Chapter 2. Introduction to Oracle KVLite</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="kvlite-usage.html#startkvlite">Starting KVLite</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="stopkvlite.html">Stopping and Restarting KVLite</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="verifykvlite.html">Verifying the Installation</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="clpoptions.html">kvlite Utility Command Line Parameter Options</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+      KVLite is a single-node, single shard store. It usually runs in a
+      single process and is used to develop and test client applications.
+      KVLite is installed when you install Oracle NoSQL Database. 
+  </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+          KVLite supports only non-authenticated access to the store. That
+          is, you cannot configure KVLite such that your code can
+          authenticate, or log in, to it. If you are developing code for a
+          store that requires authentication, then you must install a test
+          store that is configured for authentication access in the same
+          way as your production store.
+      </p>
+        <p>
+          See
+          <a class="xref" href="authentication.html" title="Using the Authentication APIs">Using the Authentication APIs</a>
+          for information on configuring your
+          <span>
+            client code
+          </span>
+          
+          to connect to a secure store.  For information on configuring a
+          store to require authentication, see the
+          <em class="citetitle">Oracle NoSQL Database Security Guide</em>.
+      </p>
+      </div>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="startkvlite"></a>Starting KVLite</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+          You start KVLite by using the <code class="literal">kvlite</code> utility,
+          which can be found in <code class="literal">KVHOME/lib/kvstore.jar</code>.
+          If you use this utility without any command line options, then
+          KVLite will run with the following default values:
+      </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                  The store name is <code class="literal">kvstore</code>.
+              </p>
+            </li>
+            <li>
+              <p>
+                  The hostname is the local machine.
+              </p>
+            </li>
+            <li>
+              <p>
+                  The registry port is <code class="literal">5000</code>.
+              </p>
+            </li>
+            <li>
+              <p>
+                  The directory where Oracle NoSQL Database data is placed (known as KVROOT) is
+                  <code class="literal">./kvroot</code>.
+              </p>
+            </li>
+            <li>
+              <p>
+                  The administration process is turned on using port 5001.
+              </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+            This means that any processes that you want to communicate with
+            KVLite can only connect to it on the local host (127.0.0.1)
+            using port 5000. If you want to communicate with KVLite from
+            some machine other than the local machine, then you must start
+            it using non-default values. The command line options are
+            described later in this chapter.
+        </p>
+        <p>
+            For example:
+        </p>
+        <pre class="programlisting">&gt; java -Xmx256m -Xms256m -jar KVHOME/lib/kvstore.jar kvlite</pre>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+                    To avoid using too much heap space, you should specify
+                    -Xmx and -Xms flags for Java when running
+                    administrative and utility commands.
+                </p>
+        </div>
+        <p>
+            When KVLite has started successfully, it writes one of two
+            statements to stdout, depending on whether it created a new
+            store or is opening an existing store:
+        </p>
+        <pre class="programlisting">Created new kvlite store with args:
+-root ./kvroot -store &lt;kvstore name&gt; -host &lt;localhost&gt; -port 5000 
+-admin 5001 </pre>
+        <p>
+                or
+            </p>
+        <pre class="programlisting">Opened existing kvlite store with config:
+-root ./kvroot -store &lt;kvstore name&gt; -host &lt;localhost&gt; -port 5000 
+-admin 5001 </pre>
+        <p>
+               where <code class="literal">&lt;kvstore name&gt;</code> is the name of
+               the store and &lt;localhost&gt; is the name of the local
+               host.  It takes about 10 - 60 seconds before this message is
+               issued, depending on the speed of your machine.
+        </p>
+        <p>
+            Note that you will not get the command line prompt back until
+            you stop KVLite.
+        </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="authentication.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="stopkvlite.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Using the Authentication APIs </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Stopping and Restarting KVLite</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

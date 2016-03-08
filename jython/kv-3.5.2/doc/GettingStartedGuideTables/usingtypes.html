@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 7. Using Data Types</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="prev" href="bulkget.html" title="Bulk Get Operations" />
+    <link rel="next" href="usingbinary.html" title="Using Binary" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 7. Using Data Types</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="bulkget.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="usingbinary.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="usingtypes"></a>Chapter 7. Using Data Types</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="usingtypes.html#usingarrays">Using Arrays</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="usingbinary.html">Using Binary</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="usingenums.html">Using Enums</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="usingfixedbinary.html">Using Fixed Binary</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="usingmaps.html">Using Maps</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="usingrecords.html">Using Embedded Records</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+        Many of the types that Oracle NoSQL Database offers are easy to use.
+        Examples of their usage has been scattered throughout this manual.
+        However, some types are a little more complicated to use because
+        they use container methods.  This chapter describes their
+        usage.
+    </p>
+      <p>
+        The types described in this chapter are: Arrays, Maps, Records,
+        Enums, and Byte Arrays.  This chapter shows how to read and write
+        values of each of these types.
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="usingarrays"></a>Using Arrays</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+            Arrays are a sequence of values all of the same type.
+        </p>
+        <p>
+            When you declare a table field as an array, you use
+            the <code class="literal">ARRAY()</code> statement.
+        </p>
+        <p>
+            To define a simple two-field table where the primary key is
+            a UID and the second field contains array of strings, you
+            use the following DDL statement:
+        </p>
+        <pre class="programlisting">CREATE TABLE myTable (
+    uid INTEGER,
+    myArray ARRAY(STRING),
+    PRIMARY KEY(uid)
+) </pre>
+        <p>
+            <code class="literal">CHECK</code> constraints are supported for array
+            values. See <a class="xref" href="tablecreationddl.html#checkconstraint" title="CHECK">CHECK</a>
+            for more details.
+        </p>
+        <p>
+            <code class="literal">DEFAULT</code> and <code class="literal">NOT NULL</code>
+            constraints are not supported for arrays.
+        </p>
+        <p>
+            To write the array, use
+            <code class="methodname">Row.putArray()</code>, which returns an
+            <code class="classname">ArrayValue</code> class instance. You then use 
+            <code class="methodname">ArrayValue.put()</code> to write elements to
+            the array:
+        </p>
+        <pre class="programlisting">TableAPI tableH = kvstore.getTableAPI();
+
+Table myTable = tableH.getTable("myTable");
+
+Row row = myTable.createRow();
+row.put("uid", 12345);
+
+ArrayValue av = row.putArray("myArray");
+av.add("One");
+av.add("Two");
+av.add("Three"); 
+
+tableH.put(row, null, null);</pre>
+        <p>
+            Note that <code class="classname">ArrayValue</code> has methods that
+            allow you to add multiple values to the array by appending an
+            array of values to the array. This assumes the array of values
+            matches the array's schema. For example, the previous example
+            could be done in the following way:
+        </p>
+        <pre class="programlisting">TableAPI tableH = kvstore.getTableAPI();
+
+Table myTable = tableH.getTable("myTable");
+
+Row row = myTable.createRow();
+row.put("uid", 12345);
+
+ArrayValue av = row.putArray("myArray");
+String myStrings[] = {"One", "Two", "Three"};
+av.add(myStrings);
+
+tableH.put(row, null, null);</pre>
+        <p>
+            To read the array, use <code class="methodname">Row.get().asArray()</code>. This returns an 
+            <code class="classname">ArrayValue</code> class instance. You can then
+            use <code class="methodname">ArrayValue.get()</code> to retrieve an
+            element of the array from a specified index, or you can use
+            <code class="methodname">ArrayValue.toList()</code> to return the
+            array as a Java <code class="classname">List</code>. In either case,
+            the retrieved values are returned as a <code class="classname">FieldValue</code>, which allows
+            you to retrieve the encapsulated value using a cast method such
+            as <code class="methodname">FieldValue.asString()</code>.
+        </p>
+        <p>
+            For example, to iterate over the array created in the previous
+            example:
+        </p>
+        <pre class="programlisting">TableAPI tableH = kvstore.getTableAPI();
+
+Table myTable = tableH.getTable("myTable");
+
+/* Create a primary key for user id 12345 and get a row */
+PrimaryKey key = myTable.createPrimaryKey();
+key.put("uid", 12345);
+Row row = tableH.get(key, null);
+
+/* Iterate over the array, displaying each element as a string */
+ArrayValue av = row.get("myArray").asArray();
+for (FieldValue fv: av.toList()) {
+    System.out.println(fv.asString().get()); } </pre>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="bulkget.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="usingbinary.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Bulk Get Operations </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Using Binary</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

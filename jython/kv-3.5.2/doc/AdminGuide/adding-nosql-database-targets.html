@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Adding NoSQL Database Targets</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="oem-integration.html" title="Chapter 9.  Integrating Oracle Enterprise Manager (OEM) with Oracle NoSQL Database" />
+    <link rel="prev" href="oem-integration.html" title="Chapter 9.  Integrating Oracle Enterprise Manager (OEM) with Oracle NoSQL Database" />
+    <link rel="next" href="components-of-nosql-store.html" title="Components of a NoSQL Store" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">
+            Adding NoSQL Database Targets
+       </th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="oem-integration.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 9. 
+      Integrating Oracle Enterprise Manager (OEM) with
+      Oracle NoSQL Database 
+   </th>
+          <td width="20%" align="right"> <a accesskey="n" href="components-of-nosql-store.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="adding-nosql-database-targets"></a>
+            Adding NoSQL Database Targets
+       </h2>
+          </div>
+        </div>
+      </div>
+      <p>
+           Run the plug-in's discovery program on each host
+           where a Storage Node Agent (SNA) is running, to
+           add the components of a store as monitoring targets.
+       </p>
+      <p>
+           Follow the steps below to add NoSQL Database targets:
+       </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                     Select “Add Targets” from the “Setup” menu,
+                     then choose “Add Targets Manually”.
+                  </p>
+          </li>
+          <li>
+            <p>
+                    Select “Add Targets Using Guided Process”
+                    on the “Add Targets Manually” page.
+                  </p>
+          </li>
+          <li>
+            <p>
+                     Select “Discover NoSQL SNA System Targets”
+                     in the “Target Types” drop-down list.
+                  </p>
+            <div class="mediaobject">
+              <img src="oem-add-targets-manually-1.jpg" alt="Discover NoSQL SNA System Targets" />
+            </div>
+          </li>
+          <li>
+            <p>
+                    Click “Add Using Guided Process”. This brings
+                    up the NoSQL Database Discovery program.
+                    </p>
+          </li>
+          <li>
+            <p>
+                    Select an agent on which you can run the discovery
+                    program. "Choose Agent" (Select Agent to Run
+                    Discovery On) in the first page of the program
+                    displays a list of all available EM agents.
+                    </p>
+            <div class="mediaobject">
+              <img src="oem-selectagent-run-discovery.jpg" alt="Select Agents" />
+            </div>
+          </li>
+          <li>
+            <p>
+                    Click “Next”. This takes you to the “Components”
+                    (Manage NoSQL Database Targets: Select Store
+                    Components) page. This shows all the NoSQL Database
+                    components that were found on the agent's host. To
+                    be found, an SNA must be running when the discovery
+                    program runs. The SNA's configuration reports the
+                    SNA's managed components, such as Replication
+                    Nodes and Admins. For each component, two
+                    attributes are listed: 
+                     </p>
+            <div class="itemizedlist">
+              <ul type="disc">
+                <li>
+                  <p>
+                                Discovered
+                             </p>
+                </li>
+                <li>
+                  <p>
+                                Currently Managed
+                             </p>
+                </li>
+              </ul>
+            </div>
+            <p>
+                    Each attribute can have a value of “Yes” or “No”.
+                    For each component found, one of two actions is
+                    available: 
+                  </p>
+            <div class="itemizedlist">
+              <ul type="disc">
+                <li>
+                  <p>
+                                add target
+                             </p>
+                </li>
+                <li>
+                  <p>
+                                remove target
+                             </p>
+                </li>
+              </ul>
+            </div>
+            <p>
+                    The action is enabled by means of a check box. The
+                    recommended action for a component is shown by the
+                    state of its check box. 
+                  </p>
+            <div class="itemizedlist">
+              <ul type="disc">
+                <li>
+                  <p>
+                                If the box is checked, then the action is
+                                recommended. The user can override the
+                                recommended action by checking or
+                                un-checking the box. 
+                             </p>
+                </li>
+                <li>
+                  <p>
+                                If a component has Discovered = YES, it means
+                                that an instance of that component was found
+                                on the host.
+                             </p>
+                </li>
+                <li>
+                  <p>
+                                If a component has Currently Managed = YES, it
+                                means that the component is already configured
+                                for monitoring by EM. 
+                             </p>
+                </li>
+                <li>
+                  <p>
+                                If a component is Discovered and not Currently
+                                Managed, then it is a candidate for being added
+                                as a target.  For such components, the available
+                                action is "add target", which is the recommended 
+                                action. 
+                             </p>
+                </li>
+                <li>
+                  <p>
+                                If a component is Discovered and Currently Managed,
+                                it means that the component has already been
+                                discovered and added as a monitoring target. 
+                                For such components, the available action is
+                                "remove target", but the recommended action is
+                                to do nothing, because the discovery report is
+                                in sync with EM's configuration. 
+                             </p>
+                </li>
+                <li>
+                  <p>
+                                If a component is Currently Managed and not 
+                                Discovered, it means that EM is configured
+                                to monitor a component that was unexpectedly
+                                 not found on the agent's host. This could
+                                be so because the component no longer resides
+                                on the host; or it could reflect a temporary
+                                unavailability of the Storage Node Agent.
+                                For such components, the recommended action
+                                is "remove target".
+                             </p>
+                </li>
+              </ul>
+            </div>
+            <div class="mediaobject">
+              <img src="oem-database-targets-select-store-components.jpg" alt="Select Store Components Page" />
+            </div>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+                In most cases, the default recommended action is the
+                correct action, and no checkboxes need to be altered.
+            </p>
+            </div>
+          </li>
+          <li>
+            <p>
+                    Click “Next” once the desired configuration is set up
+                    on the “Components” page. This takes you to the
+                    “Confirm” (Manage NoSQL Database Targets: Confirm Changes)
+                    page, which shows a list of all the chosen actions.
+                  </p>
+            <div class="mediaobject">
+              <img src="oem-manage-database-target-confirm-changes.jpg" alt="Confirm Changes Page" />
+            </div>
+          </li>
+          <li>
+            <p>
+                    Click “Next” to go to the “Summary” (Add SNA Targets:
+                    Apply Changes) page. This shows a report of success
+                    or failure of each action.
+                     </p>
+            <div class="mediaobject">
+              <img src="oem-sna-targets-apply-changes.jpg" alt="Summary Page" />
+            </div>
+          </li>
+          <li>
+            <p>
+                    At this point, you may exit Discovery, or you may click on
+                    "Choose Agent", near the top of the page, to return to the
+                    first page of the program, to re-start and run discovery
+                    on a new agent. Once all of the components of a store
+                    have been discovered and added, EM's model of the
+                    store's topology is complete.
+                  </p>
+          </li>
+        </ol>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="oem-integration.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="oem-integration.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="components-of-nosql-store.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 9. 
+      Integrating Oracle Enterprise Manager (OEM) with
+      Oracle NoSQL Database 
+    </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> 
+            Components of a NoSQL Store
+       </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

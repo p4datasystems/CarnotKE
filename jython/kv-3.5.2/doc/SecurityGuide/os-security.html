@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Guidelines for Operating System Security</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="security_guidelines.html" title="Chapter 12. Keeping Oracle NoSQL Database Secure" />
+    <link rel="prev" href="update_cert.html" title="Guidelines for Updating the SSL key/certificate" />
+    <link rel="next" href="appendix_keytool.html" title="Appendix A. SSL keystore generation" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Guidelines for Operating System Security</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="update_cert.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 12. Keeping Oracle NoSQL Database Secure</th>
+          <td width="20%" align="right"> <a accesskey="n" href="appendix_keytool.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="os-security"></a>Guidelines for Operating System Security</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+            Follow these guidelines regarding operating system security:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    There should be a single user identity that runs the
+                    KVStore software. 
+                </p>
+          </li>
+          <li>
+            <p> 
+                    The KVStore user should be in its own group, independent
+                    of other users. 
+                </p>
+          </li>
+          <li>
+            <p> 
+                    JE log files, audit log files, and password stores should
+                    have mode 0600 on Linux/UNIX platforms with equivalent
+                    settings for Windows systems. The simplest way to achieve
+                    this on Linux/UNIX is to set an umask of 0077.
+                </p>
+          </li>
+          <li>
+            <p>
+                    Security configuration files must be write-protected.
+                </p>
+          </li>
+          <li>
+            <p>
+                    The KVROOT directory and the security directory must be
+                    protected from modification by other users. On UNIX/Linux
+                    this should include having the sticky bit (01000) set in
+                    order to prevent renaming and deletion of files/directories.
+                </p>
+          </li>
+          <li>
+            <p>
+                    Access to the systems that are running KVStore should be
+                    limited in order to avoid the risk of tampering.
+                </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p> 
+                        Access protections do not guard against users who
+                        have sufficiently elevated access rights (for example,
+                        the UNIX root user). 
+                    </p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="update_cert.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="security_guidelines.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="appendix_keytool.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Guidelines for Updating the SSL key/certificate </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Appendix A. SSL keystore generation</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

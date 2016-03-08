@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 1. Introducing Oracle NoSQL Database Security</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="prev" href="preface.html" title="Preface" />
+    <link rel="next" href="security_config.html" title="Chapter 2. Security Configuration" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 1. Introducing Oracle NoSQL Database Security</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="preface.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="security_config.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="introduction_security"></a>Chapter 1. Introducing Oracle NoSQL Database Security</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+        Oracle NoSQL Database can be configured securely. In a secure configuration, network
+        communications between NoSQL clients, utilities, and NoSQL server
+        components are encrypted using SSL/TLS, and all processes must
+        authenticate themselves to the components to which they connect. 
+    </p>
+      <p> 
+        There are two levels of security to be aware of. These are network
+        security, which provides an outer layer of protection at the network
+        level, and user authentication/authorization. Network security is
+        configured at the file system level typically during the installation
+        process, while user authentication/authorization is managed through
+        NoSQL utilities.
+    </p>
+      <p>
+        You can use the default Oracle NoSQL Database features to configure security in the
+        following areas for your Oracle NoSQL Database installation;   
+    </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                <code class="literal">Security Configuration Utility</code>. Allows you to
+                configure and add security to a new or to an existing Oracle NoSQL Database
+                installation. 
+            </p>
+          </li>
+          <li>
+            <p>
+                <code class="literal">Authentication methods</code>. Oracle NoSQL Database provides
+                password authentication for users and systems. Oracle NoSQL Database EE version
+                also supports Kerberos authentication.
+            </p>
+          </li>
+          <li>
+            <p>
+                <code class="literal">Encryption</code>. You can encrypt data on the
+                network to prevent unauthorized access to that data. 
+            </p>
+          </li>
+          <li>
+            <p>
+                <code class="literal">External Password Storage</code>. Oracle NoSQL Database provides
+                two types of external password storage methods that you can
+                manipulate (one type for CE deployments). 
+            </p>
+          </li>
+          <li>
+            <p>
+                <code class="literal">Security Policies</code>. Oracle NoSQL Database allows you to set
+                up behaviors in order to ensure a secure environment. 
+            </p>
+          </li>
+          <li>
+            <p>
+                <code class="literal">Role-based authorization</code>. Oracle NoSQL Database provides
+                predefined system roles, privileges, and user-defined roles to
+                users. You can set desired privileges to users by role-granting.
+            </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+        In addition, <a class="xref" href="security_guidelines.html" title="Chapter 12. Keeping Oracle NoSQL Database Secure">Keeping Oracle NoSQL Database Secure</a> provides guidelines that you
+        should follow when securing your Oracle NoSQL Database installation.
+    </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="preface.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="security_config.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Preface </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 2. Security Configuration</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

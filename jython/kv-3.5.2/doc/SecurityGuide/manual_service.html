@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Appendix D. Manually Registering Oracle NoSQL Database Service Principal</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="prev" href="using_kadmin.html" title="Appendix C. Configuring the Kerberos Administrative Utility" />
+    <link rel="next" href="thirdpartylicenses.html" title="Appendix E. Third Party Licenses" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Appendix D. Manually Registering Oracle NoSQL Database Service Principal</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="using_kadmin.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="thirdpartylicenses.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="appendix" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="manual_service"></a>Appendix D. Manually Registering Oracle NoSQL Database Service Principal</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+		The securityconfig tool allows you to create service principals and
+		generate keytabs assuming that each Storage Node is able to access the
+		Kerberos admin interface remotely. Although this is the typical
+		configuration most Kerberos deployments have, you may want to use a
+		non-standard configuration. You can manage service principals by using
+		only kadmin.local or ktutil utility on the KDC host. 
+	</p>
+      <p> 
+		To register Oracle NoSQL Database service principal by using
+			<code class="literal">kadmin.local</code>:
+	</p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+				Register the service principal: </p>
+            <pre class="programlisting">kadmin.local: addprinc -randkey nosql/abc.example.com</pre>
+          </li>
+          <li>
+            <p> 
+				Extract the keytab file using the <code class="literal">ktadd</code>
+				command:
+			</p>
+            <pre class="programlisting">kadmin.local: ktadd –norandkey –k keytab nosql/abc.example.com </pre>
+          </li>
+          <li>
+            <p> 
+				Verify the entries of the generated keytab using the
+					<code class="literal">klist</code> tool: 
+			</p>
+            <pre class="programlisting">klist –k –e /tmp/keytab
+Keytab name: FILE:keytab
+KVNO Principal
+---- ------------------------------------------------
+12   nosql/abc.example.com@EXAMPLE.COM 
+                           (AES-128 CTS mode with 96-bit SHA-1 HMAC)
+12   nosql/abc.example.com@EXAMPLE.COM 
+                           (AES-256 CTS mode with 96-bit SHA-1 HMAC) </pre>
+          </li>
+          <li>
+            <p>
+				Copy the keytab of Oracle NoSQL Database server principal to each Storage
+				Node. The default location is under kvroot/security. You need to
+				create the security directory. 
+			</p>
+          </li>
+          <li>
+            <p>
+				Run makebootconfig or securityconfig utility to complete the
+				rest of the Kerberos security configuration.
+			</p>
+          </li>
+        </ol>
+      </div>
+      <p>
+		To register Oracle NoSQL Database service principal by using
+			<code class="literal">ktutil</code> utility:
+	</p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+				Add principal entries:
+			</p>
+            <pre class="programlisting">ktutil: add_entry –password –p \
+nosql/abc.example.com –k 1 –e aes128-cts-hmac-sha1-96
+Password for nosql/abc.example.com@EXAMPLE.COM:
+ktutil:add_entry –password –p nosql/abc.example.com \
+–k 1 –e aes256-cts-hmac-sha1-96
+Password for nosql/abc.example.com@EXAMPLE.COM </pre>
+          </li>
+          <li>
+            <p> 
+				Write the current keylist into the keytab file: 
+			</p>
+            <pre class="programlisting">Ktutil: write_kt keytab </pre>
+          </li>
+          <li>
+            <p> 
+				Verify the entries of the generated keytab using the
+					<code class="literal">klist</code> tool: 
+			</p>
+            <pre class="programlisting">klist –k –e /tmp/keytab
+Keytab name: FILE:keytab
+KVNO Principal
+---- ------------------------------------------------
+12   nosql/abc.example.com@EXAMPLE.COM 
+                           (AES-128 CTS mode with 96-bit SHA-1 HMAC)
+12   nosql/abc.example.com@EXAMPLE.COM 
+                           (AES-256 CTS mode with 96-bit SHA-1 HMAC) </pre>
+          </li>
+          <li>
+            <p> 
+				Copy the keytab of Oracle NoSQL Database server principal to each Storage
+				Node. The default location is under kvroot/security. You need to
+				create the security directory.
+			</p>
+          </li>
+          <li>
+            <p> 
+				Run makebootconfig or securityconfig utility to complete the
+				rest of the Kerberos security configuration.
+			</p>
+          </li>
+        </ol>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="using_kadmin.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="thirdpartylicenses.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Appendix C. Configuring the Kerberos Administrative Utility </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Appendix E. Third Party Licenses</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

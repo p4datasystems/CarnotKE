@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Managing Roles, Privileges and Users</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="authorization.html" title="Chapter 9. Configuring Authorization" />
+    <link rel="prev" href="roles.html" title="Roles" />
+    <link rel="next" href="security_policies.html" title="Chapter 10. Security Policies" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Managing Roles, Privileges and Users</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="roles.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 9. Configuring Authorization</th>
+          <td width="20%" align="right"> <a accesskey="n" href="security_policies.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="managing_roles"></a>Managing Roles, Privileges and Users</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="managing_roles.html#role_creation">Role Creation</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="managing_roles.html#role_removal">Role Removal</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="managing_roles.html#role_status">Role Status</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="managing_roles.html#grant_role">Grant Roles or Privileges</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="managing_roles.html#revoke_role">Revoke Roles or Privileges</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p> 
+                Oracle NoSQL Database provides a set of declarative language of security operations,
+                including the commands allowing to create, drop, show, grant or revoke
+                roles to or from users, and grant or revoke privileges to or from roles.
+                All these statements can be executed via the “execute” command in Admin CLI,
+                or the API of KVStore.execute() or KVStore.executeSync(). 
+            </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="role_creation"></a>Role Creation</h3>
+            </div>
+          </div>
+        </div>
+        <pre class="programlisting">CREATE ROLE role_name </pre>
+        <p>
+                  Where, <code class="literal">role_name</code> is the name of the role, which
+                  is case insensitive.
+                  </p>
+        <p>For example,</p>
+        <pre class="programlisting">kv-&gt; execute 'CREATE ROLE administrator'
+Statement completed successfully </pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="role_removal"></a>Role Removal</h3>
+            </div>
+          </div>
+        </div>
+        <pre class="programlisting">DROP ROLE role_name </pre>
+        <p>
+                  Where, <code class="literal">role_name</code> is the name of the role, which
+                  is case insensitive.
+                  </p>
+        <p>For example,</p>
+        <pre class="programlisting">kv-&gt; execute 'DROP ROLE administrator'
+Statement completed successfully </pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="role_status"></a>Role Status</h3>
+            </div>
+          </div>
+        </div>
+        <pre class="programlisting">SHOW [AS JSON] ROLES | ROLE role_name </pre>
+        <p>
+                     Where, <code class="literal">role_name</code> is the name of the role.
+                  </p>
+        <p>
+                     List all available role names by running 'SHOW ROLES', or view the
+                     detailed information of a role if the role name is specified.
+                  </p>
+        <p>For example,</p>
+        <pre class="programlisting">kv-&gt;execute 'SHOW ROLES'
+role:name=dbadmin
+role:name=public
+role:name=readonly
+role:name=readwrite
+role:name=sysadmin
+role:name=writeonly </pre>
+        <p>
+                     The detailed information of a role can be viewed by specifying the
+                     role name:
+                  </p>
+        <pre class="programlisting">kv-&gt;execute 'SHOW ROLE dbadmin'
+name=dbadmin assignable=true readonly=true
+granted-privileges=[SYSDBA, DBVIEW] </pre>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+                      Assignable indicates whether this role can be explicitly
+                      granted to or revoked from a user.
+                      </p>
+        </div>
+        <p>
+                     Object privileges will appear in the form of PRIVILEGE(obj). For
+                     example, privilege of READ_TABLE on table 'emp' will
+                     appear as:
+                  </p>
+        <pre class="programlisting">kv-&gt;execute 'CREATE ROLE emptablereader'
+kv-&gt;execute 'GRANT READ_TABLE ON emp TO emptablereader'
+kv-&gt;execute 'SHOW ROLE emptablereader'
+name=emptablereader assignable=true readonly=false
+granted-privileges=[READ_TABLE(emp)] </pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="grant_role"></a>Grant Roles or Privileges</h3>
+            </div>
+          </div>
+        </div>
+        <pre class="programlisting">GRANT { grant_roles | grant_system_privileges
+| grant_object_privileges }
+grant_roles ::= role [, role]... TO { USER user | ROLE role }
+grant_system_privileges ::=
+{system_privilege | ALL PRIVILEGES}
+[,{system_privilege | ALL PRIVILEGES}]...
+TO role
+grant_object_privileges ::=
+{object_privileges| ALL [PRIVILEGES]}
+[,{object_privileges| ALL [PRIVILEGES]}]...
+ON object TO role </pre>
+        <p>
+                  where:
+                  </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                <code class="literal">role</code>
+              </p>
+              <p>The role that is granted.</p>
+            </li>
+            <li>
+              <p>
+                <code class="literal">user</code>
+              </p>
+              <p>The user to which the privileges are granted.</p>
+            </li>
+            <li>
+              <p>
+                <code class="literal">system_privileges</code>
+              </p>
+              <p>The system privileges that are granted.</p>
+            </li>
+            <li>
+              <p>
+                <code class="literal">object_privileges</code>
+              </p>
+              <p>The object privileges that are granted.</p>
+            </li>
+            <li>
+              <p>
+                <code class="literal">object</code>
+              </p>
+              <p>
+                         The object on which the privilege is granted. 
+                         Currently only table privileges are supported.
+                       </p>
+            </li>
+            <li>
+              <p>
+                <code class="literal">ALL PRIVILEGES</code>
+              </p>
+              <p>
+                          Grants all of the system privileges. This is a
+                          shortcut for specifying all system privileges.
+                        </p>
+            </li>
+            <li>
+              <p>
+                <code class="literal">ALL [PRIVILEGES]</code>
+              </p>
+              <p>
+                          Grants all object privileges defined for the object.
+                          The keyword PRIVILEGES is provided for semantic clarity and is optional.
+                       </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+                  For example, to grant a role 'manager' to another role 'employee':
+               </p>
+        <pre class="programlisting">kv-&gt; execute 'GRANT EMPLOYEE TO ROLE manager'
+kv-&gt; execute 'GRANT MANAGER TO USER Kate'
+Statement completed successfully  </pre>
+        <p>
+                  If you repeat the command:
+               </p>
+        <pre class="programlisting">kv-&gt; execute 'GRANT employee to ROLE manager' </pre>
+        <p>
+                  You will receive an error of "Could not recursively grant role
+                  employee to role manager" because this would lead to a cyclic definition
+                  of role manager.
+               </p>
+        <p>
+                  The user can now add new privileges to their defined role. For example:
+               </p>
+        <pre class="programlisting">kv-&gt; execute 'GRANT READ_ANY TO Kate' </pre>
+        <p>
+                 For example, to grant read permission on table T1 to Kate:
+               </p>
+        <pre class="programlisting">kv-&gt; execute 'GRANT READ_TABLE on T1 TO Kate' </pre>
+        <p>
+                    See also notes on granting table privileges in
+                    <a class="xref" href="authorization.html#tableownership" title="Table Ownership">Table Ownership</a>.
+                </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="revoke_role"></a>Revoke Roles or Privileges</h3>
+            </div>
+          </div>
+        </div>
+        <pre class="programlisting">REVOKE { revoke_roles | revoke_system_privileges
+| revoke_object_privileges}
+revoke_roles ::= role [, role]... FROM { USER user | ROLE role }
+revoke_system_privileges ::=
+{ system_privilege | ALL PRIVILEGES }
+[, {system_privilege | ALL PRIVILEGES}]...
+FROM role
+revoke_object_privileges ::=
+{ object_privileges| ALL [PRIVILEGES] }
+[, { object_privileges | ALL [PRIVILEGES] }]...
+ON object FROM role </pre>
+        <p>
+                  where:
+                  </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                <code class="literal">role</code>
+              </p>
+              <p>The role to revoke.</p>
+            </li>
+            <li>
+              <p>
+                <code class="literal">user</code>
+              </p>
+              <p>The user from which the privileges are revoked.</p>
+            </li>
+            <li>
+              <p>
+                <code class="literal">system_privileges</code>
+              </p>
+              <p>The system privileges to revoke.</p>
+            </li>
+            <li>
+              <p>
+                <code class="literal">object_privileges</code>
+              </p>
+              <p>The object privileges to revoke.</p>
+            </li>
+            <li>
+              <p>
+                <code class="literal">object</code>
+              </p>
+              <p>
+                           The table from which the privileges are revoked. Currently,
+                           the only objects supported are tables.
+                       </p>
+            </li>
+            <li>
+              <p>
+                <code class="literal">ALL PRIVILEGES</code>
+              </p>
+              <p>
+                          Revokes all of the system privileges that have
+                          been granted to the revokee.
+                        </p>
+            </li>
+            <li>
+              <p>
+                <code class="literal">ALL [PRIVILEGES]</code>
+              </p>
+              <p>
+                          Revokes all object privileges defined on the object
+                          from the revokee. The keyword PRIVILEGES is provided for semantic
+                          clarity and is optional.
+                       </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+             For example, to revoke role 'employee' from role 'manager':
+          </p>
+        <pre class="programlisting">kv-&gt; execute 'REVOKE employee FROM ROLE manager'
+Statement completed successfully </pre>
+        <p>
+              To revoke the role 'manager' from user 'Kate':
+          </p>
+        <pre class="programlisting">kv-&gt; execute 'REVOKE manager FROM USER Kate'
+Statement completed successfully </pre>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="roles.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="authorization.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="security_policies.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Roles </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 10. Security Policies</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

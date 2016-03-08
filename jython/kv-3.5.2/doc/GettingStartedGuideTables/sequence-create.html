@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Creating a Sequence</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="multiop.html" title="Chapter 12. Executing a Sequence of Operations" />
+    <link rel="prev" href="multiop.html" title="Chapter 12. Executing a Sequence of Operations" />
+    <link rel="next" href="sequence-exec.html" title="Executing a Sequence" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Creating a Sequence</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="multiop.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 12. Executing a Sequence of Operations</th>
+          <td width="20%" align="right"> <a accesskey="n" href="sequence-exec.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="sequence-create"></a>Creating a Sequence</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            You create a sequence by using the <code class="classname">TableOperationFactory</code>
+            class to create <code class="classname">TableOperation</code> class
+            instances, each of which represents exactly one operation in
+            the store. You obtain an instance of
+            <code class="classname">TableOperationFactory</code> by using 
+            <code class="methodname">TableAPI.getTableOperationFactory()</code>.
+        </p>
+      <p>
+            For example, suppose you are using a table defined like this:
+        </p>
+      <pre class="programlisting">CREATE TABLE myTable (
+    itemType STRING,
+    itemCategory STRING,
+    itemClass STRING,
+    itemColor STRING,
+    itemSize STRING,
+    price FLOAT,
+    inventoryCount INTEGER,
+    PRIMARY KEY (SHARD(itemType, itemCategory, itemClass), itemColor,
+    itemSize)
+) </pre>
+      <p>
+            With tables containing data like this:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    Row 1:
+                </p>
+            <table class="simplelist" border="0" summary="Simple list">
+              <tr>
+                <td>itemType: Hats</td>
+              </tr>
+              <tr>
+                <td>itemCategory: baseball</td>
+              </tr>
+              <tr>
+                <td>itemClass: longbill</td>
+              </tr>
+              <tr>
+                <td>itemColor: red</td>
+              </tr>
+              <tr>
+                <td>itemSize: small</td>
+              </tr>
+              <tr>
+                <td>price: 12.07</td>
+              </tr>
+              <tr>
+                <td>inventoryCount: 127</td>
+              </tr>
+            </table>
+          </li>
+          <li>
+            <p>
+                    Row 2:
+                </p>
+            <table class="simplelist" border="0" summary="Simple list">
+              <tr>
+                <td>itemType: Hats</td>
+              </tr>
+              <tr>
+                <td>itemCategory: baseball</td>
+              </tr>
+              <tr>
+                <td>itemClass: longbill</td>
+              </tr>
+              <tr>
+                <td>itemColor: red</td>
+              </tr>
+              <tr>
+                <td>itemSize: medium</td>
+              </tr>
+              <tr>
+                <td>price: 13.07</td>
+              </tr>
+              <tr>
+                <td>inventoryCount: 201</td>
+              </tr>
+            </table>
+          </li>
+          <li>
+            <p>
+                    Row 3:
+                </p>
+            <table class="simplelist" border="0" summary="Simple list">
+              <tr>
+                <td>itemType: Hats</td>
+              </tr>
+              <tr>
+                <td>itemCategory: baseball</td>
+              </tr>
+              <tr>
+                <td>itemClass: longbill</td>
+              </tr>
+              <tr>
+                <td>itemColor: red</td>
+              </tr>
+              <tr>
+                <td>itemSize: large</td>
+              </tr>
+              <tr>
+                <td>price: 14.07</td>
+              </tr>
+              <tr>
+                <td>inventoryCount: 39</td>
+              </tr>
+            </table>
+          </li>
+        </ul>
+      </div>
+      <p>
+            And further suppose that this table has rows that require an
+            update (such as a price and inventory refresh), and you want
+            the update to occur in such a fashion as to ensure it is
+            performed consistently for all the rows.
+        </p>
+      <p>
+            Then you can create a sequence in the following way:
+        </p>
+      <a id="sequence-tblcreate-1"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+import java.util.ArrayList;
+
+import oracle.kv.KVStore;
+import oracle.kv.KVStoreConfig;
+import oracle.kv.KVStoreFactory;
+
+import oracle.kv.DurabilityException;
+import oracle.kv.FaultException;
+import oracle.kv.OperationExecutionException;
+import oracle.kv.RequestTimeoutException;
+
+import oracle.kv.table.PrimaryKey;
+import oracle.kv.table.Row;
+import oracle.kv.table.Table;
+import oracle.kv.table.TableAPI;
+import oracle.kv.table.TableOperationFactory;
+import oracle.kv.table.TableOperation;
+
+...
+
+// kvstore handle creation omitted.
+
+...
+
+TableAPI tableH = kvstore.getTableAPI();
+
+Table myTable = tableH.getTable("myTable");
+
+// We use TableOperationFactory to create items for our
+// sequence.
+TableOperationFactory tof = tableH.getTableOperationFactory();
+
+// This ArrayList is used to contain each item in our sequence.
+ArrayList&lt;TableOperation&gt; opList = new ArrayList&lt;TableOperation&gt;();
+
+// Update each row, adding each to the opList as we do.
+Row row = myTable.createRow();
+row.put("itemType", "Hats");
+row.put("itemCategory", "baseball");
+row.put("itemClass", "longbill");
+row.put("itemColor", "red");
+row.put("itemSize", "small");
+row.put("price", new Float(13.07));
+row.put("inventoryCount", 107);
+opList.add(tof.createPut(row, null, true));
+
+row = myTable.createRow();
+row.put("itemType", "Hats");
+row.put("itemCategory", "baseball");
+row.put("itemClass", "longbill");
+row.put("itemColor", "red");
+row.put("itemSize", "medium");
+row.put("price", new Float(14.07));
+row.put("inventoryCount", 198);
+opList.add(tof.createPut(row, null, true));
+
+row = myTable.createRow();
+row.put("itemType", "Hats");
+row.put("itemCategory", "baseball");
+row.put("itemClass", "longbill");
+row.put("itemColor", "red");
+row.put("itemSize", "large");
+row.put("price", new Float(15.07));
+row.put("inventoryCount", 139);
+opList.add(tof.createPut(row, null, true)); </pre>
+      <p>
+            Note in the above example that we update only those rows that
+            share the same shard key. In this case, the shard key includes
+            the <code class="literal">itemType</code>, <code class="literal">itemCategory</code>,
+            and <code class="literal">itemClass</code> fields. If the value for any
+            of those fields is different from the others, we could not
+            successfully execute the sequence.
+        </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="multiop.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="multiop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="sequence-exec.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 12. Executing a Sequence of Operations </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Executing a Sequence</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

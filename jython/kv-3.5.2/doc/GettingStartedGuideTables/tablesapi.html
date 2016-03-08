@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 3. Introducing Oracle NoSQL Database Tables and Indexes</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="prev" href="clpoptions.html" title="kvlite Utility Command Line Parameter Options" />
+    <link rel="next" href="createindex.html" title="Creating Indexes" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 3. Introducing Oracle NoSQL Database Tables and Indexes</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="clpoptions.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="createindex.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="tablesapi"></a>Chapter 3. Introducing Oracle NoSQL Database Tables and Indexes</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="tablesapi.html#tabledefine">Defining Tables</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="tablesapi.html#cliaddtable">Executing DDL Statements using the CLI</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="tablesapi.html#tablesdatatypes">Supported Table Data Types</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="tablesapi.html#recordfields">Record Fields</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="tablesapi.html#defchildtable">Defining Child Tables</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="tablesapi.html#tableevolve">Table Evolution</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="createindex.html">Creating Indexes</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="createindex.html#indexdtlimits">Indexable Field Types</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+        </dl>
+      </div>
+      <p>
+      Using the Table API (in one of the supported languages) is the
+      recommended method of coding an Oracle NoSQL Database client application. They allow
+      you to manipulate data using a tables metaphor, in which data is
+      organized in multiple columns of data.  An unlimited number of
+      subtables are supported by this API. You can also create indexes to
+      improve query speeds against your tables.
+  </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+          You should avoid any possibility of colliding keys if your store is
+          accessed by a mix of clients that use both the Table and the
+          Key/Value APIs. 
+      </p>
+      </div>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="tabledefine"></a>Defining Tables</h2>
+            </div>
+          </div>
+        </div>
+        <div class="toc">
+          <dl>
+            <dt>
+              <span class="sect2">
+                <a href="tablesapi.html#cliaddtable">Executing DDL Statements using the CLI</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="tablesapi.html#tablesdatatypes">Supported Table Data Types</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="tablesapi.html#recordfields">Record Fields</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="tablesapi.html#defchildtable">Defining Child Tables</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="tablesapi.html#tableevolve">Table Evolution</a>
+              </span>
+            </dt>
+          </dl>
+        </div>
+        <p>
+          Before an Oracle NoSQL Database client can read or write to a table in the store,
+          the table must be created. There are several ways to do this, but
+          this manual focuses on using Table DDL Statements. These
+          statements can be submitted to the store using the command line
+          interface (CLI), but the recommended approach is to submit them to
+          the store programmatically. Both methods are described in this
+          section.
+      </p>
+        <p>
+          The DDL language that you use to define tables is described in
+          <a class="xref" href="ddl_overview.html" title="Appendix A. Table Data Definition Language Overview">Table Data Definition Language Overview</a>
+          This section provides a brief overview of how to use that
+          language.
+      </p>
+        <p>
+          As an introductory example, suppose
+          you wanted to use a table named
+          <code class="literal">myTable</code> with four columns per row:
+          <code class="literal">item</code>, <code class="literal">description</code>,
+          <code class="literal">count</code>, and <code class="literal">percentage</code>. 
+          To create this table, you would use the following statement:
+      </p>
+        <pre class="programlisting">CREATE TABLE myTable (
+  item STRING,
+  description STRING,
+  count INTEGER,
+  percentage DOUBLE,
+  PRIMARY KEY (item) // Every table must have a primary key
+) </pre>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+            Primary keys are a concept that have not yet been introduced in
+            this manual. See
+            <a class="xref" href="primaryshardkeys.html" title="Chapter 4. Primary and Shard Key Design">Primary and Shard Key Design</a>
+            for a complete explanation on what they are and how you should
+            use them.
+        </p>
+        </div>
+        <p>
+        To add the table definition to the store, you can add it
+        programmatically using the 
+        
+        <code class="classname">KVStore.execute()</code>
+        
+        
+        or 
+        <code class="classname">KVStore.executeSync()</code>
+        
+        
+        methods.  (The latter method executes the statement synchronously.)
+        In order to use these methods, you must establish a connection to
+        the store. This is described in 
+        <a class="xref" href="kvapi.html#kvstorehandle" title="The KVStore Handle">The KVStore Handle</a>.
+    </p>
+        <p>
+        For example:
+    </p>
+        <pre class="programlisting">package kvstore.basicExample;
+
+import oracle.kv.FaultException;
+import oracle.kv.StatementResult;
+import oracle.kv.KVStore;
+import oracle.kv.table.TableAPI;
+...
+
+// kvstore open omitted
+
+TableAPI tableAPI = kvstore.getTableAPI();
+ExecutionFuture future = null;
+StatementResult result = null;
+String statement = null;
+
+public void createTable() {
+    TableAPI tableAPI = store.getTableAPI();
+    StatementResult result = null;
+    String statement = null;
+
+    try {
+
+        /*
+         * Add a table to the database.
+         * Execute this statement asynchronously.
+         */
+
+        statement =
+            "CREATE TABLE myTable (" +
+            "item STRING," +
+            "description STRING," +
+            "count INTEGER," +
+            "percentage DOUBLE," +
+            "PRIMARY KEY (item))"; // Required"
+        result = store.executeSync(statement);
+
+        displayResult(result, statement);
+
+    } catch (IllegalArgumentException e) {
+        System.out.println("Invalid statement:\n" + e.getMessage());
+    } catch (FaultException e) {
+        System.out.println
+            ("Statement couldn't be executed, please retry: " + e);
+    }
+}
+
+private void displayResult(StatementResult result, String statement) {
+    System.out.println("===========================");
+    if (result.isSuccessful()) {
+        System.out.println("Statement was successful:\n\t" + 
+            statement);
+        System.out.println("Results:\n\t" + result.getInfo());
+    } else if (result.isCancelled()) {
+        System.out.println("Statement was cancelled:\n\t" + 
+            statement);
+    } else {
+        /*
+         * statement was not successful: may be in error, or may still
+         * be in progress.
+         */
+        if (result.isDone()) {
+            System.out.println("Statement failed:\n\t" + statement);
+            System.out.println("Problem:\n\t" + 
+                result.getErrorMessage());
+        } else {
+            System.out.println("Statement in progress:\n\t" + 
+                statement);
+            System.out.println("Status:\n\t" + result.getInfo());
+        }
+    }
+} </pre>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="cliaddtable"></a>Executing DDL Statements using the CLI</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+            You can execute DDL statements using the CLI's
+            <code class="literal">execute</code> command. This executes DDL statements
+            synchronously. For example:
+        </p>
+          <pre class="programlisting">kv-&gt; execute "CREATE TABLE myTable (
+&gt; item STRING, 
+&gt; description STRING, 
+&gt; count INTEGER, 
+&gt; percentage DOUBLE, 
+&gt; PRIMARY KEY (item))"
+Statement completed successfully
+kv-&gt; </pre>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="tablesdatatypes"></a>Supported Table Data Types</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+              You specify schema for each column in an Oracle NoSQL Database table. This schema can be a
+              primitive data type, or complex data types that are handled as
+              objects.
+          </p>
+          <p>
+              Supported data types for Oracle NoSQL Database are:
+          </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+                      Array
+                  </p>
+                <p>
+                      An array of values, all of the same type.
+                  </p>
+              </li>
+              <li>
+                <p>
+                      Binary
+                  </p>
+                <p>
+                      Implemented as a byte array with no
+                      predetermined fixed size.
+                  </p>
+              </li>
+              <li>
+                <p>
+                      Boolean
+                  </p>
+              </li>
+              <li>
+                <p>
+                      Double
+                  </p>
+              </li>
+              <li>
+                <p>
+                      Enum
+                  </p>
+                <p>
+                      An enumeration, represented as an array of strings.
+                  </p>
+              </li>
+              <li>
+                <p>
+                      Fixed Binary
+                  </p>
+                <p>
+                      A fixed-sized binary type (byte array) used to
+                      handle binary data where each record is the same
+                      size. It uses less storage than an unrestricted
+                      binary field, which requires the length to be stored
+                      with the data.
+                  </p>
+              </li>
+              <li>
+                <p>
+                      Float
+                  </p>
+              </li>
+              <li>
+                <p>
+                      Integer
+                  </p>
+              </li>
+              <li>
+                <p>
+                      Long
+                  </p>
+              </li>
+              <li>
+                <p>
+                      Map
+                  </p>
+                <p>
+                      An unordered map type where all entries are constrained
+                      by a single type.
+                  </p>
+              </li>
+              <li>
+                <p>
+                      Records
+                  </p>
+                <p>
+                      See the following section.
+                  </p>
+              </li>
+              <li>
+                <p>
+                      String
+                  </p>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="recordfields"></a>Record Fields</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+              As described in <a class="xref" href="tablesapi.html#defchildtable" title="Defining Child Tables">Defining Child Tables</a>,
+              you can create child tables to hold subordinate information,
+              such as addresses in a contacts database, or vendor contact
+              information for an inventory system. When you do this, you
+              can create an unlimited number of rows in the child table,
+              and you can index the fields in the child table's rows. 
+          </p>
+          <p>
+              However, child tables are not required in order to organize
+              subordinate data. If you have very simple requirements for
+              subordinate data, you can use record fields instead of a
+              child tables. In general, you can use record fields instead of
+              child tables if you only want a fixed, small number of instances 
+              of the record for each parent table row. For anything beyond
+              trivial cases, you should use child tables. (Note that there
+              is no downside to using child tables even for trivial cases.)
+          </p>
+          <p>
+              The assumption when using record fields is that you have a
+              fixed known number of records that you will want to manage
+              (unless you organize them as arrays). For example, for a
+              contacts database, child tables allow you to have an
+              unlimited number of addresses associated for each user. But
+              by using records, you can associate a fixed number of
+              addresses by creating a record field for each supported
+              address (home and work, for example).
+          </p>
+          <p>
+              For example:
+          </p>
+          <pre class="programlisting">CREATE TABLE myContactsTable (
+    uid STRING,
+    surname STRING,
+    familiarName STRING,
+    homePhone STRING,
+    workPhone STRING,
+    homeAddress RECORD (street STRING, city STRING, state STRING,
+                zip INTEGER CHECK(zip &gt;= 00000 and zip &lt;= 99999)),
+    workAddress RECORD (street STRING, city STRING, state STRING,
+                zip INTEGER CHECK(zip &gt;= 00000 and zip &lt;= 99999)),
+    PRIMARY KEY(uid)) </pre>
+          <p>
+                Alternatively, you can create an array of record fields.
+                This allows you to create an unlimited number of address records
+                per field. Note, however, that in general you should use
+                child tables in this case.
+            </p>
+          <pre class="programlisting">CREATE TABLE myContactsTable (
+    uid STRING,
+    surname STRING,
+    familiarName STRING,
+    homePhone STRING,
+    workPhone STRING,
+    addresses ARRAY(RECORD (street STRING, city STRING, state STRING,
+                zip INTEGER CHECK(zip &gt;= 00000 and zip &lt;= 99999))),
+    PRIMARY KEY(uid)) </pre>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="defchildtable"></a>Defining Child Tables</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+              Oracle NoSQL Database tables can be organized in a parent/child hierarchy.
+              There is no limit to how many child tables you can create,
+              nor is there a limit to how deep the child table nesting can
+              go.
+          </p>
+          <p>
+              By default, child tables are not retrieved when you retrieve
+              a parent table, nor is the parent retrieved when you retrieve
+              a child table.
+          </p>
+          <p>
+              To create a child table, you name the table using the format:
+              <span class="emphasis"><em>&lt;parentTableName&gt;.&lt;childTableName&gt;</em></span>. 
+              For example, suppose you had the trivial table called 
+              <code class="literal">myInventory</code>: 
+          </p>
+          <pre class="programlisting">CREATE TABLE myInventory (
+  itemCategory STRING,
+  description STRING,
+  PRIMARY KEY (itemCategory) 
+) </pre>
+          <p>
+              We can create a child table called
+              <code class="literal">itemDetails</code> in the following way:
+            </p>
+          <pre class="programlisting">CREATE TABLE myInventory.itemDetails (
+    itemSKU STRING,
+    itemDescription STRING,
+    price FLOAT,
+    inventoryCount INTEGER,
+    PRIMARY KEY (itemSKU)
+) </pre>
+          <p>
+                Note that when you do this, the child table inherits the
+                parent table's primary key. In this trivial case, the child
+                table's primary key is actually two fields:
+                <code class="literal">itemCategory</code> and <code class="literal">itemSKU</code>.
+                This has several ramifications, one of which is that the
+                parent's primary key fields are retrieved when you retrieve
+                the child table. See 
+                <a class="xref" href="singleget.html#getChild" title="Retrieve a Child Table">Retrieve a Child Table</a>
+                for more information.
+            </p>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="tableevolve"></a>Table Evolution</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+              In the event that you must update your application at some
+              point after it goes into production, there is a good chance
+              that your tables will also have to be updated to either use
+              new fields or remove existing fields that are no longer in
+              use. You do this through the use of the <code class="literal">ALTER TABLE</code>
+              statement. See <a class="xref" href="modifytableddl.html" title="Modify Table Definitions">Modify Table Definitions</a>
+              for details on this statement.
+          </p>
+          <p>
+              Note that you cannot remove a field if it is a primary key
+              field. You also cannot add primary key field during table
+              evolution.
+          </p>
+          <p>
+              Tables can only be evolved if they have already been added to
+              the store.
+          </p>
+          <p>
+              For example, the following statements evolve the table that was
+              created in the previous section. Note that these would be
+              submitted to the store, one after another, using either the
+              API or the CLI. 
+          </p>
+          <pre class="programlisting">ALTER TABLE myInventory.itemDetails (ADD salePrice FLOAT)</pre>
+          <pre class="programlisting">ALTER TABLE myInventory.itemDetails (DROP inventoryCount) </pre>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="clpoptions.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="createindex.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">kvlite Utility Command Line Parameter Options </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Creating Indexes</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

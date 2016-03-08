@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="ant-bootstrap">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Neo4j/WDB/ext/apache-ant-1.7.0/etc/ant-bootstrap.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

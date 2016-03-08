@@ -1,22 +1,26 @@
 language: java
 
-jdk:
-    - openjdk7
+notifications:
+  email:
+    recipients:
+      - npererar@utexas.edu
+      - npererar@gmail.com
 
-sudo: false
+env:
+  matrix:
+    - CUSTOM_JDK="oraclejdk7"
+    - CUSTOM_JDK="openjdk7"
 
-before_script:
-    - cd jyhton
-    - export INSTALLATION_ROOT="."
-    - uname -a
-    - printenv
+before_install:
+  - cd jython
+  - jdk_switcher use "$CUSTOM_JDK"
+  
+# install: ant
+
+# before_script: cd jython
 
 script:
-    - pwd
-    - ant
-
-after_success:
-    - jdk_switcher use oraclejdk8
-
-after_script:
-    - dist/bin/jython nativeSIMunitTests.py
+   - cd kv-3.5.2/lib
+   - java -jar kvstore.jar kvlite
+   - cd ../../
+   - dist/bin/jython ReLUnitTests.py

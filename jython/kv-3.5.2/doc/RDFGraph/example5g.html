@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Example5g.java: SPARQL query with PLAN query hint</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="quickstart.html" title="Chapter 8. Quick Start for the RDF Graph Feature" />
+    <link rel="prev" href="example5e.html" title="Example5e.java: SPARQL query with INFERENCE/ASSERTED ONLY hints" />
+    <link rel="next" href="example6.html" title="Example6.java: SPARQL ASK query" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center"> Example5g.java: SPARQL query with PLAN query hint</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="example5e.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 8. Quick Start for the RDF Graph Feature</th>
+          <td width="20%" align="right"> <a accesskey="n" href="example6.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="example5g"></a> Example5g.java: SPARQL query with PLAN query hint</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+            This example shows the SPARQL query from 
+            <a class="xref" href="example5.html" title="Example5.java: SPARQL query with JOIN_METHOD"> Example5.java: SPARQL query with JOIN_METHOD</a>
+            with additional features including a PLAN setting
+            (PLAN=encoded_plan), where you can specify the execution
+            plan associated to the query patterns of this query.
+            Further details on query hints can be found in 
+            <a class="xref" href="bestpractices.html#queryhints" title="Query hints">Query hints</a>.
+        </p>
+      <pre class="programlisting">import com.hp.hpl.jena.query.*;
+import org.openjena.riot.Lang;
+import com.hp.hpl.jena.sparql.core.DatasetImpl;
+import java.net.URLEncoder;
+import oracle.rdf.kv.client.jena.*;
+
+public class Example5g
+{
+  
+  public static void main(String[] args) throws Exception
+  {
+    
+String szStoreName = args[0];
+String szHostName = args[1];
+String szHostPort = args[2];
+   
+    // Create connection
+    OracleNoSqlConnection conn 
+        = OracleNoSqlConnection.createInstance(szStoreName,
+                                               szHostName, 
+                                               szHostPort);
+
+// Create datasetgraph
+OracleGraphNoSql graph = new OracleGraphNoSql(conn);
+DatasetGraphNoSql datasetGraph = DatasetGraphNoSql.createFrom(graph);
+   
+// Close graph, as it is no longer needed
+graph.close();
+    
+// Clear dataset
+datasetGraph.clearRepository();
+    
+// Load data from file into the dataset
+DatasetGraphNoSql.load("example.nt", Lang.NQUADS, conn, 
+                       "http://example.com"); 
+    
+    
+Dataset ds = DatasetImpl.wrap(datasetGraph);
+    
+String plan = URLEncoder.encode("((qp2 qp3 NLJ) qp1 NLJ)", "UTF-8");
+
+String queryString = 
+" PREFIX ORACLE_SEM_HT_NS: "                         + 
+" &lt;http://oracle.com/semtech#plan=" + plan + "&gt;"     +
+" PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;"         +
+" SELECT ?name1 ?name2 "                             +
+" WHERE { " +
+" graph &lt;http://example.org/alice/foaf.rdf&gt; { "      +
+"   ?person1 foaf:knows ?person2 . "                 +
+"   ?person1 foaf:name ?name1 . "                    +
+"   ?person2 foaf:name ?name2 . "                    +
+" } } ";
+    
+System.out.println("Execute query " + queryString);
+    
+Query query = QueryFactory.create(queryString);
+QueryExecution qexec = QueryExecutionFactory.create(query, ds);
+    
+try {
+      ResultSet results = qexec.execSelect();
+      ResultSetFormatter.out(System.out, results, query);
+    }
+    
+finally {
+      qexec.close();
+    }
+    
+ds.close();
+conn.dispose();    
+  }
+}
+</pre>
+      <p>
+            The following are the commands to compile and run
+            this example, as well as the expected output of the java
+            command.
+        </p>
+      <pre class="programlisting">javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar:./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar:./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example5g.java
+
+javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar:./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar:./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example5g &lt;store_name&gt; \
+&lt;host_name&gt; &lt;host_port&gt;
+-------------------
+| name1   | name2 |
+===================
+| "Alice" | "Bob" |
+-------------------</pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="example5e.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="quickstart.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="example6.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top"> Example5e.java: SPARQL query with INFERENCE/ASSERTED ONLY hints </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top">  Example6.java: SPARQL ASK query</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

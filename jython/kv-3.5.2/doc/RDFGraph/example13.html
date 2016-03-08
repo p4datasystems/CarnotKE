@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Example13.java: SPARQL Query with ARQ Built-in Functions</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="quickstart.html" title="Chapter 8. Quick Start for the RDF Graph Feature" />
+    <link rel="prev" href="example12.html" title="Example12.java: SPARQL Involving Named Graphs" />
+    <link rel="next" href="example14.html" title="Example14: SPARQL Update" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Example13.java: SPARQL Query with ARQ Built-in Functions</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="example12.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 8. Quick Start for the RDF Graph Feature</th>
+          <td width="20%" align="right"> <a accesskey="n" href="example14.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="example13"></a>Example13.java: SPARQL Query with ARQ Built-in Functions</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            This example inserts data about two books, and it
+            displays the book titles in all uppercase characters and
+            the length of each title string.
+        </p>
+      <pre class="programlisting">import com.hp.hpl.jena.query.*;
+import com.hp.hpl.jena.rdf.model.Model;
+import oracle.rdf.kv.client.jena.*;
+import com.hp.hpl.jena.update.*;
+
+public class Example13 
+{
+  
+  public static void main(String[] args) throws Exception
+  {
+    
+String szStoreName  = args[0];
+String szHostName   = args[1];
+String szHostPort   = args[2];
+String szGraphName  = args[3];
+    
+// Create Oracle NoSQL connection    
+OracleNoSqlConnection conn 
+       = OracleNoSqlConnection.createInstance(szStoreName,
+                                              szHostName, 
+                                              szHostPort);
+    
+// Create model from named graph
+Model model = 
+      OracleModelNoSql.createOracleModelNoSql(szGraphName, conn);
+    
+// Clear model
+model.removeAll();
+    
+String insertString =
+" PREFIX dc: &lt;http://purl.org/dc/elements/1.1/&gt; "               +
+" INSERT DATA "                                                 +
+" { &lt;http://example/book3&gt; dc:title \"A new book\" ; "          +
+"                          dc:creator \"A.N.Other\" . "         +
+"   &lt;http://example/book4&gt; dc:title \"Semantic Web Rocks\" ; "  +
+"                          dc:creator \"TB\" . "                +
+" } ";
+    
+System.out.println("Execute insert action " + insertString);
+UpdateAction.parseExecute(insertString, model);
+    
+    
+String szQuery 
+= "PREFIX dc: &lt;http://purl.org/dc/elements/1.1/&gt; "          +
+"PREFIX fn: &lt;http://www.w3.org/2005/xpath-functions#&gt; "   +
+" SELECT ?subject (fn:upper-case(?object) as ?object1) "  +
+"        (fn:string-length(?object) as ?strlen) "         +
+" WHERE { ?subject dc:title ?object } ";
+    
+System.out.println("Execute query " + szQuery);
+    
+Query query = QueryFactory.create(szQuery, Syntax.syntaxARQ);
+QueryExecution qexec = QueryExecutionFactory.create(query, model);
+    
+try {
+      ResultSet results = qexec.execSelect();
+      ResultSetFormatter.out(System.out, results, query);
+    }
+    
+finally {
+      qexec.close();
+    }
+    
+model.close();   
+conn.dispose();   
+  }
+}</pre>
+      <p>
+            The following are the commands to compile and run
+            this example, as well as the expected output of the java
+            command.
+        </p>
+      <pre class="programlisting">javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar:./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar:./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example13.java
+
+javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar:./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar:./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example13 &lt;store_name&gt; \
+&lt;host_name&gt; &lt;host_port&gt; &lt;graph_name&gt;
+
+Execute query PREFIX dc: &lt;http://purl.org/dc/elements/1.1/&gt; 
+PREFIX fn: &lt;http://www.w3.org/2005/xpath-functions#&gt;  
+SELECT ?subject (fn:upper-case(?object) as ?object1)  
+(fn:string-length(?object) as ?strlen)  
+WHERE { ?subject dc:title ?object }
+----------------------------------------------------------
+| subject                | object1              | strlen |
+==========================================================
+| &lt;http://example/book4&gt; | "SEMANTIC WEB ROCKS" | 18     |
+| &lt;http://example/book3&gt; | "A NEW BOOK"         | 10     |
+----------------------------------------------------------</pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="example12.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="quickstart.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="example14.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Example12.java: SPARQL Involving Named Graphs </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Example14: SPARQL Update</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

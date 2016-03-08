@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Monitoring Metrics for Replication Nodes</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Run Book" />
+    <link rel="up" href="softwaremonitor.html" title="Chapter 2. Software Monitoring" />
+    <link rel="prev" href="monitorforstoragenodes.html" title="Monitoring Metrics for Storage Nodes" />
+    <link rel="next" href="monitoringmetricsforadminnodes.html" title="Monitoring Metrics for Administration Nodes" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Monitoring Metrics for Replication Nodes</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="monitorforstoragenodes.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 2. Software Monitoring </th>
+          <td width="20%" align="right"> <a accesskey="n" href="monitoringmetricsforadminnodes.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="monitorforrepnodes"></a>Monitoring Metrics for Replication Nodes</h2>
+          </div>
+        </div>
+      </div>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                   repNodeShardNumber – The store-wide unique shard
+                   (replication group) number that the replication node
+                   runs within. This is the number that directly follows
+                   the rg specifier when a replication node is displayed in
+                   a <code class="literal">show topology</code> command such as rg1-rn1.
+                   In this case, the <code class="literal">repNodeShardNumber</code>
+                   would be 1.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeNumber – The shard (replication group) local
+                   unique replication node number. This is the number that
+                   directly follows the rn specifier when a replication
+                   node is displayed in a <code class="literal">show topology</code>
+                   command such as rg1-rn1. In this case, the 
+                   <code class="literal">repNodeNumber</code> would be 1.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeServiceStatus – The current status of the
+                   replication node. They are as follows:
+                </p>
+            <div class="itemizedlist">
+              <ul type="circle">
+                <li>
+                  <p>starting (1) – The storage
+                       node agent is booting up. </p>
+                </li>
+                <li>
+                  <p>waitingForDeploy (2) – The
+                       replication node is waiting to be
+                       registered with the storage node
+                       agent.</p>
+                </li>
+                <li>
+                  <p>running(3) – The replication
+                       node is running.</p>
+                </li>
+                <li>
+                  <p>stopping(4) – The replication
+                       node is in the process of shutting
+                       down. </p>
+                </li>
+                <li>
+                  <p>stopped(5) – An intentional
+                       clean shutdown.</p>
+                </li>
+                <li>
+                  <p>errorRestarting(6) – The
+                       replication node is restarting
+                       after encountering an error.</p>
+                </li>
+                <li>
+                  <p>errorNoRestart(7) – Service
+                       is in an error state and will not
+                       be automatically restarted. Administrative
+                       intervention is required.</p>
+                </li>
+                <li>
+                  <p>unreachable(8) – The
+                       replication node is unreachable by
+                       the admin service.</p>
+                  <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                    <h3 class="title">Note</h3>
+                    <p>
+                         If an SN is UNREACHABLE, or an RN is having problems and its SN is UNREACHABLE, 
+                         the first thing to check is the network connectivity between the Admin and the SN.
+                         However, if the managing SNA is reachable and the managed Replication Node is not,
+                         we can guess that the network is OK and the problem lies elsewhere.
+                      </p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <p>
+            The following metrics can be monitored to get a sense for the
+            performance of each replication node in the cluster. There are
+            two flavors of metric granularity:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                   Interval – By default, each node in the cluster will
+                   sample performance data every 60 seconds and aggregate
+                   the metrics to this interval. This interval may be
+                   changed using the admin plan change-parameters and
+                   supplying the statsInterval parameter with a new value
+                   in seconds (see
+                   <a class="ulink" href="http://docs.oracle.com/cd/NOSQL/html/AdminGuide/setstoreparams.html#changeparamcli" target="_top">http://docs.oracle.com/cd/NOSQL/html/AdminGuide/setstoreparams.html#changeparamcli</a>).
+                </p>
+          </li>
+          <li>
+            <p>
+                   Cumulative – Metrics that have been collected and
+                   aggregated since the node has started. 
+                </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+            The metrics are further broken down into measurements for
+            operations over single keys versus operations over multiple
+            keys. 
+        </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+                All timestamp metrics are in UTC, therefore appropriate conversion
+                to a time zone relevant to where the store is deployed is
+                necessary.
+             </p>
+      </div>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                   repNodeIntervalStart – The start timestamp of when this
+                   sample of single key operation measurements were
+                   collected.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeIntervalEnd –The start timestamp of when this
+                   sample of single key operation measurements were
+                   collected.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeIntervalPeriod –  The number of milliseconds that
+                   the replication has collected single key operation
+                   measurements (repNodeIntervalEnd -
+                   repNodeIntervalStart). 
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeIntervalTotalOps – Total number of single key
+                   operations (get, put, delete) processed by the
+                   replication node in the interval being measured.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeIntervalThroughput – Number of single key
+                   operations (get, put, delete) per second completed
+                   during the interval being measured.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeIntervalLatMin – The minimum latency sample of
+                   single key operations (get, put, delete) during the
+                   interval being measured.
+                </p>
+          </li>
+          <li>
+            <p>
+                    repNodeIntervalLatMax – The maximum latency sample of
+                    single key operations (get, put, delete) during the
+                    interval being measured.
+                 </p>
+          </li>
+          <li>
+            <p>
+                   repNodeIntervalLatAvg – The average latency sample of
+                   single key operations (get, put, delete) during the
+                   interval being measured (returned as a string).
+               </p>
+          </li>
+          <li>
+            <p>
+                   repNodeIntervalLatAvgInt – The average latency sample of
+                   single key operations (get, put, delete) during the
+                   interval being measured (returned as an integer).
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeIntervalLatAvgFrac – The fractional part of the
+                   average latency sample of single key operations (get,
+                   put, delete) during the interval being measured
+                   (returned as an integer).
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeIntervalPct95 – The 95th percentile of the
+                   latency sample of single key operations (get, put,
+                   delete) during the interval being measured.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeIntervalPct99 – The 95th percentile of the
+                   latency sample of single key operations (get, put,
+                   delete) during the interval being measured. 
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeCumulativeStart – The start timestamp of when the
+                   replication started collecting cumulative performance
+                   metrics (all the below metrics that are cumulative).
+               </p>
+          </li>
+          <li>
+            <p>
+                   repNodeCumulativeEnd – The end timestamp of when the
+                   replication ended collecting cumulative performance
+                   metrics (all the below metrics that are cumulative).
+               </p>
+          </li>
+          <li>
+            <p>
+                   repNodeCumulativeTotalOps – The total number of single key
+                   operations that have been processed by the replication node.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeCumulativeThroughput – The sustained operations
+                   per second of single key operations measured by this
+                   node since it has started.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeCumulativeLatMin – The minimum latency of single
+                   key operations measured by this node since it has
+                   started.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeCumulativeLatMax – The maximum latency of single
+                   key operations measured by this node since it has
+                   started. 
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeCumulativeLatAvg – The average latency of single
+                   key operations measured by this node since it has started
+                   (returned as a string).
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeCumulativeLatAvgInt – The maximum latency of
+                   single key operations measured by this node since it has
+                   started (returned as an integer).
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeCumulativeLatAvgFrac – The fractional part of
+                   the cumulative average latency of single key operations
+                   (get, put, delete) measured (returned as an integer) by
+                   the node since it has started.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeCumulativePct95 – The 95th percentile of the
+                   latency of single key operations (get, put, delete)
+                   since it has started.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeCumulativePct99 – The 99th percentile of the
+                   latency of single key operations (get, put, delete)
+                   since it has started.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeMultiIntervalStart – The start timestamp of when
+                   this sample of multiple key operation measurements were
+                   collected.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeMultiIntervalEnd – The end timestamp of when this
+                   sample of multiple key operation measurements were
+                   collected.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeMultiIntervalPeriod – The number of milliseconds
+                   that the replication has collected multiple key
+                   operation measurements (repNodeMultiIntervalEnd –
+                   repNodeMultiIntervalStart). 
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeMultiIntervalTotalOps – Total number of multiple
+                   key operations (execute) processed by the replication
+                   node in the interval being measured.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeMultiIntervalThroughput – Number of multiple key
+                   operations (execute) per second completed during the
+                   interval being measured. 
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeMultiIntervalLatMin – The minimum latency sample
+                   of multiple key operations (execute) during the interval
+                   being measured.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeMultiIntervalLatMax – The maximum latency sample
+                   of multiple key operations (execute) during the interval
+                   being measured.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeMultiIntervalLatAvg – The average latency sample
+                   of multiple key operations (execute) during the interval
+                   being measured (returned as a string).
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeMultiIntervalLatAvgInt – The average latency
+                   sample of multiple key operations (execute) during the
+                   interval being measured (returned as an integer).
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeMultiIntervalLatAvgFrac – The fractional part of
+                   the average latency sample of multiple key operations
+                   (execute) during the interval being measured (returned
+                   as an integer).
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeMultiIntervalPct95 – The 95th percentile of the
+                   latency sample of multiple key operations (execute)
+                   during the interval being measured. 
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeMultiIntervalPct99 – The 95th percentile of the
+                   latency sample of multiple key operations (execute)
+                   during the interval being measured.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeMultiIntervalTotalRequests – The total number of
+                   multiple key operations (execute) during the interval
+                   being measured.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeMultiCumulativeStart – The start timestamp of
+                   when the replication node started collecting cumulative
+                   multiple key performance metrics (all the below metrics
+                   that are cumulative).
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeMultiCumulativeEnd – The end timestamp of when
+                   the replication node started collecting cumulative
+                   multiple key performance metrics (all the below metrics
+                   that are cumulative).
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeMultiCumulativeTotalOps – The total number of
+                   single multiple operations that have been processed by
+                   the replication node since it has started.
+                </p>
+          </li>
+          <li>
+            <p>
+                    repNodeMultiCumulativeThroughput – The sustained
+                   operations per second of multiple key operations
+                   measured by this node since it has started.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeMultiCumulativeTotalRequests – The total number
+                   of multiple key operations measured by this node since
+                   it has started.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeCacheSize – The size in bytes of the replication
+                   node's cache of B-tree nodes. This is calculated
+                   using the DBCacheSize utility referred here. 
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeConfigProperties ‐ The set of configuration
+                   name/value pairs that the replication node is currently
+                   running with.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeCollectEnvStats – True or false depending on
+                   whether the replication node is currently collecting
+                   performance statistics.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeStatsInterval – The interval (in seconds) that
+                   the replication node is utilizing for aggregate
+                   statistics.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeMaxTrackedLatency – The maximum number of
+                   milliseconds for which latency statistics will be
+                   tracked. For example, if this parameter is set to 1000,
+                   then any operation at the repnode that exhibits a
+                   latency of 1000 or greater milliseconds is not put
+                   into the array of metric samples for subsequent
+                   reporting.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeJavaMiscParams – The value of the -Xms, -Xmx, and
+                   -XX:ParallelGCThreads= as encountered when the Java VM
+                   running this replication node was booted.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeLoggingConfigProps – The value of the
+                   loggingConfigProps parameter as encountered when the
+                   Java VM running this replication node was booted.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeHeapSize – The current value of –Xmx for this
+                   replication node.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeMountPoint – Used only for KVLite.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeLatencyCeiling – The upper bound (in
+                   milliseconds) at which latency samples may be gathered
+                   at this replication node before an alert is generated. 
+                   For example, if this is set to 3, then any latency
+                   sample above 3 generates an alert.
+                </p>
+          </li>
+          <li>
+            <p>
+                   repNodeThroughputFloor – The lower bound (in operations
+                   per second) at which throughput samples may be gathered
+                   at this replication node before an alert is generated. 
+                   For example, if this is set to 300,000, then any
+                   throughput calculation at this replication node that is
+                   lower than 300,000 operations per seconds generates an
+                   alert.
+                </p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="monitorforstoragenodes.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="softwaremonitor.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="monitoringmetricsforadminnodes.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Monitoring Metrics for Storage Nodes </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Monitoring Metrics for Administration Nodes</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

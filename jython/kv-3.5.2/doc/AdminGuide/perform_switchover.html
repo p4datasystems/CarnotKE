@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Performing a switchover</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="failover-switchover.html" title="Chapter 7.  Failover and Switchover Operations" />
+    <link rel="prev" href="perform_failover.html" title="Performing a failover" />
+    <link rel="next" href="standardized-monitoring.html" title="Chapter 8.  Standardized Monitoring Interfaces" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Performing a switchover</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="perform_failover.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 7.  Failover and Switchover Operations </th>
+          <td width="20%" align="right"> <a accesskey="n" href="standardized-monitoring.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="perform_switchover"></a>Performing a switchover</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            To continue from the example of the previous
+            section, after performing the failover, you can return the old
+            nodes to service by performing the following switchover
+            procedure:
+        </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                    After the failed zones are repaired, restart all the
+                    Storage Nodes of the failed zones without starting any
+                    services (avoids hard rollback): 
+                </p>
+            <pre class="programlisting">java -jar KVHOME/lib/kvstore.jar restart -disable-services \
+-root nyc1/KVROOT &amp;</pre>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+                     When performing planned maintenance, there is no need to 
+                     isolate nodes or disable services prior to bringing nodes back online.
+                  </p>
+            </div>
+          </li>
+          <li>
+            <p>
+                    Reestablish network connectivity or reenable the
+                    standard startup sequence of the previously failed
+                    zones. 
+                </p>
+          </li>
+          <li>
+            <p> 
+                    Repair the topology so that the topology for the
+                    newly restarted Storage Nodes can be updated with
+                    changes made by the failover.
+                </p>
+            <pre class="programlisting">java -Xmx256m -Xms256m -jar KVHOME/lib/kvstore.jar runadmin \
+-host jersey1 -port 5000
+kv-&gt; plan repair-topology -wait
+Executed plan 10, waiting for completion...
+Plan 10 ended successfully </pre>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+                        This command will also restart services on the
+                        previously failed nodes. 
+                    </p>
+            </div>
+            <p> 
+                    Use the <code class="literal">verify configuration</code>
+                    command to confirm that there are no configuration
+                    problems. 
+                </p>
+          </li>
+          <li>
+            <p> 
+                    Run the ping command. The "maxCatchupTimeSecs" value
+                    will be used for the -timeout flag of the
+                    <code class="literal">await-consistency</code> command.
+                </p>
+            <p>
+                    Use the timeout flag to specify an estimate of how
+                    long the switchover will take. For example, if the
+                    nodes have been offline for a long time it might take
+                    many hours for them to catch up so that they can be
+                    converted back to primary nodes.
+                </p>
+            <pre class="programlisting">kv-&gt; ping 
+Pinging components of store mystore based upon topology sequence #208
+200 partitions and 2 storage nodes
+Time: 2015-07-17 17:10:19 UTC   Version: 12.1.3.4.1
+Shard Status: healthy:1 writable-degraded:0 read-only:0 offline:0
+Admin Status: healthy
+Zone [name=Manhattan id=zn1 type=SECONDARY]   
+RN Status: online:1 offline:0 maxDelayMillis:120000 
+                                                maxCatchupTimeSecs:1800
+Zone [name=JerseyCity id=zn2 type=PRIMARY]   
+RN Status: online:1 offline:0
+Storage Node [sn1] on nyc1:5000
+Zone: [name=Manhattan id=zn1 type=SECONDARY]    
+Status: RUNNING   
+Ver: 12cR1.3.4.1 2015-07-13 10:16:21 UTC  Build id: 508d38507fff
+        Admin [admin1]          Status: RUNNING,REPLICA
+        Rep Node [rg1-rn1]      Status: RUNNING,REPLICA 
+        sequenceNumber:434 haPort:5011 delayMillis:0 catchupTimeSecs:0
+Storage Node [sn2] on jersey1:6000    
+Zone: [name=JerseyCity id=zn2 type=PRIMARY]    
+Status: RUNNING   
+Ver: 12cR1.3.4.1 2015-07-13 10:16:21 UTC  Build id: 508d38507fff
+        Admin [admin2]          Status: RUNNING,MASTER
+        Rep Node [rg1-rn2]      
+        Status: RUNNING,MASTER sequenceNumber:434 haPort:6011 </pre>
+            <p> 
+                    In this case, 1800 seconds (30 minutes) is the value
+                    to be used.
+                </p>
+          </li>
+          <li>
+            <p> 
+                    Use the <code class="literal">await-consistency</code> command
+                    to specify the wait time (1800 seconds) used for the
+                    secondary zones to catch up with their masters.
+                </p>
+            <p>
+                    The system will only wait five minutes for nodes to
+                    catch up when attempting to change a zone's type. If
+                    the nodes do not catch up in that amount of time, the
+                    plan will fail.
+                </p>
+            <p> 
+                    If the nodes will take more than five minutes to
+                    catch up, you should run the
+                        <code class="literal">await-consistency</code> command,
+                    specifying a longer wait time using the -timeout flag.
+                    In this case, the wait time (1800 seconds) is used: 
+                </p>
+            <pre class="programlisting">kv-&gt; await-consistent -timeout 1800 -znname Manhattan 
+The specified zone is consistent </pre>
+            <p> 
+                    By default, nodes need to have a delay of no more
+                    than 1 second to be considered caught up. You can
+                    change this value by specifying the
+                    -replica-delay-threshold flag. You should do this if
+                    network delays prevent the nodes from catching up
+                    within 1 second of their masters. 
+                </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+                        If you do not want the switchover to wait for
+                        the nodes to catch up, you can use the
+                        -no-replica-delay threshold flag. In that case,
+                        nodes will be converted to primary nodes even if
+                        they are behind. You should evaluate whether this risk
+                        is worth taking.
+                    </p>
+            </div>
+          </li>
+          <li>
+            <p>
+                    Perform the switchover to convert the previously
+                    failed zone back to a primary zone. 
+                </p>
+            <pre class="programlisting">kv-&gt; topology clone -current -name newTopo
+kv-&gt; topology change-zone-type -name newTopo 
+-znname Manhattan -type primary
+Changed zone type of zn1 to PRIMARY in newTopo
+kv-&gt; plan deploy-topology -name newTopo -wait
+Executed plan 11, waiting for completion...
+Plan 11 ended successfully </pre>
+            <p> 
+                    Confirm the zone type change of the Manhattan zone
+                    to PRIMARY by running the ping command.
+                </p>
+            <pre class="programlisting">kv-&gt; ping 
+Pinging components of store mystore based upon topology sequence #208
+200 partitions and 2 storage nodes
+Time: 2015-07-17 17:10:19 UTC   Version: 12.1.3.4.1
+Shard Status: healthy:1 writable-degraded:0 read-only:0 offline:0
+Admin Status: healthy
+Zone [name=Manhattan id=zn1 type=PRIMARY]   
+RN Status: online:1 offline:0 maxDelayMillis:120000 
+                                                maxCatchupTimeSecs:1800
+Zone [name=JerseyCity id=zn2 type=PRIMARY]   
+RN Status: online:1 offline:0
+Storage Node [sn1] on nyc1:5000    
+Zone: [name=Manhattan id=zn1 type=PRIMARY]    
+Status: RUNNING   
+Ver: 12cR1.3.4.1 2015-07-13 10:16:21 UTC  Build id: 508d38507fff
+        Admin [admin1]          Status: RUNNING,REPLICA
+        Rep Node [rg1-rn1]      Status: RUNNING,REPLICA 
+        sequenceNumber:434 haPort:5011 delayMillis:0 catchupTimeSecs:0
+Storage Node [sn2] on jersey1:6000    
+Zone: [name=JerseyCity id=zn2 type=PRIMARY]    
+Status: RUNNING   
+Ver: 12cR1.3.4.1 2015-07-13 10:16:21 UTC  Build id: 508d38507fff
+        Admin [admin2]          Status: RUNNING,MASTER
+        Rep Node [rg1-rn2]      
+        Status: RUNNING,MASTER sequenceNumber:434 haPort:6011 </pre>
+          </li>
+        </ol>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="perform_failover.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="failover-switchover.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="standardized-monitoring.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Performing a failover </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 8. 
+      Standardized Monitoring Interfaces
+   </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Syntax Involving Bnodes (Blank Nodes)</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="query.html" title="Chapter 5. Query RDF Graphs" />
+    <link rel="prev" href="query.html" title="Chapter 5. Query RDF Graphs" />
+    <link rel="next" href="jsonsupport.html" title="JavaScript Object Notation (JSON) Format Support" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Syntax Involving Bnodes (Blank Nodes)</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="query.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 5. Query RDF Graphs</th>
+          <td width="20%" align="right"> <a accesskey="n" href="jsonsupport.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="syntax-bnodes"></a>Syntax Involving Bnodes (Blank Nodes)</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+            Syntax involving bnodes can be used freely in query
+            patterns. For example, the following bnode-related syntax
+            is supported at the parser level, so each is equivalent to
+            its full triple-query-pattern-based version. 
+        </p>
+      <pre class="programlisting">:x :q [ :p "v" ] . 
+(1 ?x 3 4) :p "w" . 
+(1 [:p :q] ( 2 ) ) .</pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="query.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="query.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="jsonsupport.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 5. Query RDF Graphs </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> JavaScript Object Notation (JSON) Format Support</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

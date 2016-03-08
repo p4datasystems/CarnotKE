@@ -1,0 +1,9 @@
+{
+    "type": "record",
+    "name": "LoginSummary",
+    "namespace": "schema",
+    "fields": [
+        {"name": "totalLoginCount", "type": "int", "default": 0},
+        {"name": "totalLoginDuration", "type": "long", "default": 0}
+    ]
+}

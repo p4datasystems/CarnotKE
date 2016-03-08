@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Installation</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="installation.html" title="Chapter 1. Installing Oracle NoSQL Database" />
+    <link rel="prev" href="installation.html" title="Chapter 1. Installing Oracle NoSQL Database" />
+    <link rel="next" href="install-config.html" title="Installation Configuration" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Installation</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="installation.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 1. Installing Oracle NoSQL Database</th>
+          <td width="20%" align="right"> <a accesskey="n" href="install-config.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="install"></a>Installation</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            The following procedures describe how to install Oracle NoSQL Database:
+        </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                    Pick a directory where the Oracle NoSQL Database package files (libraries,
+                    Javadoc, scripts, and so forth) should reside.  It is easiest if
+                    that directory has the same path on all nodes in the
+                    installation.  You should use different directories for the Oracle NoSQL Database
+                    package files (referred to as KVHOME in this document) and the
+                    Oracle NoSQL Database data (referred to as KVROOT).  Both the KVHOME and
+                    KVROOT directories should be local to the node (that is, not
+                    on a Network File System).
+                </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+                      To make future software upgrades easier, adopt a convention for
+                      KVHOME that includes the release number. Always use a
+                      KVHOME location such as <code class="literal">/var/kv/kv-M.N.O</code>,
+                      where <code class="literal">M.N.O</code> are the release.major.minor
+                      numbers. This can be easily achieved by simply unzip/untaring
+                      the distribution into a common directory (/var/kv in this 
+                                           example).
+                    </p>
+            </div>
+          </li>
+          <li>
+            <p>
+                    Extract the contents of the Oracle NoSQL Database package (kv-M.N.O.zip or
+                    kv-M.N.O.tar.gz) to create the KVHOME directory (i.e. KVHOME is
+                    the kv-M.N.O/ directory created by extracting the
+                    package).  If KVHOME resides on a network shared directory (not
+                    recommended) then you only need to unpack it on one machine.
+                    If KVHOME is local to each machine, then you should unpack the
+                    package on each node.
+                </p>
+          </li>
+          <li>
+            <p>
+                    Verify the installation by issuing the following command on one
+                    of the nodes:
+                </p>
+            <pre class="programlisting">java -Xmx256m -Xms256m -jar KVHOME/lib/kvclient.jar</pre>
+            <p>
+                    You should see some output that looks like this:
+                </p>
+            <pre class="programlisting">11gR2.M.N.O (....)</pre>
+            <p>
+                    where <code class="literal">M.N.O</code> is the package version number.
+                </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+                        Oracle NoSQL Database is a distributed system and the runtime
+                        needs to be installed on every node in the cluster.
+                        While the entire contents of the Oracle NoSQL Database package do
+                        not need to be installed on every node, the
+                        contents of the lib and doc directories must be
+                        present. How this distribution is done is beyond
+                        the scope of this manual.
+                    </p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="installation.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="installation.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="install-config.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 1. Installing Oracle NoSQL Database </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Installation Configuration</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Using SPARQL Gateway as an XML Data Source to OBIEE</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="sparql.html" title="Chapter 9. SPARQL Gateway for XML-based Tools" />
+    <link rel="prev" href="sparql-wi.html" title="Using the SPARQL Gateway Graphical Web Interface" />
+    <link rel="next" href="prerequisite.html" title="Appendix A. Prerequisite Software" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center"> Using SPARQL Gateway as an XML Data Source to OBIEE</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="sparql-wi.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 9. SPARQL Gateway for XML-based
+        Tools</th>
+          <td width="20%" align="right"> <a accesskey="n" href="prerequisite.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="gateway-datasource"></a> Using SPARQL Gateway as an XML Data Source to OBIEE</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+            This section explains how to create an XML Data source
+            for Oracle Business Intelligence Enterprise Edition
+            (OBIEE), by integrating OBIEE with RDF using SPARQL
+            Gateway as a bridge. (The specific steps and illustrations
+            reflect the Oracle BI Administration Tool Version
+            11.1.1.3.0.100806.0408.000.) 
+        </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p> 
+                    Start the Oracle BI Administration Tool.
+                </p>
+          </li>
+          <li>
+            <p> 
+                    Click File, then Import Metadata. The first
+                    page of the Import Metadata wizard is displayed,
+                    as shown in the following figure:
+                </p>
+            <div class="mediaobject">
+              <img src="datasource.jpg" alt="Select Data Source" />
+            </div>
+            <p>
+                    Connection Type: Select XML.
+                </p>
+            <p> 
+                    URL: This is the URL required for an application to interact with
+                    SPARQL Gateway, as explained in 
+                    <a class="xref" href="sparql-gateway.html" title="Using SPARQL Gateway with RDF Data">Using SPARQL Gateway with RDF Data</a>.
+                    You can also include the timeout and best effort
+                    options.
+                </p>
+            <p> 
+                    Ignore the <code class="literal">User Name</code> and
+                    <code class="literal">Password</code> fields.
+                </p>
+          </li>
+          <li>
+            <p> 
+                    Click <code class="literal">Next</code>. The second page of the Import
+                    Metadata wizard is displayed, as shown in the following
+                    figure:
+                </p>
+            <div class="mediaobject">
+              <img src="metadata.jpg" alt="Select Metadata Types" />
+            </div>
+            <p>
+                    Select the desired metadata types to be
+                    imported. Be sure that <code class="literal">Tables</code> is included in the
+                    selected types. 
+                </p>
+          </li>
+          <li>
+            <p> 
+                    Click <code class="literal">Next</code>. The third page of the Import
+                    Metadata wizard is displayed, as shown in the
+                    following figure:
+                </p>
+            <div class="mediaobject">
+              <img src="dataobjects.jpg" alt="XSLT Management Page" />
+            </div>
+            <p> 
+                    In the Data Source View, expand the node that
+                    has the table icon, select the column names
+                    (mapped from projected variables defined in the
+                    SPARQL SELECT statement), and click the
+                    right-arrow (&gt;) button to move the selected
+                    columns to the Repository View.
+                </p>
+          </li>
+          <li>
+            <p> Click <code class="literal">Finish</code>. </p>
+          </li>
+          <li>
+            <p>
+                    Complete the remaining steps for the usual OBIEE
+                    Business Model work and Mapping and Presentation
+                    definition work, which are not specific to SPARQL
+                    Gateway or RDF data.
+                </p>
+          </li>
+        </ol>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="sparql-wi.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="sparql.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="prerequisite.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Using the SPARQL Gateway Graphical Web Interface </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Appendix A. Prerequisite Software</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

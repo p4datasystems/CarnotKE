@@ -1,0 +1,2296 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Appendix A. KVStore Command Reference</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="prev" href="store-targets.html" title="Store Targets" />
+    <link rel="next" href="independent_commands.html" title="Utility commands" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Appendix A. KVStore Command Reference</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="store-targets.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="independent_commands.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="appendix" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="cli_command_reference"></a>Appendix A. KVStore Command Reference</h2></div></div></div><p>
+        You can access KVStore commands either through the Command
+        Line Interface(CLI) or through <code class="literal">"java
+        -Xmx256m -Xms256m -jar
+        &lt;kvhome&gt;/lib/kvstore.jar &lt;command&gt;"</code>.
+        The following sections will describe both the CLI commands and
+        the utility commands accessed through <code class="literal">"java
+        -jar"</code>.
+    </p>p
+
+    <div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="commands_subcommands"></a>CLI Commands and Subcommands</h2></div></div></div><div class="toc"><dl><dt><span class="sect2"><a href="cli_command_reference.html#aggregate">aggregate </a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#await-consistent">await-consistent</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#change-policy">change-policy</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#configure_store">configure</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#connect">connect</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#delete">delete</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#ddl">ddl</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#execute">execute</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#exit">exit</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#get">get </a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#help">help</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#hidden">hidden</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#history">history</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#load">load</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#logtail">logtail</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#page">page</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#ping">ping</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#plan">plan</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#pool">pool</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#put_command">put</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#repair-admin-quorum">repair-admin-quorum</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#show">show</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#snapshot">snapshot</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#table">table</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#table_size">table size</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#timer">timer</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#topology">topology</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#verbose">verbose</a></span></dt><dt><span class="sect2"><a href="cli_command_reference.html#verify">verify</a></span></dt></dl></div><p>
+            The Command Line Interface (CLI) is run interactively
+            or used to run single commands. The general usage to start
+            the CLI is:
+        </p><pre class="programlisting">java -Xmx&amp;javamxvalue; -Xms&amp;javamxvalue; \
+-jar KVHOME/lib/kvstore.jar runadmin
+-host &lt;hostname&gt; -port &lt;port&gt; [single command and arguments] </pre><p>
+            If you want to run a script file, you can use the
+            "load" command on the command line:
+        </p><pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar runadmin
+-host &lt;hostname&gt; -port &lt;port&gt; load -file &lt;path-to-script&gt;</pre><p>
+            If none of the optional arguments are passed, it starts
+            interactively. If additional arguments are passed they are
+            interpreted as a single command to run, then return. The
+            interactive prompt for the CLI is:
+        </p><pre class="programlisting">"kv-&gt; "</pre><p>
+            Upon successful completion of the command, the CLI's
+            process exit code is zero. If there is an error, the exit
+            code will be non-zero.
+        </p><p>
+            The CLI comprises a number of commands, some of which
+            have subcommands. Complex commands are grouped by general
+            function, such as "show" for displaying information or
+            "ddl" for manipulating schema. All commands accept the
+            following flags:
+        </p><div class="itemizedlist"><ul type="disc"><li><p>
+                    -help
+                </p><p>
+                    Displays online help for the command or
+                    subcommand.
+                </p></li><li><p>
+                    ?
+                </p><p>
+                    Synonymous with -help. Displays online help for
+                    the command or subcommand.
+                </p></li><li><p>
+                    -verbose
+                </p><p>
+                    Enables verbose output for the command.
+                </p></li></ul></div><p>
+            CLI commands have the following general format:
+        </p><div class="orderedlist"><ol type="1"><li><p>
+                    All commands are structured like this:
+                </p><pre class="programlisting">"kv-&gt; command [sub-command] [arguments] </pre></li><li><p>
+                    All arguments are specified using flags which
+                    start with "-"
+                </p></li><li><p>
+                    Commands and subcommands are case-insensitive
+                    and match on partial strings(prefixes) if
+                    possible. The arguments, however, are
+                    case-sensitive.
+                </p></li></ol></div><p>
+           Inside a CLI script file, you can use <code class="literal">#</code> to designate
+           a comment. Also, you can terminate a line with a backslash <code class="literal">\</code> to 
+           continue a command onto the next line.
+        </p><p>
+            This appendix contains the following information on the
+            commands and subcommands:
+        </p><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="aggregate"></a>aggregate </h3></div></div></div><p>
+                Performs simple data aggregation operations on
+                numeric fields like count, sum, average, keys, start
+                and end. The aggregate command iterates matching keys
+                or rows in the store so, depending on the size of the
+                specified key or row, it may take a very long time to
+                complete.
+            </p><p>
+                The aggregate subcommands are:
+            </p><div class="itemizedlist"><ul type="disc"><li><p>
+                        <a class="xref" href="cli_command_reference.html#aggregate_kv" title="aggregate kv">aggregate kv</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#aggregate-table" title="aggregate table">aggregate table</a>
+                    </p></li></ul></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="aggregate_kv"></a>aggregate kv</h4></div></div></div><pre class="programlisting">aggregate kv [-count] [-sum &lt;field[,field,..]&gt;] [-avg &lt;field[,field,..]&gt;]
+              [-key &lt;key&gt;] [-schema &lt;name&gt;]
+              [-start &lt;prefixString&gt;] [-end &lt;prefixString&gt;] </pre><p>
+                Performs simple data aggregation operations using the
+                specified key.
+              </p><p>
+                where:
+              </p><div class="itemizedlist"><ul type="disc"><li><p>
+                    <code class="literal">-count</code>
+                  </p><p>
+                      Returns the count of matching records.
+                    </p></li><li><p>
+                    <code class="literal">-sum</code>
+                  </p><p>
+                    Returns the sum of the values of matching
+                    fields. All records with a specified schema with the
+                        named field are matched. Unmatched records are
+                        ignored.
+                    </p></li><li><p>
+                    <code class="literal">-avg</code>
+                  </p><p>
+                    Returns the average of the values of
+                    matching fields. All records with a specified schema
+                    with the named field are matched. Unmatched
+                    records are ignored.
+                  </p></li><li><p>
+                    <code class="literal">-key</code>
+                  </p><p>
+                    Specifies the key (prefix) to use.
+                  </p></li><li><p>
+                    <code class="literal">-schema</code>
+                  </p><p>
+                    Specifies the Avro schema to use.
+                  </p></li><li><p>
+                    <code class="literal">-start</code> and
+                    <code class="literal">-end</code> flags
+                  </p><p>
+                    Restricts the range used for iteration.
+                    This is particularly helpful when getting a
+                    range of records based on a key component,
+                    such as a well-formatted string.
+                    <code class="literal">-start</code> and
+                    <code class="literal">-end</code> arguments are
+                    inclusive.
+                  </p></li></ul></div><p>
+                For example, a simple <code class="literal">count</code> of
+                all records in the store:
+              </p><pre class="programlisting">kv-&gt; aggregate kv -count
+count: 33508 </pre><p>
+                <code class="literal">Sum</code> and <code class="literal">average</code>
+                operate on specific field names in matching records
+                which means that only Avro records containing the
+                named fields are used. Sum and average only operate on
+                numeric fields of Avro types INT, LONG, FLOAT, and
+                DOUBLE.
+              </p><p>
+                For example, with the following schema:
+              </p><pre class="programlisting">{
+   "type" : "record",
+   "name" : "Cookie",
+   "fields" : [ {
+   "name" : "id",
+   "type" : "string",
+   "default" : ""
+   }, {
+     "name" : "frequency",
+     "type" : "int",
+     "default" : 0
+   }, {
+     "name" : "lastVisit",
+     "type" : "string",
+     "default" : ""
+   }, {
+     "name" : "segments",
+     "type" : {
+        "type" : "array",
+     "items" : "string"
+     },
+     "default" : [ ]
+   } ]
+} </pre><p>
+                An example of <code class="literal">sum</code> on a field
+                named <code class="literal">frequency</code>:
+              </p><pre class="programlisting">kv-&gt; aggregate kv -sum frequency -key /visits/charitable_donors/date
+sum(frequency): 2068 </pre><p>
+                An example of <code class="literal">average</code> on a field
+                named <code class="literal">frequency</code>:
+              </p><pre class="programlisting">kv -&gt; aggregate kv -avg frequency -key /visits/charitable_donors/date
+avg(frequency): 2.494571773220748 </pre></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="aggregate-table"></a>aggregate table</h4></div></div></div><pre class="programlisting">aggregate table -name &lt;name&gt;
+              [-count] [-sum &lt;field[,field,..]&gt;]
+              [-avg &lt;field[,field,..]&gt;]
+              [-index &lt;name&gt;]
+              [-field &lt;name&gt; -value &lt;value&gt;]*
+              [-field &lt;name&gt; [-start &lt;value&gt;] [-end &lt;value&gt;]]
+              [-json &lt;string&gt;] </pre><p>
+                Performs simple data aggregation operations on numeric
+                fields of the table.
+              </p><p>
+                where:
+              </p><div class="itemizedlist"><ul type="disc"><li><p>
+                    <code class="literal">-table</code>
+                  </p><p>
+                      Specifies the table for the operation.
+                    </p></li><li><p>
+                    <code class="literal">-count</code>
+                  </p><p>
+                      Returns the count of matching records.
+                  </p></li><li><p>
+                    <code class="literal">-sum</code>
+                  </p><p>
+                    Returns the sum of the values of matching
+                    fields.
+                  </p></li><li><p>
+                    <code class="literal">-avg</code>
+                  </p><p>
+                    Returns the average of the values of
+                    matching fields.
+                  </p></li><li><p>
+                    <code class="literal">-index</code>
+                  </p><p>
+                    Specifies the name of the index to use.  When an
+                    index is used, the fields named must belong to the
+                    specified index and the aggregation is performed
+                    over rows with matching index entries.
+                  </p></li><li><p>
+                    <code class="literal">-field</code> and
+                    <code class="literal">-value</code> pairs are
+                    used to specify the field values of the
+                    primary key to use to match for the aggregation,
+                    or you can use an empty key to match the entire table.
+                  </p></li><li><p>
+                    The <code class="literal">-field</code> flat, along
+                    with its
+                    <code class="literal">-start</code> and
+                    <code class="literal">-end</code> flags, can be used
+                    for restricting the range used to match rows.
+                  </p></li><li><p>
+                    <code class="literal">-json</code>
+                  </p><p>
+                    Specifies the fields and values to use for the
+                    aggregation as a JSON input string.
+                  </p></li></ul></div><p>
+                See the example below:
+              </p><pre class="programlisting">
+# Create a table 'user_test' with an index on user_test(age):
+kv-&gt; execute 'CREATE TABLE user_test (id INTEGER,
+firstName STRING, lastName STRING, age INTEGER, PRIMARY KEY (id))'
+Statement completed successfully
+
+kv-&gt; execute 'CREATE INDEX idx1 on user_test (age)'
+Statement completed successfully
+
+# Insert 3 rows:
+kv-&gt; put table -name user_test -json 
+'{"id":1,"firstName":"joe","lastName":"wang","age":21}'
+Operation successful, row inserted.
+kv-&gt; put table -name user_test -json
+'{"id":2,"firstName":"jack","lastName":"zhao","age":32}'
+Operation successful, row inserted.
+kv-&gt; put table -name user_test -json
+'{"id":3,"firstName":"john","lastName":"gu","age":43}'
+Operation successful, row inserted.
+
+# Get count(*), sum(age) and avg(age) of rows in table:
+kv-&gt; aggregate table -name user_test -count -sum age -avg age
+Row count: 3
+Sum:
+        age(3 values): 96
+Average:
+        age(3 values): 32.00
+
+# Get count(*), sum(age) and avg(age) of rows where
+age &gt;= 30, idx1 is utilized to filter the rows:
+kv-&gt; aggregate table -name user_test -count -sum age
+-avg age -index idx1 -field age -start 30
+Row count: 2
+Sum:
+        age(2 values): 75
+Average:
+        age(2 values): 37.50 
+</pre></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="await-consistent"></a>await-consistent</h3></div></div></div><pre class="programlisting">await-consistent -timeout &lt;timeout-secs&gt; [-zn &lt;id&gt; | -znname &lt;name&gt; ]...
+[-replica-delay-threshold &lt;time-millis&gt;] </pre><p>
+                Waits for up to the specified number of seconds for the replicas in
+                one or more zones, or in the entire store, to catch up with the
+                masters in their associated shards. Prints information
+                about whether consistency was achieved or, if not, details about
+                which nodes failed to become consistent.
+            </p><p>
+                When performing a switchover, you can use this command to wait 
+                for secondary nodes to catch up with their masters, and to 
+                obtain information about progress towards reaching consistency.
+            </p><p>
+                The -zn and -znname options restrict the zones whose replicas
+                need to satisfy the requested consistency requirements. If 
+                these options are not specified, all replicas must meet the 
+                consistency requirements.
+            </p><p>
+                The -replica-delay-threshold option specifies the maximum number
+                of milliseconds that a replica may be behind the master and be
+                considered caught up. The default if 1000 milliseconds (1 second).
+            </p></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="change-policy"></a>change-policy</h3></div></div></div><pre class="programlisting">change-policy [-dry-run] -params [name=value]* </pre><p>
+                Modifies store-wide policy parameters that apply to
+                not yet deployed services. The parameters to change
+                follow the -params flag and are separated by spaces.
+            </p><p>
+                Parameter values with embedded spaces must be
+                quoted, for example, name="value with spaces". If
+                -dry-run is specified, the new parameters are returned
+                without changing them.
+            </p><p>
+                For more information on setting policy parameters,
+                see <a class="xref" href="setstoreparams.html#settingpolicycli" title="Setting Store Wide Policy Parameters">Setting Store Wide Policy Parameters</a>.
+            </p></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="configure_store"></a>configure</h3></div></div></div><pre class="programlisting">configure -name &lt;storename&gt; </pre><p>
+                Configures a new store. This call must be made
+                before any other administration can be performed.
+            </p><p>
+                Use the <code class="literal">-name</code> option to specify
+                the name of the KVStore that you want to configure.
+                The name is used to form a path to records kept in the
+                store. For this reason, you should avoid using
+                characters in the store name that might interfere with
+                its use within a file path. The command line interface
+                does not allow an invalid store name. Valid characters
+                are alphanumeric, '-', '_', and '.'.
+            </p></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="connect"></a>connect</h3></div></div></div><p>
+                Encapsulates commands that connect to the specified
+                host and registry port to perform administrative
+                functions or connect to the specified store to perform
+                data access functions.
+            </p><p>
+                The current store, if any, will be closed before
+                connecting to another store. If there is a failure
+                opening the specified KVStore, the following warning
+                is displayed: "Warning: You are no longer connected to
+                KVStore".
+            </p><p>
+                The subcommands are as follows:
+            </p><div class="itemizedlist"><ul type="disc"><li><p>
+                        <a class="xref" href="cli_command_reference.html#connect-admin" title="connect admin">connect admin</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#connect store" title="connect store">connect store</a>
+                    </p></li></ul></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="connect-admin"></a>connect admin</h4></div></div></div><pre class="programlisting">connect admin -host &lt;hostname&gt; -port &lt;registry port&gt;
+[-username &lt;user&gt;] [-security &lt;security-file-path&gt;] </pre><p>
+                    Connects to the specified host and registry
+                    port to perform administrative functions. An Admin
+                    service must be active on the target host. If the
+                    instance is secured, you may need to provide login
+                    credentials.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="connect store"></a>connect store</h4></div></div></div><pre class="programlisting">connect store [-host &lt;hostname&gt;] [-port &lt;port&gt;] 
+-name &lt;storename&gt; [-timeout &lt;timeout ms&gt;] 
+[-consistency &lt;NONE_REQUIRED(default) 
+                                   | ABSOLUTE| NONE_REQUIRED_NO_MASTER&gt;]
+[-durability &lt;COMMIT_SYNC(default) 
+                               | COMMIT_NO_SYNC | COMMIT_WRITE_NO_SYNC&gt;]
+[-username &lt;user&gt;] [-security &lt;security-file-path&gt;] </pre><p>
+                    Connects to a KVStore to perform data access
+                    functions. If the instance is secured, you may
+                    need to provide login credentials.
+                </p><p>
+                   Use the timeout, consistency and durability flags to override
+                   the default connect configuration.
+                </p><p>
+                   where:
+                </p><div class="itemizedlist"><ul type="disc"><li><p>
+                      <code class="literal">-timeout</code>
+                    </p><p>
+                        Specifies the store request timeout in milliseconds.
+                      </p></li><li><p>
+                      <code class="literal">-consistency</code>
+                    </p><p>
+                       Specifies the store request consistency. The default
+                       value is NONE_REQUIRED.
+                    </p></li><li><p>
+                      <code class="literal">-durability</code>
+                    </p><p>
+                       Specifies the store request durability. The default
+                       value is COMMIT_SYNC.
+                    </p></li></ul></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="delete"></a>delete</h3></div></div></div><p>
+                Encapsulates commands that delete key/value pairs
+                from store or rows from table. The subcommands are as
+                follows:
+            </p><div class="itemizedlist"><ul type="disc"><li><p>
+
+                        <a class="xref" href="cli_command_reference.html#delete_kv" title="delete kv">delete kv</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#delete-table" title="delete table">delete table</a>
+                    </p></li></ul></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="delete_kv"></a>delete kv</h4></div></div></div><pre class="programlisting">delete kv [-key &lt;key&gt;] [-start prefixString] [-end prefixString] [-all] </pre><p>
+                    Deletes one or more keys. If
+                    <code class="literal">-all</code> is specified, delete
+                    all keys starting at the specified key. If no key
+                    is specified, delete all keys in the store. The
+                    <code class="literal">-start</code> and
+                    <code class="literal">-end</code> flags can be used for
+                    restricting the range used for deleting.
+                </p><p>
+                    For example, to delete all keys in the store
+                    starting at root:
+                </p><pre class="programlisting">kv -&gt; delete kv -all
+301 Keys deleted starting at root </pre></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="delete-table"></a>delete table</h4></div></div></div><pre class="programlisting">delete table -name &lt;name&gt;
+ [-field &lt;name&gt; -value &lt;value&gt;]*
+ [-field &lt;name&gt; [-start &lt;value&gt;] [-end &lt;value&gt;]]
+ [-ancestor &lt;name&gt;]* [-child &lt;name&gt;]*
+ [-json &lt;string&gt;] [-delete-all] </pre><p>
+                    Deletes one or multiple rows from the named
+                    table. The table name is a dot-separated name with
+                    the format
+                    <code class="literal">tableName[.childTableName]*</code>.
+                </p><div class="itemizedlist"><ul type="disc"><li><p>
+                            <code class="literal">-field</code> and
+                            <code class="literal">-value</code> pairs are
+                            used to specify the field values of the
+                            primary key, or you can use an empty key
+                            to delete all rows from the table.
+                        </p></li><li><p>
+                          The <code class="literal">-field</code> flag, along
+                          with its
+                          <code class="literal">-start</code> and
+                          <code class="literal">-end</code> flags, can be used
+                          for restricting the sub range for deletion
+                          associated with the parent key.
+                        </p></li><li><p>
+                            <code class="literal">-ancestor</code> and
+                            <code class="literal">-child</code> flags are
+                            used to delete rows from specific ancestor
+                            and/or descendant tables as well as the
+                            target table.
+                        </p></li><li><p>
+                            <code class="literal">-json</code> indicates that the
+                            key field values are in JSON format.
+
+                        </p></li><li><p>
+                            <code class="literal">-delete-all</code> is used to
+                            delete all rows in a table.
+                        </p></li></ul></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="ddl"></a>ddl</h3></div></div></div><p>
+                Encapsulates operations that manipulate schemas in
+                the store. The subcommands are as follows:
+            </p><div class="itemizedlist"><ul type="disc"><li><p>
+
+                        <a class="xref" href="cli_command_reference.html#add_ddl_schema" title="ddl add-schema">ddl add-schema</a>
+
+                    </p></li><li><p>
+
+                        <a class="xref" href="cli_command_reference.html#enable_ddl_schema" title="ddl enable-schema">ddl enable-schema</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#disable_ddl_schema" title="ddl disable-schema">ddl disable-schema</a>
+                    </p></li></ul></div><p>
+                For details on managing schema in the store, see
+                <a class="xref" href="provideschema.html" title="Managing Avro Schema">Managing Avro Schema</a>.
+            </p><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="add_ddl_schema"></a>ddl add-schema</h4></div></div></div><pre class="programlisting">ddl add-schema &lt;-file &lt;file&gt; | -string &lt;schema string&gt;&gt;
+[-evolve] [-force] </pre><p>
+                    Adds a new schema or changes (evolves) an
+                    existing schema with the same name. Use the
+                    -evolve flag to indicate that the schema is
+                    changing. Use the -force flag to add the schema in
+                    spite of evolution warnings.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="enable_ddl_schema"></a>ddl enable-schema</h4></div></div></div><pre class="programlisting">ddl enable-schema -name &lt;name&gt;.&lt;ID&gt; </pre><p>
+                    Enables an existing, previously disabled
+                    schema.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="disable_ddl_schema"></a>ddl disable-schema</h4></div></div></div><pre class="programlisting">ddl disable-schema -name &lt;name&gt;.&lt;ID&gt; </pre><p>
+                    Disables an existing schema.
+                </p></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="execute"></a>execute</h3></div></div></div><pre class="programlisting">execute &lt;statement&gt; </pre><p>
+                       Oracle NoSQL Database provides a Data Definition Language (DDL) that you use
+                       to form table and index statements. Use the <code class="literal">execute</code>
+                       command to run the specified statement synchronously. The statement
+                       must be enclosed in single or double quotes. Before using this command,
+                       you need to connect to a store first.
+                    </p><p>
+                       For example:
+                    </p><pre class="programlisting">kv-&gt; execute 'CREATE TABLE users (id INTEGER, name STRING, 
+pets ARRAY(STRING), primary key (id))'
+Statement completed successfully </pre><pre class="programlisting">kv-&gt; execute 'DESCRIBE AS JSON TABLE users'
+{
+  "type" : "table",
+  "name" : "users",
+  "comment" : null,
+  "shardKey" : [ "id" ],
+  "primaryKey" : [ "id" ],
+  "fields" : [ {
+    "name" : "id",
+    "type" : "INTEGER",
+    "nullable" : true,
+    "default" : null
+  }, {
+    "name" : "name",
+    "type" : "STRING",
+    "nullable" : true,
+    "default" : null
+  }, {
+    "name" : "pets",
+    "type" : "ARRAY",
+    "collection" : {
+      "type" : "STRING"
+    },
+    "nullable" : true,
+    "default" : null
+  } ]
+} </pre><p>
+                       For more information on using Data Definition Language(DDL)
+                       to perform table operations see Getting Started with NoSQL Database Table API.
+                    </p></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="exit"></a>exit</h3></div></div></div><pre class="programlisting">exit | quit </pre><p>
+                Exits the interactive command shell.
+            </p></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="get"></a>get </h3></div></div></div><p>
+                Encapsulates commands that get key/value pairs from
+                store or get rows from table. The subcommands are as
+                follows:
+            </p><div class="itemizedlist"><ul type="disc"><li><p>
+                        <a class="xref" href="cli_command_reference.html#get_kv" title="get kv"> get kv </a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#get-table" title="get table">get table</a>
+                    </p></li></ul></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="get_kv"></a> get kv </h4></div></div></div><pre class="programlisting">get kv [-key &lt;keyString&gt;] [-json] [-file &lt;output&gt;] [-all] [-keyonly]
+[-valueonly] [-start &lt;prefixString&gt;] [-end &lt;prefixString&gt;] </pre><p>
+                    Perform a simple get operation using the
+                    specified key. The obtained value is printed out
+                    if it contains displayable characters, otherwise
+                    the bytes array is encoded using Base64 for
+                    display purposes. "[Base64]" is appended to
+                    indicate this transformation. The arguments for
+                    the get command are:
+                </p><div class="itemizedlist"><ul type="disc"><li><p>
+                            <code class="literal">-key &lt;keyString&gt;</code>
+
+                        </p><p>
+                            Indicates the full or the prefix key
+                            path to use. If
+                            <code class="literal">&lt;keyString&gt;</code>
+                            is a full key path, it returns a single
+                            value information. The format of this
+                            <code class="literal">get</code> command is:
+                            <code class="literal">get -key
+                                &lt;keyString&gt;.</code> If
+                            <code class="literal">&lt;keyString&gt;</code>
+                            is a prefix key path, it returns multiple
+                            key/value pairs. The format of this
+                            <code class="literal">get</code> command is:
+                            <code class="literal">get -key &lt;keyString&gt;
+                                -all.</code> Key can be composed of
+                            both major and minor key paths, or a major
+                            key path only. The &lt;keyString&gt;
+                            format is:
+                            "major-key-path/-/minor-key-path".
+                            Additionally, in the case of the prefix
+                            key path, a key can be composed of the
+                            prefix part of a major key path.
+                        </p><p>
+                            For example, with some sample keys in
+                            the KVStore:
+                        </p><pre class="programlisting">/group/TC/-/user/bob
+/group/TC/-/user/john
+/group/TC/-/dep/IT
+/group/SZ/-/user/steve
+/group/SZ/-/user/diana</pre><p>
+                            A get command with a key containing
+                            only the prefix part of the major key path
+                            results in:
+                        </p><pre class="programlisting">kv -&gt; get kv -key /group -all -keyonly
+/group/TC/-/user/bob
+/group/TC/-/user/john
+/group/TC/-/dep/IT
+/group/SZ/-/user/steve
+/group/SZ/-/user/diana</pre><p>
+                            A get command with a key containing a
+                            major key path results in:
+                        </p><pre class="programlisting">kv -&gt; get kv -key /group/TC -all -keyonly
+/group/TC/-/user/bob
+/group/TC/-/user/john
+/group/TC/-/dep/IT</pre><p>
+                            Get commands with a key containing
+                            major and minor key paths results in:
+                        </p><pre class="programlisting">kv -&gt; get kv -key /group/TC/-/user -all -keyonly
+/group/TC/-/user/bob
+/group/TC/-/user/john</pre><pre class="programlisting">kv -&gt; get kv -key /group/TC/-/user/bob
+{
+    "name"  : "bob.smith",
+    "age"   : 20,
+    "email" : "bob.smith@gmail.com",
+    "phone" : "408 555 5555"
+}</pre></li><li><p>
+
+                            <code class="literal">-json</code>
+
+                        </p><p>
+                            Should be specified if the record is
+                            JSON.
+                        </p></li><li><p>
+
+                            <code class="literal">-file &lt;output&gt;</code>
+
+                        </p><p>
+                            Specifies an output file, which is
+                            truncated, replacing all existing content
+                            with new content.
+                        </p><p>
+                            In the following example, records from
+                            the key <code class="literal">/Smith/Bob</code> are
+                            written to the file
+                            <code class="literal">"data.out".</code>
+                        </p><pre class="programlisting">kv -&gt; get kv -key /Smith/Bob -all -file ./data.out </pre><p>
+                            In the following example, contents of
+                            the file <code class="literal">"data.out"</code> are
+                            replaced with records from the key
+                            <code class="literal">/Wong/Bill.</code>
+                        </p><pre class="programlisting">kv -&gt; get kv -key /Wong/Bill -all -file ./data.out </pre></li><li><p>
+                            <code class="literal">-all</code>
+                        </p><p>
+                            Specified for iteration starting at the
+                            specified key. If the key argument is not
+                            specified, the entire store will be
+                            iterated.
+                        </p></li><li><p>
+                            <code class="literal">-keyonly</code>
+                        </p><p>
+                            Specified with <code class="literal">-all</code>
+                            to return only keys.
+                        </p></li><li><p>
+                            <code class="literal">-valueonly</code>
+                        </p><p>
+                            Specified with <code class="literal">-all</code>
+                            to return only values.
+                        </p></li><li><p>
+                            <code class="literal">-start
+                                &lt;prefixString&gt;</code> and
+                            <code class="literal">-end
+                                &lt;prefixString&gt;</code>
+                        </p><p>
+                            Restricts the range used for iteration.
+                            This is particularly helpful when getting
+                            a range of records based on a key
+                            component, such as a well-formatted
+                            string. Both the <code class="literal">-start</code>
+                            and <code class="literal">-end</code> arguments are
+                            inclusive.
+                        </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+                                <code class="literal">-start</code> and
+                                <code class="literal">-end</code> only work
+                                on the key component specified by
+                                <code class="literal">-key
+                                    &lt;keyString&gt;</code>. The
+                                value of
+                                <code class="literal">&lt;keyString&gt;</code>
+                                should be composed of simple strings
+                                and cannot have multiple key
+                                components specified.
+                            </p></div><p>
+                            For example, a log where its key
+                            structure is:
+                        </p><pre class="programlisting">/log/&lt;year&gt;/&lt;month&gt;/-/&lt;day&gt;/&lt;time&gt; </pre><p>
+                            puts all log entries for the same day
+                            in the same partition, but splits the days
+                            across shards. The <code class="literal">time</code>
+                            format is: "hour.minute".
+                        </p><p>
+                            In this way, you can do a
+                            <code class="literal">get</code> of all log
+                            entries in February and March, 2013 by
+                            specifying:
+                        </p><pre class="programlisting">kv-&gt; get kv -all -keyonly -key /log/2013 -start 02 -end 03
+/log/2013/02/-/01/1.45
+/log/2013/02/-/05/3.15
+/log/2013/02/-/15/10.15
+/log/2013/02/-/20/6.30
+/log/2013/02/-/28/8.10
+/log/2013/03/-/01/11.13
+/log/2013/03/-/15/2.28
+/log/2013/03/-/22/4.52
+/log/2013/03/-/31/11.55 </pre><p>
+                            You can be more specific to the
+                            <code class="literal">get</code> command by
+                            specifying a more complete key path. For
+                            example, to display all log entries from
+                            April 1st to April 4th:
+                        </p><pre class="programlisting">kv-&gt; get kv -all -keyonly -key /log/2013/04 -start 01 -end 04
+/log/2013/04/-/01/1.03
+/log/2013/04/-/01/4.05
+/log/2013/04/-/02/7.22
+/log/2013/04/-/02/9.40
+/log/2013/04/-/03/4.15
+/log/2013/04/-/03/6.30
+/log/2013/04/-/03/10.25
+/log/2013/04/-/04/4.10
+/log/2013/04/-/04/8.35 </pre></li></ul></div><p>
+                    See the subcommand <a class="xref" href="cli_command_reference.html#get-table" title="get table">get table</a>
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="get-table"></a>get table</h4></div></div></div><pre class="programlisting">get table -name &lt;name&gt; [-index &lt;name&gt;]
+[-field &lt;name&gt; -value &lt;value&gt;]+
+[-field &lt;name&gt; [-start &lt;value&gt;] [-end &lt;value&gt;]]
+[-ancestor &lt;name&gt;]+ [-child &lt;name&gt;]+
+[-json &lt;string&gt;] [-file &lt;output&gt;] [-keyonly]
+[-pretty] [-report-size] </pre><p>
+                    Performs a get operation to retrieve row(s)
+                    from a named table. The table name is a
+                    dot-separated name with the format
+                    <code class="literal">tableName[.childTableName]*
+                    </code>.
+                </p><div class="itemizedlist"><ul type="disc"><li><p>
+
+                            <code class="literal">-field</code> and
+                            <code class="literal">-value</code> pairs are
+                            used to specify the field values of the
+                            primary key or index key if using index
+                            specified by <code class="literal">-index</code>, or
+                            with an empty key to iterate the entire
+                            table.
+                        </p></li><li><p>
+                          <code class="literal">-field</code> flag, along
+                          with its
+                          <code class="literal">-start</code> and
+                          <code class="literal">-end</code> flags, can be used to define
+                          a value range for the last field specified.
+                        </p></li><li><p>
+                            <code class="literal">-ancestor</code> and
+                            <code class="literal">-child</code> flags are
+                            used to return results from specific
+                            ancestor and/or descendant tables as well
+                            as the target table.
+                        </p></li><li><p>
+                            <code class="literal">-json</code> indicates that the
+                            key field values are in JSON format.
+                        </p></li><li><p>
+                            <code class="literal">-file</code> is used to
+                            specify an output file, which is
+                            truncated.
+                        </p></li><li><p>
+                            <code class="literal">-keyonly</code> is used to restrict
+                             information to keys only.
+                        </p></li><li><p>
+                            <code class="literal">-pretty</code> is used for a
+                            nicely formatted JSON string with
+                            indentation and carriage returns.
+                        </p></li><li><p>
+                            <code class="literal">-report-size</code> is used to
+                            show key and data size information for primary
+                            keys, data values, and index keys for matching
+                            records. When  <code class="literal">-report-size</code> is
+                            specified no data is displayed.
+                        </p></li></ul></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="help"></a>help</h3></div></div></div><pre class="programlisting">help [command [sub-command]] [-include-deprecated] </pre><p>
+                Prints help messages. With no arguments the
+                top-level shell commands are listed. With additional
+                commands and sub-commands, additional detail is
+                provided.
+            </p><pre class="programlisting">kv-&gt; help load 
+  load -file &lt;path to file&gt;
+  Loads the named file and interpret its contents as a script of
+  commands to be executed. If any of the commands in the script
+  fail, execution will stop at that point.</pre><p>
+               Use <code class="literal">-include-deprecated</code> to show
+               deprecated commands.
+            </p><p>
+               For example:
+            </p><pre class="programlisting">kv-&gt; help show -include-deprecated
+Usage: show admins 
+            datacenters
+            events
+            faults
+            indexes
+            parameters
+            perf
+            plans
+            pools
+            schemas
+            snapshots
+            tables
+            topology
+            upgrade-order
+            users
+            versions
+            zones </pre></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="hidden"></a>hidden</h3></div></div></div><pre class="programlisting">hidden [on|off] </pre><p>
+                Toggles visibility and setting of parameters that
+                are normally hidden. Use these parameters only if
+                advised to do so by Oracle Support.
+            </p></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="history"></a>history</h3></div></div></div><pre class="programlisting">history [-last &lt;n&gt;] [-from &lt;n&gt;] [-to &lt;n&gt;] </pre><p>
+                Displays command history. By default all history is
+                displayed. Optional flags are used to choose ranges
+                for display.
+            </p></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="load"></a>load</h3></div></div></div><pre class="programlisting">load -file &lt;path to file&gt; </pre><p>
+                Loads the named file and interpret its contents as
+                a script of commands to be executed. If any of the
+                commands in the script fail, execution will stop at
+                that point.
+            </p><p>
+                For example, suppose the following commands are
+                collected in the script file
+                <code class="literal">load-contacts-5.txt</code>:
+            </p><pre class="programlisting">### Begin Script ###
+put -key /contact/Bob/Walker -value "{\"phone\":\"857-431-9361\", \
+\"email\":\"Nunc@Quisque.com\",\"city\":\"Turriff\"}" \
+-json example.ContactInfo
+put -key /contact/Craig/Cohen -value "{\"phone\":\"657-486-0535\", \
+\"email\":\"sagittis@metalcorp.net\",\"city\":\"Hamoir\"}" \
+-json example.ContactInfo
+put -key /contact/Lacey/Benjamin -value "{\"phone\":\"556-975-3364\", \
+\"email\":\"Duis@laceyassociates.ca\",\"city\":\"Wasseiges\"}" \
+-json example.ContactInfo
+put -key /contact/Preston/Church -value "{\"phone\":\"436-396-9213\", \
+\"email\":\"preston@mauris.ca\",\"city\":\"Helmsdale\"}" \
+-json example.ContactInfo
+put -key /contact/Evan/Houston -value "{\"phone\":\"028-781-1457\", \
+\"email\":\"evan@texfoundation.org\",\"city\":\"Geest-G\"}" \
+-json example.ContactInfo
+exit
+### End Script ###</pre><p>
+                Then, the script can be run by using the
+                <code class="literal">load</code> command in the data
+                command line interface:
+            </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+                    A schema must be loaded to the store before
+                    this script can successfully run. For more
+                    information on adding schema, see "Adding Schema"
+                    section in Oracle NoSQL Database Getting Started.
+
+                </p></div><pre class="programlisting">&gt; java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar runadmin -host node01 -port 5000 \
+-store mystore
+kv-&gt; load -file ./load-contacts-5.txt
+Operation successful, record inserted.
+Operation successful, record inserted.
+Operation successful, record inserted.
+Operation successful, record inserted.
+Operation successful, record inserted.</pre><p>
+                The following schema was previously added to the
+                store:
+            </p><pre class="programlisting">{
+     "type": "record",
+     "name": "ContactInfo",
+     "namespace": "example",
+     "fields": [
+         {"name": "phone", "type": "string", "default": ""},
+         {"name": "email", "type": "string", "default": ""},
+         {"name": "city", "type": "string", "default": ""}
+     ]
+} </pre><p>
+                For more information on using the load command, see
+                <a class="xref" href="deploy-script.html" title="Using a Script to Configure the Store">Using a Script to Configure the Store</a>.
+            </p></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="logtail"></a>logtail</h3></div></div></div><p>
+                Monitors the store-wide log file until interrupted
+                by an "enter" key press.
+            </p></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="page"></a>page</h3></div></div></div><pre class="programlisting">page [on|&lt;n&gt;|off] </pre><p>
+               Turns query output paging on or off. If specified, <code class="literal">n</code>
+               is used as the page height. 
+            </p><p>
+               If <code class="literal">n</code> is 0, or "on" is specified, the default
+               page height is used. Setting <code class="literal">n</code> to "off" turns paging off.
+            </p></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="ping"></a>ping</h3></div></div></div><pre class="programlisting">ping [-json] </pre><p>
+                Pings the runtime components of a store.  Components
+                available from the Topology are contacted, as well as
+                Admin services.
+            </p><p>
+                where:
+            </p><div class="itemizedlist"><ul type="disc"><li><p>
+                        <code class="literal">-json</code>
+                    </p><p>
+                        Displays output in JSON format.
+                    </p></li></ul></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="plan"></a>plan</h3></div></div></div><p>
+                Encapsulates operations, or jobs that modify store
+                state. All subcommands with the exception of interrupt
+                and wait change persistent state. Plans are
+                asynchronous jobs so they return immediately unless
+                <code class="literal">-wait</code> is used. Plan status can
+                be checked using <code class="literal">show plans</code>. The
+                optional arguments for all plans include:
+            </p><div class="itemizedlist"><ul type="disc"><li><p>
+                        <code class="literal">-wait</code>
+                    </p><p>
+                        Wait for the plan to complete before
+                        returning.
+                    </p></li><li><p>
+                        <code class="literal">-plan-name</code>
+                    </p><p>
+                        The name for a plan. These are not unique.
+                    </p></li><li><p>
+                        <code class="literal">-noexecute</code>
+
+                    </p><p>
+                        Do not execute the plan. If specified, the
+                        plan can be run later using <code class="literal">plan
+                        execute</code>.
+                    </p></li><li><p>
+                        <code class="literal">-force</code>
+                    </p><p>
+                        Used to force plan execution and plan
+                        retry.
+                    </p></li></ul></div><p>
+                The subcommands are as follows:
+            </p><div class="itemizedlist"><ul type="disc"><li><p>
+
+                        <a class="xref" href="cli_command_reference.html#plan_add_index" title="plan add-index">plan add-index</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_add_table" title="plan add-table">plan add-table</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_cancel" title="plan cancel">plan cancel</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_change-parameters" title="plan change-parameters">plan change-parameters</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_change_storagedir" title="plan change-storagedir">plan change-storagedir</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_change_user" title="plan change-user">plan change-user</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_create_user" title="plan create-user">plan create-user</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_deploy-admin" title="plan deploy-admin">plan deploy-admin</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_deploy_datacenter" title="plan deploy-datacenter">plan deploy-datacenter </a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_deploy-sn" title="plan deploy-sn">plan deploy-sn</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_deploy-topology" title="plan deploy-topology">plan deploy-topology</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_deploy_zone" title="plan deploy-zone">plan deploy-zone</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_drop_user" title="plan drop-user">plan drop-user</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_evolve-table" title="plan evolve-table">plan evolve-table</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_grant" title="plan grant">plan grant</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_execute" title="plan execute">plan execute</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_failover" title="plan failover">plan failover</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_interrupt" title="plan interrupt">plan interrupt</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_migrate-sn" title="plan migrate-sn">plan migrate-sn</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_remove-admin" title="plan remove-admin">plan remove-admin</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_remove_datacenter" title="plan remove-datacenter">plan remove-datacenter</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_remove_index" title="plan remove-index">plan remove-index</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_remove-sn" title="plan remove-sn">plan remove-sn</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_remove-table" title="plan remove-table">plan remove-table</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_remove-zone" title="plan remove-zone">plan remove-zone</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_repair_topology" title="plan repair-topology">plan repair-topology</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_revoke" title="plan revoke">plan revoke</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_start-service" title="plan start-service">plan start-service</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_stop-service" title="plan stop-service">plan stop-service</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#plan_wait" title="plan wait">plan wait</a>
+                    </p></li></ul></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_add_index"></a>plan add-index</h4></div></div></div><pre class="programlisting">plan add-index -name &lt;name&gt; -table &lt;name&gt; [-field &lt;name&gt;]*
+[-desc &lt;description&gt;]
+[-plan-name &lt;name&gt;] [-wait] [-noexecute] [-force] </pre><p>
+                    Adds an index to a table in the store. The
+                    table name is a dot-separated name with the format
+                    <code class="literal">tableName[.childTableName]*</code>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_add_table"></a>plan add-table</h4></div></div></div><pre class="programlisting">plan add-table -name &lt;name&gt;
+[-plan-name &lt;name&gt;] [-wait] [-noexecute] [-force] </pre><p>
+                    Adds a new table to the store. The table name
+                    is a dot-separated name with the format
+                    <code class="literal">tableName[.childTableName]*</code>.
+                </p><p>
+                    Before adding a table, first use the
+                    <code class="literal">table create</code> command to
+                    create the named table. The following example
+                    defines a table (creates a table by name, adds
+                    fields and other table metadata).
+                </p><pre class="programlisting">## Enter into table creation mode
+table create -name user -desc "A sample user table"
+user-&gt;
+user-&gt; help
+Usage: add-array-field |
+add-field |
+add-map-field |
+add-record-field |
+add-schema |
+cancel |
+exit |
+primary-key |
+remove-field |
+set-description |
+shard-key |
+show </pre><pre class="programlisting">## Now add the fields
+user-&gt; help add-field
+Usage: add-field -type &lt;type&gt; [-name &lt;field-name&gt; ] [-not-required]
+[-nullable] [-default &lt;value&gt;] [-max &lt;value&gt;] [-min &lt;value&gt;]
+[-max-exclusive] [-min-exclusive] [-desc &lt;description&gt;]
+[-size &lt;size&gt;] [-enum-values &lt;value[,value[,...]]
+&lt;type&gt;: INTEGER, LONG, DOUBLE, FLOAT, STRING, BOOLEAN, DATE, BINARY, FIX
+ED_BINARY, ENUM </pre><pre class="programlisting">## Adds a field. Ranges are inclusive with the exception of String,
+## which will be set to exclusive.
+user-&gt; add-field -type Integer -name id
+user-&gt; add-field -type String -name firstName
+user-&gt; add-field -type String -name lastName
+user-&gt; help primary-key
+Usage: primary-key -field &lt;field-name&gt; [-field &lt;field-name&gt;]*
+## Sets primary key.
+user-&gt; primary-key -field id
+## Exit table creation mode
+user-&gt; exit
+## Table User built. </pre><p>
+                    Use <code class="literal">table list -create</code> to
+                    see the list of tables that can be added. The
+                    following example lists and displays tables that
+                    are ready for deployment.
+                </p><pre class="programlisting">kv-&gt; table list
+## Tables to be added:
+## User -- A sample user table
+kv-&gt; table list -name user
+## Add table User:
+{
+  "type" : "table",
+  "name" : "User",
+  "id" : "User",
+  "description" : "A sample user table",
+  "shardKey" : [ "id" ],
+  "primaryKey" : [ "id" ],
+  "fields" : [ {
+    "name" : "id",
+    "type" : "INTEGER"
+  }, {
+    "name" : "firstName",
+    "type" : "STRING"
+  }, {
+    "name" : "lastName",
+    "type" : "STRING"
+  } ]
+} </pre><p>
+                    The following example adds the table to the
+                    store.
+                </p><pre class="programlisting">## Add the table to the store.
+kv-&gt; help plan add-table
+kv-&gt; plan add-table -name user -wait
+Executed plan 5, waiting for completion...
+Plan 5 ended successfully
+kv-&gt; show tables -name user
+{
+  "type" : "table",
+  "name" : "User",
+  "id" : "r",
+  "description" : "A sample user table",
+  "shardKey" : [ "id" ],
+  "primaryKey" : [ "id" ],
+  "fields" : [ {
+    "name" : "id",
+    "type" : "INTEGER"
+  }, {
+    "name" : "firstName",
+    "type" : "STRING"
+  }, {
+    "name" : "lastName",
+    "type" : "STRING"
+  } ]
+} </pre><p>
+                    For more information and examples on table
+                    design, see the <a href="../GettingStartedGuideTables/tablesapi.html" class="olink"> Introducing Oracle
+                        NoSQL Database Tables and Indexes. </a>
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_cancel"></a>plan cancel</h4></div></div></div><pre class="programlisting">plan cancel -id &lt;plan id&gt; | -last </pre><p>
+                    Cancels a plan that is not running. A running
+                    plan must be interrupted before it can be
+                    canceled.
+                </p><p>
+                    Use the <code class="literal">-last</code> option to
+                    reference the most recently created plan.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_change-parameters"></a>plan change-parameters</h4></div></div></div><pre class="programlisting">plan change-parameters -security | -service &lt;id&gt; | -all-rns [-zn &lt;id&gt; | -
+znname &lt;name&gt;] | -all-admins [-zn &lt;id&gt; | -znname &lt;name&gt;] [-dry-run]
+[-plan-name &lt;name&gt;] [-wait] [-noexecute] [-force] -params [name=value]* </pre><p>
+                    Changes parameters for either the specified
+                    service, or for all service instances of the same
+                    type that are deployed to the specified zone or
+                    all zones.
+                </p><p>
+                    The <code class="literal">-security</code> flag allows
+                    changing store-wide global security parameters,
+                    and should never be used with other flags.
+                </p><p>
+                    The <code class="literal">-service</code> flag allows a
+                    single instance to be affected; and should never
+                    be used with either the <code class="literal">-zn</code> or
+                    <code class="literal">-znname</code> flag.
+                </p><p>
+                    The <code class="literal">-all-*</code> flags can be used
+                    to change all instances of the service type. The
+                    parameters to change follow the
+                    <code class="literal">-params</code> flag and are
+                    separated by spaces. The parameter values with
+                    embedded spaces must be quoted; for example,
+                    name="value with spaces".
+                </p><p>
+                    One of the -all-* flags can be combined with
+                    the -zn or -znname flag to change all instances of
+                    the service type deployed to the specified zone;
+                    leaving unchanged, any instances of the specified
+                    type deployed to other zones. If one of the -all-*
+                    flags is used without also specifying the zone,
+                    then the desired parameter change will be applied
+                    to all instances of the specified type within the
+                    store, regardless of zone.
+                </p><p>
+                    If <code class="literal">-dry-run</code> is specified,
+                    the new parameters are returned without changing
+                    them. Use the command <code class="literal"> show
+                    parameters</code> to see what parameters
+                    can be modified. For more information, see <a class="xref" href="cli_command_reference.html#show_parameters" title="show parameters">show parameters</a>.
+                </p><p>
+                    For more information on changing parameters in
+                    the store, see <a class="xref" href="setstoreparams.html" title="Setting Store Parameters">Setting Store Parameters</a>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_change_storagedir"></a>plan change-storagedir</h4></div></div></div><pre class="programlisting">plan change-storagedir -sn &lt;id&gt; -storagedir &lt;path&gt; -add | -remove
+[-plan-name &lt;name&gt;] [-wait] [-noexecute]
+[-force] </pre><p>
+                    Adds or removes a storage directory on a
+                    Storage Node, for storing a Replication Node.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_change_user"></a>plan change-user</h4></div></div></div><pre class="programlisting">plan change-user -name &lt;user name&gt;
+[-disable | -enable] [-set-password [-password &lt;new password&gt;]
+[-retain-current-password]] [-clear-retained-password]
+[-plan-name &lt;name&gt;] [-wait] [-noexecute] [-force] </pre><p>
+                    Change a user with the specified name in the
+                    store. The -retain-current-password argument
+                    option causes the current password to be
+                    remembered during the -set-password operation as a
+                    valid alternate password for configured retention
+                    time or until cleared using
+                    -clear-retained-password. If a retained password
+                    has already been set for the user, setting
+                    password again will cause an error to be reported.
+                </p><p>
+                    This command is deprecated. For more information see
+                    <a href="../SecurityGuide/config_auth.html#user_modification" class="olink">User Modification</a> 
+                    in the <em class="citetitle">Oracle NoSQL Database Security Guide</em>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_create_user"></a>plan create-user</h4></div></div></div><pre class="programlisting">plan create-user -name &lt;user name&gt;
+[-admin] [-disable] [-password &lt;new password&gt;]
+[-plan-name &lt;name&gt;] [-wait] [-noexecute] [-force] </pre><p>
+                    Create a user with the specified name in the
+                    store. The -admin argument indicates that the
+                    created user has full administrative privileges.
+                </p><p>
+                    This command is deprecated. For more information see
+                    <a href="../SecurityGuide/config_auth.html#user_creation" class="olink">User Creation</a> 
+                    in the <em class="citetitle">Oracle NoSQL Database Security Guide</em>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_deploy-admin"></a>plan deploy-admin</h4></div></div></div><pre class="programlisting">plan deploy-admin -sn &lt;id&gt; -port &lt;http port&gt; [-plan-name &lt;name&gt;]
+[-wait] [-noexecute] [-force] </pre><p>
+                    Deploys an Admin to the specified Storage Node. The admin
+                    type (PRIMARY/SECONDARY) is the same type as the zone
+                    the Storage Node is in. Its graphical interface listens 
+                    on the specified port.
+                </p><p>
+                    For more information on deploying an admin, see
+                    <a class="xref" href="cli-adminproc.html" title="Create an Administration Process on a Specific Host">Create an Administration Process on a Specific Host</a>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_deploy_datacenter"></a>plan deploy-datacenter </h4></div></div></div><p>
+                    Deprecated. See <a class="xref" href="cli_command_reference.html#plan_deploy_zone" title="plan deploy-zone">plan deploy-zone</a> instead.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_deploy-sn"></a>plan deploy-sn</h4></div></div></div><pre class="programlisting">plan deploy-sn -zn &lt;id&gt; | -znname &lt;name&gt; -host &lt;host&gt; -port &lt;port&gt;
+[-plan-name &lt;name&gt;] [-wait] [-noexecute] [-force] </pre><p>
+                    Deploys the Storage Node at the specified host
+                    and port into the specified zone.
+                </p><p>
+                    For more information on deploying your Storage
+                    Nodes, see <a class="xref" href="create-all-sns.html" title="Create the Remainder of your Storage Nodes">Create the Remainder of your Storage Nodes</a>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_deploy-topology"></a>plan deploy-topology</h4></div></div></div><pre class="programlisting">plan deploy-topology -name &lt;topology name&gt; [-plan-name &lt;name&gt;]
+[-wait] [-noexecute] [-force] </pre><p>
+                    Deploys the specified topology to the store.
+                    This operation can take a while, depending on the
+                    size and state of the store.
+                </p><p>
+                    For more information on deploying a
+                    satisfactory topology candidate, see <a class="xref" href="managing-topology.html#deploytopology" title="Deploy the Topology Candidate">Deploy the Topology Candidate</a>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_deploy_zone"></a>plan deploy-zone</h4></div></div></div><pre class="programlisting">plan deploy-zone -name &lt;zone name&gt;
+-rf &lt;replication factor&gt;
+[-type [primary | secondary]]
+[-plan-name &lt;name&gt;] [-wait] [-noexecute] [-force] </pre><p>
+                    Deploys the specified zone to the store and
+                    creates a primary zone if -type is not specified.
+                </p><p>
+                    For more information on creating a zone, see
+                    <a class="xref" href="cli-datacenter.html" title="Create a Zone">Create a Zone</a>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_drop_user"></a>plan drop-user</h4></div></div></div><pre class="programlisting">plan drop-user -name &lt;user name&gt;
+[-plan-name &lt;name&gt;] [-wait] [-noexecute] [-force] </pre><p>
+                    Drop a user with the specified name in the
+                    store. A logged-in user may not drop itself.
+                </p><p>
+                    This command is deprecated. For more information see
+                    <a href="../SecurityGuide/config_auth.html#user_removal" class="olink">User Removal</a> 
+                    in the <em class="citetitle">Oracle NoSQL Database Administrator's Guide</em>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_evolve-table"></a>plan evolve-table</h4></div></div></div><pre class="programlisting">plan evolve-table -name &lt;name&gt;
+[-plan-name &lt;name&gt;] [-wait] [-noexecute] [-force] </pre><p>
+                    Evolves a table in the store. The table name is
+                    a dot-separate with the format
+                    <code class="literal">tableName[.childTableName]*</code>.
+                </p><p>
+                    Use the <code class="literal">table evolve</code> command
+                    to evolve the named table. The following example
+                    evolves a table.
+                </p><pre class="programlisting">## Enter into table evolution mode
+kv-&gt; table evolve -name User
+kv-&gt; show
+{
+  "type" : "table",
+  "name" : "User",
+  "id" : "r",
+  "description" : "A sample user table",
+  "shardKey" : [ "id" ],
+  "primaryKey" : [ "id" ],
+  "fields" : [ {
+    "name" : "id",
+    "type" : "INTEGER"
+  }, {
+    "name" : "firstName",
+    "type" : "STRING"
+  }, {
+    "name" : "lastName",
+    "type" : "STRING"
+  } ]
+}
+## Add a field
+kv-&gt; add-field -type String -name address
+## Exit table creation mode
+kv-&gt; exit
+## Table User built. </pre><pre class="programlisting">kv-&gt; plan evolve-table -name User -wait
+## Executed plan 6, waiting for completion...
+## Plan 6 ended successfully
+kv-&gt; show tables -name User
+{
+  "type" : "table",
+  "name" : "User",
+  "id" : "r",
+  "description" : "A sample user table",
+  "shardKey" : [ "id" ],
+  "primaryKey" : [ "id" ],
+  "fields" : [ {
+    "name" : "id",
+    "type" : "INTEGER"
+  }, {
+    "name" : "firstName",
+    "type" : "STRING"
+  }, {
+    "name" : "lastName",
+    "type" : "STRING"
+  }, {
+    "name" : "address",
+    "type" : "STRING"
+  } ]
+} </pre><p>
+                    Use <code class="literal">table list -evolve</code> to
+                    see the list of tables that can be evolved. For
+                    more information, see <a class="xref" href="cli_command_reference.html#plan_add_table" title="plan add-table">plan add-table</a> .
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_execute"></a>plan execute</h4></div></div></div><pre class="programlisting">plan execute -id &lt;id&gt; | -last
+[-plan-name &lt;name&gt;] [-wait] [-noexecute] [-force] </pre><p>
+                    Executes a created but not yet executed plan.
+                    The plan must have been previously created using
+                    the <code class="literal">-noexecute</code> flag .
+                </p><p>
+                    Use the <code class="literal">-last</code> option to
+                    reference the most recently created plan.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_failover"></a>plan failover</h4></div></div></div><pre class="programlisting">plan failover  { {-zn &lt;zone-id&gt;|-znname &lt;zone-name&gt;}
+-type {primary|offline-secondary} }...
+[-plan-name &lt;name&gt;] [-wait] [-noexecute] [-force] </pre><p>
+                    Changes zone types to failover to a changed set of primary zones following a failure
+                    of primary zones that has resulted in a loss of quorum.
+                </p><p>
+                   where:
+                </p><div class="itemizedlist"><ul type="disc"><li><p>
+                        <code class="literal">-zn &lt;zone-id&gt; | -znname &lt;zone-name&gt;</code>
+                    </p><p>
+                        Specifies a zone either by zone ID or by name.
+                    </p></li><li><p>
+                        <code class="literal">-type {primary | offline-secondary}</code>
+                    </p><p>
+                        Specifies the new type (primary/offline-secondary) for the
+                        associated zone. 
+                    </p></li></ul></div><p>
+                    Zones whose new type is primary will be zones that are taking over 
+                    from failed zones as new primary zones in order to reestablish quorum.
+                    For these zones, a quorum of the storage nodes in each shard in the zone
+                    needs to be available and responding to requests.
+                </p><p>
+                    Zones whose new type is offline-secondary represent primary zones that are 
+                    currently offline, resulting in the current loss of quorum. For these zones,
+                    all of the storage nodes in the zones must currently be unavailable. None of
+                    the command's zone type changes will be performed if these requirements are 
+                    not met when the command starts.
+                </p><p>
+                    This command cannot be performed when other plans are in progress for the store.
+                    You should cancel or interrupt the plans, before executing this plan.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_grant"></a>plan grant</h4></div></div></div><pre class="programlisting">plan grant [-role &lt;role name&gt;]* -user &lt;user_name&gt; </pre><p>
+                    Allows granting roles to users.
+                </p><p>
+                where: 
+                </p><div class="itemizedlist"><ul type="disc"><li><p>
+                        <code class="literal">-role &lt;role name&gt;</code>
+                    </p><p> 
+                        Specifies the roles that will be granted. The role names
+                        should be the system-defined roles (except <code class="literal">public</code>)
+                        listed in the Oracle NOSQL Database Security Guide.     
+                    </p></li><li><p>
+                        <code class="literal">-user &lt;user_name&gt;</code>
+                    </p><p> 
+                        Specifies the user who the role will be granted from.
+                    </p></li></ul></div><p>
+                    This command is deprecated. For more information see
+                    <a href="../SecurityGuide/authorization.html#grant_role" class="olink">Grant Role or Privilege</a> 
+                    in the <em class="citetitle">Oracle NoSQL Database Administrator's Guide</em>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_interrupt"></a>plan interrupt</h4></div></div></div><pre class="programlisting">plan interrupt -id &lt;plan id&gt; | -last </pre><p>
+                    Interrupts a running plan. An interrupted plan
+                    can only be re-executed or canceled. Use -last to
+                    reference the most recently created plan.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_migrate-sn"></a>plan migrate-sn</h4></div></div></div><pre class="programlisting">plan migrate-sn -from &lt;id&gt; -to &lt;id&gt; [-admin-port &lt;admin port&gt;]
+[-plan-name &lt;name&gt;] [-wait] [-noexecute] [-force] </pre><p>
+                    Migrates the services from one Storage Node to
+                    another. The old node must not be running.
+                </p><p>
+                    The <code class="literal">-admin-port</code> option is
+                    required if the old node hosted an admin service.
+                </p><p>
+                    Before executing the <code class="literal">plan
+                    migrate-sn</code> command, you can stop any
+                    running old Storage Node by using <code class="literal">-java
+                    -Xmx256m -Xms256m -jar KVHOME/lib/kvstore.jar
+                    stop -root KVROOT</code>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_remove-admin"></a>plan remove-admin</h4></div></div></div><pre class="programlisting"> plan remove-admin -admin &lt;id&gt; | -zn &lt;id&gt; | -znname &lt;name&gt;
+[-plan-name &lt;name&gt;] [-wait] [-noexecute] [-force] </pre><p>
+                    Removes the desired Admin instances; either the
+                    single specified instance, or all instances
+                    deployed to the specified zone.
+                </p><p>
+                    If you use the <code class="literal">-admin</code> flag
+                    and there are 3 or fewer Admins running in the
+                    store, or if you use the <code class="literal">-zn</code> or
+                    <code class="literal">-znname</code> flag and the
+                    removal of all Admins from the specified zone
+                    would result in only one or two Admins in the
+                    store, then the desired Admins will be removed
+                    only if you specify the <code class="literal">-force</code>
+                    flag.
+                </p><p>
+                    Also, if you use the <code class="literal">-admin</code>
+                    flag and there is only one Admin in the store, or
+                    if you use the <code class="literal">-zn</code> or
+                    <code class="literal">-znname</code> flag and the
+                    removal of all Admins from the specified zone
+                    would result in the removal of all Admins from the
+                    store, then the desired Admins will not be
+                    removed.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_remove_index"></a>plan remove-index</h4></div></div></div><pre class="programlisting">plan remove-index -name &lt;name&gt; -table &lt;name&gt;
+[-plan-name &lt;name&gt;] [-wait] [-noexecute] [-force] </pre><p>
+                    Removes an index from a table. The table name
+                    is a dot-separated name with the format
+                    tableName[.childTableName]*.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_remove_datacenter"></a>plan remove-datacenter</h4></div></div></div><pre class="programlisting">plan remove-datacenter </pre><p>
+                    This command is deprecated. See 
+                    <a class="xref" href="cli_command_reference.html#plan_remove-zone" title="plan remove-zone">plan remove-zone</a> instead.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_remove-sn"></a>plan remove-sn</h4></div></div></div><pre class="programlisting">plan remove-sn -sn &lt;id&gt; [-plan-name &lt;name&gt;]
+[-wait] [-noexecute] [-force] </pre><p>
+                    Removes the specified Storage Node from the
+                    topology.
+                </p><p>
+                    This command is useful when removing unused,
+                    old Storage Nodes from the store. To do this, see
+                    <a class="xref" href="replacefailedsn.html" title="Replacing a Failed Storage Node">Replacing a Failed Storage Node</a>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_remove-table"></a>plan remove-table</h4></div></div></div><pre class="programlisting">plan remove-table -name &lt;name&gt; [-keep-data]
+[-plan-name &lt;name&gt;] [-wait] [-noexecute] [-force] </pre><p>
+                    Removes a table from the store. The named table
+                    must exist and must not have any child tables.
+                    Indexes on the table are automatically removed. By
+                    default data stored in this table is also removed.
+                    Table data may be optionally saved by specifying
+                    the -keep-data flag. Depending on the indexes and
+                    amount of data stored in the table this may be a
+                    long-running plan.
+                </p><p>
+                    The following example removes a table.
+                </p><pre class="programlisting">## Remove a table.
+kv-&gt; plan remove-table -name User
+## Started plan 7. Use show plan -id 7 to check status.
+## To wait for completion, use plan wait -id 7.
+kv-&gt; show tables
+## No table found. </pre><p>
+                    For more information, see <a href="../GettingStartedGuideTables/tablesapi.html" class="olink"> Introducing Oracle
+                    NoSQL Database Tables and Indexes. </a>
+
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_remove-zone"></a>plan remove-zone</h4></div></div></div><pre class="programlisting">plan remove-zone -zn &lt;id&gt; | -znname &lt;name&gt;
+[-plan-name &lt;name&gt;] [-wait] [-noexecute] [-force] </pre><p>
+                    Removes the specified zone from the store.
+                </p><p>
+                    Before running this command, all Storage Nodes
+                    that belong to the specified zone must first be
+                    removed using the <code class="literal">plan
+                    remove-sn</code> command.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_repair_topology"></a>plan repair-topology</h4></div></div></div><pre class="programlisting">plan repair-topology
+[-plan-name &lt;name&gt;] [-wait] [-noexecute] [-force] </pre><p>
+                    Inspects the store's deployed, current topology
+                    for inconsistencies in location metadata that may
+                    have arisen from the interruption or cancellation
+                    of previous deploy-topology or migrate-sn plans.
+                    Where possible, inconsistencies are repaired. This
+                    operation can take a while, depending on the size
+                    and state of the store.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_revoke"></a>plan revoke</h4></div></div></div><pre class="programlisting">plan revoke [-role &lt;role name&gt;]* -user &lt;user_name&gt; </pre><p>
+                    Allows revoking roles to users.
+                </p><p>
+                where: 
+                </p><div class="itemizedlist"><ul type="disc"><li><p>
+                        <code class="literal">-role &lt;role name&gt;</code>
+                    </p><p> 
+                        Specifies the roles that will be revoked. The role names
+                        should be the system-defined roles (except <code class="literal">public</code>)
+                        listed in the Oracle NOSQL Database Security Guide.                         
+                    </p></li><li><p>
+                        <code class="literal">-user &lt;user_name&gt;</code>
+                    </p><p> 
+                        Specifies the user who the role will be revoked from.
+                    </p></li></ul></div><p>
+                    This command is deprecated. For more information see
+                    <a href="../SecurityGuide/authorization.html#revoke_role" class="olink">Revoke Role or Privilege</a> 
+                    in the <em class="citetitle">Oracle NoSQL Database Administrator's Guide</em>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_start-service"></a>plan start-service</h4></div></div></div><pre class="programlisting">plan start-service {-service &lt;id&gt; | -all-rns [-zn &lt;id&gt; | -znname &lt;name&gt;]|
+-zn &lt;id&gt; | -znname &lt;name&gt;}
+[-plan-name &lt;name&gt;] [-wait] [-noexecute] [-force] </pre><p>
+                    Starts the specified service(s).
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_stop-service"></a>plan stop-service</h4></div></div></div><pre class="programlisting">plan stop-service {-service &lt;id&gt; | -all-rns [-zn &lt;id&gt; | -znname &lt;name&gt;] |
+-zn &lt;id&gt; | -znname &lt;name&gt;}
+[-plan-name &lt;name&gt;] [-wait] [-noexecute] [-force] </pre><p>
+                    Stops the specified service(s).
+                </p><p>
+                    Use this command to stop any affected services
+                    so that any attempts by the system to communicate
+                    with it are no longer made; resulting in a
+                    reduction in the amount of error output related to
+                    a failure you are already aware of.
+                </p><p>
+                    This command is useful during disk replacement
+                    process. Use the <code class="literal">plan
+                    stop-service</code> command to stop the
+                    affected service prior removing the failed disk.
+                    For more information, see <a class="xref" href="replacedisk.html" title="Replacing a Failed Disk">Replacing a Failed Disk</a>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="plan_wait"></a>plan wait</h4></div></div></div><pre class="programlisting">plan wait -id &lt;id&gt; | -last [-seconds &lt;timeout in seconds&gt;] </pre><p>
+                    Waits indefinitely for the specified plan to
+                    complete, unless the optional timeout is
+                    specified.
+                </p><p>
+                    Use the <code class="literal">-seconds</code> option to
+                    specify the time to wait for the plan to complete.
+                </p><p>
+                    The <code class="literal">-last</code> option references
+                    the most recently created plan.
+                </p></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="pool"></a>pool</h3></div></div></div><p>
+                Encapsulates commands that manipulates Storage Node
+                pools, which are used for resource allocations. The
+                subcommands are as follows:
+            </p><div class="itemizedlist"><ul type="disc"><li><p>
+
+                        <a class="xref" href="cli_command_reference.html#pool_create" title="pool create">pool create</a>
+                    </p></li><li><p>
+
+                        <a class="xref" href="cli_command_reference.html#pool_join" title="pool join">pool join</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#pool_remove" title="pool remove">pool remove</a>
+                    </p></li></ul></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="pool_create"></a>pool create</h4></div></div></div><pre class="programlisting">pool create -name &lt;name&gt; </pre><p>
+                    Creates a new Storage Node pool to be used for
+                    resource distribution when creating or modifying a
+                    store.
+                </p><p>
+                    For more information on creating a Storage Node
+                    pool, see <a class="xref" href="cli-createpool.html" title="Create a Storage Node Pool">Create a Storage Node Pool</a>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="pool_join"></a>pool join</h4></div></div></div><pre class="programlisting">pool join -name &lt;name&gt; [-service] &lt;snX&gt;*</pre><p>
+                    Adds Storage Nodes to an existing Storage Node
+                    pool.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="pool_remove"></a>pool remove</h4></div></div></div><pre class="programlisting">pool remove -name &lt;name&gt; </pre><p>
+                    Removes a Storage Node pool.
+                </p></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="put_command"></a>put</h3></div></div></div><p>
+                Encapsulates commands that put key/value pairs to
+                the store or put rows to a table. The subcommands are
+                as follows:
+            </p><div class="itemizedlist"><ul type="disc"><li><p>
+                        <a class="xref" href="cli_command_reference.html#put_kv" title="put kv">put kv</a>
+                    </p></li><li><p>
+
+                        <a class="xref" href="cli_command_reference.html#put_table" title="put table">put table</a>
+                    </p></li></ul></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="put_kv"></a>put kv</h4></div></div></div><pre class="programlisting">put kv -key &lt;keyString&gt; -value &lt;valueString&gt; [-file]
+[-hex | -json &lt;schemaName&gt;] [-if-absent] [-if-present] </pre><p>
+                    Put the specified key/value pair into the
+                    store. The following arguments apply to the put
+                    command:
+                </p><div class="itemizedlist"><ul type="disc"><li><p>
+                            <code class="literal">-key&lt;keyString&gt;</code>
+                        </p><p>
+                            Specifies the name of the key to be put
+                            into the store. Key can be composed of
+                            both major and minor key paths, or a major
+                            key path only. The &lt;keyString&gt;
+                            format is:
+                            "major-key-path/-/minor-key-path".
+                        </p><p>
+                            For example, a key containing major and
+                            minor key paths:
+                        </p><pre class="programlisting">kv-&gt; put -key /Smith/Bob/-/email -value
+"{\"id\": 1,\"email\":\"bob.smith@gmail.com\"}" -json schema.EmailInfo </pre><p>
+                            For example, a key containing only a
+                            major key path:
+                        </p><pre class="programlisting">kv-&gt; put -key /Smith/Bob -value"{\"name\":
+ \"bob.smith\", \"age\": 20, \"phone\":\"408 555 5555\", \"email\":
+ \"bob.smith@gmail.com\"}" -json schema.UserInfo </pre></li><li><p>
+                            <code class="literal">-value
+                                &lt;valueString&gt;</code>
+                        </p><p>
+                            If neither -json or -file is specified,
+                            the &lt;valueString&gt; is treated as a
+                            raw bytes array.
+                        </p><p>
+                            For example:
+                        </p><pre class="programlisting">kv-&gt; put -key /Smith/Bob/-/phonenumber -value "408 555 5555"</pre><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+                                The mapping of the raw arrays to
+                                data structures (serialization and
+                                deserialization) is left entirely to
+                                the application. This is not the
+                                recommended approach. Instead, you
+                                should use Avro even for very simple
+                                values.
+                            </p></div><p>
+                            If used with <code class="literal">-json</code>
+                            to specify a Json string, the
+                            <code class="literal">valueString</code> should
+                            be encapsulated in quotation marks, and
+                            its internal field name and value with
+                            string type should also be encapsulated by
+                            string quote characters.
+                        </p><p>
+                            For example:
+                        </p><pre class="programlisting">kv-&gt; put -key /Smith/John/-/email -value
+"{\"id\": 1,\"email\":\"john.smith@gmail.com\"}" -json schema.EmailInfo </pre></li><li><p>
+
+                            <code class="literal">-file</code>
+
+                        </p><p>
+                            Indicates that the value is obtained
+                            from a file. The file to use is identified
+                            by the value parameter.
+                        </p><p>
+                            For example:
+                        </p><pre class="programlisting">kv-&gt; put -key /Smith/Bob -value ./smith-bob-info.txt
+ -file -json schema.UserInfo </pre></li><li><p>
+                            <code class="literal">-hex</code>
+                        </p><p>
+                            Indicates that the value is a BinHex
+                            encoded byte value with base64 encoding.
+                        </p></li><li><p>
+                            <code class="literal">-json&lt;schemaName&gt;</code>
+                        </p><p>
+                            Indicates that the value is a JSON
+                            string. Can be specified along with
+                            <code class="literal">-file</code>.
+                        </p></li><li><p>
+                            <code class="literal">-if-absent</code>
+                        </p><p>
+                            Indicates that a key/value pair is
+                            <code class="literal">put</code> only if no
+                            value for the given key is present.
+                        </p></li><li><p>
+                            <code class="literal">-if-present</code>
+                        </p><p>
+                            Indicates that a key/value pair is
+                            <code class="literal">put</code> only if a value
+                            for the given key is present.
+                        </p></li></ul></div></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="put_table"></a>put table</h4></div></div></div><pre class="programlisting">put table -name &lt;name&gt; [if-absent | -if-present ]
+[-json &lt;string&gt;] [-file &lt;file&gt;] [-exact] [-update] </pre><p>
+                    Put a row into the named table. The table name
+                    is a dot-separated name with the format
+                    table[.childTableName]*.
+                </p><p>
+                    where:
+                </p><div class="itemizedlist"><ul type="disc"><li><p>
+                            <code class="literal">-if-absent</code>
+                        </p><p>
+                            Indicates to put a row only if the row
+                            does not exist.
+                        </p></li><li><p>
+                            <code class="literal">-if-present</code>
+                        </p><p>
+                            Indicates to put a row only if the row
+                            already exists.
+                        </p></li><li><p>
+                            <code class="literal">-json</code>
+                        </p><p>
+                            Indicates that the value is a JSON
+                            string.
+                        </p></li><li><p>
+                            <code class="literal">-file</code>
+                        </p><p>
+                            Can be used to load JSON strings from a
+                            file.
+                        </p></li><li><p>
+                            <code class="literal">-exact</code>
+                        </p><p>
+                            Indicates that the input JSON string
+                            or file must contain values for all
+                            columns in the table and cannot contain
+                            extraneous fields.
+                        </p></li><li><p>
+                            <code class="literal">-update</code>
+                        </p><p>
+                            Can be used to partially update the
+                            existing record.
+                        </p></li></ul></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="repair-admin-quorum"></a>repair-admin-quorum</h3></div></div></div><pre class="programlisting">repair-admin-quorum {-zn &lt;id&gt; | -znname &lt;name&gt; | -admin&lt;id&gt;}... </pre><p>
+                Repairs admin quorum by reducing membership of the admin group to the
+                admins in the specified zones or the specific admins listed. This command should be used when attempting to recover from a failure that has resulted in a loss of admin quorum.  This command can result in data loss. 
+            </p><p>
+               After obtaining a working admin by calling this command, you should use the plan failover command to failover to the zones that remain available after a failure and to update the topology to match the changes made to the admins.
+            </p><p>
+               The arguments specify which admins to use as the new set of primary admins, either by specifying all of the admins in one or more zones or by identifying specific admins. The specified set of admins must not be empty, must contain only currently available admins, and must include all currently available primary admins. It may also include secondary admins, if desired, to increase the admin replication factor or because no primary admins are available.
+            </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+                This command can be repeated if a temporary network or component failure causes the command invocation to fail.
+            </p></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="show"></a>show</h3></div></div></div><p>
+                Encapsulates commands that display the state of the
+                store and its components or schemas. The subcommands
+                are as follows:
+            </p><div class="itemizedlist"><ul type="disc"><li><p>
+                        <a class="xref" href="cli_command_reference.html#show_admins" title="show admins">show admins</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#show_datacenters" title="show datacenters">show datacenters</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#show_events" title="show events">show events</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#show_faults" title="show faults">show faults</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#show_indexes" title="show indexes">show indexes</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#show_parameters" title="show parameters">show parameters</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#show_perf" title="show perf">show perf</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#show_plans" title="show plans">show plans</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#show_pools" title="show pools">show pools</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#show_schemas" title="show schemas">show schemas</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#show_snapshots" title="show snapshots">show snapshots</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#show_tables" title="show tables">show tables</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#show_topology" title="show topology">show topology</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#show_upgrade" title="show upgrade-order">show upgrade-order</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#show_users" title="show users">show users</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#show_versions" title="show versions">show versions</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#show_zones" title="show zones">show zones</a>
+                    </p></li></ul></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="show_admins"></a>show admins</h4></div></div></div><pre class="programlisting">show admins </pre><p>
+                    Displays basic information about Admin
+                    services.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="show_datacenters"></a>show datacenters</h4></div></div></div><pre class="programlisting">show datacenters </pre><p>
+                    Deprecated. See
+                    <a class="xref" href="cli_command_reference.html#show_zones" title="show zones">show zones</a> instead.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="show_events"></a>show events</h4></div></div></div><pre class="programlisting">show events [-id &lt;id&gt;] | [-from &lt;date&gt;] [-to &lt;date&gt; ]
+[-type &lt;stat | log | perf&gt;] </pre><p>
+                    Displays event details or list of store events.
+                    The status events indicate changes in service
+                    status.
+                </p><p>
+                    Log events are noted if they require attention.
+                </p><p>
+                    Performance events are not usually critical but
+                    may merit investigation. Events marked "SEVERE"
+                    should be investigated.
+                </p><p>
+                    The following date/time formats are accepted.
+                    They are interpreted in the local time zone.
+                </p><table class="simplelist" border="0" summary="Simple list"><tr><td>
+                        <span class="emphasis"><em>MM-dd-yy HH:mm:ss:SS</em></span>
+                    </td></tr><tr><td>
+                        <span class="emphasis"><em>MM-dd-yy HH:mm:ss</em></span>
+                    </td></tr><tr><td>
+                        <span class="emphasis"><em>MM-dd-yy HH:mm</em></span>
+                    </td></tr><tr><td>
+                        <span class="emphasis"><em>MM-dd-yy</em></span>
+                    </td></tr><tr><td>
+                        <span class="emphasis"><em>HH:mm:ss:SS</em></span>
+                    </td></tr><tr><td>
+                        <span class="emphasis"><em>HH:mm:ss</em></span>
+                    </td></tr><tr><td>
+                        <span class="emphasis"><em>HH:mm</em></span>
+                    </td></tr></table><p>
+                    For more information on events, see <a class="xref" href="monitoring.html#monitorevents" title="Events">Events</a>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="show_faults"></a>show faults</h4></div></div></div><pre class="programlisting">show faults [-last] [-command &lt;command index&gt;] </pre><p>
+                    Displays faulting commands. By default all
+                    available faulting commands are displayed.
+                    Individual fault details can be displayed using
+                    the -last and -command flags.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="show_indexes"></a>show indexes</h4></div></div></div><pre class="programlisting">show indexes [-table &lt;name&gt;] [-name &lt;name&gt;]</pre><p>
+                    Displays index metadata. By default the indexes
+                    metadata of all tables are listed.
+                </p><p>
+                    If a specific table is named, its indexes
+                    metadata are displayed. If a specific index of the
+                    table is named, its metadata is displayed. For
+                    more information, see <a class="xref" href="cli_command_reference.html#plan_add_index" title="plan add-index">plan add-index</a>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="show_parameters"></a>show parameters</h4></div></div></div><pre class="programlisting">show parameters -policy | -service &lt;name&gt; </pre><p>
+                    Displays service parameters and state for the
+                    specified service. The service may be a
+                    Replication Node, Storage Node, or Admin service,
+                    as identified by any valid string, for example
+                    rg1-rn1, sn1, admin2, etc. Use the -policy flag to
+                    show global policy parameters. Use the -security
+                    flag to show global security parameters.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="show_perf"></a>show perf</h4></div></div></div><pre class="programlisting">show perf </pre><p>
+                    Displays recent performance information for
+                    each Replication Node.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="show_plans"></a>show plans</h4></div></div></div><pre class="programlisting">show plans [-last] [-id &lt;id&gt;] [-from &lt;date&gt;] [-to &lt;date&gt;][-num &lt;howMany&gt;]</pre><p>
+                    Shows details of the specified plan or list all
+                    plans that have been created along with their
+                    corresponding plan IDs and status.
+                </p><div class="itemizedlist"><ul type="disc"><li><p>
+                      The <code class="literal">-last</code> option shows details
+                      of the most recently created plan.
+                    </p></li><li><p>
+                      The <code class="literal">-id &lt;n&gt;</code> option details the plan
+                       with the given id. If -num &lt;n&gt; is also given,
+                       list &lt;n&gt; plans, starting with plan #&lt;id&gt;.
+                </p></li><li><p>
+                    The <code class="literal">-num &lt;n&gt;</code> option sets the
+                    number of plans to the list. The default is 10.
+                </p></li><li><p>
+                    The <code class="literal">-from &lt;date&gt;</code> option lists
+                    plans after &lt;date&gt;.
+                </p></li><li><p>
+                    The <code class="literal">-to &lt;date&gt;</code> option lists
+                    plans before &lt;date&gt;.
+                </p></li></ul></div><p>
+                Combining <code class="literal">-from</code> with <code class="literal">-to</code>
+                describes the range between the two dates. Otherwise <code class="literal">-num</code>
+                applies.
+                </p><p>
+                The following date formats are accepted. They are interpreted in the 
+                UTC time zone.
+                </p><table class="simplelist" border="0" summary="Simple list"><tr><td>
+                        <span class="emphasis"><em>yyyy-MM-dd HH:mm:ss.SSS</em></span>
+                    </td></tr><tr><td>
+                        <span class="emphasis"><em>yyyy-MM-dd HH:mm:ss</em></span>
+                    </td></tr><tr><td>
+                        <span class="emphasis"><em>yyyy-MM-dd HH:mm</em></span>
+                    </td></tr><tr><td>
+                        <span class="emphasis"><em>yyyy-MM-dd</em></span>
+                    </td></tr><tr><td>
+                        <span class="emphasis"><em>MM-dd-yyyy HH:mm:ss.SSS</em></span>
+                    </td></tr><tr><td>
+                        <span class="emphasis"><em>MM-dd-yyyy HH:mm:ss</em></span>
+                    </td></tr><tr><td>
+                        <span class="emphasis"><em>MM-dd-yyyy HH:mm</em></span>
+                    </td></tr><tr><td>
+                        <span class="emphasis"><em>MM-dd-yyyy</em></span>
+                    </td></tr><tr><td>
+                        <span class="emphasis"><em>HH:mm:ss.SSS</em></span>
+                    </td></tr><tr><td>
+                        <span class="emphasis"><em>HH:mm:ss</em></span>
+                    </td></tr><tr><td>
+                        <span class="emphasis"><em>HH:mm</em></span>
+                    </td></tr></table><p>
+                    For more information on plan review, see <a class="xref" href="reviewplans.html" title="Reviewing Plans">Reviewing Plans</a>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="show_pools"></a>show pools</h4></div></div></div><pre class="programlisting">show pools </pre><p>
+                    Lists the Storage Node pools.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="show_schemas"></a>show schemas</h4></div></div></div><pre class="programlisting">show schemas [-disabled] | [-name &lt;name&gt;] </pre><p>
+                    Displays schema details of the named schema or
+                    a list of schemas registered with the store.
+                </p><p>
+                    Use the <code class="literal">-name</code> option to
+                    specify the name of the schema you want to check
+                    if it is currently enabled in the store.
+                </p><p>
+                    Use the <code class="literal">-disabled</code> option to
+                    see all schemas, including those which are
+                    currently disabled.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="show_snapshots"></a>show snapshots</h4></div></div></div><pre class="programlisting">show snapshots [-sn &lt;id&gt;] </pre><p>
+                    Lists snapshots on the specified Storage Node.
+                    If no Storage Node is specified, one is chosen
+                    from the store. You can use this command to view
+                    the existing snapshots.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="show_tables"></a>show tables</h4></div></div></div><pre class="programlisting">show tables -name &lt;name&gt;</pre><p>
+                    Displays the table information. Use
+                    <code class="literal">-original</code> flag to show the
+                    original table information if you are building a
+                    table for evolution. The flag is ignored for
+                    building table for addition. For more information,
+                    see <a class="xref" href="cli_command_reference.html#plan_add_table" title="plan add-table">plan add-table</a> and <a class="xref" href="cli_command_reference.html#plan_evolve-table" title="plan evolve-table">plan evolve-table</a>
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="show_topology"></a>show topology</h4></div></div></div><pre class="programlisting">show topology [-zn] [-rn] [-sn] [-store] [-status] [-perf] </pre><p>
+                    Displays the current, deployed topology. By
+                    default it shows the entire topology. The optional
+                    flags restrict the display to one or more of
+                    Zones, Replication Nodes, Storage Nodes and store
+                    name, or specify service status or performance.
+                </p><p>
+                    With this command you can obtain the ID of the
+                    zone to which Storage Nodes can be deployed to.
+
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="show_upgrade"></a>show upgrade-order</h4></div></div></div><pre class="programlisting">show upgrade-order </pre><p>
+                    Lists the Storage Nodes which need to be
+                    upgraded in an order that prevents disruption to
+                    the store's operation.
+                </p><p>
+                    This command displays one or more Storage Nodes
+                    on a line. Multiple Storage Nodes on a line are
+                    separated by a space. If multiple Storage Nodes
+                    appear on a single line, then those nodes can be
+                    safely upgraded at the same time. When multiple
+                    nodes are upgraded at the same time, the upgrade
+                    must be completed on all nodes before the nodes
+                    next on the list can be upgraded.
+                </p><p>
+                    If at some point you lose track of which group
+                    of nodes should be upgraded next, you can always
+                    run the show upgrade-order command again.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="show_users"></a>show users</h4></div></div></div><pre class="programlisting">show users [-name &lt;name&gt;</pre><p>
+                    Lists the names of all users, or displays
+                    information about a specific user. If no user is
+                    specified, lists the names of all users. If a user
+                    is specified using the <code class="literal"> -name</code>
+                    option, then lists detailed information about the
+                    user.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="show_versions"></a>show versions</h4></div></div></div><pre class="programlisting">show versions </pre><p>
+                    Lists the client and server version information.
+                </p><p>
+                   For example
+                </p><pre class="programlisting">kv-&gt; show versions
+Client version: 12.1.3.4.0
+Server version: 12.1.3.4.0 </pre></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="show_zones"></a>show zones</h4></div></div></div><pre class="programlisting">show zones [-zn &lt;id&gt;] | -znname &lt;name&gt; </pre><p>
+                    Lists the names of all zones, or display
+                    information about a specific zone.
+                </p><p>
+                    Use the <code class="literal">-zn</code> or the
+                    <code class="literal">-znname</code> flag to specify the
+                    zone that you want to show additional information;
+                    including the names of all of the Storage Nodes in
+                    the specified zone, and whether that zone is a
+                    primary of secondary zone.
+                </p></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="snapshot"></a>snapshot</h3></div></div></div><p>
+                Encapsulates commands that create and delete
+                snapshots, which are used for backup and restore. The
+                subcommands are as follows:
+            </p><div class="itemizedlist"><ul type="disc"><li><p>
+
+                        <a class="xref" href="cli_command_reference.html#snapshot_create" title="snapshot create">snapshot create</a>
+                    </p></li><li><p>
+
+                        <a class="xref" href="cli_command_reference.html#snapshot_remove" title="snapshot remove">snapshot remove</a>
+                    </p></li></ul></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="snapshot_create"></a>snapshot create</h4></div></div></div><pre class="programlisting">snapshot create -name &lt;name&gt; </pre><p>
+                    Creates a new snapshot using the specified name
+                    as the prefix.
+                </p><p>
+                    Use the <code class="literal">-name</code> option to
+                    specify the name of the snapshot that you want to
+                    create.
+                </p><p>
+                    Snapshots should not be taken while any
+                    configuration (topological) changes are being
+                    made, because the snapshot might be inconsistent
+                    and not usable.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="snapshot_remove"></a>snapshot remove</h4></div></div></div><pre class="programlisting">snapshot remove -name &lt;name&gt; | -all </pre><p>
+                    Removes the named snapshot. If -all is
+                    specified, remove all snapshots.
+                </p><p>
+                    Use the <code class="literal">-name</code> option to
+                    specify the name of the snapshot that you want to
+                    remove.
+                </p><p>
+                    If the <code class="literal">-all</code> option is
+                    specified, remove all snapshots.
+                </p><p>
+                    To create a backup of your store using a
+                    snapshot see <a class="xref" href="procedures.html#takesnapshot" title="Taking a Snapshot">Taking a Snapshot</a>.
+                </p><p>
+                    To recover your store from a previously created
+                    snapshot you can use the load utility or restore
+                    directly from a snapshot. For more information, see
+                    <a class="xref" href="recovery.html#usingload" title="Using the Load Program">Using the Load Program</a> or <a class="xref" href="recovery.html#restoredirect" title="Restoring Directly from a Snapshot">Restoring Directly from a Snapshot</a>.
+                </p></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="table"></a>table</h3></div></div></div><p>
+                Deprecated with exception of table size.
+                See <a class="xref" href="cli_command_reference.html#execute" title="execute">execute</a> instead.
+                For more information, see
+                <a class="xref" href="cli_command_reference.html#table_size" title="table size">table size</a>
+            </p></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="table_size"></a>table size</h3></div></div></div><pre class="programlisting">table size -name &lt;name&gt; -json &lt;string&gt;
+[-rows &lt;num&gt; [[-primarykey | -index &lt;name&gt;] -keyprefix &lt;size&gt;]] </pre><p>
+                     Calculates key and data sizes for the specified table using the row
+                     input, optionally estimating the NoSQL DB cache size required for a
+                     specified number of rows of the same format. Running this command on
+                     multiple sample rows can help determine the necessary cache size for
+                     desired store performance.
+                </p><div class="itemizedlist"><ul type="disc"><li><p>
+                     -json specifies a sample row used for the calculation.
+                      </p></li><li><p>
+                     -rows specifies the number of rows to use for the cache size calculation
+                     </p></li><li><p>
+                     Use the -index or -primarykey and -keyprefix to specify the expected
+                     commonality of index keys in terms of number of bytes.
+                    </p></li></ul></div><p>
+                     It mainly does the following:
+                </p><div class="orderedlist"><ol type="1"><li><p>
+                     Calculates the key and data size based on the input row in JSON format.
+                    </p></li><li><p>
+                     Estimates the DB Cache size required for a specified number of rows in
+                     the same JSON format.
+                    </p><p>
+                     The output contains both detailed size info for primary key/index and
+                     the total size; internally it calls JE's DbCacheSize utility
+                     to calculate the cache size required for primary key and indexes with
+                     the input parameters: 
+                    </p><pre class="programlisting">java -jar $KVHOME/dist/lib/je.jar DbCacheSize
+-records &lt;num&gt; -key &lt;size&gt; -data &lt;size&gt; -keyprefix
+&lt;size&gt; -outputproperties -replicated &lt;JE properties...&gt;
+-duplicates] </pre><p>
+                            where:
+                          </p><div class="itemizedlist"><ul type="disc"><li><p>
+                            -records &lt;num&gt;: The number of rows specified by -row &lt;num&gt;.
+                          </p></li><li><p>
+                            -key &lt;size&gt;: The size of key get from step 1.
+                          </p></li><li><p>
+                            -data &lt;size&gt;: The size of data get from step1.
+                          </p></li><li><p>
+                            -keyprefix &lt;size&gt;: The expected commonality of keys, specified
+                            using -primarykey | -index &lt;name&gt; -keyprefix &lt;size&gt;
+                          </p></li><li><p>
+                            -duplicates: Used only for table index.
+                          </p></li><li><p>
+                            -&lt;JE properties...&gt;: The JE configuration parameters used
+                            in kvstore.
+                          </p></li></ul></div></li></ol></div><p>
+                            For example:
+                          </p><p>
+                            Create table user (id integer, address string, zip_code string) 
+                            and idx1 on user (zip_code)
+                            </p><pre class="programlisting">kv-&gt; execute "create table user (id integer, address string,
+zip_code string, primary key(id))" </pre><pre class="programlisting">kv-&gt; execute "create index idx1 on user (zip_code)" </pre><p>
+                See the following cases:
+                </p><div class="orderedlist"><ol type="1"><li><p>
+                  Calculates the key size and data size based on the input row in JSON.
+                </p><pre class="programlisting">kv-&gt; table size -name user -json '{"id":1, 
+"address": "Oracle Building ZPark BeiJing China","zip_code":"100000"}'
+
+=== Key and Data Size ===
+
+      Name         Number of Bytes
+-----------------  ---------------
+Primary Key               8
+Data                     47
+Index Key of idx1         7 </pre><p>
+                </p></li><li><p>
+                  Calculates the key/data size and the cache size of the table
+                  with 10000 rows.
+                </p><pre class="programlisting">kv-&gt; table size -name user -json '{"id":1,
+"address": "Oracle Building ZPark BeiJing China","zip_code":"100000"}'
+-rows 10000
+=== Key and Data Size ===
+
+      Name         Number of Bytes
+-----------------  ---------------
+Primary Key               8
+Data                     47
+Index Key of idx1         7
+
+=== Environment Cache Overhead ===
+
+16,798,797 minimum bytes
+
+=== Database Cache Sizes ===
+
+Name   Number of Bytes             Description
+-----  ---------------  ---------------------------------- 
+             1,024,690  Internal nodes only
+Table        1,024,690  Internal nodes and record versions
+             1,024,690  Internal nodes and leaf nodes
+-----  ---------------  ----------------------------------
+               413,728  Internal nodes only                 
+idx1           413,728  Internal nodes and record versions
+               413,728  Internal nodes and leaf nodes
+-----  ---------------  ----------------------------------
+             1,438,418  Internal nodes only
+Total        1,438,418  Internal nodes and record versions
+             1,438,418  Internal nodes and leaf nodes </pre><p>
+                </p><p>
+            For more information, see the DbCacheSize javadoc:
+<a class="ulink" href="http://docs.oracle.com/cd/E17277_02/html/java/com/sleepycat/je/util/DbCacheSize.html" target="_top">http://docs.oracle.com/cd/E17277_02/html/java/com/sleepycat/je/util/DbCacheSize.html</a> 
+            </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+                  The cache size are calculated as follows:
+                  </p><div class="itemizedlist"><ul type="disc"><li><p>
+                           Cache size of table
+                </p><pre class="programlisting">java -jar KVHOME/lib/je.jar DbCacheSize -records
+10000 key 8 -data 47 -outputproperties -replicated
+&lt;JE properties...&gt; </pre><p>
+                        </p><p>
+                        The parameters are as follows:
+                        </p><div class="itemizedlist"><ul type="circle"><li><p>
+                            Record number: 10000
+                          </p></li><li><p>
+                            Primary key size: 8
+                          </p></li><li><p>
+                            Data size: 47 
+                          </p></li></ul></div><p>
+                        </p></li><li><p>
+                           Cache size of table
+                </p><pre class="programlisting"> java -jar KVHOME/lib/je.jar DbCacheSize -records
+10000 -key 7 -data 8 -outputproperties -replicated
+&lt;JE properties...&gt; -duplicates </pre><p>
+                        </p><p>
+                        The parameters are as follows:
+                        </p><div class="itemizedlist"><ul type="circle"><li><p>
+                            Record number: 10000
+                          </p></li><li><p>
+                            Index key size: 7
+                          </p></li><li><p>
+                            Data size: 8. The primary key size is used here, since the data of
+                            secondary index is the primary key.
+                          </p></li><li><p>
+                            Use -duplicates for index. 
+                          </p></li></ul></div><p>
+                        </p></li><li><p>
+                           Total size = cache size of table + cache size of idx1.
+                        </p></li></ul></div><p>
+                  </p></div></li><li><p>
+                Calculates the cache size with a key prefix size for idx1
+            </p><pre class="programlisting">kv-&gt; table size -name user -json 
+'{"id":1, "address":"Oracle Building ZPark BeiJing China",
+"zip_code":"100000"}' -rows 10000 -index idx1 -keyprefix 3
+
+=== Key and Data Size ===
+
+
+      Name         Number of Bytes
+-----------------  ---------------
+Primary Key               8
+Data                     47
+Index Key of idx1         7
+
+=== Environment Cache Overhead ===
+
+16,798,797 minimum bytes
+
+=== Database Cache Sizes ===
+
+Name   Number of Bytes             Description
+-----  ---------------  ----------------------------------
+             1,024,690  Internal nodes only
+Table        1,024,690  Internal nodes and record versions
+             1,024,690  Internal nodes and leaf nodes
+-----  ---------------  ----------------------------------
+               413,691  Internal nodes only
+idx1           413,691  Internal nodes and record versions
+               413,691  Internal nodes and leaf nodes
+-----  ---------------  ----------------------------------
+             1,438,381  Internal nodes only
+Total        1,438,381  Internal nodes and record versions
+             1,438,381  Internal nodes and leaf nodes </pre><p>
+                </p><p>
+            For more information, see the DbCacheSize javadoc:
+<a class="ulink" href="http://docs.oracle.com/cd/E17277_02/html/java/com/sleepycat/je/util/DbCacheSize.html" target="_top">http://docs.oracle.com/cd/E17277_02/html/java/com/sleepycat/je/util/DbCacheSize.html</a> 
+            </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+                    A key prefix size is provided for idx1, the idx1's cache size is
+                    calculated like this:
+            </p><pre class="programlisting">java -jar KVHOME/lib/je.jar DbCacheSize -records
+10000 -key 7 -data 8 -keyprefix 3 -outputproperties -replicated
+&lt;JE properties...&gt; -duplicates </pre><p>
+               </p><p>
+                    The above examples show that the cache size of idx1 is 413,691 and is
+                    smaller than 413,728 of case 2. For more information about the usage
+                    of keyprefix, see JE DbCacheSize document: 
+<a class="ulink" href="http://docs.oracle.com/cd/E17277_02/html/java/com/sleepycat/je/util/DbCacheSize.html" target="_top">http://docs.oracle.com/cd/E17277_02/html/java/com/sleepycat/je/util/DbCacheSize.html</a> 
+               </p></div></li></ol></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="timer"></a>timer</h3></div></div></div><pre class="programlisting">timer [on|off] </pre><p>
+                Turns the measurement and display of execution time for
+                commands on or off.
+            </p></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="topology"></a>topology</h3></div></div></div><p>
+                Encapsulates commands that manipulate store
+                topologies. Examples are redistribution/rebalancing of
+                nodes or changing replication factor. Topologies are
+                created and modified using this command. They are then
+                deployed by using the <code class="literal">plan
+                deploy-topology</code> command. For more
+                information, see <a class="xref" href="cli_command_reference.html#plan_deploy-topology" title="plan deploy-topology">plan deploy-topology</a>. The
+                subcommands are as follows:
+            </p><div class="itemizedlist"><ul type="disc"><li><p>
+                        <a class="xref" href="cli_command_reference.html#topology_change-repfactor" title="topology change-repfactor">topology change-repfactor</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#topology_change-zone-type" title="topology change-zone-type">topology change-zone-type</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#topology_clone" title="topology clone">topology clone</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#topology_create" title="topology create">topology create</a>
+                    </p></li><li><p>
+
+                        <a class="xref" href="cli_command_reference.html#topology_delete" title="topology delete">topology delete</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#topology_list" title="topology list">topology list</a>
+                    </p></li><li><p>
+
+                        <a class="xref" href="cli_command_reference.html#topology_preview" title="topology preview">topology preview</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#topology_rebalance" title="topology rebalance">topology rebalance</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#topology_redistribute" title="topology redistribute">topology redistribute</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#topology_validate" title="topology validate">topology validate</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#topology_view" title="topology view">topology view</a>
+                    </p></li></ul></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="topology_change-repfactor"></a>topology change-repfactor</h4></div></div></div><pre class="programlisting">topology change-repfactor -name &lt;name&gt;  -pool &lt;pool name&gt;
+-zn &lt;id&gt; | -znname &lt;name&gt; -rf &lt;replication factor&gt; </pre><p>
+                    Modifies the topology to change the replication
+                    factor of the specified zone to a new value. The
+                    replication factor may not be decreased at this
+                    time.
+                </p><p>
+                    For more information on modifying the
+                    replication factor, see <a class="xref" href="managing-topology.html#datareplication" title="Increase Replication Factor">Increase Replication Factor</a>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="topology_change-zone-type"></a>topology change-zone-type</h4></div></div></div><pre class="programlisting">topology change-zone-type -name &lt;name&gt;
+{-zn &lt;id&gt; | -znname &lt;name&gt;} -type {primary | secondary} </pre><p>
+                    Modifies the topology to change the type of the specified
+                    zone to a new type.
+                </p><p>
+                   If one or more zones have their type changed and the resulting 
+                   topology is deployed using the plan deploy-topology command, the 
+                   following rules apply:
+                </p><div class="itemizedlist"><ul type="disc"><li><p>
+                   The plan waits for up to five minutes for secondary nodes that
+                   are being converted to primary nodes to catch up with their
+                   masters.
+                </p></li><li><p>
+                   The plan will fail, and print details about lagging zones
+                   and nodes, if a quorum of secondary nodes in each shard fails 
+                   to catch up within the required amount of time. This behavior 
+                   helps to reduce the time that a newly added primary node
+                   cannot become a master, and so is not able 
+                   to contribute to availability.
+                </p></li><li><p>
+                   Because this command can only be performed successfully 
+                   if quorum can be maintained, it does not result in data loss.
+                </p></li></ul></div></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="topology_clone"></a>topology clone</h4></div></div></div><pre class="programlisting">topology clone -from &lt;from topology&gt; -name &lt;to topology&gt;</pre><p>
+                    or
+                </p><pre class="programlisting">topology clone -current -name &lt;to topology&gt; </pre><p>
+                    Clones an existing topology so as to create a
+                    new candidate topology to be used for topology
+                    change operations.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="topology_create"></a>topology create</h4></div></div></div><pre class="programlisting">topology create -name &lt;candidate name&gt; -pool &lt;pool name&gt;
+-partitions &lt;num&gt;</pre><p>
+                    Creates a new topology with the specified
+                    number of partitions using the specified storage
+                    pool.
+                </p><p>
+                   You should avoid using the dollar sign ('$') character in topology
+                   candidate names. The CLI displays a warning when trying to create or clone
+                   topologies whose names contain the reserved character.
+                </p><p>
+                    For more information on creating the first
+                    topology candidate, see <a class="xref" href="managing-topology.html#topologycandidate" title="Make the Topology Candidate">Make the Topology Candidate</a>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="topology_delete"></a>topology delete</h4></div></div></div><pre class="programlisting">topology delete -name &lt;name&gt; </pre><p>
+                    Deletes a topology.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="topology_list"></a>topology list</h4></div></div></div><pre class="programlisting">topology list </pre><p>
+                    Lists existing topologies.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="topology_preview"></a>topology preview</h4></div></div></div><pre class="programlisting">topology preview -name &lt;name&gt; [-start &lt;from topology&gt;]</pre><p>
+                    Describes the actions that would be taken to
+                    transition from the starting topology to the
+                    named, target topology. If -start is not
+                    specified, the current topology is used. This
+                    command should be used before deploying a new
+                    topology.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="topology_rebalance"></a>topology rebalance</h4></div></div></div><pre class="programlisting">topology rebalance -name &lt;name&gt; -pool &lt;pool name&gt;
+[-zn &lt;id&gt; | -znname &lt;name&gt;]</pre><p>
+                    Modifies the named topology to create a
+                    balanced topology. If the optional
+                    <code class="literal">-zn</code> flag is used, only
+                    Storage Nodes from the specified zone are used for
+                    the operation.
+                </p><p>
+                    For more information on balancing a
+                    non-compliant topology, see <a class="xref" href="managing-topology.html#databalancing" title="Balance a Non-Compliant Topology">Balance a Non-Compliant Topology</a>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="topology_redistribute"></a>topology redistribute</h4></div></div></div><pre class="programlisting">topology redistribute -name &lt;name&gt; -pool &lt;pool name&gt; </pre><p>
+                    Modifies the named topology to redistribute
+                    resources to more efficiently use those available.
+                </p><p>
+                    For more information on redistributing
+                    resources to enhance write throughput, see <a class="xref" href="managing-topology.html#datadistribution" title="Increase Data Distribution">Increase Data Distribution</a>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="topology_validate"></a>topology validate</h4></div></div></div><pre class="programlisting">topology validate [-name &lt;name&gt;] </pre><p>
+                    Validates the specified topology. If no
+                    topology is specified, the current topology is
+                    validated. Validation generates violations and
+                    notes.
+                </p><p>
+                    Violations are issues that can cause problems
+                    and should be investigated.
+                </p><p>
+                    Notes are informational and highlight
+                    configuration oddities that can be potential
+                    issues or may be expected.
+                </p><p>
+                    For more information, see <a class="xref" href="managing-topology.html#validatetopology" title="Validate the Topology Candidate">Validate the Topology Candidate</a>.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="topology_view"></a>topology view</h4></div></div></div><pre class="programlisting">topology view -name &lt;name&gt; </pre><p>
+                    Displays details of the specified topology.
+                </p></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="verbose"></a>verbose</h3></div></div></div><pre class="programlisting">verbose [on|off] </pre><p>
+                Toggles or sets the global verbosity setting. This property
+                can also be set on a per-command basis using the
+                <code class="literal">-verbose</code> flag.
+            </p></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="verify"></a>verify</h3></div></div></div><p>
+                Encapsulates commands that check various parameters
+                of the store. The subcommands are as follows:
+            </p><div class="itemizedlist"><ul type="disc"><li><p>
+                        <a class="xref" href="cli_command_reference.html#verify_silent" title="verify configuration">verify configuration</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#verify_prerequisite" title="verify prerequisite">verify prerequisite</a>
+                    </p></li><li><p>
+                        <a class="xref" href="cli_command_reference.html#verify_upgrade" title="verify upgrade">verify upgrade</a>
+                    </p></li></ul></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="verify_silent"></a>verify configuration</h4></div></div></div><pre class="programlisting">verify configuration [-silent] [-json] </pre><p>
+                    Verifies the store configuration by iterating
+                    the components and checking their state against
+                    that expected in the Admin database. This call may
+                    take a while on a large store.
+                </p><p>
+                    The <code class="literal">-json</code> option specifies that
+                    output should be displayed in JSON format.
+                </p><p>
+                    The <code class="literal">-silent</code> option
+                    suppresses verbose verification messages that are
+                    displayed as the verification is proceeding.
+                    Instead, only the initial startup messages and the
+                    final verification message is displayed. This option
+                    has no effect when the <code class="literal">-json</code>
+                    option is specified.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="verify_prerequisite"></a>verify prerequisite</h4></div></div></div><pre class="programlisting">verify prerequisite [-silent] [-sn snX]*</pre><p>
+                    Verifies that the storage nodes are at or above
+                    the prerequisite software version needed to
+                    upgrade to the current version. This call may take
+                    a while on a large store.
+                </p><p>
+                    As part of the verification process, this
+                    command displays the components which do not meet
+                    the prerequisites or cannot be contacted. It also
+                    checks for illegal downgrade situations where the
+                    installed software is of a newer minor release
+                    than the current version.
+                </p><p>
+                    When using this command, the current version is
+                    the version of the software running the command
+                    line interface.
+                </p><p>
+                    Use the <code class="literal">-sn</code> option to
+                    specify those storage nodes that you want to
+                    verify. If no storage nodes are specified, all the
+                    nodes in the store are checked.
+                </p><p>
+                    The <code class="literal">-silent</code> option
+                    suppresses verbose verification messages that are
+                    displayed as the verification is proceeding.
+                    Instead, only the initial startup messages and the
+                    final verification message is displayed.
+                </p></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="verify_upgrade"></a>verify upgrade</h4></div></div></div><pre class="programlisting">verify upgrade [-silent] [-sn snX]*</pre><p>
+                    Verifies the storage nodes (and their managed
+                    components) are at or above the current version.
+                    This call may take a while on a large store.
+                </p><p>
+                    As part of the verification process, this
+                    command displays the components which have not yet
+                    been upgraded or cannot be contacted.
+                </p><p>
+                    When using this command, the current version is
+                    the version of the software running the command
+                    line interface.
+                </p><p>
+                    Use the <code class="literal">-sn</code> option to
+                    specify those storage nodes that you want to
+                    verify. If no storage nodes are specified, all the
+                    nodes in the store are checked.
+                </p><p>
+                    The <code class="literal">-silent</code> option
+                    suppresses verbose verification messages that are
+                    displayed as the verification is proceeding.
+                    Instead, only the initial startup messages and the
+                    final verification message is displayed.
+                </p></div></div></div></div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="store-targets.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="independent_commands.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">
+            Store Targets
+        </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Utility commands</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

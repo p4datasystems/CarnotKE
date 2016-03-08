@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 8. Indexing Non-Scalar Data Types</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="prev" href="usingrecords.html" title="Using Embedded Records" />
+    <link rel="next" href="indexmaps.html" title="Indexing Maps" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 8. Indexing Non-Scalar Data Types</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="usingrecords.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="indexmaps.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="indexnonscalar"></a>Chapter 8. Indexing Non-Scalar Data Types</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="indexnonscalar.html#indexarrays">Indexing Arrays</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="indexmaps.html">Indexing Maps</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="indexmaps.html#mapindexbykeyvalue">Indexing by Map Keys</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="indexmaps.html#mapindexbyelementvalue">Indexing by Map Values</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="indexmaps.html#mapindexspecifickey">Indexing by a Specific Map Key Name</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="indexmaps.html#mapindexkeyandvalue">Indexing by Map Key and Value</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="indexrecords.html">Indexing Embedded Records</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+        We describe how to index scalar data types in 
+        <a class="xref" href="createindex.html" title="Creating Indexes">Creating Indexes</a>, and we
+        show how to read using indexes in
+        <a class="xref" href="indexread.html" title="Reading Indexes">Reading Indexes</a>. However,
+        non-scalar data types (Arrays, Maps and Records) require more
+        explanation, which we give here.
+    </p>
+      <p>
+        Index creation is accomplished using the <code class="literal">CREATE INDEX</code>
+        statement. See <a class="xref" href="addindexddl.html" title="CREATE INDEX">CREATE INDEX</a>
+        for details on this statement.
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="indexarrays"></a>Indexing Arrays</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+            You can create an index on an array field so long as the array
+            contains scalar data, or contains a record with scalar fields. 
+        </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+                You cannot index a map or array that is nested beneath
+                another map or array. This is not allowed because of the
+                potential for an excessively large number of index entries.
+            </p>
+        </div>
+        <p>
+            Be aware that indexing an array potentially results in multiple
+            index entries for each row, which can lead to very large
+            indexes.
+        </p>
+        <p>
+            To create the index, first create the table:
+        </p>
+        <pre class="programlisting">CREATE TABLE myArrayTable (
+    uid INTEGER,
+    testArray ARRAY(STRING),
+    PRIMARY KEY(uid)
+) </pre>
+        <p>
+            Once the table has been added to the store, create the index:
+        </p>
+        <pre class="programlisting">CREATE INDEX arrayFieldIndex on myArrayTable (testArray) </pre>
+        <p>
+              In the case of arrays, the field can be indexed only
+              if the array contains values that are of one of the
+              other indexable types. For example, you can create an
+              index on an array of Integers.  You can also create
+              an index on a specific record in an array of records.
+              Only one array should participate in an index, otherwise
+              the size of the index can grow exponentially because
+              there is an index entry for each array entry.
+          </p>
+        <p>
+              To retrieve data using an index of arrays, 
+              
+              <span>
+                  you first retrieve the index using its name, and create an
+                  instance of <code class="classname">IndexKey</code> that you will use
+                  to perform the index lookup:
+              </span>
+              
+              
+          </p>
+        <pre class="programlisting">Index arrayIndex = myTable.getIndex("arrayFieldIndex");
+IndexKey indexKey = arrayIndex.createIndexKey(); </pre>
+        <p>
+              Next you create an <code class="classname">ArrayValue</code>
+              instance, and assign a value to it. 
+          </p>
+        <p>
+              When you perform the index lookup, the only records that will
+              be returned will be those which have an array with at least
+              one item matching the value set 
+              
+              <span>
+                  for the <code class="classname">ArrayValue</code>. 
+              </span>
+              
+              
+                  For example, if you have
+                  individual records that contain arrays like this:
+          </p>
+        <pre class="programlisting">Record 1: ["One," "Two", "Three"]
+Record 2: ["Two", "Three", "One"]
+Record 3: ["One", "Three", "One"]
+Record 4: ["Two", "Three", "Four"] </pre>
+        <p>
+              and you then perform an array lookup on the array value
+              "One", then Records 1 - 3 will be returned, but not
+              4.
+          </p>
+        <p>
+              To set an <code class="classname">ArrayValue</code>,
+              construct it using <code class="methodname">IndexKey.putArray()</code>.
+              Pass the method the name of the array field. Then add
+              the index value to the <code class="classname">ArrayValue</code>
+              instance using an array of the appropriate type:
+          </p>
+        <pre class="programlisting">ArrayValue av = indexKey.putArray("testArray");
+av.add("One"); </pre>
+        <p>
+              After that, you retrieve the matching table rows, and
+              iterate over them in the same way you would any
+              other index type. For example:
+          </p>
+        <pre class="programlisting">TableIterator&lt;Row&gt; iter = tableH.tableIterator(indexKey, null, null);
+System.out.println("Results for Array value 'One' : ");
+try {
+    while (iter.hasNext()) {
+        Row rowRet = iter.next();
+        int uid = rowRet.get("uid").asInteger().get();
+        System.out.println("uid: " + uid);
+        ArrayValue avRet = rowRet.get("testArray").asArray();
+        for (FieldValue fv: avRet.toList()) {
+            System.out.println(fv.asString().get());
+        }
+    }
+} finally {
+    if (iter != null) {
+        iter.close();
+    }
+} </pre>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="usingrecords.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="indexmaps.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Using Embedded Records </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Indexing Maps</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

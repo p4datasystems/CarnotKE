@@ -1,0 +1,913 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 6. Avro Schemas</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="prev" href="bulkget.html" title="Bulk Get Operations" />
+    <link rel="next" href="avro-useschema.html" title="Using Avro Schemas" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 6. Avro Schemas</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="bulkget.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="avro-useschema.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="avroschemas"></a>Chapter 6. Avro Schemas</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="avroschemas.html#avro-creatingschemas">Creating Avro Schemas</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="avroschemas.html#avro-record-definitions">Avro Schema Definitions</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="avroschemas.html#avro-primitivedatatypes">Primitive Data Types</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="avroschemas.html#avro-complexdatatypes">Complex Data Types</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="avro-useschema.html">Using Avro Schemas</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="schemaevolution.html">Schema Evolution</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="schemaevolution.html#changeschema-rules">Rules for Changing Schema</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="schemaevolution.html#writerreaderschema">Writer and Reader Schema</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="schemaevolution.html#schemaevolutionhow">How Schema Evolution Works</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="provideschema.html">Managing Avro Schema in the Store</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="provideschema.html#schema-add-to-store">Adding Schema</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="provideschema.html#change-schema-in-store">Changing Schema</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="provideschema.html#disable-schema-in-store">Disabling and Enabling Schema</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="provideschema.html#show-schema-in-store">Showing Schema</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+        </dl>
+      </div>
+      <p>
+        Avro is used to define the data schema for a record's value. This
+        schema describes the fields allowed in the value, along with their
+        data types.
+    </p>
+      <p>
+        You apply a schema to the value portion of an Oracle NoSQL Database record using
+        Avro bindings.  These bindings are used to serialize values
+        before writing them, and to deserialize values after reading
+        them. The usage of these bindings requires your applications to use
+        the Avro data format, which means that each stored value is
+        associated with a schema.
+    </p>
+      <p>
+        The use of Avro schemas allows serialized values to be
+        stored in a very space-efficient binary format. Each value is
+        stored without any metadata other than a small internal schema
+        identifier, between 1 and 4 bytes in size. One such reference is
+        stored per key-value pair. In this way, the serialized Avro data
+        format is always associated with the schema used to serialize it,
+        with minimal overhead. This association is made transparently to
+        the application, and the internal schema identifier is managed by
+        the bindings supplied by the AvroCatalog class. The application
+        never sees or uses the internal identifier directly.
+    </p>
+      <p>
+        The Avro API is the result of an open source project provided by the
+        Apache Software Foundation. It is formally described here:
+        <a class="ulink" href="http://avro.apache.org" target="_top">http://avro.apache.org</a>.
+    </p>
+      <p>
+        In addition, Avro makes use of the Jackson APIs for parsing JSON.
+        This is likely to be of interest to you if you are integrating 
+        Oracle NoSQL Database with a JSON-based system. Jackson is formally described
+        here: <a class="ulink" href="http://wiki.fasterxml.com/JacksonHome" target="_top">http://wiki.fasterxml.com/JacksonHome</a>.
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="avro-creatingschemas"></a>Creating Avro Schemas</h2>
+            </div>
+          </div>
+        </div>
+        <div class="toc">
+          <dl>
+            <dt>
+              <span class="sect2">
+                <a href="avroschemas.html#avro-record-definitions">Avro Schema Definitions</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="avroschemas.html#avro-primitivedatatypes">Primitive Data Types</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="avroschemas.html#avro-complexdatatypes">Complex Data Types</a>
+              </span>
+            </dt>
+          </dl>
+        </div>
+        <p>
+            An Avro schema is created using JSON format. JSON is short for
+            <span class="emphasis"><em>JavaScript Object Notation</em></span>, and it is a
+            lightweight, text-based data interchange format that is
+            intended to be easy for humans to read and write. JSON is
+            described in a great many places, both on the web and in
+            after-market documentation. However, it is formally
+            described in the IETF's RFC 4627, which can be found at
+            <a class="ulink" href="http://www.ietf.org/rfc/rfc4627.txt?number=4627" target="_top">http://www.ietf.org/rfc/rfc4627.txt?number=4627</a>.
+        </p>
+        <p>
+            To describe an Avro schema, you create a JSON record which
+            identifies the schema, like this:
+        </p>
+        <pre class="programlisting">{
+     "type": "record",
+     "namespace": "com.example",
+     "name": "FullName",
+     "fields": [
+       { "name": "first", "type": "string" },
+       { "name": "last", "type": "string" }
+     ]
+} </pre>
+        <p>
+            The above example is a JSON record which describes schema that
+            might be used by the value portion of a key-value pair in the
+            store. It describes a schema for a person's full name.
+        </p>
+        <p>
+            Notice that for the record, there are four fields:
+        </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                    <code class="literal">type</code>
+                </p>
+              <p>
+                    Identifies the JSON field type. For Avro schemas, this
+                    must always be <code class="literal">record</code> when it is
+                    specified at the schema's top level. The type
+                    <code class="literal">record</code> means that there will be
+                    multiple fields defined.
+                </p>
+            </li>
+            <li>
+              <p>
+                    <code class="literal">namespace</code>
+                </p>
+              <p>
+                    This identifies the namespace in which the object
+                    lives. Essentially, this is meant to be a URI that has
+                    meaning to you and your organization. It is used to
+                    differentiate one schema type from another should they
+                    share the same name.
+                </p>
+            </li>
+            <li>
+              <p>
+                    <code class="literal">name</code>
+                </p>
+              <p>
+                    This is the schema name which, when combined with the
+                    namespace, uniquely identifies the schema within the
+                    store. In the above example, the fully qualified name
+                    for the schema is <code class="literal">com.example.FullName</code>.
+                </p>
+            </li>
+            <li>
+              <p>
+                    <code class="literal">fields</code>
+                </p>
+              <p>
+                    This is the actual schema definition. It defines what
+                    fields are contained in the value, and the data type
+                    for each field. A field can be a simple data type, such
+                    as an integer or a string, or it can be complex data.
+                    We describe this in more detail, below.
+                </p>
+              <p>
+                    Note that schema field names must begin with [A-Za-z_], and
+                    subsequently contain only [A-Za-z0-9_].
+                </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+            To use the schema, you must define it in a flat text file, and
+            then add the schema to your store using the appropriate command
+            line call.  You must also somehow provide it to your code. The
+            schema that your code is using must correspond to the schema that
+            has been added to your store.
+        </p>
+        <p>
+            The remainder of this chapter describes schemas and how to add
+            them to your store. For a description of how to use schemas in
+            your code, see
+            <a class="xref" href="avrobindings.html" title="Chapter 7. Avro Bindings">Avro Bindings</a>.
+        </p>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="avro-record-definitions"></a>Avro Schema Definitions</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                Avro schema definitions are JSON records.  Because it is a
+                record, it can define multiple fields which are organized
+                in a JSON array.  Each such field identifies the field's
+                name as well as its type. The type can be something simple,
+                like an integer, or something complex, like another record. 
+            </p>
+          <p>
+                For example, the following trivial Avro schema definition
+                can be used for a value that contains just someone's age:
+            </p>
+          <pre class="programlisting">{
+    "type" : "record",
+    "name" : "userInfo",
+    "namespace" : "my.example",
+    "fields" : [{"name" : "age", "type" : "int"}]
+} </pre>
+          <p>
+               Of course, if your data storage needs are this simple, you
+               can just use a byte-array to store the integer in
+               the store. (Although this is not considered best practice.)
+           </p>
+          <p>
+               Notice in the previous example that the top-level type for
+               the schema definition is of type <code class="literal">record</code>,
+               even though we are defining a single-field schema. Oracle NoSQL Database
+               requires you to use <code class="literal">record</code> for the
+               top-level type, even if you only need one field.
+           </p>
+          <p>
+               Also, it is best-practice to define default values for the
+               fields in your schema. While this is optional, should you
+               ever decide to change your schema, it can save you a lot of
+               trouble. To define a default value, use the
+               <code class="literal">default</code> attribute:
+           </p>
+          <pre class="programlisting">{
+    "type" : "record",
+    "name" : "userInfo",
+    "namespace" : "my.example",
+    "fields" : [{"name" : "age", "type" : "int"<strong class="userinput"><code>, "default" : -1</code></strong>}]
+}</pre>
+          <p>
+               You almost certainly will not be using single-field
+               definitions. To add multiple fields, specify an array in the
+               <code class="literal">fields</code> field. For example:
+           </p>
+          <pre class="programlisting">{
+    "type" : "record",
+    "name" : "userInfo",
+    "namespace" : "my.example",
+    "fields" : [{"name" : "username", 
+                "type" : "string", 
+                "default" : "NONE"},
+
+                {"name" : "age", 
+                "type" : "int", 
+                "default" : -1},
+
+                {"name" : "phone", 
+                "type" : "string", 
+                "default" : "NONE"},
+
+                {"name" : "housenum", 
+                "type" : "string", 
+                "default" : "NONE"},
+
+                {"name" : "street", 
+                "type" : "string", 
+                "default" : "NONE"},
+
+                {"name" : "city", 
+                "type" : "string", 
+                "default" : "NONE"},
+
+                {"name" : "state_province", 
+                "type" : "string", 
+                "default" : "NONE"},
+
+                {"name" : "country", 
+                "type" : "string", 
+                "default" : "NONE"},
+
+                {"name" : "zip", 
+                "type" : "string", 
+                "default" : "NONE"}]
+} </pre>
+          <p>
+                The above schema definition provides a lot of information.
+                However, simple as it is, you could add some more
+                structure to it by using an embedded record:
+            </p>
+          <pre class="programlisting">{
+    "type" : "record",
+    "name" : "userInfo",
+    "namespace" : "my.example",
+    "fields" : [{"name" : "username", 
+                 "type" : "string", 
+                 "default" : "NONE"},
+
+                {"name" : "age", 
+                 "type" : "int",
+                 "default" : -1},
+
+                 {"name" : "phone", 
+                  "type" : "string", 
+                  "default" : "NONE"},
+
+                 {"name" : "housenum", 
+                  "type" : "string", 
+                  "default" : "NONE"},
+
+                  {"name" : "address", 
+                   "type" : {
+                         "type" : "record",
+                         "name" : "mailing_address",
+                         "fields" : [
+                            {"name" : "street", 
+                             "type" : "string", 
+                             "default" : "NONE"},
+
+                            {"name" : "city", 
+                             "type" : "string", 
+                             "default" : "NONE"},
+
+                            {"name" : "state_prov", 
+                             "type" : "string", 
+                             "default" : "NONE"},
+
+                            {"name" : "country", 
+                             "type" : "string", 
+                             "default" : "NONE"},
+
+                            {"name" : "zip", 
+                             "type" : "string", 
+                             "default" : "NONE"}
+                          ]},
+                          "default" : {}
+                }
+    ]
+} </pre>
+          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+            <h3 class="title">Note</h3>
+            <p>
+                        It is unlikely that you will need just one record
+                        definition for your entire store. Probably you will
+                        have more than one type of record. You handle this by
+                        providing each of your record definitions
+                        individually in separate files. Your code must then
+                        be written to handle the different record
+                        definitions. We will discuss how to do that 
+                        later in this chapter.
+                    </p>
+          </div>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="avro-primitivedatatypes"></a>Primitive Data Types</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                In the previous Avro schema examples, we have only shown
+                strings and integers.  The complete list of primitive types
+                which Avro supports are:
+            </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+                        <code class="literal">null</code>
+                    </p>
+                <p>
+                        No value.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">boolean</code>
+                    </p>
+                <p>
+                        A binary value.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">int</code>
+                    </p>
+                <p>
+                        A 32-bit signed integer.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">long</code>
+                    </p>
+                <p>
+                        A 64-bit signed integer.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">float</code>
+                    </p>
+                <p>
+                        A single precision (32 bit) IEEE 754 floating-point
+                        number.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">double</code>
+                    </p>
+                <p>
+                        A double precision (64-bit) IEEE 754 floating-point
+                        number.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">bytes</code>
+                    </p>
+                <p>
+                        A sequence of 8-bit unsigned bytes.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">string</code>
+                    </p>
+                <p>
+                        A Unicode character sequence.
+                    </p>
+              </li>
+            </ul>
+          </div>
+          <p>
+                These primitive types do not have any specified attributes.
+                Primitive type names are also defined type names. For
+                example, the schema "string" is equivalent to:
+            </p>
+          <pre class="programlisting">{"type" : "string"}</pre>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="avro-complexdatatypes"></a>Complex Data Types</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                Beyond the primitive data types described in the previous
+                section, Avro also supports six complex data types:
+                Records, Enums, Arrays, Maps, Unions, and Fixed. They are
+                described in this section.
+            </p>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="avrotype-record"></a>record</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+                    A record represents an encapsulation of attributes
+                    that, all combined, describe a single thing.  The
+                    attributes that an Avro record supports are:
+                </p>
+            <div class="itemizedlist">
+              <ul type="disc">
+                <li>
+                  <p>
+                            name
+                        </p>
+                  <p>
+                            This is the record's name, and it is required.
+                            It is meant to identify the thing that the
+                            record describes.  For example:
+                            <code class="literal">PersonInformation</code> or
+                            <code class="literal">Automobiles</code> or
+                            <code class="literal">Hats</code> or
+                            <code class="literal">BankDeposit</code>.
+                        </p>
+                  <p>
+                            Note that record names must begin with [A-Za-z_], and
+                            subsequently contain only [A-Za-z0-9_].
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            namespace
+                        </p>
+                  <p>
+                            A namespace is an optional attribute that uniquely
+                            identifies the record.  It is optional, but it
+                            should be used when there is a chance that the
+                            record's name will collide with another
+                            record's name. For example, suppose you have a
+                            record that describes an employee. However, you
+                            might have several different types of
+                            employees: full-time, part time, and
+                            contractors. So you might then create all three
+                            types of records with the name
+                            <code class="literal">EmployeeInfo</code>, but then with
+                            namespaces such as <code class="literal">FullTime</code>,
+                            <code class="literal">PartTime</code> and
+                            <code class="literal">Contractor</code>. The fully
+                            qualified name for the records used to describe
+                            full time employees would then be
+                            <code class="literal">FullTime.EmployeeInfo</code>.
+                        </p>
+                  <p>
+                            Alternatively, if your store contains
+                            information for many different organizations,
+                            you might want to use a namespace that
+                            identifies the organization used by the record
+                            so as to avoid collisions in the record names.
+                            In this case, you could end up with fully
+                            qualified records with names such as
+                            <code class="literal">My.Company.Manufacturing.EmployeeInfo</code>
+                            and <code class="literal">My.Company.Sales.EmployeeInfo</code>.
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            doc
+                        </p>
+                  <p>
+                            This optional attribute simply provides documentation about
+                            the record. It is parsed and stored with the
+                            schema, and is available from the Schema object
+                            using the Avro API, but it is not used during
+                            serialization.
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            aliases
+                        </p>
+                  <p>
+                            This optional attribute provides a JSON array of strings that 
+                            are alternative names for the record. Note that
+                            there is no such thing as a rename operation
+                            for JSON schema. So if you want to refer to a
+                            schema by a name other than what you initially
+                            defined in the <code class="literal">name</code>
+                            attribute, use an alias.
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            type
+                        </p>
+                  <p>
+                            A required attribute that is either the keyword
+                            <code class="literal">record</code>, or an embedded JSON
+                            schema definition. If this attribute is for the
+                            top-level schema definition,
+                            <code class="literal">record</code> must be used.
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            fields
+                        </p>
+                  <p>
+                            A required attribute that provides a JSON array which lists 
+                            all of the fields in the schema. Each field
+                            must provide a name and a type attribute. Each field may
+                            provide doc, order, aliases and default
+                            attributes:
+                        </p>
+                  <div class="itemizedlist">
+                    <ul type="circle">
+                      <li>
+                        <p>
+                                    The name, type, doc and aliases attributes are
+                                    used in the exact same way as described earlier
+                                    in this section.
+                                </p>
+                        <p>
+                                    As is the case with record names, field
+                                    names must begin with [A-Za-z_], and
+                                    subsequently contain only [A-Za-z0-9_].
+                                </p>
+                      </li>
+                      <li>
+                        <p>
+                                    The order attribute is optional, and it
+                                    is ignored by Oracle NoSQL Database. For applications
+                                    (other than Oracle NoSQL Database) that honor it, this
+                                    attribute describes how this field
+                                    impacts sort ordering of this record.
+                                    Valid values are
+                                    <code class="literal">ascending</code>,
+                                    <code class="literal">descending</code>, or
+                                    <code class="literal">ignore</code>. For more
+                                    information on how this works, see
+                                    <a class="ulink" href="http://avro.apache.org/docs/current/spec.html#order" target="_top">http://avro.apache.org/docs/current/spec.html#order</a>.
+                                </p>
+                      </li>
+                      <li>
+                        <p>
+                                    The default attribute is optional,
+                                    but highly recommended in order to support
+                                    schema evolution. It provides a default value
+                                    for the field that is used only for the
+                                    purposes of schema evolution. Use of the default
+                                    attribute does not mean that you can fail to
+                                    initialize the field when creating a new value
+                                    object; all fields must be initialized
+                                    regardless of whether the default attribute is
+                                    present.
+                                </p>
+                        <p>
+                                    Schema evolution is described in 
+                                    <a class="xref" href="schemaevolution.html" title="Schema Evolution">Schema Evolution</a>.
+                                </p>
+                        <p>
+                                    Permitted values for the default attribute
+                                    depend on the field's type. Default values for
+                                    unions depend on the first field in the union.
+                                    Default values for bytes and fixed fields are
+                                    JSON strings.
+                                </p>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="avrotype-enum"></a>Enum</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+                    Enums are enumerated types, and it supports the
+                    following attributes
+                </p>
+            <div class="itemizedlist">
+              <ul type="disc">
+                <li>
+                  <p>
+                            name
+                        </p>
+                  <p>
+                            A required attribute that provides the name for
+                            the enum. This name must begin with [A-Za-z_],
+                            and subsequently contain only [A-Za-z0-9_].
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            namespace
+                        </p>
+                  <p>
+                            An optional attribute that qualifies the enum's
+                            name attribute.
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            aliases
+                        </p>
+                  <p>
+                            An optional attribute that provides a JSON
+                            array of alternative names for the enum.
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            doc
+                        </p>
+                  <p>
+                            An optional attribute that provides a comment
+                            string for the enum.
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            symbols
+                        </p>
+                  <p>
+                            A required attribute that provides the enum's
+                            symbols as an array of names. These symbols
+                            must begin with [A-Za-z_], and subsequently
+                            contain only [A-Za-z0-9_].
+                        </p>
+                </li>
+              </ul>
+            </div>
+            <p>
+                    For example:
+                </p>
+            <pre class="programlisting">{ "type" : "enum",
+  "name" : "Colors",
+  "namespace" : "palette",
+  "doc" : "Colors supported by the palette.",
+  "symbols" : ["WHITE", "BLUE", "GREEN", "RED", "BLACK"]}
+</pre>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="avrotype-arrays"></a>Arrays</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+                    Defines an array field. It only supports 
+                    the items attribute, which is required. The items
+                    attribute identifies the type of the items in the
+                    array:
+                </p>
+            <pre class="programlisting">{"type" : "array", "items" : "string"}</pre>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="avrotype-maps"></a>Maps</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+                    A map is an associative array, or dictionary, that
+                    organizes data as key-value pairs. The key for an Avro map
+                    must be a string. Avro maps supports only one
+                    attribute: values. This attribute is required and it
+                    defines the type for the value portion of the map.
+                </p>
+            <pre class="programlisting">{"type" : "map", "values" : "int"}</pre>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="avrotype-unions"></a>Unions</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+                    A union is used to indicate that a field may have more
+                    than one type. They are represented as JSON arrays.
+                </p>
+            <p>
+                    For example, suppose you had a field that could be
+                    either a string or null. Then the union is represented
+                    as:
+                </p>
+            <pre class="programlisting">["string", "null"]</pre>
+            <p>
+                    You might use this in the following way:
+                </p>
+            <pre class="programlisting">{
+     "type": "record",
+     "namespace": "com.example",
+     "name": "FullName",
+     "fields": [
+       { "name": "first", "type": ["string", "null"] },
+       { "name": "last", "type": "string", "default" : "Doe" }
+     ]
+} </pre>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="avrotype-fixed"></a>Fixed</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+                    A fixed type is used to declare a fixed-sized field
+                    that can be used for storing binary data.
+                    It has two required attributes: the field's name, and
+                    the size in 1-byte quantities.
+                </p>
+            <p>
+                    For example, to define a fixed field that is one
+                    megabyte in size:
+                </p>
+            <pre class="programlisting">{"type" : "fixed" , "name" : "bdata", "size" : 1048576}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="bulkget.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="avro-useschema.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Bulk Get Operations </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Using Avro Schemas</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

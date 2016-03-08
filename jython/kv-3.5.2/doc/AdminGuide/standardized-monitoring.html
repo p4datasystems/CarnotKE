@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 8.  Standardized Monitoring Interfaces</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="prev" href="perform_switchover.html" title="Performing a switchover" />
+    <link rel="next" href="oem-integration.html" title="Chapter 9.  Integrating Oracle Enterprise Manager (OEM) with Oracle NoSQL Database" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 8. 
+      Standardized Monitoring Interfaces
+   </th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="perform_switchover.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="oem-integration.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="standardized-monitoring"></a>Chapter 8. 
+      Standardized Monitoring Interfaces
+   </h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="standardized-monitoring.html#SNMP-JMX-Objects">
+            Simple Network Management Protocol (SNMP)  and Java Management
+            Extensions (JMX)
+       </a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="standardized-monitoring.html#Enabling_Monitoring">Enabling Monitoring</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="standardized-monitoring.html#Displaying_MBeans">Displaying the NoSQL DB MBeans</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+        </dl>
+      </div>
+      <p>
+     Oracle NoSQL Database allows Java Management Extensions (JMX) or 
+     Simple Network Management Protocol (SNMP) agents to be optionally available
+     for monitoring, in addition to the native monitoring provided by the Admin
+     CLI and the Admin Console. These agents provide interfaces on each storage node
+     that allow management clients to poll them for information about the status,
+     performance metrics, and operational parameters of the storage node and its
+     managed services, including replication nodes and admin instances.
+   </p>
+      <p>
+     Both these management agents can also be configured to push notifications
+     about changes in the status of any of the services, and for violations
+     of preset performance limits.
+   </p>
+      <p>
+     The JMX interface can be enabled in either the Community Edition or
+     the Enterprise Edition. To use SNMP, however, you must have the
+     Enterprise Edition.
+   </p>
+      <p>
+     The JMX service exposes MBeans for the three types of components.
+     These MBeans are the java interfaces StorageNodeMBean, RepNodeMBean,
+     and AdminMBean in the package oracle.kv.impl.mgmt.jmx. For more 
+     information about the status reported for each component, see the
+     <a class="ulink" href="../javadoc/index.html" target="_top">javadoc</a> for these interfaces.
+   </p>
+      <p>
+     The same information that is reported via JMX can also be reported
+     through SNMP. In this case, the information is organized according to
+     the Management Information Base (MIB) named OracleNosqlMIB, which is
+     included with the Enterprise Edition, in the file lib/nosql.mib.
+   </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="SNMP-JMX-Objects"></a>
+            Simple Network Management Protocol (SNMP)  and Java Management
+            Extensions (JMX)
+       </h2>
+            </div>
+          </div>
+        </div>
+        <div class="toc">
+          <dl>
+            <dt>
+              <span class="sect2">
+                <a href="standardized-monitoring.html#Enabling_Monitoring">Enabling Monitoring</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="standardized-monitoring.html#Displaying_MBeans">Displaying the NoSQL DB MBeans</a>
+              </span>
+            </dt>
+          </dl>
+        </div>
+        <p>
+           Both the SNMP and JMX agents in NoSQL Database are read-only interfaces
+           and allow you to poll the storage nodes for information about the
+           storage node and about any replication nodes or admins that are hosted on
+           the storage node. The available information includes service status
+           (such as, RUNNING, STOPPED etc.), operational parameters, and
+           performance metrics.
+       </p>
+        <p>
+           SNMP and JMX traps/notifications are also delivered for particular
+           events. Notifications are sent for every service status state change;
+           and for violations of performance limits.
+       </p>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="Enabling_Monitoring"></a>Enabling Monitoring</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+             Monitoring can be enabled on a per-storage node basis in two different
+             ways:
+         </p>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="Bootfile"></a>In the Bootfile</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+                You can specify that you want to enable JMX or SNMP in the storage
+                node's boot configuration file.  Usually, these files are created by 
+                using the makebootconfig utility, which has the following options to 
+                control these features:
+            </p>
+            <div class="itemizedlist">
+              <ul type="disc">
+                <li>
+                  <pre class="programlisting">[-mgmt {snmp|jmx|none} -pollport &lt;snmp poll port&gt;]
+</pre>
+                </li>
+                <li>
+                  <pre class="programlisting">-traphost &lt;snmp trap/notification hostname&gt;]
+</pre>
+                </li>
+                <li>
+                  <pre class="programlisting">-trapport &lt;snmp trap/notification port&gt;]
+</pre>
+                </li>
+              </ul>
+            </div>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+                When you specify -mgmt snmp, you must also specify -pollport. The
+                SNMP agent listens for connections from SNMP management clients
+                on this port. You may also optionally specify -traphost and
+                -trapport to indicate the  destination address for notifications.
+                This would be the hostname and port number of an SNMP management
+                service that is configured to receive notifications at that address.
+            </p>
+            </div>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+                When you specify -mgmt jmx, you do not have to specify -pollport.
+                A storage node's JMX agent uses the RMI registry at the same port number
+                as is used for all other RMI services managed by the storage node.
+                (This port number is specified as the -port argument to makebootconfig.)
+            </p>
+            </div>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="Changing_StorageNode"></a>By Changing Storage Node Parameters</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+                You can still enable JMX or SNMP after a store is deployed, by changing
+                the storage node parameters "mgmtClass", "mgmtPollPort", "mgmtTrapHost",
+                and "mgmtTrapPort". Similar to configuring via makebootconfig, the
+                "mgmtPollPort", "mgmtClass", "mgmtTrapHost", and "mgmtTrapPort" are used
+                only for SNMP; and the parameter "mgmtPollPort" must be set when enabling SNMP.
+            </p>
+            <p>
+                The value of the "mgmtClass" parameter may be one of the following class
+                names:
+            </p>
+            <div class="itemizedlist">
+              <ul type="disc">
+                <li>
+                  <p>To enable JMX:</p>
+                  <pre class="programlisting">oracle.kv.impl.mgmt.jmx.JmxAgent</pre>
+                </li>
+                <li>
+                  <p>To enable SNMP:</p>
+                  <pre class="programlisting">oracle.kv.impl.mgmt.snmp.SnmpAgent</pre>
+                </li>
+                <li>
+                  <p>To enable neither JMX nor SNMP:</p>
+                  <pre class="programlisting">oracle.kv.impl.mgmt.NoOpAgent</pre>
+                </li>
+              </ul>
+            </div>
+            <p>
+                For example, you could issue the following command in the
+                Admin CLI to enable SNMP on a storage node:
+            </p>
+            <pre class="programlisting">plan change-parameters -service sn1 -wait -params \
+mgmtClass=oracle.kv.impl.mgmt.snmp.SnmpAgent \
+mgmtPollPort=5002 mgmtTrapHost=192.168.26.42
+mgmtTrapPort=32767</pre>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+                Only a single implementation of the management agent may be enabled
+                at a particular time. If you enable SNMP on a storage node where JMX
+                is already enabled; the JMX agent shuts down, and the SNMP
+                agent takes its place.
+                </p>
+            </div>
+          </div>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="Displaying_MBeans"></a>Displaying the NoSQL DB MBeans</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+             To view the NoSQL Database JMX Mbeans in a monitoring tool such as JConsole, 
+             connect using the hostname and registry port for each Storage Node that
+             you would like to view.
+         </p>
+          <p>
+             For example, in this case you would specify localhost:5000 to the JConsole Remote
+             Process connection box in the New Connection tab.
+         </p>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="perform_switchover.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="oem-integration.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Performing a switchover </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 9. 
+      Integrating Oracle Enterprise Manager (OEM) with
+      Oracle NoSQL Database 
+   </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

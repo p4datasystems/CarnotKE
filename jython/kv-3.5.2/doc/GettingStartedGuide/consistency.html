@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 10. Consistency Guarantees</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="prev" href="versions.html" title="Chapter 9. Using Versions" />
+    <link rel="next" href="consistency-pre.html" title="Using Simple Consistency" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 10. Consistency Guarantees</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="versions.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="consistency-pre.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="consistency"></a>Chapter 10. Consistency Guarantees</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="consistency.html#consistency-specify">Specifying Consistency Policies</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="consistency-pre.html">Using Simple Consistency</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="consistency-time.html">Using Time-Based Consistency</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="consistency-version.html">Using Version-Based Consistency</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+          The KV store is built from some number of computers (generically
+          referred to as <span class="emphasis"><em>nodes</em></span>) that are working
+          together using a network. All data in your store is first written
+          to a master node. The master node then copies that data to other
+          nodes in the store. Nodes which are not master nodes are referred 
+          to as <span class="emphasis"><em>replicas.</em></span> 
+      </p>
+      <p>
+          Because of the relatively slow performance of distributed
+          systems, there can be a possibility that, at any given moment, a
+          write operation that was performed on the master node will not
+          yet have been performed on some other node in the store. 
+      </p>
+      <p>
+          <span class="emphasis"><em>Consistency</em></span>, then, is the policy describing
+          whether it is possible for 
+          <span>
+              a record
+          </span>
+          
+          on Node A to be different from the same 
+          <span> record </span>
+          
+          on Node B.
+      </p>
+      <p>
+          When there is a high likelihood that 
+          <span> a record </span>
+          
+          stored on one node is identical to the same 
+          <span> record </span>
+          
+          stored on another node, we say
+          that we have a <span class="emphasis"><em>high consistency guarantee</em></span>.
+          Likewise, a <span class="emphasis"><em>low consistency guarantee</em></span> means
+          that there is a good possibility that 
+          <span> a record </span>
+          
+          on one node differs in some way from the same 
+          <span> record </span>
+          
+          stored on another node.
+      </p>
+      <p>
+          You can control how high you want your consistency guarantee to
+          be. Note that the trade-off in setting a high consistency
+          guarantee is that your store's read performance might not be as
+          high as if you use a low consistency guarantee.
+      </p>
+      <p>
+          There are several different forms of consistency guarantees that
+          you can use. They are described in the following sections.
+      </p>
+      <p>
+          Note that by default, Oracle NoSQL Database uses the lowest possible consistency
+          possible.
+      </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="consistency-specify"></a>Specifying Consistency Policies</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+              To specify a consistency policy, you use one of the static
+              instances of the <code class="classname">Consistency</code> class, or
+              one of its nested classes.
+          </p>
+        <p>
+              Once you have selected a consistency policy, you can put it to
+              use in one of two ways. First, you can use it to define a default
+              consistency policy using the
+              <span>
+                    <code class="methodname">KVStoreConfig.setConsistency()</code>
+                    method.
+              </span>
+
+              
+
+              
+
+              Specifying a consistency policy in this way means that all
+              store operations will use that policy, unless they are
+              overridden on an operation by operation basis.
+          </p>
+        <p>
+              The second way to use a consistency policy is to override the
+              default policy 
+              <span>
+                  using the <code class="literal">Consistency</code> parameter on the 
+                  <code class="classname">KVStore</code> method 
+               </span>
+              
+              
+              that you are using to perform the store read operation.
+          </p>
+        <p>
+              The following example shows how to set a default consistency
+              policy for the store. We will show the per-operation method
+              of specifying consistency policies in the following sections.
+          </p>
+        <a id="consist-1"></a>
+        <pre class="programlisting">package kvstore.basicExample;
+
+import oracle.kv.Consistency;
+import oracle.kv.KVStore;
+import oracle.kv.KVStoreConfig;
+import oracle.kv.KVStoreFactory;
+
+...
+
+KVStoreConfig kconfig = new KVStoreConfig("exampleStore", 
+    "node1.example.org:5088, node2.example.org:4129");
+
+kconfig.setConsistency(Consistency.NONE_REQUIRED);
+
+KVStore kvstore = KVStoreFactory.getStore(kconfig); </pre>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="versions.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="consistency-pre.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 9. Using Versions </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Using Simple Consistency</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

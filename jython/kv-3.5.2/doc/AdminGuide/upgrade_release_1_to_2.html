@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Upgrade from NoSQL DB Release 1.0 to NoSQL DB Release 2.0</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="deploymentupdate.html" title="Chapter 5. Upgrading an Existing Oracle NoSQL Database Deployment" />
+    <link rel="prev" href="upgrade_release_2_to_2.1.html" title="Upgrade from Release 2.0 to Release 3.0" />
+    <link rel="next" href="procedures.html" title="Chapter 6. Administrative Procedures" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Upgrade from NoSQL DB Release 1.0 to NoSQL DB Release 2.0</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="upgrade_release_2_to_2.1.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 5. Upgrading an Existing Oracle NoSQL Database Deployment</th>
+          <td width="20%" align="right"> <a accesskey="n" href="procedures.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="upgrade_release_1_to_2"></a>Upgrade from NoSQL DB Release 1.0 to NoSQL DB Release 2.0</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+                NoSQL DB release 2.0 changes the internal protocols by which
+                the components of a store communicate with one other.
+                Limited cross-version compatibility has been implemented.
+                Components (including applications that use the embedded
+                client library) running NoSQL DB release 1.0 and components
+                running NoSQL DB release 2.0 can communicate with one
+                another, so that a store can remain running and available
+                to clients during the upgrade.  However, operations that
+                change the configuration of the store should not be
+                attempted while the upgrade is in progress.
+            </p>
+      <p>
+                Similarly, NoSQL DB release 2.0 changes the persistent
+                meta-data that is kept by the components of the store. When
+                a component, such as the Admin or the Replication Node,
+                first starts on the new software, it will automatically
+                convert its meta-data to the new format. Therefore it is
+                not possible to downgrade to the older NoSQL DB release
+                without restoring the store from a previous backup.
+            </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+                    Online upgrade is not supported for a store with a
+                    NoSQL DB release 1.0 topology that contains multiple
+                    zones. If your store has such a topology, please
+                    contact technical support before attempting to upgrade.
+                </p>
+      </div>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+                    The NoSQL DB release 1.0 administrative CLI program is
+                    not compatible with a NoSQL DB release 2.0 Admin service,
+                    nor vice-versa. Make sure that you are using the
+                    compatible library when running the CLI. It may be
+                    necessary to clear the cache of your web browser when
+                    you first connect to the NoSQL DB release 2. Admin
+                    Console.
+                </p>
+      </div>
+      <p>
+              To upgrade your release 1.0 installation to release 2.0,
+              perform the following steps for each node (machine) in your store:
+          </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                      Place the 2.0 software in a new KVHOME
+                      directory — referred to here as
+                      NEW_KVHOME. If nodes share this directory using
+                      NFS, this only needs to be done once for each
+                      shared directory.
+                  </p>
+          </li>
+          <li>
+            <p>
+                      If you have configured the node to automatically
+                      start the Storage Node Agent on reboot using
+                      /etc/init.d, Upstart, or some other mechanism
+                      for example, using the command:
+</p>
+            <pre class="programlisting">nohup java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar start -root &lt;kvroot&gt; ...&amp;</pre>
+            <p>
+                  First modify that script to point to NEW_KVHOME. 
+                  </p>
+          </li>
+          <li>
+            <p>
+                      For each KVROOT (usually, once per node):
+                  </p>
+            <div class="orderedlist">
+              <ol type="a">
+                <li>
+                  <p>
+                              Stop the Storage Node using the old code:
+                          </p>
+                  <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar OLD_KVHOME/lib/kvstore.jar stop -root &lt;kvroot&gt; \
+[-config &lt;configfile&gt;]</pre>
+                </li>
+                <li>
+                  <p>
+                              Restart the Storage Node using the new code:
+                          </p>
+                  <pre class="programlisting">nohup java -Xmx256m -Xms256m \
+-jar NEW_KVHOME/lib/kvstore.jar start -root &lt;kvroot&gt; \
+[-config &lt;configfile&gt;] &amp; </pre>
+                  <p>
+                              If the system is configured to
+                              automatically restart the Storage Node Agent,
+                              this step may not be necessary.
+                          </p>
+                </li>
+              </ol>
+            </div>
+          </li>
+          <li>
+            <p>
+                      Make sure that any administrative scripts or other files
+                      that reference OLD_KVHOME have been changed.
+                  </p>
+          </li>
+        </ol>
+      </div>
+      <p>
+              Once you are done, OLD_KVHOME can be removed.
+          </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="upgrade_release_2_to_2.1.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="deploymentupdate.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="procedures.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Upgrade from Release 2.0 to Release 3.0 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 6. Administrative Procedures</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

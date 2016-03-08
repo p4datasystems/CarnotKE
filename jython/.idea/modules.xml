@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Demo/Demo.iml" filepath="$PROJECT_DIR$/Demo/Demo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Neo4j/WDB/src/WDB.iml" filepath="$PROJECT_DIR$/Neo4j/WDB/src/WDB.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Neo4j/WDB-new/src/WDB-new.iml" filepath="$PROJECT_DIR$/Neo4j/WDB-new/src/WDB-new.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ast/ast.iml" filepath="$PROJECT_DIR$/ast/ast.iml" />
+      <module fileurl="file://$PROJECT_DIR$/build/build.iml" filepath="$PROJECT_DIR$/build/build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tests/data/data.iml" filepath="$PROJECT_DIR$/tests/data/data.iml" />
+      <module fileurl="file://$PROJECT_DIR$/installer/src/installer.iml" filepath="$PROJECT_DIR$/installer/src/installer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Demo/jreload/jreload.iml" filepath="$PROJECT_DIR$/Demo/jreload/jreload.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jython.iml" filepath="$PROJECT_DIR$/jython.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Neo4j/cyphersim/src/main/main.iml" filepath="$PROJECT_DIR$/Neo4j/cyphersim/src/main/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tests/modjy/modjy.iml" filepath="$PROJECT_DIR$/tests/modjy/modjy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Neo4j/WDB-new/src/parser/parser.iml" filepath="$PROJECT_DIR$/Neo4j/WDB-new/src/parser/parser.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Neo4j/WDB/src/parser/parser1.iml" filepath="$PROJECT_DIR$/Neo4j/WDB/src/parser/parser1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/installer/test/test.iml" filepath="$PROJECT_DIR$/installer/test/test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Neo4j/cyphersim/src/test/test1.iml" filepath="$PROJECT_DIR$/Neo4j/cyphersim/src/test/test1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tests/tests.iml" filepath="$PROJECT_DIR$/tests/tests.iml" />
+    </modules>
+  </component>
+</project>

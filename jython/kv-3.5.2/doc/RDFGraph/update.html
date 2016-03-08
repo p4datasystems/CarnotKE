@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 6. Update an RDF Graph</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="prev" href="bestpractices.html" title="Best Practices" />
+    <link rel="next" href="inference.html" title="Chapter 7. Inference on an RDF Graph" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 6. Update an RDF Graph</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="bestpractices.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="inference.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="update"></a>Chapter 6. Update an RDF Graph</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+        The RDF Graph feature supports SPARQL Update 
+        (<a class="ulink" href="http://www.w3.org/TR/sparql11-update/" target="_top">http://www.w3.org/TR/sparql11-update/</a>), 
+        also referred to as SPARUL. The primary programming APIs involve
+        the Apache Jena class <code class="classname">UpdateAction</code> (in package
+        <code class="literal">com.hp.hpl.jena.update</code>) and the RDF Graph
+        feature classes <code class="classname">OracleGraphNoSql</code> and
+        <code class="classname">DatasetGraphNoSql</code>. The following example
+        shows a SPARQL Update operation that removes all triples in named
+        graph <code class="literal">&lt;http://example/graph&gt;</code> from the
+        relevant model stored in the database. 
+    </p>
+      <pre class="programlisting">OracleGraphNoSql oracleGraph = .... ;
+DatasetGraphNoSql dsgos = DatasetGraphNoSql.createFrom(oracleGraph); 
+
+// SPARQL Update operation
+String szUpdateAction = "DROP GRAPH &lt;http://example/graph&gt;"; 
+// Execute the Update against a DatasetGraph instance 
+// (can be a Jena Model as well)
+UpdateAction.parseExecute(szUpdateAction, dsgos); </pre>
+      <p>
+        Note that the Oracle NoSQL Database does not keep any
+        information about an empty named graph. This implies that if
+        you invoke the CREATE GRAPH &lt;graph_name&gt; without adding
+        any triples into this graph, then no triples will be
+        created. With an Oracle NoSQL Database, you can safely skip
+        the CREATE GRAPH step, as is the case in the following example.
+    </p>
+      <pre class="programlisting">PREFIX example: &lt;http://example/&gt;
+INSERT DATA { 
+    GRAPH &lt;http://example/graph&gt; { 
+		example:anne example:age 30 . 
+		example:peter example:birthyear 1982  
+	}
+} ;
+DELETE DATA { 
+     GRAPH &lt;http://example/graph&gt; { example:anne example:age 30 . }
+}</pre>
+      <p> 
+        The following example shows a SPARQL Update operation (from ARQ
+        2.9.2) involving multiple insert and delete operations.
+    </p>
+      <pre class="programlisting">PREFIX : &lt;http://example/&gt;
+CREATE GRAPH &lt;http://example/graph&gt;;
+INSERT DATA { example:anne example:age 30 };
+INSERT DATA { example:peter example:birthyear 1982 };
+DELETE DATA { example:peter example:birthyear 1982 };
+INSERT DATA { 
+    GRAPH &lt;http://example/graph&gt; { 
+		example:anne example:age 30 . 
+		example:peter example:birthyear 1982  
+	}
+};
+DELETE DATA { 
+     GRAPH &lt;http://example/graph&gt; { example:anne example:age 30 }
+} </pre>
+      <p> 
+        After running the update operation in the previous example against
+        an empty DatasetGraphNoSql, running the SPARQL query 
+        <code class="literal">SELECT ?s ?p ?o WHERE {?s ?p ?o}</code> generates the following response:
+    </p>
+      <pre class="programlisting">-----------------------------------------------------
+| s                     | p                    | o  |
+=====================================================
+| &lt;http://example/anne&gt; | &lt;http://example/age&gt; | 30 |
+-----------------------------------------------------</pre>
+      <p>
+        Using the same data, running the SPARQL query 
+        <code class="literal">SELECT ?s ?p ?o ?g where {GRAPH ?g {?s ?p ?o}}</code>
+        generates the following response: 
+    </p>
+      <pre class="programlisting">-----------------------------------------------------------------
+| s                      | p                          | o    |
+=================================================================
+| &lt;http://example/peter&gt; | &lt;http://example/birthyear&gt; | 1982 |
+-----------------------------------------------------------------
+--------------------------------
+|             g                |
+================================
+| &lt;http://example/graph&gt; |
+--------------------------------</pre>
+      <p> 
+        In addition to using the Java API for SPARQL Update
+        operations, you can configure Apache Jena Joseki to accept SPARQL Update
+        operations by removing the comment (##) characters at the
+        start of the following lines in the joseki-config.ttl file. 
+    </p>
+      <pre class="programlisting">## &lt;#serviceUpdate&gt;
+## rdf:type joseki:Service ;
+## rdfs:label "SPARQL/Update" ;
+## joseki:serviceRef "update/service" ;
+## # dataset part
+## joseki:dataset &lt;#oracle&gt;;
+## # Service part. 
+## # This processor will not allow either the protocol,
+## # nor the query, to specify the dataset.
+## joseki:processor joseki:ProcessorSPARQLUpdate
+## .
+## 
+## &lt;#serviceRead&gt;
+## rdf:type joseki:Service ;
+## rdfs:label "SPARQL" ;
+## joseki:serviceRef "sparql/read" ;
+## # dataset part
+## joseki:dataset &lt;#oracle&gt; ; ## Same dataset
+## # Service part. 
+## # This processor will not allow either the protocol,
+## # nor the query, to specify the dataset.
+## joseki:processor joseki:ProcessorSPARQL_FixedDS ;
+## .</pre>
+      <p> 
+        After you edit the <code class="filename">joseki-config.ttl</code> file, you
+        must restart the Apache Jena Joseki Web application. You can then try a simple
+        update operation, as follows:
+    </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p> In your browser, go to:
+                http://&lt;hostname&gt;:7001/joseki/update.html
+            </p>
+          </li>
+          <li>
+            <p> Type or paste the following into the text
+                box:</p>
+            <pre class="programlisting">PREFIX example: &lt;http://example/&gt;
+INSERT DATA { 
+GRAPH &lt;http://example/g1&gt; { example:peter example:birthyear 1970  }
+}
+</pre>
+          </li>
+          <li>
+            <p>
+                Click <code class="literal">Perform SPARQL Update</code>. 
+            </p>
+          </li>
+        </ol>
+      </div>
+      <p> 
+        To verify that the update operation was successful, go to
+        http://&lt;hostname&gt;:7001/joseki and enter the following
+        query: 
+    </p>
+      <pre class="programlisting">SELECT *
+WHERE 
+{ GRAPH &lt;http://example/g1&gt;}{?s ?p ?o}}</pre>
+      <p> 
+        The response should contain the following triple: 
+    </p>
+      <pre class="programlisting">&lt;http://example/peter&gt; &lt;http://example/birthyear&gt; "1970"</pre>
+      <p>
+        A SPARQL Update can also be sent using an HTTP POST
+        operation to the
+        http://&lt;hostname&gt;:7001/joseki/update/service. For
+        example, you can use cURL (<a class="ulink" href="https://en.wikipedia.org/wiki/CURL" target="_top">https://en.wikipedia.org/wiki/CURL</a>) to send an HTTP
+        POST request to perform the update operation: 
+    </p>
+      <pre class="programlisting">curl --data "request=PREFIX%20%3A%20%3Chttp%3A%2F%2Fexample \
+        %2F%3E%20%0AINSERT%20DATA%20%7B%0A%20%20GRAPH%20%3 \
+        Chttp%3A%2F%2Fexample%2Fg1%3E%20%7B%20%3Ar%20%3Ap%20 \
+        888%20%7D%0A%7D%0A" \
+        <a class="ulink" href="http://&lt;hostname&gt;:7001/joseki/update/service" target="_top">http://&lt;hostname&gt;:7001/joseki/update/service</a></pre>
+      <p> 
+        In the preceding example, the URL encoded string is a
+        simple INSERT operation into a named graph. After decoding, it
+        reads as follows: 
+    </p>
+      <pre class="programlisting">PREFIX : &lt;http://example/&gt;
+INSERT DATA { 
+GRAPH &lt;http://example/g1&gt; { :r :p 888 } </pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="bestpractices.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="inference.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Best Practices </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 7. Inference on an RDF Graph</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

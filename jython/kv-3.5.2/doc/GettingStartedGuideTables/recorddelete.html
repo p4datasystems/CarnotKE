@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Deleting Rows from the Store</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="storewrites.html" title="Chapter 5. Writing and Deleting Table Rows" />
+    <link rel="prev" href="rowput.html" title="Writing Rows to a Table in the Store" />
+    <link rel="next" href="tableget.html" title="Chapter 6. Reading Table Rows" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Deleting Rows from the Store</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="rowput.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 5. Writing and Deleting Table Rows</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tableget.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="recorddelete"></a>Deleting Rows from the Store</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="recorddelete.html#multidelete">Using multiDelete()</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+          You delete a single row from the store using the
+          <code class="methodname">TableAPI.delete()</code> 
+           
+          method. Rows are
+          deleted based on a 
+          
+          <span>
+              <code class="classname">PrimaryKey</code>, which you obtain using the
+              <code class="methodname">Table.createPrimaryKey()</code> method.  
+          </span>
+          
+          
+          You can also require a row to match a specified version before it
+          will be deleted. To do this, use the
+          <code class="methodname">TableAPI.deleteIfVersion()</code> 
+           
+           
+          method.
+          Versions are described in 
+          <a class="xref" href="versions.html" title="Chapter 9. Using Row Versions">Using Row Versions</a>.
+      </p>
+      <p>
+          When you delete a row, you must handle the same exceptions as
+          occur when you perform any write operation on the store. See
+          <a class="xref" href="storewrites.html#writeexceptions" title="Write Exceptions">Write Exceptions</a> 
+          for a high-level description of these exceptions.
+      </p>
+      <a id="rowdelete-1"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+import oracle.kv.KVStore;
+import oracle.kv.table.PrimaryKey;
+import oracle.kv.table.Table;
+import oracle.kv.table.TableAPI;
+
+...
+
+// KVStore handle creation is omitted for brevity
+
+...
+
+TableAPI tableH = kvstore.getTableAPI();
+
+// The name you give to getTable() must be identical
+// to the name that you gave the table when you created
+// the table using the CREATE TABLE DDL statement.
+Table myTable = tableH.getTable("myTable");
+
+// Get the primary key for the row that we want to delete
+PrimaryKey primaryKey = myTable.createPrimaryKey();
+primaryKey.put("item", "Bolts");
+
+// Delete the row
+// This performs a store write operation
+tableH.delete(primaryKey, null, null); </pre>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="multidelete"></a>Using multiDelete()</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                You can delete multiple rows at once in a single atomic
+                operation, so long as they all share the shard key values.
+                Recall that shard keys are at least a subset of your
+                primary keys. The result is that you use a partial primary
+                key (which happens to be a shard key) to perform a
+                multi-delete.
+            </p>
+        <p>
+                To delete multiple rows at once, use the 
+                <code class="methodname">TableAPI.multiDelete()</code> 
+                 
+                 
+                method.
+            </p>
+        <p>
+                For example, suppose you created a table like this:
+            </p>
+        <pre class="programlisting">CREATE TABLE myTable (
+    itemType STRING,
+    itemCategory STRING,
+    itemClass STRING,
+    itemColor STRING,
+    itemSize STRING,
+    price FLOAT,
+    inventoryCount INTEGER,
+    PRIMARY KEY (SHARD(itemType, itemCategory, itemClass), itemColor,
+    itemSize)
+) </pre>
+        <p>
+            With tables containing data like this:
+        </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                    Row 1:
+                </p>
+              <table class="simplelist" border="0" summary="Simple list">
+                <tr>
+                  <td>itemType: Hats</td>
+                </tr>
+                <tr>
+                  <td>itemCategory: baseball</td>
+                </tr>
+                <tr>
+                  <td>itemClass: longbill</td>
+                </tr>
+                <tr>
+                  <td>itemColor: red</td>
+                </tr>
+                <tr>
+                  <td>itemSize: small</td>
+                </tr>
+                <tr>
+                  <td>price: 12.07</td>
+                </tr>
+                <tr>
+                  <td>inventoryCount: 127</td>
+                </tr>
+              </table>
+            </li>
+            <li>
+              <p>
+                    Row 2:
+                </p>
+              <table class="simplelist" border="0" summary="Simple list">
+                <tr>
+                  <td>itemType: Hats</td>
+                </tr>
+                <tr>
+                  <td>itemCategory: baseball</td>
+                </tr>
+                <tr>
+                  <td>itemClass: longbill</td>
+                </tr>
+                <tr>
+                  <td>itemColor: red</td>
+                </tr>
+                <tr>
+                  <td>itemSize: medium</td>
+                </tr>
+                <tr>
+                  <td>price: 13.07</td>
+                </tr>
+                <tr>
+                  <td>inventoryCount: 201</td>
+                </tr>
+              </table>
+            </li>
+            <li>
+              <p>
+                    Row 3:
+                </p>
+              <table class="simplelist" border="0" summary="Simple list">
+                <tr>
+                  <td>itemType: Hats</td>
+                </tr>
+                <tr>
+                  <td>itemCategory: baseball</td>
+                </tr>
+                <tr>
+                  <td>itemClass: longbill</td>
+                </tr>
+                <tr>
+                  <td>itemColor: red</td>
+                </tr>
+                <tr>
+                  <td>itemSize: large</td>
+                </tr>
+                <tr>
+                  <td>price: 14.07</td>
+                </tr>
+                <tr>
+                  <td>inventoryCount: 39</td>
+                </tr>
+              </table>
+            </li>
+          </ul>
+        </div>
+        <p>
+            Then in this case, you can delete all the rows sharing the
+            partial primary key <code class="literal">Hats</code>,
+            <code class="literal">baseball</code>, <code class="literal">longbill</code>
+            as follows:
+        </p>
+        <a id="multidelete-1"></a>
+        <pre class="programlisting">package kvstore.basicExample;
+
+import oracle.kv.KVStore;
+import oracle.kv.table.PrimaryKey;
+import oracle.kv.table.Table;
+import oracle.kv.table.TableAPI;
+
+...
+
+// KVStore handle creation is omitted for brevity
+
+...
+
+TableAPI tableH = kvstore.getTableAPI();
+
+// The name you give to getTable() must be identical
+// to the name that you gave the table when you created
+// the table using the CREATE TABLE DDL statement.
+Table myTable = tableH.getTable("myTable");
+
+// Get the primary key for the row that we want to delete
+PrimaryKey primaryKey = myTable.createPrimaryKey();
+primaryKey.put("itemType", "Hats");
+primaryKey.put("itemCategory", "baseball");
+primaryKey.put("itemClass", "longbill");
+
+// Exception handling omitted
+tableH.multiDelete(primaryKey, null, null); </pre>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="rowput.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="storewrites.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tableget.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Writing Rows to a Table in the Store </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 6. Reading Table Rows</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

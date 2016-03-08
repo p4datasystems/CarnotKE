@@ -1,0 +1,26 @@
+2016-03-08 07:32:26.190 UTC INFO [rg1-rn1] Current group size: 0
+2016-03-08 07:32:26.190 UTC INFO [rg1-rn1] New node rg1-rn1(-1) unknown to rep group
+2016-03-08 07:32:26.191 UTC INFO [rg1-rn1] Master changed to rg1-rn1
+2016-03-08 07:32:26.191 UTC INFO [rg1-rn1] Nascent group. rg1-rn1 is master by virtue of being the first node.
+2016-03-08 07:32:26.200 UTC INFO [rg1-rn1] Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5006
+2016-03-08 07:32:26.203 UTC INFO [rg1-rn1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-03-08 07:32:26.205 UTC INFO [rg1-rn1] Successfully added node:rg1-rn1(1) HostPort = DESKTOP-BS7Q9BS: 5006 [ELECTABLE]
+2016-03-08 07:32:26.207 UTC INFO [rg1-rn1] Refreshed 0 monitors.
+2016-03-08 07:32:26.214 UTC INFO [rg1-rn1] Node rg1-rn1 started
+2016-03-08 07:32:26.215 UTC INFO [rg1-rn1] Feeder manager accepting requests.
+2016-03-08 07:32:26.215 UTC INFO [rg1-rn1] Joining group as master
+2016-03-08 07:32:26.216 UTC INFO [rg1-rn1] Refreshed 0 monitors.
+2016-03-08 08:03:01.387 UTC INFO [rg1-rn1] Current group size: 1
+2016-03-08 08:03:01.387 UTC INFO [rg1-rn1] Existing node rg1-rn1 querying for a current master.
+2016-03-08 08:03:01.411 UTC INFO [rg1-rn1] Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5006
+2016-03-08 08:03:01.411 UTC INFO [rg1-rn1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-03-08 08:03:01.418 UTC INFO [rg1-rn1] Node rg1-rn1 started
+2016-03-08 08:03:01.418 UTC INFO [rg1-rn1] Election initiated; election #1
+2016-03-08 08:03:01.419 UTC INFO [rg1-rn1] Started election thread Tue Mar 08 02:03:01 CST 2016
+2016-03-08 08:03:03.429 UTC INFO [rg1-rn1] Winning proposal: Proposal(000001535540307b:204f1a9915cf1a263708f576f19a02f0:00000002) Value: Value:DESKTOP-BS7Q9BS$$$5006$$$rg1-rn1$$$1
+2016-03-08 08:03:03.434 UTC INFO [rg1-rn1] Master changed to rg1-rn1
+2016-03-08 08:03:03.436 UTC INFO [rg1-rn1] Election finished. Elapsed time: 2018ms
+2016-03-08 08:03:03.437 UTC INFO [rg1-rn1] Election thread exited. Group master: rg1-rn1(1)
+2016-03-08 08:03:03.437 UTC INFO [rg1-rn1] Feeder manager accepting requests.
+2016-03-08 08:03:03.441 UTC INFO [rg1-rn1] Joining group as master
+2016-03-08 08:03:03.441 UTC INFO [rg1-rn1] Refreshed 0 monitors.

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Transport parameters</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="security_xml.html" title="Chapter 6. Security.xml parameters" />
+    <link rel="prev" href="security_xml.html" title="Chapter 6. Security.xml parameters" />
+    <link rel="next" href="encryption.html" title="Chapter 7. Encryption" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Transport parameters</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="security_xml.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Security.xml parameters</th>
+          <td width="20%" align="right"> <a accesskey="n" href="encryption.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="transport_parameters"></a>Transport parameters</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            There are three standard transport types:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    ha
+                </p>
+            <p>
+                    Controls the communications between the data replication
+                    layer.
+                </p>
+          </li>
+          <li>
+            <p>
+                    client
+                </p>
+            <p>
+                    Controls most RMI communication.
+                </p>
+          </li>
+          <li>
+            <p> 
+                    internal 
+                </p>
+            <p>
+                    Controls the SSL internal authentication mechanism.
+                </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+            The following parameters can be set and associated to a transport
+            type:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    transportType
+                </p>
+            <p> 
+                    This parameter should be set to SSL.
+                </p>
+          </li>
+          <li>
+            <p>
+                    serverKeyAlias 
+                </p>
+            <p>
+                    The keystore alias that identifies the keypair used by
+                    the server end of a connection.
+                </p>
+          </li>
+          <li>
+            <p>
+                    clientKeyAlias 
+                </p>
+            <p>
+                    The keystore alias that identifies the keypair used by
+                    the client end of a connection.
+                </p>
+          </li>
+          <li>
+            <p>
+                    clientAuthRequired 
+                </p>
+            <p> 
+                    Should always be true for ha and internal transports and
+                    should be false for client transports.
+                </p>
+          </li>
+          <li>
+            <p> 
+                    clientIdentityAllowed 
+                </p>
+            <p>
+                    When clientAuthRequired is true, this specifies what
+                    client identification check should be applied. This should
+                    be set to dnmatch(XXX) where XXX is the Distinguished name
+                    from the client certificate.
+                </p>
+          </li>
+          <li>
+            <p>
+                    serverIdentityAllowed
+                </p>
+            <p>
+                    This specifies what server verification should be
+                    performed. This should normally be set to dnmatch(XXX) where
+                    XXX is the Distinguished name from the server certificate.
+                </p>
+          </li>
+          <li>
+            <p> 
+                    allowCipherSuites 
+                </p>
+            <p> 
+                    This is a comma-delimited list of SSL/TLS cipher suites
+                    that should be considered for use. For valid options, see
+                    the Java JSSE documentation corresponding to your JDK
+                    version. If not specified, the JDK default set of cipher
+                    suites is allowed.
+                </p>
+          </li>
+          <li>
+            <p>
+                    allowProtocols
+                </p>
+            <p> 
+                    This is a comma-delimited list of SSL/TLS protocols that
+                    should be considered for use. For valid options, see the
+                    Java JSSE documentation corresponding to your JDK version.
+                    If not specified, the JDK default set of protocols is used.
+                </p>
+          </li>
+          <li>
+            <p> 
+                    clientAllowCipherSuites
+                </p>
+            <p> 
+                    See allowCipherSuites for a description of the format.
+                    This parameter sets the cipher suite requirements only for
+                    the initiating side of a connection. If set, it overrides
+                    any setting of allowCipherSuites for the connection
+                    initiator.
+                </p>
+          </li>
+          <li>
+            <p> 
+                    clientAllowProtocols
+                </p>
+            <p> 
+                    See allowProtocols for a description of the format. This
+                    parameter sets the protocol requirements only for the
+                    initiating side of a connection. If set, it overrides any
+                    setting of allowProtocols for the connection initiator.                  
+                </p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="security_xml.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="security_xml.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="encryption.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 6. Security.xml parameters </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 7. Encryption</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

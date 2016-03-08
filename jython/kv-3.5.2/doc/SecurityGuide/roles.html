@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Roles</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="authorization.html" title="Chapter 9. Configuring Authorization" />
+    <link rel="prev" href="authorization.html" title="Chapter 9. Configuring Authorization" />
+    <link rel="next" href="managing_roles.html" title="Managing Roles, Privileges and Users" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Roles</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="authorization.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 9. Configuring Authorization</th>
+          <td width="20%" align="right"> <a accesskey="n" href="managing_roles.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="roles"></a>Roles</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="roles.html#system_roles">System Built-in Roles</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="roles.html#user_defined_roles">User-Defined Roles</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p> 
+            In Oracle NoSQL Database a role is a set of privileges that defines the authority and
+            responsibility of users assigned to the role. Oracle NoSQL Database provides
+            a set of system built-in roles. Users can create new roles to
+            group together privileges or other roles. 
+        </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="system_roles"></a>System Built-in Roles</h3>
+            </div>
+          </div>
+        </div>
+        <p> 
+            The following system roles are predefined:
+        </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                    <code class="literal">readonly</code>
+                </p>
+              <p>
+                    Contains the READ_ANY privilege. Users with this role can
+                    read all data in the KVStore.
+                </p>
+            </li>
+            <li>
+              <p>
+                    <code class="literal">writeonly</code>
+                </p>
+              <p>
+                    Contains the WRITE_ANY privilege. Users with this role can
+                    write to the entire KVStore.
+                </p>
+            </li>
+            <li>
+              <p>
+                    <code class="literal">readwrite</code>
+                </p>
+              <p>
+                    Contains both the READ_ANY and WRITE_ANY privileges. Users with
+                    this role can both read and write the entire KVStore. 
+                </p>
+            </li>
+            <li>
+              <p>
+                    <code class="literal">dbadmin</code>
+                </p>
+              <p>
+                    Contains the SYSDBA privilege. Users with this role can execute
+                    data definition operations, including table, index and Avro
+                    schema administration.
+                </p>
+            </li>
+            <li>
+              <p>
+                    <code class="literal">sysadmin</code>
+                </p>
+              <p> 
+                  Contains the SYSDBA, SYSVIEW and SYSOPER privileges. Users with this
+                  role can execute the same operations as <code class="literal">dbadmin</code>,
+                  and have the ability of executing all Oracle NoSQL Database management tasks. A
+                  user created with the <code class="literal">-admin</code> option is granted
+                  with the <code class="literal">sysadmin</code> role besides the default
+                  <code class="literal">public</code> role.
+                </p>
+            </li>
+            <li>
+              <p>
+                    <code class="literal">public</code>
+                </p>
+              <p> 
+                     Contains the USRVIEW and DBVIEW privileges. A default role for
+                     all Oracle NoSQL Database users, which cannot be revoked. Users with this role
+                     can login to database, view and change their own user information,
+                     as well as check and operate the plans owned by them. Users with
+                     this role can also obtain a read-only view of the data object
+                     information, for example, table names, indices, and others.
+                </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="user_defined_roles"></a>User-Defined Roles</h3>
+            </div>
+          </div>
+        </div>
+        <p> 
+                Oracle NoSQL Database allows the user to create new roles using kvstore
+                built-in privileges, and add new privilege groups to users by
+                assigning defined roles to the users. To perform role and
+                privilege granting and revocation operations, the user
+                must have a role having SYSOPER privilege, for example,
+                the sysadmin role.
+            </p>
+        <p>
+                To manage user-defined roles, use the following commands:
+            </p>
+        <pre class="programlisting">kv-&gt; execute 'CREATE ROLE role_name' </pre>
+        <pre class="programlisting">kv-&gt; execute 'DROP ROLE role_name' </pre>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+                    The names of user-defined roles are case-insensitive, and are not the same
+                    as any existing privilege names or names of system built-in roles.
+                    Also, a reserved keyword cannot be used as a role name. For 
+                    a list of reserved keywords, see
+                    <a href="../GettingStartedGuideTables/ddl_overview.html#nameconstraints" class="olink">Name Constraints</a>
+                    in the <em class="citetitle">Table Data Definition Language
+                        Overview</em> appendix of the
+                    <em class="citetitle">Oracle NoSQL Database Getting Started with the Table API</em> guide.
+                </p>
+        </div>
+        <p>
+                The following example shows how to create user-defined roles and grant/revoke
+                them to/from the users:
+            </p>
+        <p>Create 2 users using the following commands:</p>
+        <pre class="programlisting">kv-&gt; execute 'CREATE USER Ken IDENTIFIED BY \”123\” '</pre>
+        <pre class="programlisting">kv-&gt; execute 'CREATE USER Kate IDENTIFIED BY \”123\” '</pre>
+        <p>
+                Now, for example, create 2 roles – 'manager' with the
+                'write_any' privilege and 'employee' with 'read_any' privilege:
+            </p>
+        <pre class="programlisting">kv-&gt;execute 'CREATE ROLE manager'
+kv-&gt;execute 'GRANT WRITE_ANY TO manager'
+kv-&gt;execute 'CREATE ROLE employee'
+kv-&gt;execute 'GRANT READ_ANY TO employee'</pre>
+        <p>
+                Role 'employee' is granted to 'manager' (sub-role of manager). Then
+                grant role manager to user Kate, who will have both 
+                'manager' and 'employee' role. In this way, she can read and write any data
+                to the store.
+            </p>
+        <p>For example:</p>
+        <pre class="programlisting">kv-&gt; execute 'GRANT employee TO ROLE manager'
+kv-&gt; execute 'GRANT manager TO USER Kate'</pre>
+        <p>
+                Use the following command to see the user’s role status:
+            </p>
+        <pre class="programlisting">kv-&gt;execute 'SHOW USER Kate'
+id=u2 name=Kate enabled=true type=LOCAL retain-passwd=inactive
+granted-role=[public, manager]</pre>
+        <p>
+                Once the user drops a role, this role and its sub-roles will be revoked
+                automatically from any users and user-defined roles having this role.
+                However, all of its sub-roles will not be removed from the Oracle NoSQL Database.
+            </p>
+        <p>For example:</p>
+        <pre class="programlisting">kv-&gt;execute 'DROP ROLE manager'
+kv-&gt;execute 'SHOW USER Kate'
+id=u2 name=Kate enabled=true type=LOCAL retain-passwd=inactive
+granted-role=[public]</pre>
+        <p>
+               Now, the <code class="literal">show roles</code> command will list the roles
+               in the system without the 'manager' role. 
+            </p>
+        <p>
+                If the administrator decides to drop the 'manager' role, the role manager
+                is revoked from the user Kate automatically as well as the role 'employee'.
+                In the above example, Kate cannot perform any read or write operations.
+            </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+                    Circular granting of roles is not allowed. For example, role 'manager'
+                    cannot be granted to role 'employee' if role 'employee' has previously
+                    been granted to role 'manager'. 
+                </p>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="authorization.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="authorization.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="managing_roles.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 9. Configuring Authorization </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Managing Roles, Privileges and Users</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

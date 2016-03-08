@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Multiple Node Secure Deployment</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="secure_installation.html" title="Chapter 3. Performing a Secure Oracle NoSQL Database Installation" />
+    <link rel="prev" href="secure_installation.html" title="Chapter 3. Performing a Secure Oracle NoSQL Database Installation" />
+    <link rel="next" href="kerberos.html" title="Chapter 4. Kerberos Authentication Service" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Multiple Node Secure Deployment</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="secure_installation.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 3. Performing a Secure Oracle NoSQL Database Installation</th>
+          <td width="20%" align="right"> <a accesskey="n" href="kerberos.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="multi_node"></a>Multiple Node Secure Deployment</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="multi_node.html#new_multiinstallation">Adding Security to a New Installation</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="multi_node.html#existing_multiinstallation">Adding Security to an Existing Installation</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+           The following examples describe how to add security to a new or to an existing Oracle NoSQL Database 
+           multiple host deployment.
+        </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="new_multiinstallation"></a>Adding Security to a New Installation</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+           To install an Oracle NoSQL Database three node, capacity=3 (3x3) secure deployment:
+        </p>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p> 
+                Run the <code class="literal">makebootconfig</code> utility 
+                with the required <code class="literal">-store-security</code> option
+                to set up the basic store configuration with security: 
+            </p>
+              <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar makebootconfig \
+-root KVROOT -port 5000 \
+-admin 5001 -host node01 -harange 5010,5020 \
+-store-security configure -pwdmgr wallet -capacity 3</pre>
+            </li>
+            <li>
+              <p>
+                In this example, <code class="literal">-store-security
+                configure</code> is used, so the
+                <code class="literal">security configuration</code> utility
+                is run as part of the makebootconfig process and you 
+                are prompted for a password to use for your keystore file:
+            </p>
+              <pre class="programlisting">Enter a password for the Java KeyStore: </pre>
+            </li>
+            <li>
+              <p>
+                Enter a password for your store and then reenter it
+                for verification. For example, using wallet, the <code class="literal">securityconfig</code> 
+                tool will automatically generate the following security related files:
+            </p>
+              <pre class="programlisting">Enter a password for the Java KeyStore: ***********
+Re-enter the KeyStore password for verification: ***********
+Created files:
+security/security.xml
+security/store.keys
+security/store.trust
+security/store.wallet/cwallet.sso 
+security/client.security 
+security/client.trust </pre>
+            </li>
+            <li>
+              <p>
+                In a multi-host store environment, the
+                security directory and all files contained in
+                it should be copied from the first node to each server that will
+                host a Storage Node, to setup internal cluster authentication.
+                For example, the following commands assume that the different nodes are visible
+                and accessible on the current node (node01):
+            </p>
+              <pre class="programlisting">cp -R node01/KVROOT/security node02/KVROOT/
+cp -R node01/KVROOT/security node03/KVROOT/ </pre>
+              <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                <h3 class="title">Note</h3>
+                <p>
+               You may need to use a remote copying command, like scp, to do
+               the copying if the files for the different nodes are not 
+               visible on the current node.
+            </p>
+              </div>
+            </li>
+            <li>
+              <p>
+                Enable security on the other two nodes using the <code class="literal">-store-security
+                enable</code> command:
+            </p>
+              <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar makebootconfig \
+-root KVROOT \
+-host node02 \
+-port 6000 \
+-admin 6001 \
+-harange 6010,6020 \
+-capacity 3 \
+-store-security enable \
+-pwdmgr wallet
+
+java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar makebootconfig \
+-root KVROOT \
+-host node03 \
+-port 7000 \
+-admin 7001 \
+-harange 7010,7020 \
+-capacity 3 \
+-store-security enable \
+-pwdmgr wallet</pre>
+            </li>
+            <li>
+              <p>
+                Start the Storage Node Agent (SNA) on each node:
+            </p>
+              <pre class="programlisting">nohup java -Xmx256m -Xms256m \ 
+-jar KVHOME/lib/kvstore.jar start -root KVROOT&amp;</pre>
+            </li>
+            <li>
+              <p>
+                Start <code class="literal">runadmin</code> in security mode on the
+                KVStore server host (node01). To do this, use the following
+                command:
+            </p>
+              <pre class="programlisting">java -Xmx256m -Xms256m -jar KVHOME/lib/kvstore.jar \
+runadmin -port 5000 -host node01 \
+-security KVROOT/security/client.security
+Logged in admin as anonymous</pre>
+            </li>
+            <li>
+              <p> 
+                Use the <code class="literal">configure -name</code> command to specify
+                the name of the KVStore that you want to configure:
+            </p>
+              <pre class="programlisting">kv-&gt; configure -name mystore
+Store configured: mystore </pre>
+            </li>
+            <li>
+              <p> 
+                Create an admin user. In this case, user
+                <code class="literal">root</code> is defined: 
+            </p>
+              <pre class="programlisting">kv-&gt; plan create-user -name root -admin -wait
+Enter the new password: ********
+Re-enter the new password: ********
+Executed plan 6, waiting for completion...
+Plan 6 ended successfully  </pre>
+              <p>
+                For more information on user creation and
+                administration, see <a class="xref" href="config_auth.html#user_management" title="User Management">User Management</a>.
+            </p>
+            </li>
+            <li>
+              <p> 
+                Create the wallet to enable client credentials for the admin user (root):
+            </p>
+              <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar securityconfig \
+wallet create -dir KVROOT/security/login.wallet 
+java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar securityconfig wallet secret \
+-dir KVROOT/security/login.wallet -set -alias root 
+Enter the secret value to store: ********
+Re-enter the secret value for verification: ********
+Secret created
+OK </pre>
+              <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                <h3 class="title">Note</h3>
+                <p>
+               The password must match the one set for the admin
+               in the previous step.
+            </p>
+              </div>
+            </li>
+            <li>
+              <p> 
+                At this point, it is possible to connect to the
+                store as the root user. To login, you can use either the
+                <code class="literal">-username &lt;user&gt;</code> runadmin argument or specify
+                the "oracle.kv.auth.username" property in the security file.
+            </p>
+              <p>
+               In this example, a security file (adminlogin.txt) is used. To login,
+               use the following command:
+            </p>
+              <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar runadmin -port 5000 \
+-host localhost -security adminlogin 
+Logged in admin as root</pre>
+              <p>
+               The file <code class="literal">adminlogin.txt</code> should be a copy of the 
+               <code class="literal">client.security</code> file with additional properties
+               settings for authentication. The file would then contain content like this:
+            </p>
+              <pre class="programlisting">oracle.kv.auth.username=root
+oracle.kv.auth.wallet.dir=KVROOT/security/login.wallet
+oracle.kv.transport=ssl
+oracle.kv.ssl.trustStore=KVROOT/security/client.trust
+oracle.kv.ssl.protocols=TLSv1.2,TLSv1.1,TLSv1
+oracle.kv.ssl.hostnameVerifier=dnmatch(CN\=NoSQL) </pre>
+              <p>
+           For more information, see
+           <a class="xref" href="config_auth.html#user_login" title="User Login">User Login</a>.
+        </p>
+            </li>
+            <li>
+              <p> 
+                Once logged in as admin, you can create some users:
+            </p>
+              <pre class="programlisting">kv-&gt; plan create-user -name user1 -wait
+Enter the new password: ********
+Re-enter the new password: ********
+Executed plan 7, waiting for completion...
+Plan 7 ended successfully </pre>
+              <pre class="programlisting">kv-&gt; plan create-user -name user2 -wait
+Enter the new password: ********
+Re-enter the new password: ********
+Executed plan 8, waiting for completion...
+Plan 8 ended successfully </pre>
+            </li>
+            <li>
+              <p> 
+                Create the wallet to enable client credentials for each user. 
+                Typically you will reuse this wallet for all your regular users:
+            </p>
+              <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar securityconfig \
+wallet create -dir KVROOT/security/users.wallet 
+java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar securityconfig wallet secret \
+-dir KVROOT/security/users.wallet -set -alias user1 
+Enter the secret value to store: ********
+Re-enter the secret value for verification: ********
+Secret created
+OK
+java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar securityconfig wallet secret \
+-dir KVROOT/security/users.wallet -set -alias user2
+Enter the secret value to store: ********
+Re-enter the secret value for verification: ********
+Secret created OK</pre>
+              <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                <h3 class="title">Note</h3>
+                <p>
+               Each password must match the one set for each user
+               in the previous step. This wallet is independent from the admin 
+               one. It is possible to store admin/user passwords using the same wallet.
+            </p>
+              </div>
+            </li>
+            <li>
+              <p> 
+                At this point, it is possible to connect to the
+                store as a user. To login, you can use either the
+                <code class="literal">-username &lt;user&gt;</code> runadmin argument or specify
+                the "oracle.kv.auth.username" property in the security file.
+            </p>
+              <p>
+               In this example, a security file (userlogin.txt) is used. To login,
+               use the following command:
+            </p>
+              <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar runadmin -port 5000 \
+-host localhost -security userlogin 
+Logged in admin as user1</pre>
+              <p>
+               The file <code class="literal">userlogin.txt</code> should be a copy of the 
+               <code class="literal">client.security</code> file with additional properties
+               settings for authentication. The file would then contain content like this:
+            </p>
+              <pre class="programlisting">oracle.kv.auth.username=user1
+oracle.kv.auth.wallet.dir=KVROOT/security/users.wallet
+oracle.kv.transport=ssl
+oracle.kv.ssl.trustStore=KVROOT/security/client.trust
+oracle.kv.ssl.protocols=TLSv1.2,TLSv1.1,TLSv1
+oracle.kv.ssl.hostnameVerifier=dnmatch(CN\=NoSQL) </pre>
+              <p>
+           For more information, see
+           <a class="xref" href="config_auth.html#user_login" title="User Login">User Login</a>.
+        </p>
+            </li>
+          </ol>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="existing_multiinstallation"></a>Adding Security to an Existing Installation</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+        To add security to an existing three node, capacity=3 (3x3) Oracle NoSQL Database installation: 
+    </p>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p>
+                Shut down the KVStore instance on each node: 
+            </p>
+              <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar stop \
+-root KVROOT</pre>
+            </li>
+            <li>
+              <p> 
+                Run the <code class="literal">securityconfig</code>
+                utility to set up the basic store configuration with
+                security: 
+            </p>
+              <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar securityconfig</pre>
+            </li>
+            <li>
+              <p>
+                Use the <code class="literal">config create</code> command
+                with the <code class="literal">-pwdmgr</code> option to specify
+                the mechanism used to hold passwords that is needed
+                for accessing the stores. In this case, Oracle Wallet is used:
+            </p>
+              <pre class="programlisting">config create -pwdmgr wallet -root KVROOT
+Enter a password for the Java KeyStore:</pre>
+            </li>
+            <li>
+              <p>
+                Enter a password for your store and then reenter it
+                for verification. The configuration tool will
+                automatically generate some security related files: 
+            </p>
+              <pre class="programlisting">Enter a password for the Java KeyStore: ***********
+Re-enter the KeyStore password for verification: ***********
+Created files:
+security/security.xml
+security/store.keys
+security/store.trust
+security/store.wallet/cwallet.sso 
+security/client.security 
+security/client.trust  </pre>
+            </li>
+            <li>
+              <p>
+                In a multi-host store environment, the
+                security directory and all files contained in
+                it should be copied from the first node to each server that will
+                host a Storage Node, to setup internal cluster authentication.
+                For example, the following commands assume that the different nodes are visible
+                and accessible on the current node (node01):
+            </p>
+              <pre class="programlisting">cp -R node01/KVROOT/security node02/KVROOT/
+cp -R node01/KVROOT/security node03/KVROOT/ </pre>
+              <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                <h3 class="title">Note</h3>
+                <p>
+               You may need to use a remote copying command, like scp, to do
+               the copying if the files for the different nodes are not 
+               visible on the current node.
+            </p>
+              </div>
+            </li>
+            <li>
+              <p>
+               Use the <code class="literal">config add-security</code> command on each node
+               to add the security configuration you just created:
+            </p>
+              <pre class="programlisting">security-&gt; config add-security -root KVROOT -secdir security </pre>
+              <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                <h3 class="title">Note</h3>
+                <p>
+                 When running this command, the <code class="literal">securityconfig</code>
+                 tool will verify the existence of the referenced files and
+                 will update the specified bootstrap configuration file to refer
+                 to the security configuration. This process is normally done with the
+                 KVStore instance stopped, and must be performed on each Storage Node
+                 of the store.
+              </p>
+              </div>
+            </li>
+            <li>
+              <p> 
+                Start the Storage Node Agent (SNA) on each node: 
+            </p>
+              <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar start -root KVROOT&amp;</pre>
+            </li>
+            <li>
+              <p>
+                Start <code class="literal">runadmin</code> in security mode on the
+                KVStore server host (node01). To do this, use the following
+                command:
+            </p>
+              <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar \
+runadmin -port 5000 -host node01 \
+-security KVROOT/security/client.security </pre>
+              <p>
+                This command sets SSL as a connection method and
+                names a copy of the generated truststore file
+                (client.security). For more information on SSL
+                properties, see <a class="xref" href="ssl_comm.html" title="SSL communication properties">SSL communication properties</a>. 
+            </p>
+            </li>
+            <li>
+              <p> 
+                Create an admin user. In this case, user
+                <code class="literal">root</code> is defined: 
+            </p>
+              <pre class="programlisting">kv-&gt; plan create-user -name root -admin -wait
+Enter the new password: ********
+Re-enter the new password: ********
+Executed plan 8, waiting for completion...
+Plan 8 ended successfully </pre>
+              <p>
+                For more information on user creation and
+                administration, see <a class="xref" href="config_auth.html#user_management" title="User Management">User Management</a>. 
+            </p>
+            </li>
+            <li>
+              <p> 
+                Create the wallet to enable client credentials for the admin user (root):
+            </p>
+              <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar securityconfig \
+wallet create -dir KVROOT/security/login.wallet 
+java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar securityconfig wallet secret \
+-dir KVROOT/security/login.wallet -set -alias root 
+Enter the secret value to store: ********
+Re-enter the secret value for verification: ********
+Secret created
+OK </pre>
+              <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                <h3 class="title">Note</h3>
+                <p>
+               The password must match the one set for the admin
+               in the previous step.
+            </p>
+              </div>
+            </li>
+            <li>
+              <p> 
+                At this point, it is possible to connect to the
+                store as the root user. To login, you can use either the
+                <code class="literal">-username &lt;user&gt;</code> runadmin argument or specify
+                the "oracle.kv.auth.username" property in the security file.
+            </p>
+              <p>
+                In this example, the oracle.kv.security property is used. To login
+                use the following command:
+            </p>
+              <pre class="programlisting">java -Xmx256m -Xms256m \
+-Doracle.kv.security=adminlogin \
+-jar KVHOME/lib/kvstore.jar runadmin -port 5000 -host localhost
+Logged in admin as root &gt;</pre>
+              <p>
+               The file <code class="literal">adminlogin.txt</code> should be a copy of the 
+               <code class="literal">client.security</code> file with additional properties
+               settings for authentication. The file would then contain content like this:
+            </p>
+              <pre class="programlisting">oracle.kv.auth.username=root
+oracle.kv.auth.wallet.dir=KVROOT/security/login.wallet
+oracle.kv.transport=ssl
+oracle.kv.ssl.trustStore=KVROOT/security/client.trust
+oracle.kv.ssl.protocols=TLSv1.2,TLSv1.1,TLSv1
+oracle.kv.ssl.hostnameVerifier=dnmatch(CN\=NoSQL) </pre>
+              <p>
+           For more information, see
+           <a class="xref" href="config_auth.html#user_login" title="User Login">User Login</a>.
+        </p>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="secure_installation.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="secure_installation.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="kerberos.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 3. Performing a Secure Oracle NoSQL Database Installation </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 4. Kerberos Authentication Service</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

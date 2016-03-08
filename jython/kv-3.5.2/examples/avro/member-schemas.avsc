@@ -1,0 +1,26 @@
+{
+    "type": "record",
+    "name": "MemberInfo",
+    "namespace": "avro",
+    "fields": [
+        {"name": "name", "type": {
+            "type": "record",
+            "name": "FullName",
+            "fields": [
+                {"name": "first", "type": "string", "default": ""},
+                {"name": "last", "type": "string", "default": ""}
+            ]
+        }, "default": {}},
+        {"name": "age", "type": "int", "default": 0},
+        {"name": "address", "type": {
+            "type": "record",
+            "name": "Address",
+            "fields": [
+                {"name": "street", "type": "string", "default": ""},
+                {"name": "city", "type": "string", "default": ""},
+                {"name": "state", "type": "string", "default": ""},
+                {"name": "zip", "type": "int", "default": 0}
+            ]
+        }, "default": {}}
+    ]
+}

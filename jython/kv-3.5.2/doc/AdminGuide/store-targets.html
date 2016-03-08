@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Store Targets</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="oem-integration.html" title="Chapter 9.  Integrating Oracle Enterprise Manager (OEM) with Oracle NoSQL Database" />
+    <link rel="prev" href="components-of-nosql-store.html" title="Components of a NoSQL Store" />
+    <link rel="next" href="cli_command_reference.html" title="Appendix A. KVStore Command Reference" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">
+            Store Targets
+       </th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="components-of-nosql-store.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 9. 
+      Integrating Oracle Enterprise Manager (OEM) with
+      Oracle NoSQL Database 
+   </th>
+          <td width="20%" align="right"> <a accesskey="n" href="cli_command_reference.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="store-targets"></a>
+            Store Targets
+       </h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="store-targets.html#store-page">Store Page</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="store-targets.html#store-node-page">Storage Node Page</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="store-targets.html#shard-page">Shard Page</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="store-targets.html#replication-node-page">Replication Node Page</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+           The name of the Store target will be the name of the Store
+           as configured in the NoSQL Database CLI's "configure" command.
+           For more information, see 
+           <a class="xref" href="cli_command_reference.html#configure_store" title="configure">configure</a>. 
+           This name must be unique across all instances of NoSQL
+           Database that will be monitored by a given instance of EM.
+       </p>
+      <p>
+           Member components of the store have target names made up
+           of their component IDs appended to the store name.  For
+           example, in a store named myStore, a Storage Node Agent
+           with an id of "sn1" will have the target name "myStore-sn1", 
+           a Replication Node with an id of "rg1-rn1" will have the
+           target name "myStore-rg1-rn1", and so forth. The undeployed
+           StorageNodes will be "UNREGISTERED-hostname-port", for
+           example, “UNREGISTERED-example1.oracle.com-5050". Once the
+           components of a store have been added, you can find the
+           page representing the store by searching for the store
+           name in the “Search Target Name” box in the upper right
+           part of EM's home page. You can also find it via
+           <code class="literal">Targets-&gt;All Targets</code> or 
+           <code class="literal">Targets-&gt;Systems</code>.
+       </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="store-page"></a>Store Page</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+             Clicking on the Store's name in any of the lists will
+             take you to the Store's target page. 
+         </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                    The page has two large graphs showing the:
+                  </p>
+              <div class="itemizedlist">
+                <ul type="circle">
+                  <li>
+                    <p>
+                                Average Latency Averaged over all Replication
+                                Nodes in the Store
+                              </p>
+                  </li>
+                  <li>
+                    <p>
+                                Total Throughput for all Replication Nodes
+                              </p>
+                  </li>
+                </ul>
+              </div>
+              <div class="mediaobject">
+                <img src="oem-store-page.jpg" alt="Store Page Graph" />
+              </div>
+            </li>
+            <li>
+              <p>
+                    In the lower right is a list of “Undeployed Storage Node”
+                    agents.
+                 </p>
+            </li>
+            <li>
+              <p>
+                    In the lower middle is a list of “Incidents and Problems”
+                    related to the store.
+                 </p>
+            </li>
+            <li>
+              <p>
+                    On the left side of the page is the “Store Navigation”
+                    panel. This panel presents the topology of the store in
+                    three different ways:
+                 </p>
+              <div class="itemizedlist">
+                <ul type="circle">
+                  <li>
+                    <p>Types</p>
+                    <p>
+                        “By Types” groups targets by their target types; so
+                        all Replication Nodes are listed together, all Storage
+                        nodes are together, and so forth.
+                      </p>
+                  </li>
+                  <li>
+                    <p>StorageNodes</p>
+                    <p>
+                        “By StorageNodes” shows the hierarchy of
+                        <code class="literal">Store-&gt;Storage Node-&gt;Replication Node</code>.
+                        Each Replication Node is managed by a Storage Node Agent,
+                        and always resides on the same host. A Storage Node Agent
+                        may manage more than one Replication Node, and this is
+                        reflected in the tree layout of the navigation panel.
+                      </p>
+                  </li>
+                  <li>
+                    <p>Shard</p>
+                    <p>
+                        “By Shards” shows the hierarchy of 
+                        <code class="literal">Store-&gt;Shard-&gt;Replication Node</code>.
+                      </p>
+                    <div class="mediaobject">
+                      <img src="oem-store-page-1.jpg" alt="Store Navigation Panel" />
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li>
+              <p>
+                    Each component in the navigation panel has a status "up" 
+                    or "down", or "unknown" and a link to the target page
+                    (labeled "Home Page") for that component. The status
+                    can be "unknown" if the targets have yet to be reported
+                    for the first time, or if OMS cannot contact the EM Agent.
+                 </p>
+            </li>
+            <li>
+              <p>
+                    The “Store” page, (under menu item Members-&gt;Topology) shows
+                    the layout of the store as a graph, which is an overview
+                    of the "Configuration Topology".
+                 </p>
+              <div class="mediaobject">
+                <img src="oem-store-page-2.jpg" alt="Configuration Topology Overview" />
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="store-node-page"></a>Storage Node Page</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+             On the “Storage Node” page, you see the same graphs of
+             “Average Latency” and “Throughput”. Here, the graphs show
+             aggregate information for the Replication Nodes that
+             are managed by the Storage Node. The graphs display either
+             discrete series, with one line per Replication Node; or
+             it can combine the series into a single line. The choice
+             is made using the radio buttons at the bottom of the
+             graph.
+         </p>
+        <p>
+             This page also shows the operational parameters for the
+             Storage Node Agent.
+         </p>
+        <div class="mediaobject">
+          <img src="oem-storage-node-page.jpg" alt="Storage Node Page" />
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="shard-page"></a>Shard Page</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+             The “Shard” page is similar to the "Storage Node" page. It
+             shows metrics collected from multiple Replication Nodes.
+             These Replication Nodes are the ones that serve as
+             the replication group for the Shard.
+         </p>
+        <div class="mediaobject">
+          <img src="oem-shard-page.jpg" alt="Shard Page" />
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="replication-node-page"></a>Replication Node Page</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+             The “Replication Node” page shows metrics for a single
+             replication node. This page also shows the Replication
+             Node's operational parameters. 
+         </p>
+        <div class="mediaobject">
+          <img src="oem-replication-node-page.jpg" alt="Replication Node Page" />
+        </div>
+        <p>
+             On this page you can view a variety of metrics by choosing
+             <code class="literal">Replication Node-&gt;Monitoring-&gt;All Metrics</code>.
+             It also shows different time ranges.
+         </p>
+        <div class="mediaobject">
+          <img src="oem-replication-node-page-1.jpg" alt="All Metrics Page" />
+        </div>
+        <p>
+             From here you can examine and graph any of the numerous
+             metric values that are collected from the Replication Node.
+         </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="components-of-nosql-store.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="oem-integration.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="cli_command_reference.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">
+            Components of a NoSQL Store
+        </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Appendix A. KVStore Command Reference</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

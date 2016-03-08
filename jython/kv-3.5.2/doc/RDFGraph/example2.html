@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Example2.java: Load an RDF file</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="quickstart.html" title="Chapter 8. Quick Start for the RDF Graph Feature" />
+    <link rel="prev" href="example1d.html" title="Example1d.java: Create an inferred graph and add/delete triples" />
+    <link rel="next" href="example2b.html" title="Concurrent RDF data loading" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center"> Example2.java: Load an RDF file</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="example1d.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 8. Quick Start for the RDF Graph Feature</th>
+          <td width="20%" align="right"> <a accesskey="n" href="example2b.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="example2"></a> Example2.java: Load an RDF file</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            This example loads an RDF file into Oracle NoSQL Database. The
+            example also queries for all the quads stored in the Oracle
+            NoSQL Database. 
+        </p>
+      <pre class="programlisting">import com.hp.hpl.jena.query.*;
+import com.hp.hpl.jena.sparql.core.DatasetImpl;
+import org.openjena.riot.Lang;
+import oracle.rdf.kv.client.jena.*;
+
+public class Example2
+{
+  
+  public static void main(String[] args) throws Exception
+  {
+    
+String szStoreName  = args[0];
+String szHostName   = args[1];
+String szHostPort   = args[2];
+    
+System.out.println("Create Oracle NoSQL connection");
+OracleNoSqlConnection conn 
+     = OracleNoSqlConnection.createInstance(szStoreName,
+                                            szHostName, 
+                                            szHostPort);
+     
+System.out.println("Create Oracle NoSQL datasetgraph");
+OracleGraphNoSql graph = new OracleGraphNoSql(conn);
+DatasetGraphNoSql datasetGraph = DatasetGraphNoSql.createFrom(graph);
+   
+// Close graph, as it is no longer needed
+graph.close();
+    
+// Clear datasetgraph
+datasetGraph.clearRepository();
+    
+// Load data from file into the Oracle NoSQL Database
+DatasetGraphNoSql.load("example.nt", Lang.NQUADS, conn, 
+                           "http://example.org/"); // base URI
+    
+// Create dataset from Oracle NoSQL datasetgraph to execute
+Dataset ds = DatasetImpl.wrap(datasetGraph);
+   
+String szQuery = "select * where { graph ?g { ?s ?p ?o }  }"; 
+System.out.println("Execute query " + szQuery);
+    
+Query query = QueryFactory.create(szQuery);
+QueryExecution qexec = QueryExecutionFactory.create(query, ds);
+    
+try {
+      ResultSet results = qexec.execSelect();
+      ResultSetFormatter.out(System.out, results, query);
+    }
+    
+finally {
+      qexec.close();
+    }
+
+ds.close();
+conn.dispose();  
+  }
+}
+</pre>
+      <p> 
+            The following are the commands to compile and run
+            this example well as the expected output of the java
+            command.
+        </p>
+      <pre class="programlisting">javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar: ./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar:./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example2.java
+
+javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar: ./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar:./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example2 &lt;store_name&gt; \
+&lt;host_name&gt; &lt;host_port&gt;
+
+Execute query select * where { graph ?g { ?s ?p ?o } } 
+------------------------------------------
+| s                                      | 
+==========================================
+| _:b0                                   | 
+| &lt;http://example.org/alice/foaf.rdf#me&gt; | 
+| _:b0                                   | 
+| &lt;http://example.org/alice/foaf.rdf#me&gt; |
+| _:b0                                   |
+| _:b0                                   | 
+| &lt;http://example.org/alice/foaf.rdf#me&gt; | 
+| &lt;http://example.org/bob/foaf.rdf#me&gt;   | 
+| &lt;http://example.org/bob/foaf.rdf#me&gt;   |
+| &lt;http://example.org/bob/foaf.rdf#me&gt;   | 
+------------------------------------------
+-----------------------------------------------------
+| p                                                 |
+=====================================================
+| &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; |
+| &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; |
+| &lt;http://xmlns.com/foaf/0.1/homepage&gt;              |
+| &lt;http://xmlns.com/foaf/0.1/knows&gt;                 | 
+| &lt;http://www.w3.org/2000/01/rdf-schema#seeAlso&gt;    | 
+| &lt;http://xmlns.com/foaf/0.1/name&gt;                  | 
+| &lt;http://xmlns.com/foaf/0.1/name&gt;                  | 
+| &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; | 
+| &lt;http://xmlns.com/foaf/0.1/homepage&gt;              | 
+| &lt;http://xmlns.com/foaf/0.1/name&gt;                  | 
+-----------------------------------------------------
+------------------------------------------
+| o                                      |
+==========================================
+| &lt;http://xmlns.com/foaf/0.1/Person&gt;     |
+| &lt;http://xmlns.com/foaf/0.1/Person&gt;     |
+| &lt;http://example.org/bob/&gt;              |
+| _:b0                                   | 
+| &lt;http://example.org/bob/foaf.rdf&gt;      |
+| "Bob"                                  |
+| "Alice"                                |
+| &lt;http://xmlns.com/foaf/0.1/Person&gt;     |  
+| &lt;http://example.org/bob/&gt;              |  
+| "Bob"                                  |
+------------------------------------------
+------------------------------------------  
+| g                                      | 
+==========================================
+| &lt;http://example.org/alice/foaf.rdf&gt;    |
+| &lt;http://example.org/alice/foaf.rdf&gt;    | 
+| &lt;http://example.org/alice/foaf.rdf&gt;    | 
+| &lt;http://example.org/alice/foaf.rdf&gt;    | 
+| &lt;http://example.org/alice/foaf.rdf&gt;    | 
+| &lt;http://example.org/alice/foaf.rdf&gt;    | 
+| &lt;http://example.org/alice/foaf.rdf&gt;    | 
+| &lt;http://example.org/bob/foaf.rdf&gt;      |
+| &lt;http://example.org/bob/foaf.rdf&gt;      |
+| &lt;http://example.org/bob/foaf.rdf&gt;      |
+------------------------------------------   </pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="example1d.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="quickstart.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="example2b.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top"> Example1d.java: Create an inferred graph and add/delete triples </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top">  Concurrent RDF data loading</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

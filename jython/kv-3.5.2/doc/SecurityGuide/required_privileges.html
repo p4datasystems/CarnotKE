@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Appendix B. KVStore Required Privileges</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="prev" href="appendix_keytool.html" title="Appendix A. SSL keystore generation" />
+    <link rel="next" href="ddl_privileges.html" title="Privileges for DDL Commands" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Appendix B. KVStore Required Privileges</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="appendix_keytool.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="ddl_privileges.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="appendix" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="required_privileges"></a>Appendix B. KVStore Required Privileges</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+        This section lists the user required privileges to access
+        specific KVStore APIs as well as CLI commands.
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="cli_privileges"></a>Privileges for Accessing CLI Commands</h2>
+            </div>
+          </div>
+        </div>
+        <p>READ_ANY:</p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>get kv</p>
+            </li>
+          </ul>
+        </div>
+        <p>READ_ANY_TABLE or READ_TABLE (on $table_name):</p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>get table –name table_name</p>
+            </li>
+          </ul>
+        </div>
+        <p>WRITE_ANY:</p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>delete kv</p>
+            </li>
+            <li>
+              <p>put kv</p>
+            </li>
+          </ul>
+        </div>
+        <p>INSERT_ANY_TABLE or INSERT_TABLE (on $table_name):</p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>put table –name table_name</p>
+            </li>
+          </ul>
+        </div>
+        <p>DELETE_ANY_TABLE or DELETE_TABLE (on $table_name):</p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>delete table –name table_name</p>
+            </li>
+          </ul>
+        </div>
+        <p>SYSDBA:</p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>ddl</p>
+            </li>
+            <li>
+              <p>plan add-index</p>
+            </li>
+            <li>
+              <p>plan add-table</p>
+            </li>
+            <li>
+              <p>plan evolve-table</p>
+            </li>
+            <li>
+              <p>plan remove-index</p>
+            </li>
+            <li>
+              <p>plan remove-table</p>
+            </li>
+          </ul>
+        </div>
+        <p>CREATE_ANY_TABLE:</p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>plan add-table</p>
+            </li>
+          </ul>
+        </div>
+        <p>DROP_ANY_TABLE:</p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>plan remove-table</p>
+            </li>
+          </ul>
+        </div>
+        <p>EVOLVE_ANY_TABLE or EVOLVE_TABLE (on $table_name):</p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>plan evolve-table –name table_name</p>
+            </li>
+          </ul>
+        </div>
+        <p>CREATE_ANY_INDEX or CREATE_INDEX (on $table_name):</p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>plan add-index –table table_name</p>
+            </li>
+          </ul>
+        </div>
+        <p>DROP_ANY_INDEX or DROP_INDEX (on $table_name):</p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>plan remove-index –table table_name</p>
+            </li>
+          </ul>
+        </div>
+        <p>SYSVIEW:</p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>await-consistency</p>
+            </li>
+            <li>
+              <p>logtail</p>
+            </li>
+            <li>
+              <p>ping</p>
+            </li>
+            <li>
+              <p>show admins</p>
+            </li>
+            <li>
+              <p>show events</p>
+            </li>
+            <li>
+              <p>show topology</p>
+            </li>
+            <li>
+              <p>show upgrade-order</p>
+            </li>
+            <li>
+              <p>show users (all users)</p>
+            </li>
+            <li>
+              <p>show zones</p>
+            </li>
+            <li>
+              <p>verify</p>
+            </li>
+            <li>
+              <p>show parameters</p>
+            </li>
+            <li>
+              <p>show perf</p>
+            </li>
+            <li>
+              <p>show plans (plans created by all users)</p>
+            </li>
+            <li>
+              <p>show pools</p>
+            </li>
+            <li>
+              <p>show snapshots</p>
+            </li>
+          </ul>
+        </div>
+        <p>DBVIEW:</p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>show indexes</p>
+            </li>
+            <li>
+              <p>show schemas</p>
+            </li>
+            <li>
+              <p>show tables</p>
+            </li>
+          </ul>
+        </div>
+        <p>USRVIEW:</p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>show users (for self)</p>
+            </li>
+            <li>
+              <p>show plans (plans created by self)</p>
+            </li>
+            <li>
+              <p>plan change-user (for self)</p>
+            </li>
+          </ul>
+        </div>
+        <p>DBVIEW and READ_ANY:</p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>aggregate</p>
+            </li>
+          </ul>
+        </div>
+        <p>SYSOPER:</p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>change-policy</p>
+            </li>
+            <li>
+              <p>configure</p>
+            </li>
+            <li>
+              <p>plan change-parameters</p>
+            </li>
+            <li>
+              <p>plan change-storagedir</p>
+            </li>
+            <li>
+              <p>plan change-user (for all users)</p>
+            </li>
+            <li>
+              <p>plan deploy-admin</p>
+            </li>
+            <li>
+              <p>plan deploy-datacenter</p>
+            </li>
+            <li>
+              <p>plan deploy-sn</p>
+            </li>
+            <li>
+              <p>plan deploy-topology</p>
+            </li>
+            <li>
+              <p>plan deploy-zone</p>
+            </li>
+            <li>
+              <p>plan drop-user</p>
+            </li>
+            <li>
+              <p>plan failover</p>
+            </li>
+            <li>
+              <p>plan grant</p>
+            </li>
+            <li>
+              <p>plan migrate-sn</p>
+            </li>
+            <li>
+              <p>plan remove-admin</p>
+            </li>
+            <li>
+              <p>plan remove-sn</p>
+            </li>
+            <li>
+              <p>plan remove-zone</p>
+            </li>
+            <li>
+              <p>plan repair-topology</p>
+            </li>
+            <li>
+              <p>plan revoke</p>
+            </li>
+            <li>
+              <p>plan start-service</p>
+            </li>
+            <li>
+              <p>plan stop-service</p>
+            </li>
+            <li>
+              <p>pool (all sub-commands)</p>
+            </li>
+            <li>
+              <p>repair-admin-quorum</p>
+            </li>
+            <li>
+              <p>snapshot (all sub-commands)</p>
+            </li>
+            <li>
+              <p>topology (all sub-commands)</p>
+            </li>
+          </ul>
+        </div>
+        <p>No privilege is required for the following commands:</p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>connect</p>
+            </li>
+            <li>
+              <p>exit</p>
+            </li>
+            <li>
+              <p>help</p>
+            </li>
+            <li>
+              <p>hidden</p>
+            </li>
+            <li>
+              <p>history</p>
+            </li>
+            <li>
+              <p>verbose</p>
+            </li>
+            <li>
+              <p>show faults</p>
+            </li>
+            <li>
+              <p>table (all sub-commands)</p>
+            </li>
+          </ul>
+        </div>
+        <p>Privilege required depends on the command being timed:</p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>time</p>
+            </li>
+          </ul>
+        </div>
+        <p>Privilege required depends on the commands contained in the script file:</p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>load</p>
+            </li>
+          </ul>
+        </div>
+        <p>Privilege required depends on the privilege needed for the plan being referred to:</p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>plan cancel</p>
+            </li>
+            <li>
+              <p>plan execute</p>
+            </li>
+            <li>
+              <p>plan interrupt</p>
+            </li>
+            <li>
+              <p>plan wait</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="appendix_keytool.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ddl_privileges.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Appendix A. SSL keystore generation </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Privileges for DDL Commands</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

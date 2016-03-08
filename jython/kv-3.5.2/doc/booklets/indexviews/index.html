@@ -1,0 +1,1136 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Creating Index Views for Oracle NoSQL Database Applications</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Creating Index Views for Oracle NoSQL Database Applications" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>(Library Version 12.1.3.5)</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Creating Index Views for Oracle NoSQL Database Applications</th>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="article" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h1 class="title"><a id="id4278802"></a>Creating Index Views for Oracle NoSQL Database Applications</h1>
+          </div>
+          <div>
+            <div class="legalnotice">
+              <a id="id4279083"></a>
+              <p class="legalnotice-title">
+                <b>Legal Notice</b>
+              </p>
+              <span>
+        <p>
+            Copyright © 2011, 2012, 2013, 2014, 2015 Oracle and/or its affiliates. All rights
+            reserved.
+        </p>
+        <p>
+            This software and related documentation are provided under a
+            license agreement containing restrictions on use and disclosure
+            and are protected by intellectual property laws. Except as
+            expressly permitted in your license agreement or allowed by
+            law, you may not use, copy, reproduce, translate, broadcast,
+            modify, license, transmit, distribute, exhibit, perform,
+            publish, or display any part, in any form, or by any means.
+            Reverse engineering, disassembly, or decompilation of this
+            software, unless required by law for interoperability, is
+            prohibited.
+        </p>
+        <p>
+            The information contained herein is subject to change without
+            notice and is not warranted to be error-free. If you find any
+            errors, please report them to us in writing.
+        </p>
+        
+        <p>
+            If this is software or related documentation that is delivered
+            to the U.S. Government or anyone licensing it on behalf of the
+            U.S. Government, the following notice is applicable:
+        </p>
+        <p>
+            U.S. GOVERNMENT END USERS: Oracle programs, including any
+            operating system, integrated software, any programs installed
+            on the hardware, and/or documentation, delivered to U.S.
+            Government end users are "commercial computer software"
+            pursuant to the applicable Federal Acquisition Regulation and
+            agency-specific supplemental regulations. As such, use,
+            duplication, disclosure, modification, and adaptation of the
+            programs, including any operating system, integrated software,
+            any programs installed on the hardware, and/or documentation,
+            shall be subject to license terms and license restrictions
+            applicable to the programs. No other rights are granted to the
+            U.S. Government.
+        </p>
+        <p>
+            This software or hardware is developed for general use in a
+            variety of information management applications. It is not
+            developed or intended for use in any inherently dangerous
+            applications, including applications that may create a risk of
+            personal injury. If you use this software or hardware in
+            dangerous applications, then you shall be responsible to take
+            all appropriate fail-safe, backup, redundancy, and other
+            measures to ensure its safe use. Oracle Corporation and its
+            affiliates disclaim any liability for any damages caused by use
+            of this software or hardware in dangerous applications.
+        </p>
+        <p>
+            Oracle and Java are registered trademarks of Oracle and/or its
+            affiliates. Other names may be trademarks of their respective
+            owners.
+        </p>
+        <p>
+            Intel and Intel Xeon are trademarks or registered trademarks of
+            Intel Corporation. All SPARC trademarks are used under license
+            and are trademarks or registered trademarks of SPARC
+            International, Inc. AMD, Opteron, the AMD logo, and the AMD
+            Opteron logo are trademarks or registered trademarks of
+            Advanced Micro Devices. UNIX is a registered trademark of The
+            Open Group.
+        </p>
+        <p>
+            This software or hardware and documentation may provide access
+            to or information on content, products, and services from third
+            parties. Oracle Corporation and its affiliates are not
+            responsible for and expressly disclaim all warranties of any
+            kind with respect to third-party content, products, and
+            services. Oracle Corporation and its affiliates will not be
+            responsible for any loss, costs, or damages incurred due to
+            your access to or use of third-party content, products, or
+            services.
+        </p>
+    </span>
+            </div>
+          </div>
+          <div>
+            <p class="pubdate">12/3/2015</p>
+          </div>
+        </div>
+        <hr />
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="index.html#indexviews">Index Views</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="index.html#keydataindexviews">Using Traditional Key/Data Pairs</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="index.html#keyonlyindexviews">Using Key-Only Records</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="index.html#complexindexname">Complex Index Names</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="index.html#indexviewmetadata">Managing Index View Metadata</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="index.html#usingviewsmeta">Using Index View Records and Metadata Together</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="index.html#keysizeconsideration">Key Size Consideration</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="index.html#viewconsiderations">General Index Views Considerations</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="index.html#additionalwrite">Additional Write Activity</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="index.html#nonatomic">Non-Atomic Updates</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="index.html#secondary-consistency">Decoupled Consistency</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="index.html#secondaryexample">Example</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="indexviews"></a>Index Views</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+            Index views are a design pattern you use to create auxiliary
+            records that are reflective of information contained in your
+            primary records. There are many ways you can create index
+            views.  This document describes two of them.
+        </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+                This article assumes that you are using Oracle NoSQL Database's Key/Value
+                API and have read and understood the
+                <em class="citetitle">Oracle NoSQL Database Getting Started with the Key/Value API</em> guide. If you have not read
+                that manual, you should do so before reading this document.
+            </p>
+          <p>
+                Users of the Tables API have a built-in indexing mechanism
+                available, and so this article is not meant for them.
+            </p>
+        </div>
+        <p>
+            As described in 
+            <a href="../../GettingStartedGuide/recordget.html" class="olink">Reading Records</a>
+            in the <em class="citetitle">Oracle NoSQL Database Getting Started with the Key/Value API</em> guide,
+            records are generally retrieved from the store using their key
+            major and minor paths. You can either retrieve a single record
+            using its key, or you can retrieve multiple records using part
+            of a major path and then iterate over the result.
+        </p>
+        <p>
+            For example, suppose your store contains records related to
+            users. The key might contain user organization information and
+            other identifying information such as a user ID.  Each record's
+            data, however, would likely contain additional details about
+            people such as names, addresses, phone numbers, and so forth.
+            While your application may frequently want to query a person by
+            user ID (that is, by the information stored as a part of the
+            key path), it may also on occasion want to locate people by,
+            say, their name.
+        </p>
+        <p>
+            Rather than iterating through all of the records in your store,
+            examining each in turn for a given person's name, you can
+            instead create application-managed index views. There are
+            multiple ways to implement index views, but in general they are
+            simply key/value pairs where the key relates to some
+            information within your primary record, and the value
+            identifies the primary record where that information can be
+            found.
+        </p>
+        <p>
+            That is, if you had a record which contained the name
+            <code class="literal">Peter</code>, then the key for its index view would
+            contain <code class="literal">Peter</code> and the value would contain
+            the major and minor key paths to that record.
+        </p>
+      </div>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="keydataindexviews"></a>Using Traditional Key/Data Pairs</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+            This method of creating index views is, intuitively, the way many developers familiar
+            with key/value stores will think to implement views.
+        </p>
+        <p>
+            For a different approach to building index views, see
+            <a class="xref" href="index.html#keyonlyindexviews" title="Using Key-Only Records">Using Key-Only Records</a>.
+        </p>
+        <p>
+            When you use traditional key/data pair records to build index
+            views, you create records where:
+        </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                    The record's key path is some information in your primary data records that
+                    you want to quickly query.
+                </p>
+            </li>
+            <li>
+              <p>
+                    The record's data is the key path to a record which has the
+                    information contained in the key path.
+                </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+            For example, suppose you had records that used the following
+            schema:
+        </p>
+        <pre class="programlisting">
+{
+    "type": "record",
+    "name": "PrimaryDBValue",
+    "namespace": "oracle.kv.indexView",
+    "fields": [
+        {"name": "name", "type": "string", "default": ""},
+        {"name": "email", "type": "string", "default": ""},
+        {"name": "phone", "type": "string", "default": ""},
+        {"name": "date", "type": "string", "default": ""}, 
+        {"name": "org", "type": "string", "default": ""}, 
+        {"name": "cost", "type": "long", "default": 0} 
+    ]
+}
+</pre>
+        <p>
+        Further, suppose these records are stored using the employee's
+        unique identifier. For example, these records might use key paths 
+        which end with an employee unique identifier, like this:
+    </p>
+        <pre class="programlisting">/Corporate/people/10012
+/Corporate/people/10013
+/Corporate/people/10014</pre>
+        <p>
+        In this case, in order to find all people who belong to the
+        organization called "Support," you would have to iterate over 
+        every record whose key begins with <code class="literal">/Corporate/people</code>,
+        examine each in turn for the proper organization name, and
+        construct a list of those people who belong to that organization.
+        Depending on the number of people contained in your store, this
+        could be a lengthy operation.
+    </p>
+        <p>
+        The alternative is to create an index view that is keyed by the
+        organization name. For example:
+    </p>
+        <pre class="programlisting">/IndexView/People/Organization/Engineering
+/IndexView/People/Organization/Sales
+/IndexView/People/Organization/Support</pre>
+        <p>
+        There are two ways to handle the data portion of these records. One
+        way is for each record to contain a list of keys corresponding to
+        the people records belonging to that organization. That is, the
+        key:
+    </p>
+        <pre class="programlisting">/IndexView/People/Organization/Support</pre>
+        <p>
+        would return a data item with was a list of major keys for all those
+        people entries containing an 'org' of 'Support'. As an Avro schema,
+        you would represent the data item in the following way:
+    </p>
+        <pre class="programlisting">{
+    "type": "record",
+    "name": "SecondaryDBValue",
+    "namespace": "oracle.kv.indexView",
+    "fields": [
+        {"name": "arrays", 
+         "type": {"type" : "array", "items" : "string"}, 
+         "default" : []}
+  ]
+} </pre>
+        <p>
+            While this approach will work for small-to-medium sized
+            indexes, it ultimately suffers from an inability to scale.
+            It would be far too easy to create a view whose list of primary
+            keys is too large to be easily handled by your code. In fact,
+            it could easily grow so large that it could not fit into
+            available memory. Given the size of the datasets for which
+            Oracle NoSQL Database is designed, this is a very real consideration.
+        </p>
+        <p>
+            A different approach would be to create index views where each
+            record referred to one and only one primary record. That is,
+            the data portion of the record contains a simple string
+            representing the key path to a primary record. (You could also
+            carry this information as an array of key path components.)
+            However, you cannot duplicate keys in Oracle NoSQL Database, so in this case
+            the key needs to somehow be unique, based on the information
+            found in the primary record. As an example, you could create
+            keys that contains both the organization name, as well as the
+            user's UID:
+        </p>
+        <pre class="programlisting">/IndexView/People/Organization/Support/-/10012</pre>
+        <p>
+            refers to the primary record:
+        </p>
+        <pre class="programlisting">/Corporate/People/10012</pre>
+      </div>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="keyonlyindexviews"></a>Using Key-Only Records</h2>
+            </div>
+          </div>
+        </div>
+        <div class="toc">
+          <dl>
+            <dt>
+              <span class="sect2">
+                <a href="index.html#complexindexname">Complex Index Names</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="index.html#indexviewmetadata">Managing Index View Metadata</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="index.html#usingviewsmeta">Using Index View Records and Metadata Together</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="index.html#keysizeconsideration">Key Size Consideration</a>
+              </span>
+            </dt>
+          </dl>
+        </div>
+        <p>
+            Key-only index view records carry all of the record's
+            information in the key; the data portion of the record is set
+            to an empty value. In this scheme, each index view record
+            represents a single pairing between the secondary key and the
+            primary record key to which it refers. Because Oracle NoSQL Database is good
+            at scaling up to large numbers of records, this eliminates the
+            scalability problem described in the previous section. 
+        </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+                The following examples use fairly long key paths. This is
+                done for the purpose of clarity. However, in general,
+                shorter key paths are desirable and so the paths shown
+                here should not be taken as advice for how to construct the
+                keys for your records.
+            </p>
+        </div>
+        <p>
+            Essentially, key-only index view records carry the index view's
+            key in the major portion of the key path, and the corresponding
+            primary record's key in the minor portion of the key path. That
+            is:
+        </p>
+        <pre class="programlisting">/Secondary/Key/Path/-/Primary/Key/Path</pre>
+        <p>
+            The minor path component here is the key path for a primary
+            record. For example, building on the example presented in the
+            previous section, this might be:
+        </p>
+        <pre class="programlisting">/Secondary/Key/Path/-/Corporate/people/10012</pre>
+        <p>
+            The major key path portion of the record needs to carry more
+            information:
+        </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                    Index key prefix
+                </p>
+              <p>
+                    This is simply a prefix value used to indicate that the
+                    record is an index view record. The prefix can be
+                    anything so long as it is unique within your store; for example, 
+                    <code class="literal">IDX</code>.
+                </p>
+            </li>
+            <li>
+              <p>
+                    Index name
+                </p>
+              <p>
+                    This is used to differentiate this index view from
+                    other types of index views. You could use something
+                    fairly simple here that is indicative of the
+                    information indexed by this record, such as <code class="literal">EMPLOYEE_NAME</code> 
+                    or <code class="literal">EMPLOYEE_LOCATION</code>. However, it is
+                    possible to carry more complex information if you
+                    set up your code correctly. We discuss this further in
+                    <a class="xref" href="index.html#complexindexname" title="Complex Index Names">Complex Index Names</a>.
+                </p>
+            </li>
+            <li>
+              <p>
+                    Field value(s)
+                </p>
+              <p>
+                    The remainder of the major key path is a sequence
+                    of one or more field values that are obtained from the
+                    associated primary record. This is the actual
+                    information that you are indexing.
+                </p>
+              <p>
+                    In the simplest case, this portion of the key contains
+                    only one field value; for example, an organization name
+                    if what you are doing is indexing all employees by
+                    organization. For example:
+                </p>
+              <pre class="programlisting">/IDX/ORGANIZATION/Engineering/-/Corporate/people/10012</pre>
+              <p>
+                    is a view entry that indicates employee record 10012
+                    belongs to the Engineering organization.
+                </p>
+              <p>
+                    However, this portion of the key path can contain
+                    multiple field values, which gives you multi-column
+                    views. An example of this is indexing by employee
+                    common and family name, both of which would be
+                    individual fields in the primary record:
+                </p>
+              <pre class="programlisting">/IDX/EMP_NAME/Smith/Robert/-/Corporate/people/10012
+/IDX/EMP_NAME/Smith/Patricia/-/Corporate/people/40288
+/IDX/EMP_NAME/Smyth/Don/-/Corporate/people/7893</pre>
+            </li>
+          </ul>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="complexindexname"></a>Complex Index Names</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                As described above, an index name can be a simple text
+                label, especially if you have fairly simple indexing
+                requirements. However, it is possible to carry more
+                information about the view record in the index name. You
+                can construct the index name so that it identifies:
+            </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+                        The Avro schema name used by the primary record.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        A list of the field names that this view is
+                        indexing. This information is useful for
+                        generalizing your Avro binding code, especially as
+                        the number of fields you are indexing grows large,
+                        and/or as the number of types of index views grows
+                        large.
+                    </p>
+              </li>
+            </ul>
+          </div>
+          <p>
+                One way to construct an index name that carries this
+                information is to create a list object that holds all the
+                information you want in your index name, 
+                then create a one-way hash of the information using 
+                <code class="classname">java.security.MessageDigest</code>.
+                Converting the list to a byte array can be accomplished
+                using the <code class="methodname">Key.createKey()</code>
+                method. For example:
+            </p>
+          <pre class="programlisting">    /**
+     * Construct and return an index name representing an index type.
+     */
+    private String getIndexName(String schemaName,
+                                List&lt;String&gt; indexFieldNames) {
+
+        MessageDigest md = null;
+        try {
+            /* 
+             * The implementation for digestCache is omitted 
+             * for brevity.
+             */
+            md = digestCache.get();
+            List&lt;String&gt; minorPath = new ArrayList&lt;String&gt;();
+            minorPath.add(schemaName);
+            minorPath.addAll(indexFieldNames);
+            byte[] bytes = 
+                Key.createKey("", minorPath).toString().getBytes();
+            md.update(bytes);
+            return new String(md.digest());
+        } finally {
+            digestCache.free(md);
+        }
+    } </pre>
+          <p>
+                This means that the information you are carrying in your
+                index name is locked up in a one-way hash. There is no way
+                to retrieve that information from the hash, so you need to
+                store it somewhere. You need a separate set of records to
+                record index view metadata.
+            </p>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="indexviewmetadata"></a>Managing Index View Metadata</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                Index view metadata is information you want to record about
+                each index type. Mostly, this is information you use to
+                construct your index names (if you use complex index
+                names). You can also record your index state as a part of
+                your metadata.
+            </p>
+          <p>
+                You can collect your index view metadata as a series of
+                key-only records. In this case, the keys are constructed
+                like this:
+            </p>
+          <pre class="programlisting">/PREFIX/INDEX_NAME/-/SCHEMA_NAME/FNAME1/FNAME2/.../STATE</pre>
+          <p>
+                where:
+            </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+                        <code class="literal">PREFIX</code> is a unique identifier
+                        that you use to indicate this record is an index
+                        view metadata record. For example:
+                        <code class="literal">META</code>.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">INDEX_NAME</code> is the name you are using for
+                        the type of index for which you are collecting metadata. If
+                        you are using a simple name (for example,
+                        <code class="literal">ORGANIZATION</code> or
+                        <code class="literal">EMP_NAME</code>), then use that. If you
+                        are using a hashed complex name, such as is
+                        described in the previous section, then use that
+                        here.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">SCHEMA_NAME</code> is the name of the
+                        Avro schema used by the primary record. This must
+                        be the same schema name as you used to construct
+                        your complex index name.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">FNAME1</code>,
+                        <code class="literal">FNAME2</code>, and so forth, are the
+                        primary record field names this view type is
+                        using. Again, these must be identical to the field
+                        names you used to construct your complex index
+                        name. They must also appear in the same order as
+                        the field values used to construct your index
+                        view record keys.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal">STATE</code> is the current state of
+                        the index type represented by this metadata record.
+                        Examples of view <code class="literal">STATE</code> are:
+                    </p>
+                <div class="itemizedlist">
+                  <ul type="circle">
+                    <li>
+                      <p>
+                                <code class="literal">BUILDING</code> to indicate
+                                that the index view is currently being
+                                built.
+                            </p>
+                    </li>
+                    <li>
+                      <p>
+                                <code class="literal">DELETING</code>
+                                to indicate that the index view is
+                                currently being deleted.
+                            </p>
+                    </li>
+                    <li>
+                      <p>
+                                <code class="literal">READY</code> to indicate that
+                                the index view is ready for use.
+                            </p>
+                    </li>
+                  </ul>
+                </div>
+                <p>
+                        These are just some suggestions.
+                        <code class="literal">STATE</code> can really indicate
+                        anything that is useful to your code. But in the
+                        example given here, your code would only use the
+                        view if its state was <code class="literal">READY</code>.
+                    </p>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="usingviewsmeta"></a>Using Index View Records and Metadata Together</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                Putting it all together, to create an index view that uses
+                complex index names, you would:
+            </p>
+          <div class="orderedlist">
+            <ol type="1">
+              <li>
+                <p>
+                        Create the index name, using the schema and field
+                        names that you are working with.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        Create the metadata record, as described in the
+                        previous section, setting its state to
+                        <code class="literal">BUILDING</code>.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        Iterate over your store, creating a view record for
+                        each primary record that you want to index. Use the
+                        index name you created in step 1 as part of the
+                        view record's major key path. See
+                        <a class="xref" href="index.html#keyonlyindexviews" title="Using Key-Only Records">Using Key-Only Records</a>
+                        and
+                        <a class="xref" href="index.html#complexindexname" title="Complex Index Names">Complex Index Names</a>
+                        for more information.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        When you are done creating the view, change the
+                        status for the metadata record to
+                        <code class="literal">READY</code>. (To do this, you
+                        delete the old record and create a new one.)
+                    </p>
+              </li>
+            </ol>
+          </div>
+          <p>
+                To use (read) index views, you:
+            </p>
+          <div class="orderedlist">
+            <ol type="1">
+              <li>
+                <p>
+                        Check the corresponding metadata record to make
+                        sure the index view is in a <code class="literal">READY</code>
+                        state. If it is not, you can abort the read, or
+                        pause until the state has changed to
+                        <code class="literal">READY</code>.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        Iterate over the index view records that interest
+                        you for the search.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        For each such record, use it to retrieve the
+                        corresponding primary record.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        For each primary record, use the schema and field
+                        names, contained in the corresponding metadata
+                        record, along with your Avro binding, to
+                        serialize/deserialize the primary record's data.
+                    </p>
+              </li>
+            </ol>
+          </div>
+          <p>
+                To update an existing record, you:
+            </p>
+          <div class="orderedlist">
+            <ol type="1">
+              <li>
+                <p>
+                        Retrieve the primary record.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        Retrieve the index view record.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        Modify the primary record as needed.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        Modify the index view record to reflect the changes
+                        to the primary record.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        Check the status of the index view to ensure that
+                        it is in a READY state. If it is, then write the
+                        index view record back to the store.
+                    </p>
+                <p>
+                        If the index view status is not READY, then either
+                        wait for the status to change to READY before
+                        writing the index view record, or fail the
+                        operation.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        Write the modified primary record back to the
+                        store.
+                    </p>
+              </li>
+            </ol>
+          </div>
+          <p>
+                An example of performing all these operations is available
+                in your Oracle NoSQL Database distribution. See
+                <a class="xref" href="index.html#secondaryexample" title="Example">Example</a>
+                for details.
+            </p>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="keysizeconsideration"></a>Key Size Consideration</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                The longer your keys, the more memory you are using at your
+                nodes. Keys can therefore grow so large that they harm your
+                system's overall read/write throughput due to an inability
+                to maintain enough records in cache.
+            </p>
+          <p>
+                The key-only design pattern described here will probably result in very long
+                keys. Whether those key sizes are so large that they cause
+                you a performance problem is a function of how long your
+                keys actually are, how many keys you need to manage, and
+                how much memory is available on your nodes.
+            </p>
+          <p>
+                If your keys are so large that they will cause an I/O
+                throughput issue, then you need to implement some other
+                design approach.
+            </p>
+        </div>
+      </div>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="viewconsiderations"></a>General Index Views Considerations</h2>
+            </div>
+          </div>
+        </div>
+        <div class="toc">
+          <dl>
+            <dt>
+              <span class="sect2">
+                <a href="index.html#additionalwrite">Additional Write Activity</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="index.html#nonatomic">Non-Atomic Updates</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="index.html#secondary-consistency">Decoupled Consistency</a>
+              </span>
+            </dt>
+          </dl>
+        </div>
+        <p>
+            While creating index views can vastly improve
+            your stores read performance (depending on the size of your
+            data set, and the kinds of questions you want to ask of it),
+            there are some limitations of which you need to be aware.
+        </p>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="additionalwrite"></a>Additional Write Activity</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                Maintaining an index view necessarily requires
+                additional read and write activity over and above what is
+                required just to maintain a primary record. Whether this
+                additional activity will measurably affect your write
+                throughput depends on the size of the dataset you are
+                indexing, and the size of your views. 
+            </p>
+          <p>
+                For small datasets and small views, this additional
+                activity will not be noticeable. But as the size of the
+                data to be indexed grows, and so your views themselves
+                grow larger, you might notice a reduction in throughput,
+                particularly in write throughput. Given this, when planning
+                your store size, be sure to consider overhead to maintain
+                index views.
+            </p>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="nonatomic"></a>Non-Atomic Updates</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                Because index views are managed by the application, Oracle NoSQL Database
+                cannot insure that operations performed on the primary
+                record are atomic with operations performed on the
+                corresponding view records.  This means that it is possible
+                to change your primary records, but have the corresponding
+                operation(s) on your index view(s) fail thereby causing
+                them to be out of sync with the primary data. The reverse
+                can also happen, where the index view update operation is
+                successful, but the update to the primary record fails.
+            </p>
+          <p>
+                Note that for some workloads, non-atomic updates to primary
+                records and their index views can be desirable. This is
+                sometimes the case for workloads that require the maximum
+                read and write throughput possible. For these types of
+                applications, consistency between the index view and the
+                primary data is not nearly as important as overall
+                performance. 
+            </p>
+          <p>
+                That said, you should still make an attempt to determine
+                whether your indexes are out of sync relative to your
+                primary data, so that you can perform compensating
+                transactions if your code detects a problem.
+                You may also need to flag your index views as being in an
+                unsafe state if some aspect of the update operations fail.
+                The safest way (not necessarily the fastest way) to update
+                a primary record for which you are maintaining an index
+                view is:
+            </p>
+          <div class="orderedlist">
+            <ol type="1">
+              <li>
+                <p>
+                        Check whether your view is in a READY state. If
+                        it is, proceed with the update operation. If it
+                        is not, either pause and wait for the state to
+                        change, or abort the update entirely.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        Update your primary record as necessary, but
+                        <span class="emphasis"><em>do not write the results back to the
+                        store yet.</em></span>
+                    </p>
+              </li>
+              <li>
+                <p>
+                        Update your index view to be reflective of the
+                        changes you have made to the primary record.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        Write the primary record to the store.
+                        If the write fails, perform a compensating
+                        transaction to fix the problem. Either retry the
+                        write operation with the updated record, or check
+                        to ensure that the record which is currently in the store 
+                        is not corrupted or altered in any way.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        If the update to the primary record succeeds, then 
+                        write the changes to the index view to the store.
+                        If this succeeds, then you are done with your
+                        update.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        If the update to the index view record fails, then
+                        immediately mark your index view as being in a
+                        non-READY state. How you do this depends on how you
+                        are storing index view state flags, but assuming
+                        you are using metadata records, that needs to be
+                        updated before you take steps to fix your index
+                        view.
+                    </p>
+              </li>
+            </ol>
+          </div>
+          <p>
+                A similar algorithm is required for the creation and
+                deletion of primary records.
+            </p>
+          <p>
+                Of course, this means that before you perform a read with
+                your index view, you need to check the view's state before
+                you proceed. If the view's state is not READY, then you
+                need to either pause until the state is READY, or you need
+                to abandon the read entirely. In addition to this check,
+                you also need to ensure that your index views are in a
+                state that is consistent with the primary records. This is
+                described next.
+            </p>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="secondary-consistency"></a>Decoupled Consistency</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                As described above, index views can be out of sync with
+                your primary data due to some generic failure in the update
+                operation. Your code needs to be robust enough to recognize
+                when this has happened, and take corrective action
+                (including rebuilding the index view, if necessary).
+                A related, but temporary, problem is that for
+                any given node, changes to your views may not have caught up
+                to changes to your primary records due to replication
+                delays. Note that it is also possible for views on the
+                local node to have been updated when the corresponding
+                primary data modifications have not yet arrived.
+            </p>
+          <p>
+                Again, for some workloads, it might not be critically
+                important that your views are in sync with your primary
+                data. However, if your workload is such that you need
+                assurance your views accurately reflect your primary
+                data, you need to make use of Oracle NoSQL Database's built-in consistency
+                guarantees.
+            </p>
+          <p>
+                One way to do this is to use an absolute consistency
+                guarantee for any reads that you perform using your views.
+                But this can ultimately harm your read and write
+                performance because absolute consistency requires the read
+                operation to be performed on a master node. 
+                (See 
+                 <a href="../../GettingStartedGuide/consistency.html#consistency-pre" class="olink">Using Predefined Consistency</a>
+                 in the <em class="citetitle">Oracle NoSQL Database Getting Started with the Key/Value API</em> guide for
+                 details.) For this reason, you should use absolute
+                 consistency only when it is truly critical that your views
+                 are completely up-to-date relative to your primary data.
+            </p>
+          <p>
+                A better way to resolve the problem is to use a version-based
+                consistency guarantee when using your index views.
+                You will need to check the version information on
+                both the primary data and the views when
+                performing your reads in order to ensure that they are in
+                sync. You may also need to create a way to transfer version
+                information between different processes in your
+                application, if one process is responsible for performing
+                store writes and other processes are performing store
+                reads. For details on using version-based consistency, see
+                <a href="../../GettingStartedGuide/consistency.html#consistency-version" class="olink">Using Version-Based Consistency</a>
+                in the <em class="citetitle">Oracle NoSQL Database Getting Started with the Key/Value API</em> guide.
+            </p>
+        </div>
+      </div>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="secondaryexample"></a>Example</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+            An example of creating and managing index views is
+            included in the Oracle NoSQL Database distribution. It can be found here:
+        </p>
+        <pre class="programlisting">&lt;KVROOT&gt;/examples/secondaryindex</pre>
+        <p>
+            The example exposes a command line interface that allows you to
+            create and delete index views, retrieve the primary data
+            referred to by an index view record, and insert, delete, and
+            update new primary records. The application is a very simple
+            application that allows you to create views against customer
+            billing records.
+        </p>
+        <p>
+            The example uses key-only index view records, with complex
+            index names and associated metadata records. The code that is
+            responsible for managing the views and associated metadata is
+            contained in this class:
+        </p>
+        <pre class="programlisting">&lt;KVROOT&gt;/examples/secondaryindex/IndexViewService.java</pre>
+        <p>
+            Note that the example is one expression of the index view
+            design pattern.  Its operations may not be a match for the way
+            your code operates, but it should serve as good design guide.
+            Feel free to adapt, expand, or simplify the example code to
+            match your own design needs and goals. 
+        </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+    </div>
+  </body>
+</html>

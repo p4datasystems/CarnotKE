@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 4. Writing and Deleting Records</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="prev" href="values.html" title="Values" />
+    <link rel="next" href="recordput.html" title="Writing Records to the Store" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 4. Writing and Deleting Records</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="values.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="recordput.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="storewrites"></a>Chapter 4. Writing and Deleting Records</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="storewrites.html#writeexceptions">Write Exceptions</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="recordput.html">Writing Records to the Store</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="recordput.html#putOtherForms">Other put Operations</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="recorddelete.html">Deleting Records from the Store</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="recorddelete.html#multidelete">Using multiDelete()</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+        </dl>
+      </div>
+      <p>
+        This chapter discusses two different write operations: putting
+        records into the store, and then deleting them. 
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="writeexceptions"></a>Write Exceptions</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+            There are many exceptions that you should handle whenever you
+            perform a write operation to the store. Some of the more common
+            exceptions are described here. For simple cases where you use
+            default policies or are not using a secure store, you can
+            probably avoid explicitly handling these. However, as your code
+            complexity increases, so too will the desirability of
+            explicitly managing these exceptions.
+        </p>
+        <p>
+            The first of these is
+            <code class="classname">DurabilityException</code>.  This exception
+            indicates that the operation cannot be completed because the
+            durability policy cannot be met. For more information, see
+            <a class="xref" href="durability.html" title="Chapter 11. Durability Guarantees">Durability Guarantees</a>.
+        </p>
+        <p>
+            The second is <code class="classname">RequestTimeoutException</code>. This
+            simply means that the operation could not be completed within the
+            amount of time provided by the store's timeout property. This
+            probably indicates an overloaded system. Perhaps your network is
+            experiencing a slowdown, or your store's nodes are overloaded with
+            too many operations (especially write operations) coming in too
+            short of a period of time.
+        </p>
+        <p>
+            To handle a <code class="classname">RequestTimeoutException</code>,
+            you could simply log the error and move on, or you could pause for
+            a short period of time and then retry the operation. You could
+            also retry the operation, but use a longer timeout value.
+            (There is a version of the <code class="methodname">TableAPI.put()</code>
+            method that allows you to specify a timeout value for that
+            specific operation.)
+        </p>
+        <p>
+            You can also receive an <code class="classname">IllegalArgumentException</code>,
+            which will be thrown if a <code class="classname">Row</code> that you
+            are writing to the store does not have a primary key or is
+            otherwise invalid.
+        </p>
+        <p>
+            You can also receive a general
+            <code class="classname">FaultException</code>, which indicates that
+            some exception occurred which is neither a problem with
+            durability nor a problem with the request timeout.  Your only
+            recourse here is to either log the error and move along, or
+            retry the operation.
+        </p>
+        <p>
+            Finally, if you are using a secure store that requires
+            authentication, you can receive
+            <code class="classname">AuthenticationFailureException</code> or
+            <code class="classname">AuthenticationRequiredException</code> if you
+            do not provide the proper authentication credentials. When
+            using a secure store, you can also see
+            <code class="classname">UnauthorizedException</code>, which means you
+            are attempting an operation for which the authenticated user
+            does not have the proper permissions.
+        </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="values.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="recordput.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Values </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Writing Records to the Store</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

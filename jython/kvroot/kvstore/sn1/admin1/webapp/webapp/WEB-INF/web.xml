@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+  
+  <!-- Servlets -->
+  <servlet>
+    <servlet-name>AdminUIService</servlet-name>
+    <servlet-class>oracle.kv.impl.admin.webapp.server.AdminUIServiceImpl</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>LogDownloadService</servlet-name>
+    <servlet-class>oracle.kv.impl.admin.webapp.server.LogDownloadService</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>AdminUIService</servlet-name>
+    <url-pattern>/kvadminui/AdminUIService</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>LogDownloadService</servlet-name>
+    <url-pattern>/kvadminui/LogDownloadService</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Default page to serve -->
+  <welcome-file-list>
+    <welcome-file>KVAdminUI.html</welcome-file>
+  </welcome-file-list>
+
+</web-app>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Modify Table Definitions</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="ddl_overview.html" title="Appendix A. Table Data Definition Language Overview" />
+    <link rel="prev" href="tablecreationddl.html" title="CREATE TABLE" />
+    <link rel="next" href="deletetableddl.html" title="DROP TABLE" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Modify Table Definitions</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tablecreationddl.html">Prev</a> </td>
+          <th width="60%" align="center">Appendix A. Table Data Definition Language Overview</th>
+          <td width="20%" align="right"> <a accesskey="n" href="deletetableddl.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="modifytableddl"></a>Modify Table Definitions</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="modifytableddl.html#addfield">ALTER TABLE ADD field</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="modifytableddl.html#deletefield">ALTER TABLE DROP field</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+            Use <code class="literal">ALTER TABLE</code> statements to either add new
+            fields to a table definition, or delete a currently existing
+            field definition. 
+        </p>
+      <p>
+            You cannot modify an existing field directly.  Instead, you
+            must delete the field, then add the field back using the new
+            definition. Note that this will cause all existing data
+            associated with the current field to be deleted.
+        </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="addfield"></a>ALTER TABLE ADD field</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                To add a field to an existing table, use the
+                <code class="literal">ADD</code> statement:
+            </p>
+        <pre class="programlisting">ALTER TABLE <span class="emphasis"><em>table-name</em></span> (ADD <span class="emphasis"><em>field-definition</em></span>)</pre>
+        <p>
+                See <a class="xref" href="tablecreationddl.html#fielddefddl" title="Field Definitions">Field Definitions</a> 
+                for a description of what should appear in 
+                <span class="emphasis"><em>field-definitions</em></span>, above. For example:
+            </p>
+        <pre class="programlisting">ALTER TABLE Users (ADD age INTEGER)</pre>
+        <p>
+                You can also add fields to nested records. For example, if
+                you have the following table definition:
+            </p>
+        <pre class="programlisting">CREATE TABLE u (id INTEGER,
+                info record(firstName String)),
+                PRIMARY KEY(id)) </pre>
+        <p>
+                then you can add a field to the nested record by using dot
+                notation to identify the nested table, like this:
+            </p>
+        <pre class="programlisting">ALTER TABLE u(ADD info.lastName STRING)</pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="deletefield"></a>ALTER TABLE DROP field</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                To delete a field from an existing table, use the
+                <code class="literal">DROP</code> statement:
+            </p>
+        <pre class="programlisting">ALTER TABLE <span class="emphasis"><em>table-name</em></span> (DROP <span class="emphasis"><em>field-name</em></span>)</pre>
+        <p>
+                For example, to drop the <code class="literal">age</code> field from
+                the <code class="literal">Users</code> table:
+            </p>
+        <pre class="programlisting">ALTER TABLE Users (DROP age)</pre>
+        <p>
+                Note that you cannot drop a field if it is the primary key.
+            </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tablecreationddl.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ddl_overview.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="deletetableddl.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">CREATE TABLE </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> DROP TABLE</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

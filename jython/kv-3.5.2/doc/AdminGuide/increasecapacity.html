@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Increasing the capacity of a Storage Node</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="procedures.html" title="Chapter 6. Administrative Procedures" />
+    <link rel="prev" href="provideschema.html" title="Managing Avro Schema" />
+    <link rel="next" href="replacefailedsn.html" title="Replacing a Failed Storage Node" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Increasing the capacity of a Storage Node</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="provideschema.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Administrative Procedures</th>
+          <td width="20%" align="right"> <a accesskey="n" href="replacefailedsn.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="increasecapacity"></a>Increasing the capacity of a Storage Node</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+          You can increase the capacity of a Storage Node by adding additional hard
+          disks to the machine. Such a configuration permits the placement of each Replication
+          Node on its own disk and ensures that the Replication Nodes on the SN
+          are not competing for I/O resources. The location of this directory on its disk 
+          can be specified via the <code class="literal">storagedir</code> parameter.
+       </p>
+      <p>
+          The following example demonstrates deploying a new store and adding two
+          more disks to a Storage Node, increasing the capacity from 1 to 3:
+        </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+          Create, start and configure the new store.
+       </p>
+            <p>
+          Create the new store:
+       </p>
+            <pre class="programlisting">java -Xmx&amp;javamxvalue; -Xms&amp;javamxvalue; \
+-jar KVHOME/lib/kvstore.jar makebootconfig \
+-root KVROOT \
+-host node20 -port 5000 -admin 5001 \
+-harange 5010,5030 \
+-capacity 1 \
+-memory_mb 200 \
+-store-security none \
+-storagedir /disk1/ondb/data </pre>
+            <p>
+          Start the new store:
+       </p>
+            <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar start \
+-root KVROOT&amp;
+</pre>
+            <p>
+          Configure the new store:
+       </p>
+            <pre class="programlisting">java -Xmx&amp;javamxvalue; -Xms&amp;javamxvalue; \
+-jar KVHOME/lib/kvstore.jar runadmin \
+-port 5000 -host node20
+kv-&gt; configure -name kvstore 
+Store configured: kvstore  </pre>
+          </li>
+          <li>
+            <p>
+          Create a zone. Then create an administration process on a specific host:
+       </p>
+            <pre class="programlisting">plan deploy-zone -name Houston -rf 1 -wait
+Executed plan 1, waiting for completion...
+Plan 1 ended successfully
+plan deploy-sn -znname "Houston" -port 5000 -wait -host node20
+Executed plan 2, waiting for completion...
+Plan 2 ended successfully </pre>
+            <pre class="programlisting">plan deploy-admin -sn sn1 -port 5001 -wait 
+Executed plan 3, waiting for completion...
+Plan 3 ended successfully </pre>
+          </li>
+          <li>
+            <p>
+          Create a topology, preview it, and then deploy it:
+       </p>
+            <pre class="programlisting">topology create -name 1x1 -pool AllStorageNodes -partitions 120
+Created: 1x1 </pre>
+            <pre class="programlisting">topology preview -name 1x1
+Topology transformation from current deployed topology to 1x1:
+Create 1 shard 
+Create 1 RN 
+Create 120 partitions
+
+shard rg1
+  1 new RN : rg1-rn1
+  120 new partitions </pre>
+            <pre class="programlisting">plan deploy-topology -name 1x1 -wait
+Executed plan 4, waiting for completion...
+Plan 4 ended successfully </pre>
+          </li>
+          <li>
+            <p>
+          Suppose two more disk drives were added to the Storage Node, mounted
+          as <code class="literal">disk2</code> and <code class="literal">disk3</code>. Add the storage
+          directories using the <code class="literal">plan change-storagedir</code> command.
+       </p>
+            <pre class="programlisting">kv-&gt; plan change-storagedir -sn sn1 -storagedir /disk2/ondb/data \
+-add -wait
+Executed plan 5, waiting for completion...
+Plan 5 ended successfully </pre>
+            <pre class="programlisting">kv-&gt; plan change-storagedir -sn sn1 -storagedir /disk3/ondb/data \
+-add -wait
+Executed plan 6, waiting for completion...
+Plan 6 ended successfully </pre>
+          </li>
+          <li>
+            <p>
+          Change the capacity equal to the total number of disks now available
+          on the Storage Node (3).
+       </p>
+            <pre class="programlisting">kv-&gt; plan change-parameters -service sn1 -wait -params capacity=3
+Executed plan 7, waiting for completion...
+Plan 7 ended successfully </pre>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>      
+          You need to perform last two steps on all the Storage Nodes (in your cluster)
+          to add the disk drives and increase the capacity of each Storage Node. In this case,
+          it is a single node deployment, so the topology is now ready to be redistributed.
+       </p>
+            </div>
+          </li>
+          <li>
+            <p>
+          Redistribute your topology to expand the cluster in order to use the new capacity (3)
+          of the Storage Node.
+       </p>
+            <pre class="programlisting">kv-&gt; topology clone -current -name 1x3
+Created 1x3 </pre>
+            <pre class="programlisting">kv-&gt; topology redistribute -name 1x3 -pool AllStorageNodes 
+Redistributed: 1x3 </pre>
+            <pre class="programlisting">kv-&gt; topology preview -name 1x3
+Topology transformation from current deployed topology to 1x3:
+Create 2 shards
+Create 2 RNs
+Migrate 80 partitions
+
+shard rg2
+  1 new RN : rg2-rn1
+  40 partition migrations
+shard rg3
+  1 new RN : rg3-rn1
+  40 partition migrations </pre>
+            <pre class="programlisting">kv-&gt; plan deploy-topology -name 1x3 -wait 
+Executed plan 8, waiting for completion...
+Plan 8 ended successfully </pre>
+          </li>
+        </ol>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="provideschema.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="procedures.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="replacefailedsn.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Managing Avro Schema </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Replacing a Failed Storage Node</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

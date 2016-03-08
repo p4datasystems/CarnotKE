@@ -1,0 +1,8 @@
+{
+    "type": "record",
+    "name": "UserImage",
+    "namespace": "schema",
+    "fields": [
+        {"name": "image", "type": "bytes", "default": ""}
+    ]
+}

@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Privileges for Accessing KVStore APIs</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="required_privileges.html" title="Appendix B. KVStore Required Privileges" />
+    <link rel="prev" href="ddl_privileges.html" title="Privileges for DDL Commands" />
+    <link rel="next" href="kvstore_tableapi.html" title="Privileges for Accessing KVStore TableAPIs" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Privileges for Accessing KVStore APIs</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ddl_privileges.html">Prev</a> </td>
+          <th width="60%" align="center">Appendix B. KVStore Required Privileges</th>
+          <td width="20%" align="right"> <a accesskey="n" href="kvstore_tableapi.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="kvstore_api"></a>Privileges for Accessing KVStore APIs</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+            Privilege(s) required: READ_ANY, or READ_TABLE/READ_ANY_TABLE if accessing
+            key-values are in tables.
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    get
+                </p>
+          </li>
+          <li>
+            <p>
+                    multiGet
+                </p>
+          </li>
+          <li>
+            <p> 
+                    multiGetIterator
+                </p>
+          </li>
+          <li>
+            <p> 
+                    multiGetKeys
+                </p>
+          </li>
+          <li>
+            <p> 
+                    multiGetKeysIterator
+                </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p> 
+                        For multi-XYZ and storeXYZiterator APIs,
+                        the parentKey may be null for scanning the
+                        whole store. In this case, if the user has no
+                        required roles, an empty result set will be
+                        returned rather than throwing the
+                        UnauthorizedException.
+                    </p>
+            </div>
+          </li>
+          <li>
+            <p> 
+                    storeIterator
+                </p>
+          </li>
+          <li>
+            <p> 
+                    storeKeysIterator 
+                </p>
+          </li>
+        </ul>
+      </div>
+      <p> 
+            Privilege(s) required: WRITE_ANY, or DELETE_TABLE/DELETE_ANY_TABLE if
+            accessing key-values are in tables:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p> 
+                    delete
+                </p>
+          </li>
+          <li>
+            <p>
+                    deleteIfVersion 
+                </p>
+          </li>
+          <li>
+            <p>
+                    multiDelete 
+                </p>
+          </li>
+        </ul>
+      </div>
+      <p> 
+            Privilege(s) required: WRITE_ANY, or INSERT_TABLE/INSERT_ANY_TABLE if
+            accessing key-values are in tables:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p> 
+                    put 
+                </p>
+          </li>
+          <li>
+            <p>
+                    putIfAbsent
+                </p>
+          </li>
+          <li>
+            <p> 
+                    putIfPresent 
+                </p>
+          </li>
+          <li>
+            <p> 
+                    putIfVersion
+                </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+            Privilege(s) required: DBVIEW
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    getAvroCatalog
+                </p>
+          </li>
+        </ul>
+      </div>
+      <p> 
+            Privilege(s) required: None:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    getOperationFactory 
+                </p>
+          </li>
+          <li>
+            <p> 
+                    getStats
+                </p>
+          </li>
+        </ul>
+      </div>
+      <p> 
+            Privilege(s) required: Union of all required roles of each
+            single operation in the operation list:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p> 
+                    execute
+                </p>
+          </li>
+        </ul>
+      </div>
+      <p> 
+            Privilege required depends on the privilege needed for the
+            statement being executed:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p> 
+                    execute(String statement)
+                </p>
+          </li>
+          <li>
+            <p> 
+                    executeSync(String statement)
+                </p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ddl_privileges.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="required_privileges.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="kvstore_tableapi.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Privileges for DDL Commands </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Privileges for Accessing KVStore TableAPIs</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

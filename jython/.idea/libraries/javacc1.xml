@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="javacc1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Neo4j/WDB/ext/javacc-4.0/bin/lib/javacc.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

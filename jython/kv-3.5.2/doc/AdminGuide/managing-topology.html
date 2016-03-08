@@ -1,0 +1,1002 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 4. Determining Your Store's Configuration</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="prev" href="troubleshooting.html" title="Troubleshooting" />
+    <link rel="next" href="deploymentupdate.html" title="Chapter 5. Upgrading an Existing Oracle NoSQL Database Deployment" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 4. Determining Your Store's Configuration</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="troubleshooting.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="deploymentupdate.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="managing-topology"></a>Chapter 4. Determining Your Store's Configuration</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="managing-topology.html#planningprocess">Steps for Changing the Store's Topology</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="managing-topology.html#topologycandidate">Make the Topology Candidate</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="managing-topology.html#transformtopology">Transform the Topology Candidate</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="managing-topology.html#viewtopology">View the Topology Candidate</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="managing-topology.html#validatetopology">Validate the Topology Candidate</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="managing-topology.html#previewtopology">Preview the Topology Candidate</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="managing-topology.html#deploytopology">Deploy the Topology Candidate</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="managing-topology.html#verifytopology">Verify the Store's Current Topology</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+        </dl>
+      </div>
+      <p>
+        A store consists of a number of Storage Nodes. Each Storage Node
+        can host one or more Replication Nodes, based on its capacity
+        value. The term <code class="literal">topology</code> is used to describe the
+        distribution of Replication Nodes.  A topology is derived from the
+        number and capacity of available Storage Nodes, the number of
+        partitions in the store, and the replication factors of the store's
+        zones. Topology layouts are also governed by a set of rules
+        that maximize the availability of the store.
+    </p>
+      <p>
+        All topologies must obey the following rules:
+    </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                Each Replication Node from the same shard must
+                reside on a different Storage Node. This rule
+                prevents a single Storage Node failure from causing
+                multiple points of failure for a single shard.
+            </p>
+          </li>
+          <li>
+            <p>
+                The number of Replication Nodes assigned to a
+                Storage Node must be less than or equal to the
+                capacity of Storage Nodes.
+            </p>
+          </li>
+          <li>
+            <p>
+                 A zone must have one or more Replication
+                 Nodes from each shard.
+            </p>
+          </li>
+        </ol>
+      </div>
+      <p>
+        The initial configuration, or topology of the store is set when the
+        store is created.  Over time, it may be necessary to change the
+        topology of the store. There are several reasons for such a change:
+    </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                You need to replace or upgrade an existing Storage Node.
+            </p>
+          </li>
+          <li>
+            <p>
+                You need to increase read throughput.  This is done by
+                increasing the replication factor and creating more copies
+                of the store's data which can be used to service read only
+                requests. 
+            </p>
+          </li>
+          <li>
+            <p>
+                You need to increase write throughput. Since each shard has
+                a single master node, distributing the data in the store
+                over a larger number of shards provides the store with more
+                nodes that can execute write operations.
+            </p>
+          </li>
+        </ol>
+      </div>
+      <p>
+        You change the store's configuration by changing the number or
+        capacity of Storage Nodes available, or the replication factor of a
+        zone.  To change from one configuration to another, you
+        either create a new initial topology, or you
+        <code class="literal">clone</code> an existing topology and modify it into
+        your target topology. You then deploy this target topology.
+    </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+            The deployment of the target topology is potentially a
+            long-running operation and the time required scales with the
+            amount of data that must be moved. During the deployment, the
+            system updates the topology at each step.  Because of that, the
+            store passes through intermediate topologies which were not
+            explicitly created by the user.
+        </p>
+      </div>
+      <p>
+        This chapter discusses how configuration, or topological changes
+        are made in a store.
+    </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+            Configuration changes should not be made while a snapshot is
+            being taken and vice versa. When making configuration changes
+            it is safest to first create a snapshot as a backup and then
+            make the changes. For additional information on creating
+            snapshots, see <a class="xref" href="procedures.html#takesnapshot" title="Taking a Snapshot">Taking a Snapshot</a>.
+        </p>
+      </div>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="planningprocess"></a>Steps for Changing the Store's Topology</h2>
+            </div>
+          </div>
+        </div>
+        <div class="toc">
+          <dl>
+            <dt>
+              <span class="sect2">
+                <a href="managing-topology.html#topologycandidate">Make the Topology Candidate</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="managing-topology.html#transformtopology">Transform the Topology Candidate</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="managing-topology.html#viewtopology">View the Topology Candidate</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="managing-topology.html#validatetopology">Validate the Topology Candidate</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="managing-topology.html#previewtopology">Preview the Topology Candidate</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="managing-topology.html#deploytopology">Deploy the Topology Candidate</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="managing-topology.html#verifytopology">Verify the Store's Current Topology</a>
+              </span>
+            </dt>
+          </dl>
+        </div>
+        <p>
+            When you change your topology, you should go through these
+            steps:
+        </p>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p>
+                    <a class="xref" href="managing-topology.html#topologycandidate" title="Make the Topology Candidate">Make the Topology Candidate</a>
+                </p>
+            </li>
+            <li>
+              <p>
+                    <a class="xref" href="managing-topology.html#transformtopology" title="Transform the Topology Candidate">Transform the Topology Candidate</a>
+                </p>
+            </li>
+            <li>
+              <p>
+                    <a class="xref" href="managing-topology.html#viewtopology" title="View the Topology Candidate">View the Topology Candidate</a>
+                </p>
+            </li>
+            <li>
+              <p>
+                   <a class="xref" href="managing-topology.html#validatetopology" title="Validate the Topology Candidate">Validate the Topology Candidate</a>
+                </p>
+            </li>
+            <li>
+              <p>
+                    <a class="xref" href="managing-topology.html#previewtopology" title="Preview the Topology Candidate">Preview the Topology Candidate</a>
+                </p>
+            </li>
+            <li>
+              <p>
+                    <a class="xref" href="managing-topology.html#deploytopology" title="Deploy the Topology Candidate">Deploy the Topology Candidate</a>
+                </p>
+            </li>
+            <li>
+              <p>
+                    <a class="xref" href="managing-topology.html#verifytopology" title="Verify the Store's Current Topology">Verify the Store's Current Topology</a>
+                </p>
+            </li>
+          </ol>
+        </div>
+        <p>
+             Creating a new topology may be an iterative process. You may
+             want to try different options to see what may be best before
+             the changes are deployed. In the end, examine the topology
+             candidate and decide if it is satisfactory. If not, apply more
+             transformations, or start over with different parameters. You
+             can view and validate topology candidates to decide if they
+             are appropriate.
+        </p>
+        <p>
+            The possible transformations include redistributing data,
+            increasing replication factor, and rebalancing. These are
+            described in 
+            <a class="xref" href="managing-topology.html#transformtopology" title="Transform the Topology Candidate">Transform the Topology Candidate</a>.
+        </p>
+        <p>
+            The following sections walk you through the process of changing
+            the configuration for your store using the Administration
+            Command Line Interface.
+        </p>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="topologycandidate"></a>Make the Topology Candidate</h3>
+              </div>
+            </div>
+          </div>
+          <p>   
+                To create the first topology candidate for an initial
+                deployment, before any Replication Nodes exist, you use the
+                <code class="literal">topology create</code> command. The
+                <code class="literal">topology create</code> command takes a topology
+                name, a pool name and the number of partitions as
+                arguments.
+            </p>
+          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+            <h3 class="title">Note</h3>
+            <p>
+               You should avoid using the dollar sign ('$') character in topology
+               candidate names. The CLI displays a warning when trying to create or clone
+               topologies whose names contain the reserved character.
+            </p>
+          </div>
+          <p>
+                For example:
+            </p>
+          <pre class="programlisting">kv-&gt; topology create -name firstTopo -pool BostonPool -partitions 300
+Created: firstTopo </pre>
+          <p>
+                This initial topology candidate can be deployed,
+                without any further transformations, using the
+                <code class="literal">plan deploy-topology</code> command.
+            </p>
+          <p>
+                After the store is deployed, topology candidates are
+                created with the topology clone command. A clone's
+                source can be another topology candidate, or the
+                current, deployed topology. The <code class="literal">topology
+                clone</code> command takes the following arguments:
+            </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+                        <code class="literal"> -from &lt;from topology&gt; </code>
+                    </p>
+                <p>
+                        The name of the source topology candidate.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal"> -name &lt;to topology&gt; </code>
+                    </p>
+                <p>
+                        The name of the clone.
+                    </p>
+              </li>
+            </ul>
+          </div>
+          <p>
+                For example:
+            </p>
+          <pre class="programlisting">kv-&gt; topology clone -from topo -name CloneTopo
+Created CloneTopo </pre>
+          <p>
+                Also, there is a variant of the topology clone command
+                that takes the following arguments:
+            </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+                        <code class="literal"> -current </code>
+                    </p>
+                <p>
+                        If specified, use the current, deployed topology as a source.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <code class="literal"> -name &lt;to topology&gt; </code>
+                    </p>
+                <p>
+                        The name of the clone.
+                    </p>
+              </li>
+            </ul>
+          </div>
+          <p>
+                For example:
+            </p>
+          <pre class="programlisting">kv-&gt; topology clone -current -name ClonedTopo
+Created ClonedTopo </pre>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="transformtopology"></a>Transform the Topology Candidate</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                After the initial deployment, the store is changed by
+                deploying a topology candidate that differs from the
+                topology currently in effect. This target topology is
+                generated by transforming a topology candidate using
+                the <code class="literal">topology redistribute, rebalance, or
+                change-repfactor</code> command.
+            </p>
+          <p> 
+                 Transformations follow the topology rules described in the
+                 previous section.
+            </p>
+          <p>  
+                 The topology rebalance, redistribute or change-repfactor
+                 commands can only make changes to the topology candidate
+                 if there are additional, or changed, Storage Nodes available. 
+                 It uses the new resources to rearrange Replication
+                 Nodes and partitions so the topology complies with
+                 the topology rules and the store improves on read or
+                 write throughput.
+             </p>
+          <p>
+                The following are scenarios in how you might expand the
+                store.
+            </p>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="datadistribution"></a>Increase Data Distribution</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+                    You can increase data distribution in order to enhance
+                    write throughput by using the 
+                    <code class="literal">topology redistribute</code> command. The
+                    redistribute command only works if new Storage Nodes
+                    are added to permit the creation of new shards.
+                    Partitions are distributed across the new shards,
+                    resulting in more Replication Nodes to service write
+                    operations.
+                </p>
+            <p>
+                    The following example demonstrates adding a set of
+                    Storage Nodes and redistributing the data to those
+                    nodes. In this example four nodes are added because the
+                    zone's replication factor is four and the new
+                    partition requires four nodes to satisfy the
+                    replication requirements:
+                </p>
+            <pre class="programlisting">kv-&gt; plan deploy-sn -zn zn1 -host node04 -port 5000 -wait
+Executed plan 7, waiting for completion...
+Plan 7 ended successfully
+kv-&gt; plan deploy-sn -zn zn1 -host node05 -port 5000 -wait
+Executed plan 8, waiting for completion...
+Plan 8 ended successfully
+kv-&gt; plan deploy-sn -zn zn1 -host node06 -port 5000 -wait
+Executed plan 9, waiting for completion...
+Plan 9 ended successfully
+kv-&gt; plan deploy-sn -zn zn1 -host node07 -port 5000 -wait
+Executed plan 10, waiting for completion...
+Plan 10 ended successfully
+kv-&gt; pool join -name BostonPool -sn sn4
+Added Storage Node(s) [sn4] to pool BostonPool
+kv-&gt; pool join -name BostonPool -sn sn5
+Added Storage Node(s) [sn5] to pool BostonPool
+kv-&gt; pool join -name BostonPool -sn sn6
+Added Storage Node(s) [sn6] to pool BostonPool
+kv-&gt; pool join -name BostonPool -sn sn7
+Added Storage Node(s) [sn7] to pool BostonPool
+kv-&gt; topology clone -current -name newTopo
+Created newTopo
+kv-&gt; topology redistribute -name newTopo -pool BostonPool
+Redistributed: newTopo
+kv-&gt; plan deploy-topology -name newTopo -wait
+Executed plan 11, waiting for completion...
+Plan 11 ended successfully 
+</pre>
+            <p>
+                    The redistribute command uses added capacity to create
+                    new shards and to migrate partitions to those shards.
+                    The command fails if the number of new shards is not
+                    greater than the current number of shards.
+                </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+                        You should not issue redistribute commands against a
+                        mixed shard store. A mixed shard store has shards
+                        whose Replication Nodes are operating with
+                        different software versions of Oracle NoSQL Database.
+                    </p>
+            </div>
+            <p>
+                    The system goes through these steps when it is
+                    redistributing a topology candidate:
+                </p>
+            <div class="orderedlist">
+              <ol type="1">
+                <li>
+                  <p>
+                            New Replication Nodes are created for each
+                            shard and are assigned to Storage Nodes
+                            following the topology rules described earlier.
+                            It may be necessary to move existing
+                            Replication Nodes to different Storage Nodes to
+                            best use available resources while still
+                            complying with the topology rules.
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            Partitions are distributed evenly among all
+                            shards.  Partitions that are in shards that are
+                            over populated will move to the shards with the
+                            least number of partitions.
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            You do not specify which partitions are moved.
+                        </p>
+                </li>
+              </ol>
+            </div>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="datareplication"></a>Increase Replication Factor</h4>
+                </div>
+              </div>
+            </div>
+            <p> 
+                        You can increase the replication factor and create
+                        more copies of the data to improve read throughput
+                        and availability by using the 
+                        <code class="literal">topology change-repfactor</code> command. 
+                        More Replication Nodes are added to each shard so
+                        that it has the requisite number of nodes. The new
+                        Replication Nodes are populated from existing nodes
+                        in the shard. Since every shard in a zone has
+                        the same replication factor, if there are a large
+                        number of shards, this command may require a
+                        significant number of new Storage Nodes to be
+                        successful.
+                    </p>
+            <p>
+                        For additional information on how to identify your
+                        primary replication factor and its implications, see
+                        <a class="xref" href="initialcapacityplanning.html#rep-factor" title="Replication Factor">Replication Factor</a>.
+                    </p>
+            <p>
+                        The following example increases the replication
+                        factor of the store to 4.  The administrator
+                        deploys a new Storage Node and adds it to the
+                        Storage Node pool. The admin then clones the existing
+                        topology and transforms it to use a new replication
+                        factor of 4.
+                    </p>
+            <pre class="programlisting">kv-&gt; plan deploy-sn -zn zn1 -host node08 -port 5000 -wait
+Executed plan 12, waiting for completion...
+Plan 12 ended successfully
+kv-&gt; pool join -name BostonPool -sn sn8
+Added Storage Node(s) [sn8] to pool BostonPool
+kv-&gt; topology clone -current -name repTopo
+Created repTopo
+kv-&gt; topology change-repfactor -name repTopo -pool BostonPool -rf 4 -zn zn1
+Changed replication factor in repTopo
+kv-&gt; plan deploy-topology -name repTopo -wait
+Executed plan 13, waiting for completion...
+Plan 13 ended successfully 
+</pre>
+            <p>
+                        The change-repfactor command fails if:
+                    </p>
+            <div class="orderedlist">
+              <ol type="1">
+                <li>
+                  <p>
+                                The new replication factor is less than or
+                                equal to the current replication factor.
+                            </p>
+                </li>
+                <li>
+                  <p>
+                                The Storage Nodes specified by the storage
+                                node pool do not have enough capacity to
+                                host the required new Replication Nodes.
+                            </p>
+                </li>
+              </ol>
+            </div>
+          </div>
+          <div class="sect3" lang="en" xml:lang="en">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h4 class="title"><a id="databalancing"></a>Balance a Non-Compliant Topology</h4>
+                </div>
+              </div>
+            </div>
+            <p>
+                    Topologies must obey the rules described in 
+                    <a class="xref" href="managing-topology.html" title="Chapter 4. Determining Your Store's Configuration">Determining Your Store's Configuration</a>.  
+                    Changes to the physical characteristics of the store
+                    can make the current topology of the store violate
+                    those rules. For example, after performance tuning, you
+                    may want to decrease the capacity of a Storage Node. If
+                    that node was already hosting the maximum permissible
+                    number of Replication Nodes, reducing the capacity will
+                    put the store out of compliance with the capacity
+                    rules.
+                </p>
+            <p>
+                    You can balance a non-compliant configuration by using
+                    the <code class="literal">topology rebalance</code> command. This
+                    command requires a topology candidate name and a
+                    Storage Node pool name.
+                </p>
+            <p>
+                    The following example examines the topology candidate
+                    named <code class="literal">repTopo</code> for any violations to
+                    the topology rules.  If no improvements are needed as a
+                    result of this examination, the topology candidate is
+                    unchanged.  However, if improvements are needed, then
+                    the <code class="literal">topology rebalance</code> command will
+                    move or create Replication Nodes, using the Storage
+                    Nodes in the BostonPool pool, in order to correct
+                    any violations. The command does not under any
+                    circumstances create additional
+                    shards. 
+                </p>
+            <pre class="programlisting">kv-&gt; topology rebalance -name repTopo -pool BostonPool
+Rebalanced: repTopo  </pre>
+            <p>
+                    If there are an insufficient number of Storage Nodes,
+                    the <code class="literal">topology rebalance</code> command may
+                    not be able to correct all violations. In that case,
+                    the command makes as much progress as possible, and
+                    warns of remaining issues.
+                </p>
+          </div>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="viewtopology"></a>View the Topology Candidate</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                You can view details of the topology candidate or a
+                deployed topology by using the 
+                <code class="literal">topology view</code> command. The command takes
+                a topology name as an argument. With the topology view
+                command, you can view all at once: the store name, number
+                of partitions, shards, replication factor, host name and
+                capacity in the specified topology.
+            </p>
+          <p>
+                For example:
+            </p>
+          <pre class="programlisting">kv-&gt; topology view -name repTopo
+store=mystore  numPartitions=300 sequence=315
+  zn: id=zn1 name=Boston repFactor=4 type=PRIMARY
+
+  sn=[sn1]  zn:[id=zn1 name=Boston] node01:5000 capacity=1
+    [rg1-rn1]
+  sn=[sn2]  zn:[id=zn1 name=Boston] node02:5000 capacity=1
+    [rg1-rn2]
+  sn=[sn3]  zn:[id=zn1 name=Boston] node03:5000 capacity=1
+    [rg1-rn3]
+  sn=[sn4]  zn:[id=zn1 name=Boston] node04:5000 capacity=1
+    [rg1-rn4]
+  sn=[sn5]  zn:[id=zn1 name=Boston] node05:5000 capacity=1
+  sn=[sn6]  zn:[id=zn1 name=Boston] node06:5000 capacity=1
+  sn=[sn7]  zn:[id=zn1 name=Boston] node07:5000 capacity=1
+  sn=[sn8]  zn:[id=zn1 name=Boston] node08:5000 capacity=1
+
+  shard=[rg1] num partitions=300
+    [rg1-rn1] sn=sn1
+    [rg1-rn2] sn=sn2
+    [rg1-rn3] sn=sn3
+    [rg1-rn4] sn=sn4  </pre>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="validatetopology"></a>Validate the Topology Candidate</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                You can validate the topology candidate or a deployed
+                topology by using the <code class="literal">topology validate</code>
+                command. The topology validate command takes a topology
+                name as an argument. If no topology is specified, the
+                current topology is validated. Validation makes sure that
+                the topology candidate obeys the topology rules described in 
+                <a class="xref" href="managing-topology.html" title="Chapter 4. Determining Your Store's Configuration">Determining Your Store's Configuration</a>.  
+                Validation generates "violations" and "notes". 
+            </p>
+          <p>
+                Violations are issues that can cause problems and should be
+                investigated.
+            </p>
+          <p>
+                Notes are informational and highlight configuration
+                oddities that may be potential issues, but may be expected.
+            </p>
+          <p>
+                For example:
+            </p>
+          <pre class="programlisting">kv-&gt; topology validate -name repTopo
+Validation for topology candidate "repTopo":
+4 warnings.
+sn7 has 0 RepNodes and is under its capacity limit of 1
+sn8 has 0 RepNodes and is under its capacity limit of 1
+sn5 has 0 RepNodes and is under its capacity limit of 1
+sn6 has 0 RepNodes and is under its capacity limit of 1  </pre>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="previewtopology"></a>Preview the Topology Candidate</h3>
+              </div>
+            </div>
+          </div>
+          <p>   
+                You should preview the changes that would be made for the
+                specified topology candidate relative to a starting
+                topology. You use the <code class="literal">topology preview</code>
+                command to do this. This command takes the following
+                arguments:
+            </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+                        <span class="emphasis"><em>name</em></span>
+                    </p>
+                <p>
+                        A string to identify the topology.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        <span class="emphasis"><em>start &lt;from topology&gt;</em></span>
+                    </p>
+                <p>
+                        If -start topology name is not specified, the current
+                        topology is used. This command should be used before
+                        deploying a new topology.
+                    </p>
+              </li>
+            </ul>
+          </div>
+          <p>
+                For example:
+            </p>
+          <pre class="programlisting">kv-&gt; topology clone -current -name redTopo
+Created redTopo
+kv-&gt; topology redistribute -name redTopo -pool BostonPool
+Redistributed: redTopo
+kv-&gt; topology preview -name redTopo
+Topology transformation from current deployed topology to redTopo:
+Create 1 shard
+Create 4 RNs
+Migrate 150 partitions
+
+shard rg2
+  4 new RNs: rg2-rn1 rg2-rn2 rg2-rn3 rg2-rn4
+  150 partition migrations
+kv-&gt; topology validate -name redTopo 
+Validation for topology candidate "redTopo":
+No problems  </pre>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="deploytopology"></a>Deploy the Topology Candidate</h3>
+              </div>
+            </div>
+          </div>
+          <p>   
+                With a satisfactory topology candidate, you can use the
+                admin service to generate and execute a plan which migrates
+                the store to the new topology. 
+            </p>
+          <p>
+                You can deploy the topology candidate by using the
+                <code class="literal">plan deploy-topology</code> command. This
+                command takes a topology name as an argument.
+            </p>
+          <p>
+                While the plan is executing, you can monitor the plan's
+                progress. You have several options:
+            </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+                        The plan can be interrupted then retried, or canceled.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        Other, limited plans may be executed while a
+                        transformation plan is in progress to deal with
+                        ongoing problems or failures.
+                    </p>
+              </li>
+            </ul>
+          </div>
+          <p>
+                By default, the <code class="literal">plan deploy-topology</code>
+                command refuses to deploy a topology candidate if it
+                introduces new violations of the topology rules. This
+                behavior can be overridden by using the
+                <code class="literal">-force</code> optional plan flag on that
+                command.
+            </p>
+          <p>
+                For example:
+            </p>
+          <pre class="programlisting">kv-&gt; show topology
+store=mystore  numPartitions=300 sequence=315
+  zn: id=zn1 name=Boston repFactor=4 type=PRIMARY
+
+  sn=[sn1]  zn=[id=zn1 name=Boston] node01:5000 capacity=1 RUNNING
+    [rg1-rn1] RUNNING
+           No performance info available
+  sn=[sn2]  zn=[id=zn1 name=Boston] node02:5000 capacity=1 RUNNING
+    [rg1-rn2] RUNNING
+           No performance info available
+  sn=[sn3]  zn=[id=zn1 name=Boston] node03:5000 capacity=1 RUNNING
+    [rg1-rn3] RUNNING
+           No performance info available
+  sn=[sn4]  zn=[id=zn1 name=Boston] node04:5000 capacity=1 RUNNING
+    [rg1-rn4] RUNNING
+           No performance info available
+  sn=[sn5]  zn=[id=zn1 name=Boston] node05:5000 capacity=1
+  sn=[sn6]  zn=[id=zn1 name=Boston] node06:5000 capacity=1
+  sn=[sn7]  zn=[id=zn1 name=Boston] node07:5000 capacity=1
+  sn=[sn8]  zn=[id=zn1 name=Boston] node08:5000 capacity=1
+
+  shard=[rg1] num partitions=300
+    [rg1-rn1] sn=sn1
+    [rg1-rn2] sn=sn2
+    [rg1-rn3] sn=sn3
+    [rg1-rn4] sn=sn4  
+kv-&gt; plan deploy-topology -name redTopo -wait
+Executed plan 14, waiting for completion...
+Plan 14 ended successfully 
+kv-&gt; show topology
+store=mystore  numPartitions=300 sequence=470
+  zn: id=zn1 name=Boston repFactor=4 type=PRIMARY
+
+  sn=[sn1]  zn:[id=zn1 name=Boston] node01:5000 capacity=1 RUNNING
+    [rg1-rn1] RUNNING
+          No performance info available
+  sn=[sn2]  zn:[id=zn1 name=Boston] node02:5000 capacity=1 RUNNING
+    [rg1-rn2] RUNNING
+          No performance info available
+  sn=[sn3]  zn:[id=zn1 name=Boston] node03:5000 capacity=1 RUNNING
+    [rg1-rn3] RUNNING
+          No performance info available
+  sn=[sn4]  zn:[id=zn1 name=Boston] node04:5000 capacity=1 RUNNING
+    [rg1-rn4] RUNNING
+          No performance info available
+  sn=[sn5]  zn:[id=zn1 name=Boston] node05:5000 capacity=1 RUNNING
+    [rg2-rn1] RUNNING
+          No performance info available
+  sn=[sn6]  zn:[id=zn1 name=Boston] node06:5000 capacity=1 RUNNING
+    [rg2-rn2] RUNNING
+          No performance info available
+  sn=[sn7]  zn:[id=zn1 name=Boston] node07:5000 capacity=1 RUNNING
+    [rg2-rn3] RUNNING
+          No performance info available
+  sn=[sn8]  zn:[id=zn1 name=Boston] node08:5000 capacity=1 RUNNING
+    [rg2-rn4] RUNNING
+          No performance info available
+
+  shard=[rg1] num partitions=150
+    [rg1-rn1] sn=sn1
+    [rg1-rn2] sn=sn2
+    [rg1-rn3] sn=sn3
+    [rg1-rn4] sn=sn4
+  shard=[rg2] num partitions=150
+    [rg2-rn1] sn=sn5
+    [rg2-rn2] sn=sn6
+    [rg2-rn3] sn=sn7
+    [rg2-rn4] sn=sn8  </pre>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="verifytopology"></a>Verify the Store's Current Topology</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                You can verify the store's current topology by using the
+                <code class="literal">verify</code> command. The verify command
+                checks the current, deployed topology to make sure it obeys
+                the topology rules described in 
+                <a class="xref" href="managing-topology.html" title="Chapter 4. Determining Your Store's Configuration">Determining Your Store's Configuration</a>.
+            </p>
+          <p>   
+                You should examine the new topology and decide if it is
+                satisfactory, and if not apply more transformations, or
+                start over with different parameters.
+            </p>
+          <p>
+                For example:
+            </p>
+          <pre class="programlisting">kv-&gt; verify configuration
+Verify: starting verification of store mystore based upon
+    topology sequence #470
+300 partitions and 8 storage nodes
+Time: 2015-03-04 17:34:23 UTC   Version: 12.1.3.2.15
+See localhost:KVROOT/mystore/log/mystore_{0..N}.log for progress messages
+Verify: Shard Status: healthy:2 writable-degraded:0 read-only:0 offline:0
+Verify: Admin Status: healthy
+Verify: Zone [name=Boston id=zn1 type=PRIMARY]
+    RN Status: online:8 offline:0 maxDelayMillis:0 maxCatchupTimeSecs:0
+Verify: == checking storage node sn1 ==
+Verify: Storage Node [sn1] on node01:5000
+    Zone: [name=Boston id=zn1 type=PRIMARY]    Status: RUNNING
+    Ver: 12cR1.3.2.15 2015-03-04 06:35:02 UTC  Build id: 8e70b50c0b0e
+Verify:         Admin [admin1]          Status: RUNNING,MASTER
+Verify:         Rep Node [rg1-rn1]      Status: RUNNING,MASTER ...
+Verify: == checking storage node sn2 ==
+Verify: Storage Node [sn2] on node02:5000
+    Zone: [name=Boston id=zn1 type=PRIMARY]    Status: RUNNING
+    Ver: 12cR1.3.2.15 2015-03-04 06:35:02 UTC  Build id: 8e70b50c0b0e
+Verify:         Rep Node [rg1-rn2]      Status: RUNNING,REPLICA ...
+Verify: == checking storage node sn3 ==
+Verify: Storage Node [sn3] on node03:5000
+    Zone: [name=Boston id=zn1 type=PRIMARY]    Status: RUNNING
+    Ver: 12cR1.3.2.15 2015-03-04 06:35:02 UTC  Build id: 8e70b50c0b0e
+Verify:         Rep Node [rg1-rn3]      Status: RUNNING,REPLICA ...
+Verify: == checking storage node sn4 ==
+Verify: Storage Node [sn4] on node04:5000
+    Zone: [name=Boston id=zn1 type=PRIMARY]    Status: RUNNING
+    Ver: 12cR1.3.2.15 2015-03-04 06:35:02 UTC  Build id: 8e70b50c0b0e
+Verify:         Rep Node [rg1-rn4]      Status: RUNNING,REPLICA ...
+Verify: == checking storage node sn5 ==
+Verify: Storage Node [sn5] on node05:5000
+    Zone: [name=Boston id=zn1 type=PRIMARY]    Status: RUNNING
+    Ver: 12cR1.3.2.15 2015-03-04 06:35:02 UTC  Build id: 8e70b50c0b0e
+Verify:         Rep Node [rg2-rn1]      Status: RUNNING,MASTER ...
+Verify: == checking storage node sn6 ==
+Verify: Storage Node [sn6] on node06:5000
+    Zone: [name=Boston id=zn1 type=PRIMARY]    Status: RUNNING
+    Ver: 12cR1.3.2.15 2015-03-04 06:35:02 UTC  Build id: 8e70b50c0b0e
+Verify:         Rep Node [rg2-rn2]      Status: RUNNING,REPLICA ...
+Verify: == checking storage node sn7 ==
+Verify: Storage Node [sn7] on node07:5000
+    Zone: [name=Boston id=zn1 type=PRIMARY]    Status: RUNNING
+    Ver: 12cR1.3.2.15 2015-03-04 06:35:02 UTC  Build id: 8e70b50c0b0e
+Verify:         Rep Node [rg2-rn3]      Status: RUNNING,REPLICA ...
+Verify: == checking storage node sn8 ==
+Verify: Storage Node [sn8] on node08:5000
+    Zone: [name=Boston id=zn1 type=PRIMARY]    Status: RUNNING
+    Ver: 12cR1.3.2.15 2015-03-04 06:35:02 UTC  Build id: 8e70b50c0b0e
+Verify:         Rep Node [rg2-rn4]      Status: RUNNING,REPLICA ...
+Verification complete, no violations.  </pre>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="troubleshooting.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="deploymentupdate.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Troubleshooting </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 5. Upgrading an Existing Oracle NoSQL Database Deployment</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

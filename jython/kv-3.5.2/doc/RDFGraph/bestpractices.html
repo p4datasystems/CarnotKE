@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Best Practices</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="query.html" title="Chapter 5. Query RDF Graphs" />
+    <link rel="prev" href="jsonsupport.html" title="JavaScript Object Notation (JSON) Format Support" />
+    <link rel="next" href="update.html" title="Chapter 6. Update an RDF Graph" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Best Practices</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="jsonsupport.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 5. Query RDF Graphs</th>
+          <td width="20%" align="right"> <a accesskey="n" href="update.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="bestpractices"></a>Best Practices</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="bestpractices.html#queryoptions">Additional Query Options</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="bestpractices.html#joinmethod">JOIN_METHOD option</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="bestpractices.html#federatedquery">SPARQL 1.1 federated query SERVICE Clause</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="bestpractices.html#datasampling">Data sampling</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="bestpractices.html#queryhints">Query hints</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="queryoptions"></a>Additional Query Options</h3>
+            </div>
+          </div>
+        </div>
+        <p> 
+                The RDF Graph feature allows you to specify
+                additional query options. It implements these
+                capabilities by using the SPARQL namespace prefix
+                syntax to refer to Oracle-specific namespaces that
+                contain these query options. The namespaces are
+                defined in the form PREFIX ORACLE_SEM_FS_NS. 
+            </p>
+        <p> 
+                Additional query options can be passed to a SPARQL
+                query by including a line in the following form: 
+            </p>
+        <pre class="programlisting">PREFIX ORACLE_SEM_FS_NS: &lt;http://oracle.com/semtech#option&gt;</pre>
+        <p>
+                The <span class="emphasis"><em>option</em></span> reflects a query
+                setting (or multiple query options delimited by
+                commas) to be applied to the SPARQL query execution.
+                For example: 
+            </p>
+        <pre class="programlisting">PREFIX ORACLE_SEM_FS_NS:
+&lt;http://oracle.com/semtech#TIMEOUT=3,DOP=4,ORDERED&gt;
+SELECT * WHERE {?subject ?property ?object }</pre>
+        <p> 
+                The following query options are supported: 
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                        <code class="literal">ASSERTED_ONLY</code> causes only
+                        the asserted triples/quads to be queried.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">BATCH=n</code> specifies the size
+                        of the batches (n) used to execute concurrent
+                        retrieval of bindings. Using a batch size that is larger
+                        than the default of 1,000, such as 5,000 or 10,000
+                        when retrieving RDF data from the Oracle NoSQL Database
+                        may improve performance.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">BEST_EFFORT_QUERY=T</code>, when
+                        used with the TIMEOUT=n option, returns all
+                        matches found in n seconds for the SPARQL
+                        query. 
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">DOP=n</code> specifies the degree
+                        of parallelism (n) for the query. The default value is 1.
+                        With multi-core or multi-CPU processors, experimenting with
+                        different DOP values (such as 4 or 8) may improve performance.
+                        A good starting point for DOP can be the number of CPU
+                        cores, assuming the level of query concurrency is low.
+                        To ensure that no single query dominates the CPU
+                        resources, DOP should be set at a lower value when
+                        the number of concurrent requests increases.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">INCLUDE=RULEBASE_ID=n</code>
+                        specifies the rulebase ID to use when
+                        answering a SPARQL query. This query option
+                        will override any rulebase configuration
+                        defined at the SPARQL Service endpoint.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">INF_ONLY</code> causes only the
+                        inferred triples/quads to be queried.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">JENA_EXECUTOR</code> disables the
+                        compilation of SPARQL queries to the RDF Graph
+                        feature; instead, the Apache Jena native query
+                        executor will be used.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">JOIN_METHOD={nl, hash}</code>
+                        specifies how query patterns in a SPARQL query
+                        can be joined, either a nested loop join (nl) or hash
+                        join (hash) method can be used. For more information,
+                        see
+                        <a class="xref" href="bestpractices.html#joinmethod" title="JOIN_METHOD option">JOIN_METHOD option</a>.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">ORDERED</code> specifies that
+                        query patterns in a SPARQL query should be
+                        executed in the same order as they are
+                        specified. 
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">TIMEOUT=n (query timeout)</code>
+                        specifies the number of seconds (n) that the
+                        query will run until it is terminated. The
+                        underlying query execution generated from a
+                        SPARQL query can return many matches and can
+                        use features like sub-queries and assignments,
+                        all of which can take considerable time. The
+                        TIMEOUT and BEST_EFFORT_QUERY=t options can be
+                        used to prevent what you consider excessive
+                        processing time for the query.
+                    </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="joinmethod"></a>JOIN_METHOD option</h3>
+            </div>
+          </div>
+        </div>
+        <p> 
+                A SPARQL query consists of a single (or multiple)
+                query patterns, conjunctions, disjunctions, and
+                optional triple patterns. The RDF Graph feature
+                processes triple patterns in the SPARQL query and
+                executes join operations over their partial results to
+                retrieve query results. The RDF Graph feature
+                automatically analyzes the received SPARQL query and
+                determines an execution plan using an efficient join
+                operation between two query row sources (outer and
+                inner, left or right). A query row source consists of
+                a query pattern or the intermediate results from
+                another join operation.
+            </p>
+        <p>
+                However, you can use the JOIN_METHOD option
+                that uses the RDF Graph feature to specify which join
+                operation to use in SPARQL query execution. For example,
+                assume the following query:
+            </p>
+        <pre class="programlisting">PREFIX ORACLE_SEM_FS_NS:&lt;http://oracle.com/semtech#JOIN_METHOD=NL&gt;
+SELECT ?subject ?object ?grandkid 
+WHERE {
+?subject &lt;u:parentOf&gt;  ?object   .
+?object  &lt;u:parentOf&gt;  ?grandkid .
+}
+</pre>
+        <p>
+                In this case, the join method to use will be set to
+                nested loop join. The first (outer) query portion of
+                this query (in this case query pattern ?subject
+                u:parentOf&gt; ?object), is executed against the
+                Oracle NoSQL Database. Each binding of ?object from
+                the results is then pushed into the second (inner)
+                query pattern (in this case ?object &lt;u:parentOf&gt;
+                ?grandkid), and which in turn is then executed against
+                the Oracle NoSQL Database. Note that nested loop join
+                operations can be executed only if the inner row
+                source is a query pattern. 
+            </p>
+        <p> 
+                If the join method to use is set to 
+                <code class="literal">hash join</code>, both the outer row source and
+                inner row source of this query will be executed against the
+                Oracle NoSQL Database. All results from the outer row
+                source (also called the build table) will be stored in a
+                hash table structure with respect to its binding of
+                <code class="literal">?object</code>, as it is a common variable
+                between the outer and inner row sources. Then, each binding
+                of <code class="literal">?object</code> from the inner row source
+                (also called the probe table) will be hashed and matched
+                against the hash data structure.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="federatedquery"></a>SPARQL 1.1 federated query SERVICE Clause</h3>
+            </div>
+          </div>
+        </div>
+        <p> 
+                When writing a SPARQL 1.1 federated query, you can
+                set a limit on returned rows in the sub-query inside
+                the SERVICE clause. This can effectively constrain the
+                amount of data to be transported between the local
+                repository and the remote SPARQL endpoint. 
+            </p>
+        <p> 
+                For example, the following query specifies a limit
+                of 100 in the subquery in the SERVICE clause: 
+            </p>
+        <pre class="programlisting">PREFIX : &lt;http://example.com/&gt;
+SELECT ?s ?o 
+WHERE 
+{ 
+?s :name "CA" 
+SERVICE &lt;http://REMOTE_SPARQL_ENDPOINT_HERE&gt;
+{ 
+select ?s ?o 
+{?s :info ?o} 
+limit 100 
+} 
+}
+</pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="datasampling"></a>Data sampling</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                Having sufficient statistics for the query optimizer
+                is critical for good query performance. In general,
+                you should ensure that you have gathered basic
+                statistics for the RDF Graph feature to use during
+                query execution. In Oracle NoSQL Database, these
+                statistics are generated by maintaining data sampling. 
+            </p>
+        <p>
+                <span class="emphasis"><em>Data sampling</em></span> is defined as a
+                representative subset of triples from an RDF graph (or
+                dataset) stored in an Oracle NoSQL Database, generated
+                at a certain point of time. The size of this subset
+                is determined by the size of the overall data and a
+                sampling rate. Data sampling is automatically performed
+                when an RDF data file is loaded into or removed from the
+                Oracle NoSQL Database. By default, the data sampling
+                rate is 0.003 (or 3 per 1000). The default sampling rate
+                may not be adequate for all database sizes. It may improve
+                performance to reduce the sampling rate for substantially
+                larger data sets to retain a more manageable count of
+                sampled data. For instance, performance may be improved by
+                setting the sampling as 0.0001 for billions of triples
+                and 0.00001 for trillions of triples.
+            </p>
+        <p>
+                Data sampling service is provided through the method
+                analyze RDF Graph feature
+                <code class="classname">OracleGraphNoSql</code> and
+                <code class="classname">DatasetGraphNoSql</code> class. This method
+                essentially gets all the data from the graph (or dataset)
+                and generates a representative subset used as data
+                sampling<span class="emphasis"><em>. </em></span>Users can choose the size of
+                data sampling by specifying the
+                <span class="emphasis"><em>samplingRate</em></span>. Note that existing data
+                sampling will be removed once this operation is executed.
+                More information about using analyze can be found in the
+                API reference information (Javadoc).
+            </p>
+        <p>
+                The following example analyzes the data from a graph
+                and generates a sampling subset with a sampling rate
+                of 0.005 (or 5/1000). 
+            </p>
+        <pre class="programlisting">public static void main(String[] args) throws Exception
+{
+String szStoreName  = args[0];
+String szHostName   = args[1];
+String szHostPort   = args[2]; 
+    
+System.out.println("Create Oracle NoSQL connection");
+OracleNoSqlConnection conn 
+                = OracleNoSqlConnection.createInstance(szStoreName,
+                                                       szHostName, 
+                                                       szHostPort);
+    
+System.out.println("Create named graph");
+OracleGraphNoSql graph = new OracleGraphNoSql(conn);
+    
+System.out.println("Clear graph");
+graph.clearRepository();
+    
+    
+System.out.println("Load data from file into a NoSQL database");
+    
+DatasetGraphNoSql.load("family.rdf", Lang.RDFXML, conn, 
+                           "http://example.com"); // base URI
+    
+System.out.println(“Analyze data”);
+long sizeSamp = graph.analyze(0.005); // 5 out of 1000
+    
+System.out.println("sampling size is " + sizeSamp);
+    
+graph.close();
+conn.dispose();
+} </pre>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="queryhints"></a>Query hints</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                The RDF Graph feature allows you to include query
+                optimization hints in a SPARQL query. It implements
+                these capabilities by using the SPARQL namespace
+                prefix syntax to refer to Oracle-specific namespaces
+                that contain these hints. The namespace is defined in
+                the form PREFIX ORACLE_SEM_HT_NS. 
+            </p>
+        <p>
+                Query hints can be passed to a SPARQL query by
+                including a line in the following form:
+            </p>
+        <pre class="programlisting">PREFIX ORACLE_SEM_HT_NS: &lt;http://oracle.com/semtech#<span class="emphasis"><em>hint</em></span>&gt;</pre>
+        <p>
+                Where <span class="emphasis"><em>hint</em></span> reflects any hint supported by the RDF
+                Graph feature. 
+            </p>
+        <p>
+                A query hint represents a helper for the RDF Graph
+                feature to generate an execution plan used to execute
+                a SPARQL query. An execution plan determines the way
+                query patterns will be handled by the RDF Graph
+                feature. This involves the following
+                conditions:
+            </p>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p> 
+                        The order in which query patterns in a Basic Graph
+                        Pattern will be executed. 
+                    </p>
+            </li>
+            <li>
+              <p>
+                        How query patterns will be joined together
+                        in order to complete a query execution.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        The join method (<span class="emphasis"><em>nested loop
+                        join</em></span> or <span class="emphasis"><em>hash
+                        join</em></span>) to pick in order to merge
+                        results retrieved from two query patterns or
+                        pre-calculated results.
+                    </p>
+            </li>
+          </ol>
+        </div>
+        <p>
+                An <span class="emphasis"><em>execution plan</em></span> is written
+                using post-fix notation. In this notation, joins
+                operations (expressed as HJ or NLJ) are preceded by
+                its operands (the result of another join operation or
+                a query pattern). The order in which the operands in a
+                join operation are presented is relevant to query
+                execution as the number of operations executed in the
+                join operation are intimately related to the size of
+                these operands. This, in consequence will affect the
+                performance of a query execution.
+            </p>
+        <p>
+                Query patterns in a plan are expressed as QP&lt;
+                ID&gt;, where ID represents the position of the query
+                pattern with respect to the specified SPARQL query.
+                Additionally, every join operation and its respective
+                operands should be wrapped using parentheses. 
+            </p>
+        <p>
+                For example, consider the following SPARQL query
+                that retrieves all pairs of names of people who
+                know each other.
+            </p>
+        <pre class="programlisting">PREFIX ORACLE_SEM_HT_NS: &lt;http://oracle.com/semtech#plan=
+                                          ((qp2%20qp3%20NLJ)%20qp1%20HJ)&gt;
+PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;" +
+
+SELECT ?name1 ?name2 " +
+WHERE { 
+graph &lt;http://example.org/graph&gt; { 
+?person1 foaf:knows ?person2     .         #QP1
+?person1 foaf:name ?name1       .         #QP2
+?person2 foaf:name ?name2         .        #QP3
+} </pre>
+        <p> 
+                Suppose that we want to specify an execution plan that will
+                perform first a nested loop join operation between
+                <code class="literal">?person1 foaf:name ?name1</code> and
+                <code class="literal">?person1 foaf:knows ?person2</code>, and then
+                perform a hash join operation between the results and the
+                third query pattern 
+                <code class="literal">?person2 foaf:name ?name2</code>. This plan can
+                be defined using post-fix notation as follows: 
+            </p>
+        <pre class="programlisting">(
+( 
+( ?person1 foaf:name ?name1 )
+( ?person1 foaf:name ?name2 )
+ NLJ )
+ 
+( ?person1 foaf:knows ?person2 )
+HJ )
+</pre>
+        <p> 
+                This execution plan can be specified into the RDF Graph
+                feature using the query 
+                <code class="literal">hint PLAN=<span class="emphasis"><em>encoded_plan</em></span></code>, 
+                where <span class="emphasis"><em>encoded_plan</em></span> represents an URL
+                encoded representation of an execution plan to execute all
+                the query patterns included in a SPARQL query using hash
+                join or nested loop join operations. Query hints can only
+                be applied to SPARQL queries with a single BGP. 
+            </p>
+        <p> 
+                Note that if a plan is not UTF-8 encoded, does not
+                include all query patterns in a SPARQL query, or is
+                syntactically incorrect, this hint will be ignored and
+                the RDF Graph feature will continue with a default
+                query optimization and execution. For information
+                about queries and joins operations, see 
+                <a class="xref" href="bestpractices.html#joinmethod" title="JOIN_METHOD option">JOIN_METHOD option</a>.
+            </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="jsonsupport.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="query.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="update.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">JavaScript Object Notation (JSON) Format Support </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 6. Update an RDF Graph</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

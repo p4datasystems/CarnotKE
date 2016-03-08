@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Specifying Subranges</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="recordget.html" title="Chapter 5. Reading Records" />
+    <link rel="prev" href="storeiterator.html" title="Using storeIterator()" />
+    <link rel="next" href="parallelscan.html" title="Parallel Scans" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Specifying Subranges</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="storeiterator.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 5. Reading Records</th>
+          <td width="20%" align="right"> <a accesskey="n" href="parallelscan.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="readsubranges"></a>Specifying Subranges</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            When performing multi-key operations in the store, you can
+            specify a range of records to operate upon. You do this using
+            the <code class="classname">KeyRange</code> class. This class defines a
+            range of <code class="classname">String</code> values for the key
+            components immediately following a key that is used in a
+            multiple get operation.
+        </p>
+      <p>
+            For example, suppose you were using the following keys:
+        </p>
+      <pre class="programlisting">/Smith/Bob/-/birthdate
+/Smith/Bobphone/-/number
+/Smith/Bob/-/image
+/Smith/Bob/-/userID 
+/Smith/Patricia/-/birthdate
+/Smith/Patricia/-/phonenumber
+/Smith/Patricia/-/image
+/Smith/Patricia/-/userID 
+/Smith/Richard/-/birthdate
+/Smith/Richard/-/phonenumber
+/Smith/Richard/-/image
+/Smith/Richard/-/userID 
+/Wong/Bill/-/birthdate
+/Wong/Bill/-/phonenumber
+/Wong/Bill/-/image
+/Wong/Bill/-/userID</pre>
+      <p>
+            Given this, you could perform operations for all the records
+            related to users Bob Smith and Patricia Smith by constructing a
+            <code class="classname">KeyRange</code>. When you do this, you must
+            identify the key components that defines the upper and lower
+            bounds of the range. You must also identify if the key
+            components that you provide are inclusive or exclusive.
+        </p>
+      <p>
+            In this case, we will define the start of the key range using
+            the string "Bob" and the end of the key range to be "Patricia".
+            Both ends of the key range will be inclusive.
+        </p>
+      <a id="readsubranges-1"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.KeyRange;
+
+...
+
+KeyRange kr = new KeyRange("Bob", true, "Patricia", true);</pre>
+      <p>
+            You then use the <code class="classname">KeyRange</code> instance when
+            you perform your multi-key operation. For example, suppose you
+            you were retrieving records from your store using 
+            <code class="methodname">KVStore.storeIterator()</code>:
+        </p>
+      <a id="readsubranges-2"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.Direction;
+import oracle.kv.Key;
+import oracle.kv.Value;
+import oracle.kv.KeyRange;
+import oracle.kv.KeyValueVersion;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+...
+
+ArrayList&lt;String&gt; majorComponents = new ArrayList&lt;String&gt;();
+
+...
+
+// Define the major and minor path components for the key
+majorComponents.add("Smith");
+
+// Create the retrieval key
+Key myKey = Key.createKey(majorComponents);
+
+<strong class="userinput"><code>KeyRange kr = new KeyRange("Bob", true, "Patricia", true);</code></strong>
+
+// Now retrieve the records. Note that we do not show the creation of
+// the kvstore handle here.
+
+
+Iterator&lt;KeyValueVersion&gt; i = 
+    kvstore.storeIterator(Direction.UNORDERED, 0,
+                          myKey<strong class="userinput"><code>, kr</code></strong>, null);
+while (i.hasNext()) {
+    Value v = i.next().getValue(); 
+    // Do some work with the Value here
+} </pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="storeiterator.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="recordget.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="parallelscan.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Using storeIterator() </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Parallel Scans</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

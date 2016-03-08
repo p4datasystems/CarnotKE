@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Using Embedded Records</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="usingtypes.html" title="Chapter 7. Using Data Types" />
+    <link rel="prev" href="usingmaps.html" title="Using Maps" />
+    <link rel="next" href="indexnonscalar.html" title="Chapter 8. Indexing Non-Scalar Data Types" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Using Embedded Records</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="usingmaps.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 7. Using Data Types</th>
+          <td width="20%" align="right"> <a accesskey="n" href="indexnonscalar.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="usingrecords"></a>Using Embedded Records</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            A record entry can contain fields of differing types. However,
+            embedded records should be used only when the data is relatively static.
+            In general, child tables provide a better solution over
+            embedded records, especially if the child dataset is large or is
+            likely to change in size.
+        </p>
+      <p>
+            Use the <code class="literal">RECORD()</code> statement to declare a
+            table field as a record.
+        </p>
+      <p>
+            To define a simple two-field table where the primary key is
+            a UID and the second field contains a record, you
+            use the following DDL statement:
+        </p>
+      <pre class="programlisting">CREATE TABLE myTable (
+    uid INTEGER,
+    myRecord RECORD(firstField STRING, secondField INTEGER),
+    PRIMARY KEY (uid)
+) </pre>
+      <p>
+            <code class="literal">CHECK</code>, <code class="literal">DEFAULT</code> and <code class="literal">NOT NULL</code>
+            constraints are not supported for embedded record fields.
+            However, these constraints can be applied to the individual
+            fields in an embedded record. See
+            <a class="xref" href="tablecreationddl.html#fieldconstraintsddl" title="Field Constraints">Field Constraints</a>
+            for more information.
+        </p>
+      <p>
+            To write the record, use
+            <code class="methodname">Row.putRecord()</code>, which returns a
+            <code class="classname">RecordValue</code> class instance. You then use 
+            <code class="methodname">RecordValue.put()</code> to write fields to
+            the record:
+        </p>
+      <pre class="programlisting">TableAPI tableH = kvstore.getTableAPI();
+
+Table myTable = tableH.getTable("myTable");
+
+Row row = myTable.createRow();
+row.put("uid", 12345);
+
+RecordValue rv = row.putRecord("myRecord");
+rv.put("firstField", "An embedded record STRING field");
+rv.put("secondField", 3388);
+
+tableH.put(row, null, null); </pre>
+      <p>
+            To read the record, use
+            <code class="methodname">Row.get().asRecord()</code>. This returns a
+            <code class="classname">RecordValue</code> class instance. You can then
+            use <code class="methodname">RecordValue.get()</code> to retrieve a
+            field from the record.  The retrieved value is returned as a
+            <code class="classname">FieldValue</code>, which allows you to retrieve
+            the encapsulated value using a cast method such as
+            <code class="methodname">FieldValue.asInteger()</code>.
+        </p>
+      <p>
+            For example, to retrieve field values from the embedded record
+            created in the previous example:
+        </p>
+      <pre class="programlisting">TableAPI tableH = kvstore.getTableAPI();
+
+Table myTable = tableH.getTable("myTable");
+
+/* Create a primary key for user id 12345 and get a row */
+PrimaryKey key = myTable.createPrimaryKey();
+key.put("uid", 12345);
+Row row = tableH.get(key, null);
+
+RecordValue rv = row.get("myRecord").asRecord();
+FieldValue fv = rv.get("firstField");
+System.out.println("firstField: " + fv.asString().get());
+fv = rv.get("secondField");
+System.out.println("secondField: " + fv.asInteger().get()); </pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="usingmaps.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="usingtypes.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="indexnonscalar.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Using Maps </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 8. Indexing Non-Scalar Data Types</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

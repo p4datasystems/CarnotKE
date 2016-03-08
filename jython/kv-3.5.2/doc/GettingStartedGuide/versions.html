@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 9. Using Versions</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="prev" href="depth.html" title="Specifying Depth" />
+    <link rel="next" href="consistency.html" title="Chapter 10. Consistency Guarantees" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 9. Using Versions</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="depth.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="consistency.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="versions"></a>Chapter 9. Using Versions</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+        When a 
+        <span>record (that is, a key-value pair)</span> 
+         
+        is initially inserted in
+        the store, and each time it is updated, it is assigned a unique
+        version token. The version is always returned by the method that
+        wrote to the store (for example,
+        <span>
+            <code class="methodname">KVStore.put()</code>).
+        </span>
+        
+        
+        
+        The version information is also returned by methods that retrieve 
+        <span>records</span>
+        
+        from the store.
+    </p>
+      <p>
+        There are two reasons why versions might be important.
+    </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                When an update or delete is to be performed, it may be
+                important to only perform the operation if the 
+                <span>record's</span>
+                
+                value has not changed. This is particularly interesting in
+                an application where there can be multiple threads or
+                processes simultaneously operating on the 
+                <span>record.</span>
+                
+                In this
+                case, read the 
+                <span>record,</span>
+                
+                examining its version when you do
+                so. You can then perform a put operation, but only allow
+                the put to proceed if the version has not changed (this is
+                often referred to as a <span class="emphasis"><em>Compare and Set</em></span>
+                (CAS) or <span class="emphasis"><em>Read, Modify, Write</em></span> (RMW)
+                operation). You use 
+                <span>
+                    <code class="methodname">KVStore.putIfVersion()</code> or
+                    <code class="methodname">KVStore.deleteIfVersion()</code>
+                </span>
+                
+                
+                
+                to guarantee this.
+            </p>
+          </li>
+          <li>
+            <p>
+                When a client reads data that was previously written, it
+                may be important to ensure that the Oracle NoSQL Database node servicing
+                the read operation has been updated with the information
+                previously written. This can be accomplished by passing the
+                version of the previously written data as a consistency
+                parameter to the read operation. For more information on
+                using consistency, see 
+                <a class="xref" href="consistency.html" title="Chapter 10. Consistency Guarantees">Consistency Guarantees</a>.
+            </p>
+          </li>
+        </ol>
+      </div>
+      <p>
+        Versions are managed using the <code class="classname">Version</code> class. In
+        some situations, it is returned as part of another encapsulating
+        class, 
+        
+        <span>
+            such as <code class="classname">KeyValueVersion</code> or
+            <code class="classname">ValueVersion</code>.
+        </span>
+        
+        
+    </p>
+      <p>
+        The following code fragment retrieves a record, and then stores that
+        record only if the version has not changed:
+    </p>
+      <a id="versions-1"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.Key;
+import oracle.kv.Value;
+import oracle.kv.ValueVersion;
+import java.util.ArrayList;
+
+...
+
+ArrayList&lt;String&gt; majorComponents = new ArrayList&lt;String&gt;();
+ArrayList&lt;String&gt; minorComponents = new ArrayList&lt;String&gt;();
+
+...
+
+// Define the major and minor path components for the key
+majorComponents.add("Smith");
+majorComponents.add("Bob");
+
+minorComponents.add("phonenumber");
+
+// Create the key
+Key myKey = Key.createKey(majorComponents, minorComponents);
+
+// Now retrieve the record. Note that we do not show the creation of 
+// the kvstore handle here.
+
+ValueVersion vv = kvstore.get(myKey);
+Value value = vv.getValue();
+Version version = vv.getVersion();
+
+...
+
+///////////////////////////////////////////////////////////
+////////////// Do work on the value here //////////////////
+///////////////////////////////////////////////////////////
+
+...
+
+// Put if the version is correct. Notice that here we examine
+// the return code. If it is null, that means that the put was
+// unsuccessful, probably because the record was changed elsewhere. 
+// In this case, you could retry the entire get/putIfVersion 
+// operation.
+Version newVersion = kvstore.putIfVersion(myKey, value, version); 
+if (newVersion == null) {
+    // Unsuccessful. Someone else probably modified the record.
+} </pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="depth.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="consistency.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Specifying Depth </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 10. Consistency Guarantees</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

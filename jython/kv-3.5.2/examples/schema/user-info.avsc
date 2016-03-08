@@ -1,0 +1,14 @@
+{
+    "type": "record",
+    "name": "UserInfo",
+    "namespace": "schema",
+    "fields": [
+        {"name": "name", "type": "string", "default": ""},
+        {"name": "gender", "type":
+            {"name": "Gender", "type": "enum",
+             "symbols": ["FEMALE", "MALE", "UNKNOWN"]},
+            "default": "UNKNOWN"},
+        {"name": "address", "type": "string", "default": ""},
+        {"name": "phone", "type": "string", "default": ""}
+    ]
+}

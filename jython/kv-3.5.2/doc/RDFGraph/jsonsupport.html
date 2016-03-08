@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>JavaScript Object Notation (JSON) Format Support</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="query.html" title="Chapter 5. Query RDF Graphs" />
+    <link rel="prev" href="syntax-bnodes.html" title="Syntax Involving Bnodes (Blank Nodes)" />
+    <link rel="next" href="bestpractices.html" title="Best Practices" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">JavaScript Object Notation (JSON) Format Support</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="syntax-bnodes.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 5. Query RDF Graphs</th>
+          <td width="20%" align="right"> <a accesskey="n" href="bestpractices.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="jsonsupport"></a>JavaScript Object Notation (JSON) Format Support</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            JavaScript Object Notation (JSON) format is supported
+            for SPARQL query responses. JSON data format is simple,
+            compact, and well suited for JavaScript programs.
+        </p>
+      <p>
+            For example, consider the following Java code snippet,
+            which executes a query over the data stored in the Oracle
+            NoSQL Database, and then calls the
+            <code class="methodname">ResultSetFormatter.outputAsJSON()</code> 
+            method to present the retrieved results: 
+        </p>
+      <pre class="programlisting">OracleNoSqlConnection conn = 
+                     OracleNoSqlConnection.createInstance(storeName,
+                                                          hostName, 
+                                                          hostPort);
+OracleGraphNoSql graph = new OracleNamedGraphNoSql(graphName, conn);
+OracleModelNoSql model = new OracleModelNoSql(graph); 
+
+graph.add(new Triple(Node.createURI("http://ds1"), 
+Node.createURI("http://dp1"), 
+Node.createURI("http://do1"))); 
+
+graph.add(new Triple(Node.createURI("http://ds2"), 
+Node.createURI("http://dp2"), 
+Node.createURI("http://do2")));
+
+Query q = QueryFactory.create("select ?s ?p ?o where {?s ?p ?o}",
+Syntax.syntaxARQ);
+
+QueryExecution qexec = QueryExecutionFactory.create(q, model); 
+ResultSet results = qexec.execSelect();
+ResultSetFormatter.outputAsJSON(System.out, results);</pre>
+      <p>
+            After the execution of this code, the following JSON
+            output is produced: 
+        </p>
+      <pre class="programlisting">{ 
+"head": { 
+"vars": [ "s" , "p" , "o" ] 
+} , 
+"results": { 
+"bindings": [ 
+{ 
+"s": { "type": "uri" , "value": "http://ds1" } , 
+"p": { "type": "uri" , "value": "http://dp1" } , 
+"o": { "type": "uri" , "value": "http://do1" } 
+} , 
+{ 
+"s": { "type": "uri" , "value": "http://ds2" } , 
+"p": { "type": "uri" , "value": "http://dp2" } , 
+"o": { "type": "uri" , "value": "http://do2" } 
+} 
+] 
+}
+}</pre>
+      <p>
+            The preceding example can be modified to execute a
+            query over a remote SPARQL endpoint instead of executing
+            it directly against an Oracle NoSQL Database. (If the
+            remote SPARQL endpoint is outside a firewall, then the
+            HTTP Proxy probably needs to be set.) 
+        </p>
+      <pre class="programlisting">Query q = QueryFactory.create("select ?s ?p ?o where {?s ?p ?o}",
+Syntax.syntaxARQ);
+QueryExecution qexec = 
+               QueryExecutionFactory.sparqlService(sparqlURL, q);
+ResultSet results = qexec.execSelect();
+ResultSetFormatter.outputAsJSON(System.out, results);</pre>
+      <p> 
+            To extend the first example in this section to named
+            graphs, the following code snippet adds two quads to the
+            same dataset, executes a named graph-based SPARQL query,
+            and serializes the query output into JSON format: 
+        </p>
+      <pre class="programlisting">DatasetGraphNoSql dsg = DatasetGraphNoSql.createFrom(graph);
+graph.close(); 
+
+dsg.add(new Quad(Node.createURI("http://g1"), 
+Node.createURI("http://s1"), 
+Node.createURI("http://p1"), 
+Node.createURI("http://o1") ) 
+);
+
+dsg.add(new Quad(Node.createURI("http://g2"), 
+                 Node.createURI("http://s2"), 
+                 Node.createURI("http://p2"), 
+                 Node.createURI("http://o2") ) 
+        ); 
+
+Query q1 = QueryFactory.create(
+                 "select ?g ?s ?p ?o where { GRAPH ?g {?s ?p ?o} }");
+
+QueryExecution qexec1 = 
+             QueryExecutionFactory.create(q1, DatasetImpl.wrap(dsg));
+
+ResultSet results1 = qexec1.execSelect();
+ResultSetFormatter.outputAsJSON(System.out, results1);
+dsg.close();
+conn.dispose();</pre>
+      <p>
+            The JSON output produced after executing the code is
+            presented as follows: 
+        </p>
+      <pre class="programlisting">{ 
+"head": { 
+"vars": [ "g" , "s" , "p" , "o" ] 
+} , 
+"results": { 
+"bindings": [ 
+{ 
+"g": { "type": "uri" , "value": "http://g1" } , 
+"s": { "type": "uri" , "value": "http://s1" } , 
+"p": { "type": "uri" , "value": "http://p1" } , 
+"o": { "type": "uri" , "value": "http://o1" } 
+} , 
+{ 
+"g": { "type": "uri" , "value": "http://g2" } , 
+"s": { "type": "uri" , "value": "http://s2" } , 
+"p": { "type": "uri" , "value": "http://p2" } , 
+"o": { "type": "uri" , "value": "http://o2" } 
+} 
+] 
+}
+}</pre>
+      <p>
+            You can also get a JSON response through HTTP against a
+            Joseki-based SPARQL endpoint, as in the following example.
+            Normally, when executing a SPARQL query against a SPARQL
+            Web service endpoint, the Accept request-head field is set
+            to be application/sparql-results+xml. For JSON output
+            format, replace the Accept request-head field with
+            application/sparql-results+json.
+        </p>
+      <pre class="programlisting">http://&lt;hostname&gt;:7001/joseki/oracle-nosql?query=
+  &lt;URL_ENCODED_SPARQL_QUERY&gt;&amp;output=json</pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="syntax-bnodes.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="query.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="bestpractices.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Syntax Involving Bnodes (Blank Nodes) </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Best Practices</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

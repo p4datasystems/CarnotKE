@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 11. Durability Guarantees</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="prev" href="consistency-version.html" title="Using Version-Based Consistency" />
+    <link rel="next" href="durability-sync.html" title="Setting Synchronization-Based Durability Policies" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 11. Durability Guarantees</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="consistency-version.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="durability-sync.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="durability"></a>Chapter 11. Durability Guarantees</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="durability.html#durability-ack">Setting Acknowledgment-Based Durability Policies</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="durability-sync.html">Setting Synchronization-Based Durability Policies</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="durability-set.html">Setting Durability Guarantees</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+          Writes are performed in the Oracle NoSQL Database store by performing the write
+          operation (be it a creation, update, or delete operation) on a
+          master node.  As a part of performing the write operation, the
+          master node will usually make sure that the operation has made it
+          to stable storage before considering the operation complete.
+      </p>
+      <p>
+          The master node will also transmit the write operation
+          to the replica nodes in its shard. It is possible to
+          ask the master node to wait for acknowledgments from its
+          replicas before considering the operation complete.
+      </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+              If your store is configured such that secondary zones are in
+              use, then write acknowledgements are never required for the
+              replicas in the secondary zones. That is, write
+              acknowledgements are only returned by replicas in primary
+              zones. See the <em class="citetitle">Oracle NoSQL Database Administrator's Guide</em> for more
+              information on zones.
+          </p>
+      </div>
+      <p>
+          The replicas, in turn, will not acknowledge the write operation
+          until they have applied the operation to their own database.
+      </p>
+      <p>
+          A <span class="emphasis"><em>durability guarantee,</em></span> then, is a policy
+          which describes how strongly persistent your data is in the event
+          of some kind of catastrophic failure within the store.  (Examples
+          of a catastrophic failure are power outages, disk crashes,
+          physical memory corruption, or even fatal application programming
+          errors.)
+      </p>
+      <p>
+          A high durability guarantee means that there is a very high
+          probability that the write operation will be retained in the
+          event of a catastrophic failure. A low durability guarantee means
+          that the write is very unlikely to be retained in the event of a
+          catastrophic failure.
+      </p>
+      <p>
+          The higher your durability guarantee, the slower your
+          write-throughput will be in the store. This is because a high
+          durability guarantee requires a great deal of disk and network
+          activity.
+      </p>
+      <p>
+          Usually you want some kind of a durability guarantee, although if
+          you have highly transient data that changes from run-time to
+          run-time, you might want the lowest possible durability guarantee
+          for that data.
+      </p>
+      <p>
+          Durability guarantees include two types of information:
+          acknowledgment guarantees and synchronization guarantees. These
+          two types of guarantees are described in the next sections. We
+          then show how to set a durability guarantee.
+      </p>
+      <p>
+          Note that by default, Oracle NoSQL Database uses a low durability guarantee.
+      </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="durability-ack"></a>Setting Acknowledgment-Based Durability Policies</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+              Whenever a master node performs a write operation (create,
+              update or delete), it must send that operation to its various
+              replica nodes. The replica nodes then apply the write
+              operation(s) to their local databases so that the replicas
+              are consistent relative to the master node.
+          </p>
+        <p>
+              Upon successfully applying write operations to their local
+              databases, replicas in primary zones send an <span class="emphasis"><em>acknowledgment
+              message</em></span> back to the master node. This message
+              simply says that the write operation was received and
+              successfully applied to the replica's local database.
+              Replicas in secondary zones do not send these acknowledgement
+              messages.
+          </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+                  The exception to this are replicas in secondary zones,
+                  which will never acknowledge write operations.  See the
+                  <em class="citetitle">Oracle NoSQL Database Administrator's Guide</em> for more information
+                  on zones.
+              </p>
+        </div>
+        <p>
+              An acknowledgment-based durability policy describes whether
+              the master node will wait for these acknowledgments before
+              considering the write operation to have completed
+              successfully. You can require the master node to wait for no
+              acknowledgments, acknowledgments from a simple majority of
+              replica nodes in primary zones, or acknowledgments from all
+              replica nodes in primary zones.
+          </p>
+        <p>
+              The more acknowledgments the master requires, the slower its
+              write performance will be. Waiting for acknowledgments means
+              waiting for a write message to travel from the master to
+              the replicas, then for the write operation to be performed at
+              the replica (this may mean disk I/O), then for an
+              acknowledgment message to travel from the replica back to
+              the master. From a computer application's point of view, this
+              can all take a long time.
+          </p>
+        <p>
+              When setting an acknowledgment-based durability policy, you
+              can require acknowledgment from:
+          </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                      All replicas. That is, all of the replica nodes in
+                      the shard that reside in a primary zone. Remember
+                      that your store has more than one shard, so the
+                      master node is not waiting for acknowledgments from
+                      every machine in the store.
+                  </p>
+            </li>
+            <li>
+              <p>
+                      No replicas. In this case, the master returns with
+                      normal status from the write operation as soon as it
+                      has met its synchronization-based durability policy.
+                      These are described in the next section.
+                  </p>
+            </li>
+            <li>
+              <p>
+                      A simple majority of replicas in primary zones. That
+                      is, if the shard has 5 replica nodes residing in
+                      primary zones, then the master will wait for
+                      acknowledgments from 3 nodes.
+                  </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="consistency-version.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="durability-sync.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Using Version-Based Consistency </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Setting Synchronization-Based Durability Policies</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

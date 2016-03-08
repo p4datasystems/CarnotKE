@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Semantic Data in the Database</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="overview.html" title="Chapter 1. RDF Graph for NoSQL Database Overview" />
+    <link rel="prev" href="datamodeling.html" title="Semantic Data Modeling" />
+    <link rel="next" href="Loading.html" title="Loading" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Semantic Data in the Database</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="datamodeling.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 1. RDF Graph for NoSQL Database Overview </th>
+          <td width="20%" align="right"> <a accesskey="n" href="Loading.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="semanticdata"></a>Semantic Data in the Database</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            We store RDF graph data (triples and quads) as key-value pairs
+            in Oracle NoSQL Database. To allow an easy separation of the
+            key-value pairs for RDF graph data, we add a prefix (customizable)
+            to all key-value pairs that are inserted into the Oracle NoSQL
+            Database for RDF related data. 
+        </p>
+      <p>
+            Note that duplicate entries are removed from the store.
+            Duplicate triples and quads are not stored. However, blank nodes
+            are supported because they are part of the RDF modeling.
+        </p>
+      <p> 
+            Each triple (quad) is modeled as a set of K/V pairs in NoSQL
+            Database.
+        </p>
+      <p>
+            Each graph is managed as a set of quads and stored and encoded
+            as key-value pairs in the Oracle NoSQL Database. Those key-value
+            pairs are used to answer SPARQL queries. In particular, each
+            SPARQL query pattern is translated into a multi-get API call
+            against the Oracle NoSQL Database and the resulting key-value
+            pairs are combined with those from other query patterns to form
+            a final result set for the client.
+        </p>
+      <p>
+            The following requirements apply to the specifications of URIs
+            and the storage of semantic data in the database:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    A subject must be a URI or a blank node.
+                </p>
+          </li>
+          <li>
+            <p> 
+                    A property must be a URI. 
+                </p>
+          </li>
+          <li>
+            <p> 
+                    An object can be any type, such as a URI, a
+                    blank node, or a literal. (However, null values
+                    and null strings are not supported.)
+                </p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="datamodeling.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="overview.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="Loading.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Semantic Data Modeling </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Loading</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Deleting Records from the Store</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="storewrites.html" title="Chapter 4. Writing and Deleting Records" />
+    <link rel="prev" href="recordput.html" title="Writing Records to the Store" />
+    <link rel="next" href="recordget.html" title="Chapter 5. Reading Records" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Deleting Records from the Store</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="recordput.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 4. Writing and Deleting Records</th>
+          <td width="20%" align="right"> <a accesskey="n" href="recordget.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="recorddelete"></a>Deleting Records from the Store</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="recorddelete.html#multidelete">Using multiDelete()</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+          You delete a single record from the store using the
+          <code class="methodname">KVStore.delete()</code> method. Records are
+          deleted based on a key. You can also require a record to match a
+          specified version before it will be deleted. To do this, use the
+          <code class="methodname">KVStore.deleteIfVersion()</code> method.
+          Versions are described in 
+          <a class="xref" href="versions.html" title="Chapter 9. Using Versions">Using Versions</a>.
+      </p>
+      <p>
+          When you delete a record, you must handle the same exceptions as
+          occur when you perform any write operation on the store. See
+          <a class="xref" href="storewrites.html#writeexceptions" title="Write Exceptions">Write Exceptions</a> 
+          for a high-level description of these exceptions.
+      </p>
+      <a id="recorddelete-1"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.Key;
+import java.util.ArrayList;
+
+...
+
+ArrayList&lt;String&gt; majorComponents = new ArrayList&lt;String&gt;();
+ArrayList&lt;String&gt; minorComponents = new ArrayList&lt;String&gt;();
+
+...
+
+// Define the major and minor path components for the key
+majorComponents.add("Smith");
+majorComponents.add("Bob");
+
+minorComponents.add("phonenumber");
+
+// Create the key
+Key myKey = Key.createKey(majorComponents, minorComponents);
+
+// Now delete the record. Note that we do not show the creation of the
+// kvstore handle here.
+
+kvstore.delete(myKey); </pre>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="multidelete"></a>Using multiDelete()</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                You can delete multiple records at once, so long as they all
+                share the same major path components. Note that you must
+                provide a complete major path component. You can omit minor
+                path components, or even provide partial path components.
+            </p>
+        <p>
+                To delete multiple records at once, use the 
+                <code class="methodname">KVStore.multiDelete()</code> method.
+            </p>
+        <p>
+                For example:
+            </p>
+        <a id="multidelete-1"></a>
+        <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.Key;
+import java.util.ArrayList;
+
+...
+
+ArrayList&lt;String&gt; majorComponents = new ArrayList&lt;String&gt;();
+
+...
+
+// Define the major and minor path components for the key
+majorComponents.add("Smith");
+majorComponents.add("Bob");
+
+// Create the key
+Key myKey = Key.createKey(majorComponents);
+
+// Now delete the record. Note that we do not show the creation of the
+// kvstore handle here.
+
+kvstore.multiDelete(myKey, null, null); </pre>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="recordput.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="storewrites.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="recordget.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Writing Records to the Store </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 5. Reading Records</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

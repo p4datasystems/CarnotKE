@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Configuring with Multiple Zones</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="configure.html" title="Chapter 3. Configuring the KVStore" />
+    <link rel="prev" href="create-rep-nodes.html" title="Create and Deploy Replication Nodes" />
+    <link rel="next" href="deploy-script.html" title="Using a Script to Configure the Store" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Configuring with Multiple Zones</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="create-rep-nodes.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 3. Configuring the KVStore</th>
+          <td width="20%" align="right"> <a accesskey="n" href="deploy-script.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="multiple-datacenters"></a>Configuring with Multiple Zones</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+            Optimal use of available physical facilities is
+            achieved by deploying your store across multiple Zones.
+            This provides fault isolation and availability for 
+            your data if a single zone fails. Each Zone has
+            a copy of your complete store, including a copy of all the shards.
+            With this configuration, reads are always possible, so long as
+            your data's consistency guarantees can be met, because at least one
+            replica is located in every Zone. Writes can also occur in the event
+            of a Zone loss so long as quorum can be maintained. For more information
+            on quorum, see the Oracle NoSQL Database Concepts manual.
+        </p>
+      <p>
+            You can specify a different replication factor to each
+            Zone. A replication factor can then be quantified as one of the following:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    <span class="emphasis"><em>Zone Replication Factor</em></span>
+                </p>
+            <p>
+                    The number of copies, or replicas, maintained in a zone.
+                </p>
+          </li>
+          <li>
+            <p>
+                    <span class="emphasis"><em>Primary Replication Factor</em></span>
+                </p>
+            <p>
+                    The total number of replicas in all Primary zones. This replication 
+                    factor controls the number of replicas that participate in 
+                    elections and acknowledgments. For additional information on how to identify the 
+                    <span class="emphasis"><em>Primary Replication Factor</em></span> and its implications,
+                    see <a class="xref" href="initialcapacityplanning.html#rep-factor" title="Replication Factor">Replication Factor</a>.
+                </p>
+          </li>
+          <li>
+            <p>
+                    <span class="emphasis"><em>Secondary Replication Factor</em></span>
+                </p>
+            <p>
+                    The total number of replicas in all Secondary zones. Secondary
+                    replicas provide additional read-only copies of the data.
+                </p>
+          </li>
+          <li>
+            <p>
+                    <span class="emphasis"><em>Store Replication Factor</em></span>
+                </p>
+            <p>
+                    Represents for all zones in the store, the total number 
+                    of replicas across the entire store.
+                </p>
+          </li>
+        </ul>
+      </div>
+      <p> 
+            Zones located nearby have the benefit of
+            avoiding bottlenecks due to throughput limitations, as
+            well as reducing latency during elections and commits.
+        </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p> 
+                Zones come in two types. <span class="emphasis"><em>Primary</em></span> zones
+                contain nodes which can serve as masters or replicas.  Zones
+                are created as primary zones by default.  For good
+                performance, primary zones should be connected by low latency
+                networks so that they can participate efficiently in master
+                elections and commit acknowledgments.
+            </p>
+        <p>
+                <span class="emphasis"><em>Secondary</em></span> zones contain nodes which can
+                only serve as replicas.  Secondary zones can be used to
+                provide low latency read access to data at a distant location,
+                or to maintain an extra copy of the data to increase
+                redundancy or increase read capacity.  Because the nodes in
+                secondary zones do not participate in master elections or
+                commit acknowledgments, secondary zones can be connected to
+                other zones by higher latency networks, because additional
+                latency will not interfere with those time critical
+                operations.
+            </p>
+      </div>
+      <p> 
+            Using high throughput and low latency networks to connect primary
+            zones leads to better results and improved performance.  You can
+            use networks with higher latency to connect to secondary zones so
+            long as the connections provide sufficient throughput to support
+            replication and sufficient reliability that temporary
+            interruptions do not interfere with network throughput.
+        </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+                Because any primary zone can host master nodes,
+                write performance may be reduced if primary zones
+                are connected through a limited throughput and/or
+                high latency network link.
+            </p>
+      </div>
+      <p>
+            The following steps walk you through the process of
+            deploying six Storage Nodes across three primary zones.
+            You can then verify that each shard has a replica in
+            every Zone; service can be continued in the event of
+            a Zone failure.
+        </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                    For a new store, create the initial "boot
+                    config" configuration files using the
+                    makebootconfig utility:
+                </p>
+            <pre class="programlisting">java -jar kv/lib/kvstore.jar makebootconfig \
+-root Data/virtualroot/datacenter1/KVROOT \
+-host localhost \
+-port 5000 \
+-admin 5001 \
+-harange 5010,5020 \
+-capacity 1 \
+-store-security none \
+
+java -jar kv/lib/kvstore.jar makebootconfig \
+-root Data/virtualroot/datacenter2/KVROOT \
+-host localhost \
+-port 6000 \
+-admin 6001 \
+-harange 6010,6020 \
+-capacity 1 \
+-store-security none \
+
+java -jar kv/lib/kvstore.jar makebootconfig \
+-root Data/virtualroot/datacenter3/KVROOT \
+-host localhost \
+-port 7000 \
+-admin 7001 \
+-harange 7010,7020 \
+-capacity 1 \
+-store-security none \
+
+java -jar kv/lib/kvstore.jar makebootconfig \
+-root Data/virtualroot/datacenter4/KVROOT \
+-host localhost \
+-port 8000 \
+-admin 8001 \
+-harange 8010,8020 \
+-capacity 1 \
+-store-security none \
+
+java -jar kv/lib/kvstore.jar makebootconfig \
+-root Data/virtualroot/datacenter5/KVROOT \
+-host localhost \
+-port 9000 \
+-admin 9001 \
+-harange 9010,9020 \
+-capacity 1 \
+-store-security none \
+
+java -jar kv/lib/kvstore.jar makebootconfig \
+-root Data/virtualroot/datacenter6/KVROOT \
+-host localhost \
+-port 10000 \
+-admin 10001 \
+-harange 10010,10020 \
+-capacity 1 \
+-store-security none \ </pre>
+          </li>
+          <li>
+            <p>
+                    Using each of the configuration files,
+                    start all of the Storage Node Agents: 
+                </p>
+            <pre class="programlisting">&gt; nohup java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar \
+start -root Data/virtualroot/datacenter1/KVROOT &amp;
+&gt; [1] 12019 
+
+&gt; nohup java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar \
+start -root -root Data/virtualroot/datacenter2/KVROOT &amp;
+&gt; [2] 12020 
+
+&gt; nohup java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar \
+start -root -root Data/virtualroot/datacenter3/KVROOT &amp;
+&gt; [3] 12021 
+
+&gt; nohup java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar \ 
+start -root -root Data/virtualroot/datacenter4/KVROOT &amp;
+&gt; [4] 12022 
+
+&gt; nohup java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar \
+start -root -root Data/virtualroot/datacenter5/KVROOT &amp;
+&gt; [5] 12023 
+
+&gt; nohup java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar \
+start -root -root Data/virtualroot/datacenter6/KVROOT &amp;
+&gt; [6] 12024</pre>
+          </li>
+          <li>
+            <p> 
+                    Start the CLI: 
+                </p>
+            <pre class="programlisting">&gt; java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar runadmin -host \
+localhost -port 5010
+kv-&gt;</pre>
+          </li>
+          <li>
+            <p> 
+                    Name your store: 
+                </p>
+            <pre class="programlisting">kv-&gt; configure -name MetroArea
+Store configured: MetroArea </pre>
+          </li>
+          <li>
+            <p>
+                    Deploy the first Storage Node with
+                    administration process in the Manhattan Zone:
+                </p>
+            <pre class="programlisting">kv-&gt; plan deploy-zone -name Manhattan -rf 1 -wait
+Executed plan 1, waiting for completion...
+Plan 1 ended successfully 
+kv-&gt; plan deploy-sn -zn 1 -host localhost -port 5000 -wait 
+Executed plan 2, waiting for completion...
+Plan 2 ended successfully
+kv-&gt; plan deploy-admin -sn sn1 -port 5001 -wait
+Executed plan 3, waiting for completion...
+Plan 3 ended successfully
+kv-&gt; pool create -name SNs 
+kv-&gt; pool join -name SNs -sn sn1 
+Added Storage Node(s) [sn1] to pool SNs  </pre>
+          </li>
+          <li>
+            <p>
+                    Deploy a second Storage Node in Manhattan
+                    Zone:
+                </p>
+            <pre class="programlisting">kv-&gt; plan deploy-sn -znname Manhattan -host localhost \
+-port 6000 -wait 
+kv-&gt; Executed plan 4, waiting for completion...
+Plan 4 ended successfully
+kv-&gt; pool join -name SNs -sn sn2
+Added Storage Node(s) [sn2] to pool SNs  </pre>
+          </li>
+          <li>
+            <p>
+                    Deploy the first Storage Node with
+                    administration process in the Jersey City Zone: 
+                </p>
+            <pre class="programlisting">kv-&gt; plan deploy-zone -name JerseyCity -rf 1 -wait
+Executed plan 5, waiting for completion...
+Plan 5 ended successfully 
+kv-&gt; plan deploy-sn -znname JerseyCity -host localhost \ 
+-port 7000 -wait 
+Executed plan 6, waiting for completion...
+Plan 6 ended successfully
+kv-&gt; plan deploy-admin -sn sn3 -port 7001 -wait
+Executed plan 7, waiting for completion...
+Plan 7 ended successfully
+kv-&gt; pool join -name SNs -sn sn3 
+Added Storage Node(s) [sn3] to pool SNs  </pre>
+          </li>
+          <li>
+            <p> 
+                    Deploy a second Storage Node in Jersey City
+                    Zone:
+                </p>
+            <pre class="programlisting">kv-&gt; plan deploy-sn -znname JerseyCity -host localhost \
+-port 8000 -wait 
+kv-&gt; Executed plan 8, waiting for completion...
+Plan 8 ended successfully
+kv-&gt; pool join -name SNs -sn sn4
+Added Storage Node(s) [sn4] to pool SNs  </pre>
+          </li>
+          <li>
+            <p>
+                    Deploy the first Storage Node with
+                    administration process in the Queens Zone:
+                </p>
+            <pre class="programlisting">kv-&gt; plan deploy-zone -name Queens -rf 1 -wait 
+Executed plan 9, waiting for completion...
+Plan 9 ended successfully 
+kv-&gt; plan deploy-sn -znname Queens -host localhost -port 9000 -wait 
+Executed plan 10, waiting for completion...
+Plan 10 ended successfully
+kv-&gt; plan deploy-admin -sn sn5 -port 9001 -wait
+Executed plan 11, waiting for completion...
+Plan 11 ended successfully
+kv-&gt; pool join -name SNs -sn sn5 
+Added Storage Node(s) [sn5] to pool SNs  </pre>
+          </li>
+          <li>
+            <p> 
+                    Deploy a second Storage Node in Queens Zone:
+                </p>
+            <pre class="programlisting">kv-&gt; plan deploy-sn -znname Queens -host localhost \
+-port 10000 -wait 
+kv-&gt; Executed plan 12, waiting for completion...
+Plan 12 ended successfully
+kv-&gt; pool join -name SNs -sn sn6
+Added Storage Node(s) [sn6] to pool SNs  </pre>
+          </li>
+          <li>
+            <p> 
+                    Create and deploy a topology:
+                </p>
+            <pre class="programlisting">kv-&gt; topology create -name Topo1 -pool SNs -partitions 100 
+Created: Topo1
+kv-&gt; plan deploy-topology -name Topo1 -wait
+kv-&gt; Executed plan 13, waiting for completion...
+Plan 13 ended successfully  </pre>
+          </li>
+          <li>
+            <p> 
+                    Check service status with the <code class="literal">show
+                        topology</code> command: 
+                </p>
+            <pre class="programlisting">kv-&gt; show topology
+store=MetroArea numPartitions=100 sequence=117
+zn: id=zn1 name=Manhattan repFactor=1 type=PRIMARY
+zn: id=zn2 name=JerseyCity repFactor=1 type=PRIMARY
+zn: id=zn3 name=Queens repFactor=1 type=PRIMARY
+
+sn=[sn1] zn=[id=zn1 name=Manhattan] node01:5000 capacity=1 RUNNING
+  [rg1-rn2] RUNNING
+     No performance info available
+sn=[sn2] zn=[id=zn1 name=Manhattan] node02:6000 capacity=1 RUNNING
+  [rg2-rn2] RUNNING
+     No performance info available
+sn=[sn3] zn=[id=zn2 name=JerseyCity] node03:7000 capacity=1 RUNNING
+  [rg1-rn3] RUNNING
+     No performance info available
+sn=[sn4] zn=[id=zn2 name=JerseyCity] node04:8000 capacity=1 RUNNING
+  [rg2-rn3] RUNNING
+     No performance info available
+sn=[sn5] zn=[id=zn3 name=Queens] node05:9000 capacity=1 RUNNING
+  [rg1-rn1] RUNNING
+     No performance info available
+sn=[sn6] zn=[id=zn3 name=Queens] node06:10000 capacity=1 RUNNING
+  [rg2-rn1] RUNNING
+     No performance info available
+
+shard=[rg1] num partitions=50
+  [rg1-rn1] sn=sn5
+  [rg1-rn2] sn=sn1
+  [rg1-rn3] sn=sn3  
+shard=[rg2] num partitions=50
+  [rg2-rn1] sn=sn6
+  [rg2-rn2] sn=sn2
+  [rg2-rn3] sn=sn4  </pre>
+          </li>
+          <li>
+            <p> 
+                    Verify that each shard has a replica in
+                    every zone:
+                </p>
+            <pre class="programlisting">kv-&gt; verify configuration
+Verify: starting verification of store MetroArea based upon
+topology sequence #117
+100 partitions and 6 storage nodes
+Time: 2015-06-16 00:01:05 UTC   Version: 12.1.3.4.0
+See node01:Data/virtualroot/datacenter1/kvroot/MetroArea/
+                                          log/MetroArea_{0..N}.log for
+                                          progress messages
+Verify: Shard Status: healthy:2 writable-degraded:0 
+                                            read-only:0 offline:0
+Verify: Admin Status: healthy
+Verify: Zone [name=Manhattan id=zn1 type=PRIMARY]   
+   RN Status: online:2 offline: 0 maxDelayMillis:1 maxCatchupTimeSecs:0
+Verify: Zone [name=JerseyCity id=zn2 type=PRIMARY]   
+   RN Status: online:2 offline: 0 maxDelayMillis:1 maxCatchupTimeSecs:0
+Verify: Zone [name=Queens id=zn3 type=PRIMARY]   
+   RN Status: online:2 offline: 0
+Verify: == checking storage node sn1 ==
+Verify: Storage Node [sn1] on node01:5000    
+   Zone: [name=Manhattan id=zn1 type=PRIMARY]    Status: RUNNING   
+   Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+Verify:         Admin [admin1]          Status: RUNNING,MASTER
+Verify:         Rep Node [rg1-rn2]      Status: RUNNING,REPLICA 
+   sequenceNumber:127 haPort:5011 delayMillis:1 catchupTimeSecs:0
+Verify: == checking storage node sn2 ==
+Verify: Storage Node [sn2] on node02:6000    
+   Zone: [name=Manhattan id=zn1 type=PRIMARY]    Status: RUNNING   
+   Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+Verify:         Rep Node [rg2-rn2]      Status: RUNNING,REPLICA 
+   sequenceNumber:127 haPort:6010 delayMillis:1 catchupTimeSecs:0
+Verify: == checking storage node sn3 ==
+Verify: Storage Node [sn3] on node03:7000    
+   Zone: [name=JerseyCity id=zn2 type=PRIMARY]    Status: RUNNING   
+   Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+Verify:         Admin [admin2]          Status: RUNNING,REPLICA
+Verify:         Rep Node [rg1-rn3]      Status: RUNNING,REPLICA 
+   sequenceNumber:127 haPort:7011 delayMillis:1 catchupTimeSecs:0
+Verify: == checking storage node sn4 ==
+Verify: Storage Node [sn4] on node04:8000    
+   Zone: [name=JerseyCity id=zn2 type=PRIMARY]    Status: RUNNING   
+   Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+Verify:         Rep Node [rg2-rn3]      Status: RUNNING,REPLICA 
+   sequenceNumber:127 haPort:8010 delayMillis:1 catchupTimeSecs:0
+Verify: == checking storage node sn5 ==
+Verify: Storage Node [sn5] on node05:9000    
+   Zone: [name=Queens id=zn3 type=PRIMARY]    Status: RUNNING   
+   Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+Verify:         Admin [admin3]          Status: RUNNING,REPLICA
+Verify:         Rep Node [rg1-rn1]      Status: RUNNING,MASTER 
+   sequenceNumber:127 haPort:9011
+Verify: == checking storage node sn6 ==
+Verify: Storage Node [sn6] on node06:10000    
+   Zone: [name=Queens id=zn3 type=PRIMARY]    Status: RUNNING   
+   Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+Verify:         Rep Node [rg2-rn1]      Status: RUNNING,MASTER 
+   sequenceNumber:127 haPort:10010
+
+Verification complete, no violations.   </pre>
+          </li>
+        </ol>
+      </div>
+      <p>
+           In the previous example there are three zones
+           (zn1 = Manhattan, zn2 = JerseyCity, zn3=Queens) with six
+            Replication Nodes (two masters and four replicas) in
+            this cluster. This means that this topology is not
+            only highly available because you have three replicas
+            within each shard, but it is also able to recover from
+            a single zone failure. If any zone
+            fails, the other two zones are enough to elect
+            the new master, so service continues without any
+            interruption.
+        </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="create-rep-nodes.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="configure.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="deploy-script.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Create and Deploy Replication Nodes </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Using a Script to Configure the Store</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

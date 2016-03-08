@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 1. Developing for Oracle NoSQL Database</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="prev" href="preface.html" title="Preface" />
+    <link rel="next" href="authentication.html" title="Using the Authentication APIs" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 1. Developing for Oracle NoSQL Database</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="preface.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="authentication.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="kvapi"></a>Chapter 1. Developing for Oracle NoSQL Database</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="kvapi.html#kvstorehandle">The KVStore Handle</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="kvapi.html#kvstoreconfig">The KVStoreConfig Class</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="authentication.html">Using the Authentication APIs</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="authentication.html#configuressl">Configuring SSL</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="authentication.html#logincreds">Authentication using LoginCredentials</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="authentication.html#loginrenew">Renewing Expired Login Credentials</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="authentication.html#kerberoslogin">Authentication using Kerberos</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="authentication.html#kerberosloginjaas">Authentication using Kerberos and JAAS</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="authentication.html#accessdenied">Unauthorized Access</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+        </dl>
+      </div>
+      <p>
+      You access the data in the Oracle NoSQL Database KVStore using Java drivers that are
+      provided for the product. In addition to the Java drivers, several
+      other drivers are also available. They are:
+  </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+              Java Key/Value Driver
+          </p>
+          </li>
+          <li>
+            <p>
+              C Table Driver
+          </p>
+          </li>
+          <li>
+            <p>
+              C Key/Value Driver
+          </p>
+          </li>
+          <li>
+            <p>
+              Python Table Driver
+          </p>
+          </li>
+          <li>
+            <p>
+              node.js Table Driver
+          </p>
+          </li>
+        </ol>
+      </div>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+          New users should use one of the Table drivers unless they
+          require a feature only available in the Key/Value API. The 
+          Key/Value API will eventually be deprecated.
+      </p>
+      </div>
+      <p>
+      The Java and C Key/Value driver provides access to store data using
+      key/value pairs. All other drivers provide access using tables. In
+      addition, the Java Key/Value driver provides Large Object (LOB) support
+      that as of this release does not appear in the other drivers. However,
+      users of the Java Tables driver can access the LOB API, even though the
+      LOB API is accessed using the Key/Value interface.
+  </p>
+      <p>
+      Users of any of the Table drivers are able to create and use secondary
+      indexing. The Java and C Key/Value drivers do not provide this support.
+  </p>
+      <p>
+      To work, the C Table, Python Table, and node.js Table drivers
+      require use of a proxy server which translates network activity
+      between the driver and the Oracle NoSQL Database store. The proxy is written in
+      Java, and can run on any machine that is network accessible by both
+      your client code and the Oracle NoSQL Database store. However, for performance and
+      security reasons, Oracle recommends that you run the proxy on the
+      same local host as your driver, and that the proxy be used in a 1:1
+      configuration with your drivers (that is, each instance of the proxy
+      should be used with just a single driver instance).
+  </p>
+      <p>
+      Regardless of the driver you decide to use, the provided classes and
+      methods allow you to write data to the store, retrieve it, and delete
+      it. You use these APIs to define consistency and durability
+      guarantees. It is also possible to execute a sequence of store
+      operations atomically so that all the operations succeed, or none of
+      them do.
+  </p>
+      <p>
+      The rest of this book introduces the Java APIs that you use to access
+      the store, and the concepts that go along with them. 
+  </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+          Oracle NoSQL Database is tested with Java 7.
+      </p>
+      </div>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="kvstorehandle"></a>The KVStore Handle</h2>
+            </div>
+          </div>
+        </div>
+        <div class="toc">
+          <dl>
+            <dt>
+              <span class="sect2">
+                <a href="kvapi.html#kvstoreconfig">The KVStoreConfig Class</a>
+              </span>
+            </dt>
+          </dl>
+        </div>
+        <p>
+          In order to perform store access of any kind, you must obtain a
+          <code class="classname">KVStore</code> handle. You obtain a KVStore
+          handle by using the <code class="methodname">KVStoreFactory.getStore()</code>
+          method.
+      </p>
+        <p>
+          When you get a <code class="classname">KVStore</code> handle, you must
+          provide a <code class="classname">KVStoreConfig</code> object. This
+          object identifies important properties about the store that you
+          are accessing. We describe the
+          <code class="classname">KVStoreConfig</code> class next in this chapter,
+          but at a minimum you must use this class to identify:
+      </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                  The name of the store. The name provided here must be
+                  identical to the name used when the store was installed.
+              </p>
+            </li>
+            <li>
+              <p>
+                  The network contact information for one or more helper
+                  hosts. These are the network name and port information
+                  for nodes currently belonging to the store.  Multiple
+                  nodes can be identified using an array of strings. You
+                  can use one or many. Many does not hurt. The downside of
+                  using one is that the chosen host may be temporarily
+                  down, so it is a good idea to use more than one.
+              </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+          In addition to the <code class="classname">KVStoreConfig</code> class
+          object, you can also provide a <code class="classname">PasswordCredentials</code>
+          class object to
+          <code class="methodname">KVStoreFactory.getStore()</code>. You do this
+          if you are using a store that has been configured to require
+          authentication. See
+          <a class="xref" href="authentication.html" title="Using the Authentication APIs">Using the Authentication APIs</a>
+          for more information.
+      </p>
+        <p>
+          For a store that does not require authentication, you obtain a
+          store handle like this:
+      </p>
+        <a id="intro-1"></a>
+        <pre class="programlisting">package kvstore.basicExample;
+
+import oracle.kv.KVStore;
+import oracle.kv.KVStoreConfig;
+import oracle.kv.KVStoreFactory;
+
+...
+
+String[] hhosts = {"n1.example.org:5088", "n2.example.org:4129"};
+KVStoreConfig kconfig = new KVStoreConfig("exampleStore", hhosts);
+KVStore kvstore = KVStoreFactory.getStore(kconfig); </pre>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="kvstoreconfig"></a>The KVStoreConfig Class</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+            The <code class="classname">KVStoreConfig</code> class is used to
+            describe properties about a <code class="classname">KVStore</code>
+            handle. Most of the properties are optional; those that are
+            required are provided when you construct a class instance.
+        </p>
+          <p>
+            The properties that you can provide using
+            <code class="classname">KVStoreConfig</code> are:
+        </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+                    Consistency
+                </p>
+                <p>
+                    Consistency is a property that describes how likely
+                    it is that a record read from a replica node is 
+                    identical to the same record stored on a master node.
+                    For more information, see
+                    <a class="xref" href="consistency.html" title="Chapter 10. Consistency Guarantees">Consistency Guarantees</a>.
+                </p>
+              </li>
+              <li>
+                <p>
+                    Durability
+                </p>
+                <p>
+                    Durability is a property that describes how likely it
+                    is that a write operation performed on the master node
+                    will not be lost if the master node is lost or is
+                    shut down abnormally. For more information, see
+                    <a class="xref" href="durability.html" title="Chapter 11. Durability Guarantees">Durability Guarantees</a>.
+                </p>
+              </li>
+              <li>
+                <p>
+                    Helper Hosts
+                </p>
+                <p>
+                    Helper hosts are hostname/port pairs that identify
+                    where nodes within the store can be contacted. Multiple
+                    hosts can be identified using an array of strings.
+                    Typically an application developer will obtain these
+                    hostname/port pairs from the store's deployer and/or
+                    administrator.  For example:
+                </p>
+                <a id="intro-2"></a>
+                <pre class="programlisting">String[] hhosts = {"n1.example.org:3333", "n2.example.org:3333"};</pre>
+              </li>
+              <li>
+                <p>
+                    Request Timeout
+                </p>
+                <p>
+                    Configures the amount of time the
+                    <code class="classname">KVStore</code> handle will wait for an
+                    operation to complete before it times out. 
+                </p>
+              </li>
+              <li>
+                <p>
+                    Store name
+                </p>
+                <p>
+                    Identifies the name of the store.
+                </p>
+              </li>
+              <li>
+                <p>
+                    Password credentials and optionally a reauthentication
+                    handler
+                </p>
+                <p>
+                    See the next section on authentication.
+                </p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="preface.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="authentication.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Preface </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Using the Authentication APIs</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

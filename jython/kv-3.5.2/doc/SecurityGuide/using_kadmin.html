@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Appendix C. Configuring the Kerberos Administrative Utility</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="prev" href="kvstore_lobapi.html" title="Privileges for Accessing KvLargeObject APIs" />
+    <link rel="next" href="manual_service.html" title="Appendix D. Manually Registering Oracle NoSQL Database Service Principal" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Appendix C. Configuring the Kerberos Administrative Utility</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="kvstore_lobapi.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="manual_service.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="appendix" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="using_kadmin"></a>Appendix C. Configuring the Kerberos Administrative Utility</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+		Before using <code class="literal">kadmin</code>, you first need to configure
+		permissions on the KDC. Kerberos uses an Access Control List (ACL) file
+		to determine which principals have administrative access to the Kerberos
+		database and their level of access.
+	</p>
+      <p> 
+		The default location of the Kerberos ACL file is
+		&lt;LOCALSTATEDIR&gt;/krb5kdc/kadm5.acl, where
+			<code class="literal">LOCALSTATEDIR</code> is the directory prefix where the
+		KDC databases are located. This location can be modified by the
+			<code class="literal">acl_file</code> variable in <code class="literal">kdc.conf</code>. 
+	</p>
+      <p> 
+		Lines containing ACL entries have this format: </p>
+      <pre class="programlisting">principal  permissions  [target_principal  [restrictions] ]</pre>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+			Line order in the ACL file is important. The first matching entry
+			will control access for an actor principal on a target principal.
+		</p>
+      </div>
+      <p>
+		To configure <code class="literal">kadmin</code>, perform the following steps:
+	</p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+				Create an access control list file and put the Kerberos
+				principal of at least one of the administrators into it. For
+				example:
+			</p>
+            <pre class="programlisting">*/admin@EXAMPLE.COM  *</pre>
+            <p> 
+				In this case, any principal in the
+					<code class="literal">EXAMPLE.COM</code> realm with an
+					<code class="literal">admin</code> instance has all administrative
+				privileges on the KDC.
+			</p>
+            <p> 
+				For example, <code class="literal">joe/admin@EXAMPLE.com</code> has all
+				privileges over the realm's Kerberos database. 
+			</p>
+          </li>
+          <li>
+            <p> 
+				Create the first principal before accessing the KDC remotely: 
+			</p>
+            <pre class="programlisting">kadmin.local: addprinc -randkey admin/admin
+kadmin.local: ktadd –k kadm5.keytab admin/admin </pre>
+          </li>
+        </ol>
+      </div>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p> 
+			To enable passwordless autentication, copy
+				<code class="literal">kadm5.keytab</code> to any client machine.
+		</p>
+      </div>
+      <p> 
+		Kadmin can also be used to perform security maintenance. For more
+		information, see <a class="xref" href="update_kerbpass.html" title="Guidelines for Updating Kerberos Passwords">Guidelines for Updating Kerberos Passwords</a>.
+	</p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="kvstore_lobapi.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="manual_service.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Privileges for Accessing KvLargeObject APIs </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Appendix D. Manually Registering Oracle NoSQL Database Service Principal</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

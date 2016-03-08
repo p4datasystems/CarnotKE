@@ -1,0 +1,256 @@
+#! /bin/bash
+
+# Example script for performing an online upgrade to an Oracle NoSQL Database
+# deployment.
+#
+# The script takes the following steps:
+# 
+# 1. Upgrade one of the admin nodes (required when upgrading from version 2 to
+#    version 2.1)
+# 2. Verify that the existing store's version meets the new software's
+#    prerequisite
+# 3. Determine the order in which to upgrade the remaining storage nodes
+# 4. Upgrade each storage node, waiting for each upgrade to complete
+#
+# For more information on upgrading refer to the Oracle NoSQL Database
+# Administrator's Guide
+#
+
+#
+# Specify the absolute java path for execution
+#
+JAVA=java
+
+#
+# Kvstore root directory for data storage
+#
+KVROOT=/tmp/kvroot
+
+#
+# The old version NOSQL kvstore jar path
+#
+FROM_JAR_PATH=$HOME/lib/kv-2.0.39/lib/kvstore-2.0.39.jar
+
+#
+# The new version NOSQL kvstore jar path
+#
+TO_JAR_PATH=$HOME/lib/kv-2.1.2/lib/kvstore.jar
+
+#
+# HOSTINFO describes the Storage Nodes used for the store.
+#
+# The value is a list of whitespace-separated entries representing the
+# storage nodes, each of the form:
+#
+#     HOST;REGISTRY_PORT;HA_START_RANGE[;KEY=VALUE]*
+#
+# The host name, registry port, and starting port number for the range
+# of HA ports are all required.  Note that port values may be different
+# for different nodes to permit testing on configurations where more
+# than one storage node runs on a given host.
+#
+# Optional attributes are specified using the KEY=VALUE syntax, with the
+# following entries supported:
+#
+#    -admin=ADMIN_PORT
+#
+# Specifies that the node should run an admin, using the specified port
+# for web access.
+#
+#    -config=CONFIG_FILE
+#
+# Specifies the name of the configuration file, with config.xml as the
+# default if not specified. Generally, this only needs to be specified when
+# testing on a configurations where more than one storage node runs on a given
+# host.
+# 
+#
+# This example configuration describes a store with nine Storage Nodes on hosts
+# host01 through host09. It specifies that host01 through host09 contain admin
+# services.
+#
+# Note that the script assumes that the first node (in this case host01)
+# contains an admin service.
+#
+# Note that direct ssh connection without password need to be setup for
+# accessing all the hosts.
+#
+HOSTINFO="host01;10100;10109;-admin=10101;-config=config1.xml
+          host02;10200;10209;-admin=10201;-config=config2.xml
+          host03;10300;10309;-admin=10301;-config=config3.xml
+          host04;10400;10409;-config=config4.xml
+          host05;10500;10509;-config=config5.xml
+          host06;10600;10609;-config=config6.xml
+          host07;10700;10709;-config=config7.xml
+          host08;10800;10809;-config=config8.xml
+          host09;10900;10909;-config=config9.xml"
+          
+#
+# Waiting time for replica nodes to start up
+#
+RN_BOOT_TIME=20
+          
+declare -i i=0
+declare -i j=0
+declare -a HOSTS
+declare -a PORTS
+declare -a ADMINPORTS
+declare -a HASTARTS
+declare -a CONFIGS
+declare REGPORT
+declare ADMINPORT
+
+#
+# Script to parse the host information to array values
+#
+for node in $HOSTINFO; do
+    HOSTS[$i]=$(echo $node | cut -d ";" -f 1)
+        if [ "${HOSTS[$i]}" = "" ]; then
+            echo "HOSTINFO host names must not be empty" >&2
+            exit 1
+        fi
+    PORTS[$i]=$(echo $node | cut -d ";" -f 2 -s)
+    HASTARTS[$i]=$(echo $node | cut -d ";" -f 3 -s)
+        optional=$(echo $node | cut -d ";" -f 4- -s)
+        while [ "$optional" != "" ]; do
+            item=$(echo $optional | cut -d ";" -f 1)
+            optional=$(echo $optional | cut -d ";" -f 2- -s)
+            key=$(echo $item | cut -d "=" -f 1)
+            value=$(echo $item | cut -d "=" -f 2 -s)
+            case $key in
+                -admin) ADMINPORTS[$i]=$value;;
+                -config) CONFIGS[$i]=$value;;
+                *)
+                echo "Error: Unknown HOSTINFO key: $key" >&2
+                return 1
+            esac
+        done
+    if [ "${CONFIGS[$i]}" = "" ]; then
+        CONFIGS[$i]=config.xml
+    fi
+
+    i=$((i + 1))
+done
+
+# Assumes that the first node contains an admin service.
+ADMINMASTER=${HOSTS[0]}
+ADMINMASTER_CONFIG=${CONFIGS[0]}
+REGPORT=${PORTS[0]}
+ADMINPORT=${ADMINPORTS[0]}
+
+#
+# Upgrade the first node in order to run the new CLI commands
+#
+ssh $ADMINMASTER $JAVA -jar $FROM_JAR_PATH stop -root $KVROOT \
+    -config $ADMINMASTER_CONFIG            
+
+JAVA_RUN="nohup $JAVA -jar $TO_JAR_PATH start -config $ADMINMASTER_CONFIG \
+    -root $KVROOT>/dev/null 2>&1 &"
+
+ssh $ADMINMASTER "$JAVA_RUN"
+    
+sleep $RN_BOOT_TIME
+
+#
+# Verify upgrade requirement
+#
+$JAVA -jar $TO_JAR_PATH runadmin -host $ADMINMASTER -port $REGPORT \
+    verify prerequisite    
+
+#
+# Get the preferred upgrade order
+#
+UPGRADE_ORDER=`$JAVA -jar $TO_JAR_PATH runadmin -host $ADMINMASTER \
+    -port $REGPORT show upgrade-order|grep sn`
+
+if [ "$UPGRADE_ORDER" = "" ] ; then
+   echo "UPGRADE_ORDER is empty" >&2
+   exit 0
+fi
+
+LENGTH=`echo "$UPGRADE_ORDER"|wc -l|awk '{print $1}'`
+
+i=1
+
+while [ $i -le $LENGTH ]; do
+    group=`echo "$UPGRADE_ORDER"|head -$i|tail -1`
+    for node in $group; do
+        number=`echo $node|awk -F sn '{print $2}'`
+        # Find the mapping services for a given SN        
+        MAPPING=`$JAVA -jar $TO_JAR_PATH runadmin -host $ADMINMASTER -port \
+        $REGPORT show topology|grep "sn=sn$number"`
+        NUMBER_OF_RN=`echo "$MAPPING"|wc -l|awk '{print $1}'`
+        j=1
+        while [ $j -le $NUMBER_OF_RN ]; do
+            RN_LINE=`echo "$MAPPING"|head -$j|tail -1`
+            RN=`echo "$RN_LINE"|awk -F ] '{print $1}'|awk -F [ '{print $2}'`
+            # Stop the mapping services
+            $JAVA -jar $TO_JAR_PATH runadmin -host $ADMINMASTER -port \
+                $REGPORT plan stop-service -service "$RN" -wait
+            j=$(( j + 1 ))      
+        done      
+        
+        #
+        # Stop the SN
+        #    
+        ssh ${HOSTS[$(( number -1 ))]} $JAVA -jar $FROM_JAR_PATH stop \
+                -config ${CONFIGS[$(( number -1 ))]} -root $KVROOT 
+        
+        #
+        # Restart SN with new jar
+        #
+        JAVA_RUN="nohup $JAVA -jar $TO_JAR_PATH start -config \
+            ${CONFIGS[$(( number -1 ))]} -root $KVROOT>/dev/null 2>&1 &"
+        ssh ${HOSTS[$(( number -1 ))]} "$JAVA_RUN"
+                        
+    done
+    
+    #
+    # Wait for service start up
+    #
+    sleep $RN_BOOT_TIME
+    
+    #
+    # Start up the services for a given SN
+    #
+    for node in $group; do
+        number=`echo $node|awk -F sn '{print $2}'`
+            
+        MAPPING=`$JAVA -jar $TO_JAR_PATH runadmin -host $ADMINMASTER -port \
+            $REGPORT show topology|grep "sn=sn$number"`
+            
+        NUMBER_OF_RN=`echo "$MAPPING"|wc -l|awk '{print $1}'`
+        WAITING_PID=
+        j=1
+        while [ $j -le $NUMBER_OF_RN ]; do
+            RN_LINE=`echo "$MAPPING"|head -$j|tail -1`
+            RN=`echo "$RN_LINE"|awk -F ] '{print $1}'|awk -F [ '{print $2}'`
+            $JAVA -jar $TO_JAR_PATH runadmin -host $ADMINMASTER -port \
+                $REGPORT plan start-service -service "$RN" -wait &
+            WAITING_PID="$WAITING_PID $!"
+            j=$(( j + 1 ))      
+        done      
+            
+        for pid in $WAITING_PID; do
+            if wait $pid; then
+                echo "Waiting for PID $pid to start"
+            else
+                echo "PID $pid failed to start"
+            fi    
+        done    
+    done
+    
+    #
+    # Check upgrade states
+    #
+    ssh ${HOSTS[$(( number -1 ))]} $JAVA -jar $TO_JAR_PATH runadmin \
+        -host $ADMINMASTER -port $REGPORT ping
+    
+    #
+    # Verify upgrade
+    #
+    ssh ${HOSTS[$(( number -1 ))]} $JAVA -jar $TO_JAR_PATH runadmin \
+        -host $ADMINMASTER -port $REGPORT verify upgrade
+    i=$(( i + 1 ))
+done
+  

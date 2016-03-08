@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Fixing Incorrect Storage Node HA Port Ranges</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="procedures.html" title="Chapter 6. Administrative Procedures" />
+    <link rel="prev" href="removestore.html" title="Removing an Oracle NoSQL Database Deployment" />
+    <link rel="next" href="failover-switchover.html" title="Chapter 7.  Failover and Switchover Operations" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Fixing Incorrect Storage Node HA Port Ranges</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="removestore.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Administrative Procedures</th>
+          <td width="20%" align="right"> <a accesskey="n" href="failover-switchover.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="fixhaportrange"></a>Fixing Incorrect Storage Node HA Port Ranges</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            When you initially configured your installation, you defined a
+            range of ports to be used by the nodes when communication
+            among themselves. (You did this in 
+            <a class="xref" href="install-config.html" title="Installation Configuration">Installation Configuration</a>.) 
+            This range of ports is called the 
+            <span class="emphasis"><em>HA port range</em></span>, where <span class="emphasis"><em>HA</em></span>
+            is short hand for "replication."
+        </p>
+      <p>
+            If you have specified invalid values for the HA Port Range, you
+            are unable to deploy a Replication Node (RN) or a secondary
+            Administration process (Admin) on any misconfigured Storage Node. You
+            discover the problem when you first attempt to deploy a store
+            or a Admin Replica on a faulty Storage Node.  You see these indications
+            that the Replication Node did not come up on this Storage Node: 
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    The Admin displays an error dialog warning that the
+                    Replication Node is in the
+                    <code class="literal">ERROR_RESTARTING</code> state. The Topology
+                    tab also shows this state in red, and after a number of
+                    retries, it indicates that the Replication Node is in
+                    <code class="literal">ERROR_NO_RESTART</code>.
+                </p>
+          </li>
+          <li>
+            <p>
+                    The plan goes into <code class="literal">ERROR</code> state, and
+                    its detailed history — available by clicking on
+                    the plan in the Admin's <code class="literal">Plan History</code>
+                    tab, or through the CLI's 
+                    <code class="literal">show plan &lt;planID&gt;</code> command
+                    — shows an error message like this:
+                </p>
+            <pre class="programlisting">Attempt 1
+        state: ERROR
+        start time: 10-03-11 22:06:12
+        end time: 10-03-11 22:08:12
+        DeployOneRepNode of rg1-rn3 on sn3/farley:5200 [RUNNING] 
+        failed. ....  Failed to attach to RepNodeService for rg1-rn3,
+        see log, /KVRT3/&lt;storename&gt;/log/rg1-rn3*.log, on host 
+        farley for more information. </pre>
+          </li>
+          <li>
+            <p>
+                    The critical events mechanism, accessible through the
+                    Admin or CLI shows an alert that contains the same
+                    error information from the plan history.
+                </p>
+          </li>
+          <li>
+            <p>
+                    An examination of the specified .log file or the
+                    store-wide log displayed in the Admin's
+                    <code class="literal">Log</code> tab shows a specific error
+                    message, such as: 
+                </p>
+            <pre class="programlisting">[rg1-rn3] Process exiting
+java.lang.IllegalArgumentException: Port number 1 is invalid because
+the port must be outside the range of "well known" ports
+</pre>
+          </li>
+        </ul>
+      </div>
+      <p>
+            The misconfiguration can be addressed with the following steps.
+            Some steps must be executed on the physical node which hosts
+            the Oracle NoSQL Database Storage Node, while others can be done from any node
+            which can access the Admin or CLI.
+        </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                    Using the Admin or CLI, cancel the deploy-store or
+                    deploy-admin plan which ran afoul of the
+                    misconfiguration.
+                </p>
+          </li>
+          <li>
+            <p>
+                    On the Storage Node, kill the existing, misconfigured
+                    StorageNodeAgentImpl process and all its
+                    ManagedProcesses. You can distinguish them from other
+                    processes because they have the parameter
+                    <code class="literal">-root &lt;KVROOT&gt;</code>.
+                </p>
+          </li>
+          <li>
+            <p>
+                    On the Storage Node, remove all files from the KVROOT
+                    directory. 
+                </p>
+          </li>
+          <li>
+            <p>
+                    On the Storage Node, re-create the Storage Node
+                    bootstrap configuration file in the KVROOT directory.
+                    For directions on how to do this, see
+                    <a class="xref" href="install-config.html" title="Installation Configuration">Installation Configuration</a>.
+                </p>
+          </li>
+          <li>
+            <p>
+                    On the Storage Node, restart the Storage Node using the following command:
+</p>
+            <pre class="programlisting">java -Xmx256m -Xms256m -jar KVHOME/lib/kvstore.jar restart</pre>
+            <p>
+                </p>
+          </li>
+          <li>
+            <p>
+                    Using the CLI, re-deploy the storage
+                    node using the deploy-sn plan. 
+                </p>
+          </li>
+        </ol>
+      </div>
+      <p>
+            You can now create and execute a deploy-store or deploy-admin
+            plan, using the same parameters as the initial attempt which
+            uncovered your misconfigured Storage Node. 
+        </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="removestore.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="procedures.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="failover-switchover.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Removing an Oracle NoSQL Database Deployment </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 7.  Failover and Switchover Operations </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

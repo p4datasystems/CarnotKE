@@ -1,0 +1,42 @@
+2016-02-28 06:46:37.601 UTC INFO [snaService] Starting, configuration file: .\kvroot\config.xml
+2016-02-28 06:46:37.648 UTC INFO [snaService] Setting java.net.InetAddress cache ttl to: networkaddress.cache.ttl=-1 networkaddress.cache.negative.ttl=-1
+2016-02-28 06:46:37.660 UTC INFO [snaService] Creating a Registry on port DESKTOP-BS7Q9BS:5000 server socket factory:<ClearServerSocketFactory name=main backlog=100 port range=0,0>
+2016-02-28 06:46:37.743 UTC INFO [snaService] Successfully created secure proxy for the storage node agent
+2016-02-28 06:46:37.842 UTC INFO [snaService] Bound to registry port 5000 using name snaService with SSF:null
+2016-02-28 06:46:37.844 UTC INFO [snaService] Using mgmt class oracle.kv.impl.mgmt.NoOpAgent
+2016-02-28 06:46:37.846 UTC INFO [snaService] findManagedProcesses exception: Cannot run program "jps": CreateProcess error=2, The system cannot find the file specified
+2016-02-28 06:46:37.847 UTC INFO [snaService] findManagedProcesses exception: Cannot run program "jps": CreateProcess error=2, The system cannot find the file specified
+2016-02-28 06:46:37.847 UTC INFO [snaService] BootstrapAdmin: Starting AdminService
+2016-02-28 06:46:37.848 UTC INFO [snaService] BootstrapAdmin: Started AdminService
+2016-02-28 06:46:37.848 UTC INFO [snaService] Service status changed from STARTING to WAITING_FOR_DEPLOY
+2016-02-28 06:46:37.864 UTC INFO [snaService] Starting in bootstrap mode
+2016-02-28 06:46:37.865 UTC INFO [snaService] Starting commandService on rmi://DESKTOP-BS7Q9BS:5000/commandService
+2016-02-28 06:46:37.949 UTC INFO [snaService] Successfully created a secure proxy for commandService
+2016-02-28 06:46:37.970 UTC INFO [snaService] Starting admin:CLIENT_ADMIN on rmi://DESKTOP-BS7Q9BS:5000/admin:CLIENT_ADMIN
+2016-02-28 06:46:37.975 UTC INFO [snaService] Successfully created a secure proxy for admin:CLIENT_ADMIN
+2016-02-28 06:46:37.984 UTC INFO [snaService] Started AdminService
+2016-02-28 06:46:37.985 UTC INFO [snaService] Thread returning for service BootstrapAdmin.5000
+2016-02-28 06:46:40.315 UTC INFO [snaService] Changing log files to log directory for store kvstore
+2016-02-28 06:46:44.191 UTC INFO [snaService] Register: root: .\kvroot, store: kvstore, hostingAdmin: true
+2016-02-28 06:46:44.191 UTC INFO [snaService] System architecture is amd64
+2016-02-28 06:46:44.191 UTC INFO [snaService] Setting number of CPUs to 4
+2016-02-28 06:46:44.421 UTC INFO [snaService] Starting, configuration file: .\kvroot\config.xml
+2016-02-28 06:46:44.424 UTC INFO [snaService] Setting java.net.InetAddress cache ttl to: networkaddress.cache.ttl=-1 networkaddress.cache.negative.ttl=-1
+2016-02-28 06:46:44.424 UTC INFO [snaService] Registered startup, config file: .\kvroot\kvstore\sn1\config.xml
+2016-02-28 06:46:44.437 UTC INFO [snaService] Changing log files to directory: .\kvroot\kvstore\log
+2016-02-28 06:50:36.394 UTC INFO [snaService] Starting, configuration file: .\kvroot\config.xml
+2016-02-28 06:50:36.401 UTC INFO [snaService] Setting java.net.InetAddress cache ttl to: networkaddress.cache.ttl=-1 networkaddress.cache.negative.ttl=-1
+2016-02-28 06:50:36.407 UTC INFO [snaService] Registered startup, config file: .\kvroot\kvstore\sn1\config.xml
+2016-02-28 06:50:36.435 UTC INFO [snaService] Changing log files to directory: .\kvroot\kvstore\log
+2016-03-01 06:18:47.683 UTC INFO [snaService] Starting, configuration file: .\kvroot\config.xml
+2016-03-01 06:18:47.703 UTC INFO [snaService] Setting java.net.InetAddress cache ttl to: networkaddress.cache.ttl=-1 networkaddress.cache.negative.ttl=-1
+2016-03-01 06:18:47.717 UTC INFO [snaService] Registered startup, config file: .\kvroot\kvstore\sn1\config.xml
+2016-03-01 06:18:47.758 UTC INFO [snaService] Changing log files to directory: .\kvroot\kvstore\log
+2016-03-01 21:16:06.528 UTC INFO [snaService] Starting, configuration file: .\kvroot\config.xml
+2016-03-01 21:16:06.559 UTC INFO [snaService] Setting java.net.InetAddress cache ttl to: networkaddress.cache.ttl=-1 networkaddress.cache.negative.ttl=-1
+2016-03-01 21:16:06.580 UTC INFO [snaService] Registered startup, config file: .\kvroot\kvstore\sn1\config.xml
+2016-03-01 21:16:06.643 UTC INFO [snaService] Changing log files to directory: .\kvroot\kvstore\log
+2016-03-07 23:02:50.574 UTC INFO [snaService] Starting, configuration file: .\kvroot\config.xml
+2016-03-07 23:02:50.734 UTC INFO [snaService] Setting java.net.InetAddress cache ttl to: networkaddress.cache.ttl=-1 networkaddress.cache.negative.ttl=-1
+2016-03-07 23:02:50.943 UTC INFO [snaService] Registered startup, config file: .\kvroot\kvstore\sn1\config.xml
+2016-03-07 23:02:51.495 UTC INFO [snaService] Changing log files to directory: .\kvroot\kvstore\log

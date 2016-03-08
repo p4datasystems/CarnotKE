@@ -1,0 +1,976 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Utility commands</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="cli_command_reference.html" title="Appendix A. KVStore Command Reference" />
+    <link rel="prev" href="cli_command_reference.html" title="Appendix A. KVStore Command Reference" />
+    <link rel="next" href="initialcapacityplanning.html" title="Appendix B. Initial Capacity Planning" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Utility commands</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="cli_command_reference.html">Prev</a> </td>
+          <th width="60%" align="center">Appendix A. KVStore Command Reference</th>
+          <td width="20%" align="right"> <a accesskey="n" href="initialcapacityplanning.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="independent_commands"></a>Utility commands</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="independent_commands.html#makebootconfig">makebootconfig</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="independent_commands.html#startagent">start</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="independent_commands.html#stopagent">stop</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="independent_commands.html#restartagent">restart</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="independent_commands.html#runadmin">runadmin</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="independent_commands.html#loaddata">load</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="independent_commands.html#pingstore">ping</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="independent_commands.html#version">version</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="independent_commands.html#generateconfig">generateconfig</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="independent_commands.html#helpjar">help</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+            You can access utility commands through <code class="literal">"java -jar"</code>.
+        </p>
+      <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar &lt;command&gt;</pre>
+      <p>
+            This appendix contains the following information on the
+            commands:
+        </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="makebootconfig"></a>makebootconfig</h3>
+            </div>
+          </div>
+        </div>
+        <pre class="programlisting">java -Xmx256m -Xms256m 
+-jar KVHOME/lib/kvstore.jar makebootconfig [-verbose]
+-root &lt;rootDirectory&gt; -host &lt;hostname&gt; -harange &lt;startPort,endPort&gt;
+-store-security [none | configure | enable]
+-port &lt;port&gt; [-admin &lt;adminPort&gt;] [-runadmin] [-config &lt;configFile&gt;]
+[-storagedir &lt;directory path&gt;] [-capacity &lt;n_rep_nodes&gt;]
+[-num_cpus &lt;ncpus&gt;][-memory_mb &lt;memory_mb&gt;]
+[-servicerange &lt;startPort,endPort&gt;]
+[-hahost &lt;haHostname&gt;]
+[-secdir &lt;security dir&gt;] [-pwdmgr {pwdfile | wallet | &lt;class-name&gt;}]
+[-kspwd &lt;password&gt;]
+[-external-auth {kerberos}]
+  [-krb-conf &lt;kerberos configuration&gt;]
+  [-kadmin-path &lt;kadmin utility path&gt;]
+  [-instance-name &lt;database instance name&gt;]
+  [-admin-principal &lt;kerberos admin principal name&gt;]
+  [-kadmin-keytab &lt;keytab file&gt;]
+  [-kadmin-ccache &lt;credential cache file&gt;]
+  [-princ-conf-param &lt;param=value&gt;]*
+[-security-param &lt;param=value&gt;]*
+[-mgmt {snmp|jmx|none}] [-pollport &lt;snmp poll port&gt;]
+[-traphost &lt;snmp trap/notification hostname&gt;]
+[-trapport &lt;snmp trap/notification port&gt;]
+[-dns-cachettl &lt;time in sec&gt;]
+[-force] </pre>
+        <p>
+                where:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                        <code class="literal">-admin &lt;adminPort&gt;</code>
+                        The port on which the web-based Admin Console
+                        is contacted. It only needs to be free on the
+                        node which runs the admin process. The value
+                        defaults to "0", which means that there will
+                        be no admin on this node.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-capacity
+                            &lt;n_rep_nodes&gt;</code> The total
+                        number of Replication Nodes a Storage Node can
+                        support. The value defaults to "1".
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-config &lt;configFile&gt;</code>
+                        Only specified if more than one Storage Node
+                        Agent process will share the same root
+                        directory. This value defaults to
+                        "config.xml".
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-dns-cachettl &lt;time in sec&gt;</code>
+                        Specifies the number of seconds that Replication Nodes
+                        should cache host name to IP address mappings. The default value is
+                        -1, which means mappings should be cached indefinitely. A value of 0
+                        means mappings should not be cached. The value of this flag is used
+                        to set the <code class="literal">networkaddress.cache.ttl</code> and 
+                        <code class="literal">networkaddress.cache.negative.ttl</code> security
+                        properties.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-external-auth {kerberos}</code>
+                        Specifies Kerberos as an external authentication service.
+                        If no keytab or credential cache has been specified on the command 
+                        line, an interactive version of the <code class="literal">securityconfig</code>
+                        utility will run.
+                    </p>
+              <p>
+                        This flag is only permitted when the value of the 
+                        <code class="literal">-store-security</code> flag is specified as configure or enable.
+                    </p>
+              <p>
+                        To remove Kerberos authentication from a running store, set the
+                        value of the <code class="literal">userExternalAuth</code> security.xml
+                        parameter to <code class="literal">NONE</code>.
+					</p>
+              <p>
+                        For more information on Kerberos, see the <em class="citetitle">Oracle NoSQL Database Security Guide</em>.
+                    </p>
+              <p>
+                        where <code class="literal">-external-auth</code> can have the following flags: 
+                    </p>
+              <div class="itemizedlist">
+                <ul type="circle">
+                  <li>
+                    <p>
+                           <code class="literal">-admin-principal &lt;kerberos admin principal name&gt;</code>
+                        </p>
+                    <p>
+                           Specifies the principal used to login to the Kerberos admin interface.
+                           This is required while using kadmin keytab or password to connect to
+                           the admin interface.
+                        </p>
+                  </li>
+                  <li>
+                    <p>
+                           <code class="literal">-kadmin-ccache &lt;credential cache file&gt; </code>
+                        </p>
+                    <p>
+                           Specifies the complete path name to the Kerberos credentials cache file
+                           that should contain a service ticket for the kadmin/ADMINHOST.
+                           <code class="literal">ADMINHOST</code> is the fully-qualified hostname of the admin server 
+                           or kadmin/admin service.
+                        </p>
+                    <p>
+                           If not specified, the user is prompted to enter the password
+                           for principal while logging to the Kerberos admin interface.
+                           This flag cannot be specified in conjunction with the 
+                           <code class="literal">-kadmin-keytab</code> flag.
+                        </p>
+                  </li>
+                  <li>
+                    <p>
+                            <code class="literal">-kadmin-keytab &lt;keytab file&gt; </code>
+                        </p>
+                    <p>
+                           Specifies the location of a Kerberos keytab file that stores Kerberos admin user
+                           principals and encrypted keys. The security configuration tool will use
+                           the specified keytab file to login to the Kerberos admin interface. 
+                        </p>
+                    <p> 
+                           The default location of the keytab file is specified by the Kerberos
+                           configuration file. If the keytab is not specified there, then the
+                           system looks for the file <code class="literal">user.home/krb5.keytab</code>.
+                        </p>
+                    <p>
+                           You need to specify the <code class="literal">-admin-principal</code> flag when using
+                           keytab to login to the Kerberos admin, otherwise the correct admin principal will
+                           not be recognized. This flag cannot be specified in conjunction with the 
+                           <code class="literal">-kadmin-ccache</code> flag.
+                        </p>
+                  </li>
+                  <li>
+                    <p>
+                            <code class="literal">-kadmin-path &lt;kadmin utility path&gt; </code>
+                        </p>
+                    <p>
+                           Indicates the absolute path of the Kerberos kadmin utility. 
+                           The default value is <code class="literal">/usr/kerberos/sbin/kadmin</code>.
+                        </p>
+                  </li>
+                  <li>
+                    <p>
+                            <code class="literal">-krb-conf &lt;kerberos configuration&gt; </code>
+                        </p>
+                    <p>
+                           Specifies the location of the Kerberos configuration file that
+                           contains the default realm and KDC information.
+                           If not specified, the default value is <code class="literal">/etc/krb5.conf</code>.
+                        </p>
+                  </li>
+                  <li>
+                    <p>
+                            <code class="literal">-princ-conf-param &lt;param=value&gt;* </code>
+                        </p>
+                    <p>
+                           A repeatable argument that allows configuration defaults to be overridden.
+                        </p>
+                    <p>
+                           Use the <code class="literal">krbPrincValidity</code> parameter to specify the
+                           expiration date of the Oracle NoSQL Database Kerberos service principal.
+                        </p>
+                    <p>
+                           Use the <code class="literal">krbPrincPwdExpire</code> parameter to specify the
+                           password expiration date of the Oracle NoSQL Database Kerberos service principal.
+                        </p>
+                    <p>
+                           Use the <code class="literal">krbKeysalt</code> parameter to specify the
+                           list of encryption types and salt types to be used for any
+                           new keys created.
+                        </p>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-force</code>
+                         Optionally specified to force generating the boot configuration files
+                         even if boot config verification finds any invalid parameters.
+                     </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-hahostname
+                            &lt;hostname&gt;</code> Can be used to
+                        specify a separate network interface for store
+                        replication traffic. This defaults to the
+                        hostname specified using the -host flag.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-harange
+                            &lt;startPort,endPort&gt;</code> A
+                        range of free ports which the Replication
+                        Nodes use to communicate among themselves.
+                        These ports should be sequential and there
+                        must be at least as many as the specified
+                        capacity for this node.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-host &lt;hostname&gt;</code>
+                        Identifies a host name associated with the
+                        node on which the command is run. This
+                        hostname identifies the network interface used
+                        for communication with this node.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-kspwd&lt;password&gt;</code>
+                        For script-based configuration you can use this
+                        option to allow tools to specify the keystore
+                        password on the command line. If it is not
+                        specified, the user is prompted to enter the
+                        password. 
+                </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-memory_mb
+                            &lt;memory_mb&gt;</code> The total
+                        number of megabytes of memory that is
+                        available in the machine. If the value is 0,
+                        the store will attempt to determine the amount
+                        of memory on the machine, but the value is
+                        only available when the JVM used is the Oracle
+                        Hotspot JVM. The default value is "0".
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-num_cpus &lt;ncpus&gt;</code> The
+                        total number of processors on the machine
+                        available to the Replication Nodes. If the
+                        value is 0, the system will attempt to query
+                        the Storage Node to determine the number of
+                        processors on the machine. This value defaults
+                        to "0".
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-port &lt;port&gt;</code> The
+                        TCP/IP port on which Oracle NoSQL Database
+                        should be contacted. Sometimes referred to as
+                        the registry port. This port must be free on
+                        the node on which this command is run.
+                    </p>
+            </li>
+            <li>
+              <p>
+                    <code class="literal">-pwdmgr [ pwdfile | wallet ]</code>
+                </p>
+              <p> 
+                    Indicates the password manager mechanism used
+                    to hold passwords that are needed for access to
+                    keystores, etc. 
+                </p>
+              <p>
+                    where -pwdmgr can have the following options: 
+                </p>
+              <div class="itemizedlist">
+                <ul type="circle">
+                  <li>
+                    <p>
+                            <code class="literal">-pwdmgr pwdfile</code>
+                        </p>
+                    <p>
+                            Indicates that the password store is a
+                            read-protected clear-text password file.
+                            This is the only available option for
+                            Oracle NoSQL Database CE deployments. You can specify an
+                            alternate implementation.
+                        </p>
+                  </li>
+                  <li>
+                    <p>
+                            <code class="literal">-pwdmgr wallet</code>
+                        </p>
+                    <p>
+                            Specifies Oracle Wallet as the password
+                            storage mechanism. This option is only
+                            available in the Oracle NoSQL Database EE version.
+                        </p>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-root &lt;rootDirectory&gt;</code>
+                        Identifies where the root directory should
+                        reside.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-secdir &lt;security dir&gt;</code>
+                    </p>
+              <p>
+                        Specifies the name of the directory within the
+                        KVROOT that will hold the security configuration. This
+                        must be specified as a name relative to the
+                        specified secroot. If not specified, the default
+                        value is "security".
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-security-param &lt;param=value&gt;*</code>
+                    </p>
+              <p>
+                       A repeatable argument that allows configuration defaults to 
+                       be overridden. 
+                    </p>
+              <p>
+                       Use the <code class="literal">krbServiceName</code> parameter to specify the
+                       service name of the Oracle NoSQL Database Kerberos service principal.
+                    </p>
+              <p>
+                       Use the <code class="literal">krbServiceKeytab</code> parameter to specify the
+                       keytab file name in security directory of the Oracle NoSQL Database Kerberos 
+                       service principal.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-servicerange
+                            &lt;startPort,endPort&gt;</code> A
+                        range of ports that may be used for
+                        communication among administrative services
+                        running on a Storage Node and its managed
+                        services. This parameter is optional and is
+                        useful when services on a Storage Node must
+                        use specific ports for firewall or other
+                        security reasons. By default the services use
+                        anonymous ports. The format of the value
+                        string is "startPort,endPort." The value
+                        varies with the capacity of the Storage Node.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-storagedir &lt;path&gt;</code>
+                        Specify a path to the directory to be used for
+                        a Replication Node. This flag may be used more
+                        than once in the command to specify multiple
+                        storage directories, but the number should not
+                        exceed the capacity for the node. If no
+                        storage directory is specified, Replication
+                        Nodes use a directory under the root
+                        directory.
+                    </p>
+              <p>
+                        The use of the -storagedir argument must be
+                        coordinated with the use of the capacity
+                        argument. For example, if your Storage Node
+                        hosts four disks, you would specify a capacity
+                        of four and have four -storagedir arguments.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-store-security [none | configure |
+                            enable] </code> Specifies if security
+                        will be used or not. If
+                        <code class="literal">-store-security none</code> is
+                        specified, no security will be used. If
+                        <code class="literal">-store-security
+                            configure</code> is specified, security
+                        will be used and the security configuration
+                        utility will be invoked as part of the
+                        makebootconfig process. If
+                        <code class="literal">-store-security enable</code>
+                        is specified, security will be used. You will
+                        need to configure security either by utilizing
+                        the security configuration utility or by
+                        copying a previously created configuration
+                        from another system.
+                    </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+                Creates a configuration file used to start a
+                not-yet-deployed Storage Node to be used in an
+                instance of Oracle NoSQL Database. The file must not
+                already exist. You only need to specify the admin
+                option(the Admin Console port) on the node which hosts
+                the initial Oracle NoSQL Database administration
+                processes. To create the initial "boot config" file
+                used to configure the installation see <a class="xref" href="install-config.html" title="Installation Configuration">Installation Configuration</a>.
+            </p>
+        <p>
+                OracleNoSQL Database allows Java Management
+                Extensions (JMX) or Simple Network Management Protocol
+                (SNMP) agents to be optionally available for
+                monitoring, in addition to the native monitoring
+                provided by the Admin CLI and the Admin Console. In
+                order to enable JMX or SNMP in the storage node's boot
+                configuration file, you can use the -mgmt, -pollport,
+                -traphost and -trapport options. See <a class="xref" href="standardized-monitoring.html" title="Chapter 8.  Standardized Monitoring Interfaces">
+      Standardized Monitoring Interfaces
+   </a> for more
+                information.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="startagent"></a>start</h3>
+            </div>
+          </div>
+        </div>
+        <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar start 
+[-disable-services] [-verbose]
+-root &lt;rootDirectory&gt; [-config &lt;bootstrapFileName&gt;] </pre>
+        <p>
+                Starts the Oracle NoSQL Database Storage Node Agent
+                (and if configured, store) in the root directory.
+            </p>
+        <p>
+                To disable all services associated with a stopped SNA use
+                the <code class="literal">-disable-services</code> flag. For more information,
+                see <a class="xref" href="disableservices.html" title="Disabling Storage Node Agent Hosted Services">Disabling Storage Node Agent Hosted Services</a>
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="stopagent"></a>stop</h3>
+            </div>
+          </div>
+        </div>
+        <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar stop 
+[-disable-services] [-verbose]
+-root &lt;rootDirectory&gt; [-config &lt;bootstrapFileName&gt;] </pre>
+        <p>
+                Stops the Oracle NoSQL Database Storage Node Agent
+                and services related to the root directory.
+            </p>
+        <p>
+                To disable all services associated with a stopped SNA use
+                the <code class="literal">-disable-services</code> flag. For more information,
+                see <a class="xref" href="disableservices.html" title="Disabling Storage Node Agent Hosted Services">Disabling Storage Node Agent Hosted Services</a>
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="restartagent"></a>restart</h3>
+            </div>
+          </div>
+        </div>
+        <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar restart 
+[-disable-services] [-verbose]
+-root &lt;rootDirectory&gt; [-config &lt;bootstrapFileName&gt;] </pre>
+        <p>
+                Stops and then starts the Oracle NoSQL Database
+                Storage Node Agent and services related to the root
+                directory.
+            </p>
+        <p>
+                To disable all services associated with a stopped SNA use
+                the <code class="literal">-disable-services</code> flag. For more information,
+                see <a class="xref" href="disableservices.html" title="Disabling Storage Node Agent Hosted Services">Disabling Storage Node Agent Hosted Services</a>
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="runadmin"></a>runadmin</h3>
+            </div>
+          </div>
+        </div>
+        <pre class="programlisting">java -Xmx&amp;javamxvalue; -Xms&amp;javamxvalue; \
+-jar KVHOME/lib/kvstore.jar runadmin
+-host &lt;hostname&gt; -port &lt;port&gt; [-store &lt;storeName&gt; ]
+[-admin-host &lt;adminHost&gt; -admin-port &lt;adminPort&gt; ]
+[-username &lt;user&gt;] [-security &lt;security-file-path&gt;]
+[-admin-username &lt;adminUser&gt;] [-admin-security &lt;admin-security-file-path&gt;]
+[-timeout &lt;timeout ms&gt;] 
+[-consistency &lt;NONE_REQUIRED(default) | ABSOLUTE | 
+                                                  NONE_REQUIRED_NO_MASTER&gt;]
+[-durability &lt;COMMIT_SYNC(default) | COMMIT_NO_SYNC | 
+                                                  COMMIT_WRITE_NO_SYNC&gt;]
+[single command and arguments] </pre>
+        <p>
+                Runs a utility which provides a command line
+                interface (CLI). It is used to perform store
+                configuration.
+            </p>
+        <p>
+                Use the timeout, consistency and durability flags to override
+                the default connect configuration.
+            </p>
+        <p>
+               where:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                 <code class="literal">-timeout</code>
+               </p>
+              <p>
+                  Specifies the store request timeout in milliseconds.
+               </p>
+            </li>
+            <li>
+              <p>
+                 <code class="literal">-consistency</code>
+              </p>
+              <p>
+                 Specifies the store request consistency. The default
+                 value is NONE_REQUIRED.
+              </p>
+            </li>
+            <li>
+              <p>
+                <code class="literal">-durability</code>
+              </p>
+              <p>
+                 Specifies the store request durability. The default
+                 value is COMMIT_SYNC.
+              </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="loaddata"></a>load</h3>
+            </div>
+          </div>
+        </div>
+        <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar load [-verbose]
+-source &lt;backupDir&gt; -host &lt;hostname&gt; -port &lt;port&gt;
+-store &lt;storeName&gt; -username &lt;user&gt; -security &lt;security-file-path&gt;
+[-load-admin] [-force] [-status &lt;pathToFile&gt;] </pre>
+        <p>
+                where:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                        <code class="literal">-load-admin</code>
+                        Loads the store metadata from the snapshot to the new
+                        store. In this case the <code class="literal">-source</code> directory
+                        must point to the environment directory of the admin node from 
+                        the snapshot. The store must not be available for use by users 
+                        at the time of this operation.
+                    </p>
+              <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                <h3 class="title">Note</h3>
+                <p>
+                        This option should not be used on a store unless
+                        that store is being restored from scratch. If <code class="literal">-force</code>
+                        is specified in conjunction with <code class="literal">-load-admin</code>,
+                        any existing metadata in the store, including tables and
+                        security metadata, will be overwritten.
+                      </p>
+              </div>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-host &lt;hostname&gt;</code>
+                        identifies the host name of a node in your
+                        store.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-port &lt;port&gt;</code>
+                        identifies the registry port in use by the
+                        store's node.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-security &lt;security-file-path&gt;</code>
+                        identifies the security file used to specify properties
+                        for login.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-source &lt;backupDir&gt;</code>
+                        identifies the on-disk location where the
+                        snapshot data is stored.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-status &lt;pathToFile&gt;</code>
+                        is an optional parameter that causes the
+                        status of the load operation to be saved in
+                        the named location on the local machine.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-store &lt;storeName&gt;</code>
+                        identifies the name of the store.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-username &lt;user&gt;</code>
+                        identifies the name of the user to login to the
+                        secured store.
+                    </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+                Program used to restore a store from a previously
+                created snapshot. By using this tool, you can restore
+                the store to any topology, not just the one that was
+                in use when the snapshot was created.
+                <code class="literal">Load</code> should be used only to
+                restore to a new, empty store. Do not use this with an
+                existing store because it only writes records if they
+                do not already exist. See <a class="xref" href="recovery.html#usingload" title="Using the Load Program">Using the Load Program</a> for more information.
+
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="pingstore"></a>ping</h3>
+            </div>
+          </div>
+        </div>
+        <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar ping [-verbose] [-json]
+-host &lt;hostname&gt; -port &lt;port&gt; or
+-helper-hosts  &lt;host:port&gt;[,host:port]*&gt;
+-username &lt;user&gt;
+-security &lt;security-file-path&gt; </pre>
+        <p>
+                Attempts to contact a store to get status of
+                running services. By using the <code class="literal">ping</code>
+                command, you can ensure that the Oracle NoSQL Database
+                client library can contact the Oracle NoSQL Database
+                Storage Agent(SNA). You can use the <code class="literal">-host</code>
+                option to check an SNA on a remote host.
+            </p>
+        <p>
+                Specify the <code class="literal">-helper-hosts</code> flag as an
+                alternative to the existing <code class="literal">-host</code> and
+                <code class="literal">-port</code> flags. If multiple helper hosts
+                are provided, the ping utility will have multiple nodes
+                it can use to make an initial point of contact with the
+                store, and will have a greater chance of success if some
+                nodes of the store are unavailable. The new 
+                <code class="literal">-helper-hosts</code> flag can be specified as
+                a comma-separated list of hosts and ports. For example:
+            </p>
+        <pre class="programlisting">java -jar kvstore.jar ping -helper-hosts hst1:5000,hst2:5100
+</pre>
+        <p>
+            </p>
+        <p>
+                Ping generates an exit code which acts as a quick summary
+                of the results. The exit code is returned both as a process
+                exit code, if ping is called as a standalone utility, and
+                as part of the JSON output. The exit code is meant to direct
+                the caller to perform the appropriate follow-on action.
+                The values, defined in the <code class="literal">Ping.ExitCode</code>
+                enum, are:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                 <code class="literal">0 (EXIT_OK)</code>
+               </p>
+              <p>
+                  All services in the store could be located and are in a
+                  known, good state (for example, RUNNING).
+               </p>
+            </li>
+            <li>
+              <p>
+                 <code class="literal">1 (EXIT_OPERATIONAL)</code>
+              </p>
+              <p>
+                 One or more services in the store could not be reached,
+                 or are in an unknown or not usable state. In this case
+                 the store should support all data operations across all
+                 shards, as well as all administrative operations, but
+                 may be in a state of degraded performance. Some action
+                 should be taken to find and fix the problem before part
+                 of the store becomes unavailable.
+              </p>
+            </li>
+            <li>
+              <p>
+                 <code class="literal">2 (EXIT_NO_ADMIN_QUORUM)</code>
+              </p>
+              <p>
+                 The Admin Service replication group does not have quorum
+                 or is not available at all, and it is not possible to execute
+                 administrative operations which modify store configuration.
+                 The store supports all normal data operations despite the
+                 loss of admin quorum, but this state requires immediate
+                 attention to restore full store capabilities.
+              </p>
+            </li>
+            <li>
+              <p>
+                 <code class="literal">3 (EXIT_NO_SHARD_QUORUM)</code>
+              </p>
+              <p>
+                 One or more of the shards does not have quorum and either
+                 cannot accept write requests, or is completely unavailable.
+                 This state requires immediate attention to restore store
+                 capabilities. The exit code takes precedence over
+                 <code class="literal">EXIT_NO_ADMIN_QUORUM</code>, so if this exit
+                 code is used, it is possible that the administrative
+                 capabilities are also reduced or unavailable.
+              </p>
+            </li>
+            <li>
+              <p>
+                 <code class="literal">100 (EXIT_USAGE)</code>
+              </p>
+              <p>
+                 A usage error.
+              </p>
+            </li>
+            <li>
+              <p>
+                 <code class="literal">101 (EXIT_TOPOLOGY_FAILURE)</code>
+              </p>
+              <p>
+                 Ping was unable to find a topology in order to operate. This
+                 could be a store problem, a network problem, or it could be
+                 a usage problem with the parameters passed to ping (for example
+                 the <code class="literal">host</code> and <code class="literal">port</code> or
+                 <code class="literal">-helper-hosts</code> list are not part of a store).
+              </p>
+            </li>
+            <li>
+              <p>
+                 <code class="literal">102 (EXIT_UNEXPECTED)</code>
+              </p>
+              <p>
+                 The utility has experienced an unexpected error.
+              </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+            </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+                      Exit codes 1 through 3 may indicate a network connectivity
+                      issue that should be checked first before concluding that
+                      any services have a problem.
+                   </p>
+        </div>
+        <p>
+                If the <code class="literal">-json</code> flag is specified, then output
+                will be displayed in JSON format. 
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="version"></a>version</h3>
+            </div>
+          </div>
+        </div>
+        <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar version</pre>
+        <p>
+                Prints version.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="generateconfig"></a>generateconfig</h3>
+            </div>
+          </div>
+        </div>
+        <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar generateconfig [-verbose]
+-host &lt;hostname&gt; -port &lt;port&gt; -sn &lt;StorageNodeId&gt; -target &lt;zipfile&gt;</pre>
+        <p>
+                Generates configuration files for the specified
+                storage node. The generateconfig command creates the
+                target zipfile which contains the required
+                configuration to re-create the storage node. The
+                top-level directory in the zipfile is the store's root
+                directory.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="helpjar"></a>help</h3>
+            </div>
+          </div>
+        </div>
+        <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar help &lt;commandName&gt;</pre>
+        <p>
+                Prints usage info. With no arguments the top-level
+                shell commands are listed. With a command name,
+                additional detail is provided.
+            </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="cli_command_reference.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="cli_command_reference.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="initialcapacityplanning.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Appendix A. KVStore Command Reference </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Appendix B. Initial Capacity Planning</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

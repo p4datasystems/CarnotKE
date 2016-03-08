@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 11. Audit Logging</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="prev" href="security_policies.html" title="Chapter 10. Security Policies" />
+    <link rel="next" href="security_guidelines.html" title="Chapter 12. Keeping Oracle NoSQL Database Secure" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 11. Audit Logging</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="security_policies.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="security_guidelines.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="audit"></a>Chapter 11. Audit Logging</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="audit.html#audit_log">Security Log Messages</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p> 
+            Oracle NoSQL Database monitors and records security sensitive activities. These log messages are
+            available through the SN-local log files and the store-wide logging view. High risky
+            security activities are also visible by using the <code class="literal">show events</code>
+            command.
+        </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="audit_log"></a>Security Log Messages</h2>
+            </div>
+          </div>
+        </div>
+        <p> 
+            For ease of grepping and analysis, the auditing log message uses
+            <code class="literal">KVAuditInfo</code> as a prefix. For example: </p>
+        <pre class="programlisting"># General audit logging:
+&lt;Timestamp&gt;: KVAuditInfo[user: &lt;user_name&gt;, 
+clienthost: &lt;client_host&gt;, operation: 
+&lt;operation_description&gt;, status: &lt;SUCCESS/FORBIDDEN&gt;,
+reason: &lt;failure_reason&gt;] </pre>
+        <pre class="programlisting"># General audit logging:
+# Particular logging for successful execution of plan:
+&lt;Timestamp&gt;: KVAuditInfo[&lt;plan_name&gt;, owned by &lt;plan_owner&gt;, 
+executed by &lt;plan_executor&gt; from &lt;client_host&gt;, 
+state=&lt;end state of plan execution&gt;] </pre>
+        <p> 
+            To distinguish security related messages from standard log messages, the following
+            two security related logging levels are introduced: 
+        </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                    <code class="literal">SEC_WARNING</code>
+                </p>
+              <p> 
+                    Logs unauthenticated login, unauthorized read/write data access and
+                    unauthorized execution of CLI commands. Unauthenticated login does not log the
+                    reasons of failure. 
+                </p>
+            </li>
+            <li>
+              <p>
+                    <code class="literal">SEC_INFO</code>
+                </p>
+              <p>
+                    Logs the success of a user login and the successful execution of plans that
+                    require <code class="literal">dbadmin</code> or <code class="literal">sysadmin</code> role related
+                    privileges. 
+                </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="security_policies.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="security_guidelines.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 10. Security Policies </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 12. Keeping Oracle NoSQL Database Secure</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

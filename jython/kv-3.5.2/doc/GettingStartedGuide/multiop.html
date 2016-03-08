@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 12. Executing a Sequence of Operations</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="prev" href="durability-set.html" title="Setting Durability Guarantees" />
+    <link rel="next" href="sequence-create.html" title="Creating a Sequence" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 12. Executing a Sequence of Operations</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="durability-set.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="sequence-create.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="multiop"></a>Chapter 12. Executing a Sequence of Operations</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="multiop.html#sequence-errors">Sequence Errors</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="sequence-create.html">Creating a Sequence</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="sequence-exec.html">Executing a Sequence</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p> 
+        You can execute a sequence of write operations as a single
+        atomic unit so long as all the 
+        <span>records</span> 
+        
+        that you are operating upon
+        share the same 
+        <span>major path components.</span>
+        
+        By <span class="emphasis"><em>atomic unit</em></span>, we mean all of the
+        operations will execute successfully, or none of them will. 
+    </p>
+      <p>
+        Also, the sequence is performed in isolation. This
+        means that if you have a thread running a particularly long
+        sequence, then another thread cannot intrude on the data in use by
+        the sequence. The second thread will not be able to see any of the
+        modifications made by the long-running sequence until the sequence
+        is complete. The second thread also will not be able to modify any
+        of the data in use by the long-running sequence.
+    </p>
+      <p>
+        Be aware that sequences only support write operations. You can
+        perform puts and deletes, but you cannot retrieve data
+        when using sequences.
+    </p>
+      <p>
+        When using a sequence of operations:
+    </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                All of the keys in use by the sequence must share the same
+                <span>major path components.</span>
+                
+            </p>
+          </li>
+          <li>
+            <p>
+                Operations are placed into a list, but the operations are
+                not necessarily executed in the order that they appear in
+                the list. Instead, they are executed in an internally
+                defined sequence that prevents deadlocks. 
+            </p>
+          </li>
+          <li>
+            <p>
+                You cannot create two or more operations that operate on
+                the same key. Doing so results in an exception, and the
+                entire operation is aborted.
+            </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+        The rest of this chapter shows how to use
+        <code class="classname">OperationFactory</code>
+        and <code class="methodname">KVStore.execute()</code>
+        to create and run a sequence of operations.
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="sequence-errors"></a>Sequence Errors</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+            If any operation within the sequence experiences an error, then
+            the entire operation is aborted. In this case, your data is
+            left in the same state it would have been in if the sequence
+            had never been run at all — no matter how much of the
+            sequence was run before the error occurred.
+        </p>
+        <p>
+            Fundamentally, there are two reasons why a sequence might
+            abort:
+        </p>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p>
+                    An internal operation results in an exception that is
+                    considered a fault. For example, the operation throws a
+                    <code class="classname">DurabilityException</code>. Also, if
+                    there is an internal failure due to message delivery or
+                    a networking error.
+                </p>
+            </li>
+            <li>
+              <p>
+                    An individual operation returns normally but is
+                    unsuccessful as defined by the particular operation.
+                    (For example, you attempt to delete a 
+                    <span>key</span> 
+                     
+                    that does not exist). If this occurs AND you specified
+                    <code class="literal">true</code> for 
+                    
+                    <span>
+                        the
+                        <code class="literal">abortIfUnsuccessful</code> parameter when
+                        the operation was created using 
+                        <span>OperationFactory,</span>
+                        
+                        
+                    </span>
+                    
+
+
+                    then 
+
+                    <span>
+                        an <code class="classname">OperationExecutionException</code>
+                    </span>
+                    
+                        
+                    is thrown. This exception contains information about the
+                    failed operation.
+                </p>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="durability-set.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="sequence-create.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Setting Durability Guarantees </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Creating a Sequence</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

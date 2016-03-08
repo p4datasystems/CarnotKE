@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Values</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="schema.html" title="Chapter 3. Record Design Considerations" />
+    <link rel="prev" href="schema.html" title="Chapter 3. Record Design Considerations" />
+    <link rel="next" href="storewrites.html" title="Chapter 4. Writing and Deleting Records" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Values</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="schema.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 3. Record Design Considerations</th>
+          <td width="20%" align="right"> <a accesskey="n" href="storewrites.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="values"></a>Values</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+          Records in the store are organized as key-value pairs. The
+          <span class="emphasis"><em>value</em></span> is the data that you want to store,
+          manage and retrieve. In almost all cases, you should create your
+          values using Avro to describe the value's data schema. Avro
+          schemas are described in 
+          <a class="xref" href="avroschemas.html" title="Chapter 6. Avro Schemas">Avro Schemas</a>.
+      </p>
+      <p>
+          In simple cases, values can also be organized as a byte array. If
+          so, the mapping of the arrays to data structures (serialization
+          and deserialization) is left entirely to the application.
+          Note that while the earliest portions of this manual show byte
+          array usage in its examples, this is not the recommended
+          approach. Instead, you should use Avro even for very simple
+          values.
+      </p>
+      <p>
+          There are no restrictions on the size of your values. However,
+          you should consider your store's performance when deciding how
+          large you are willing to allow your individual records to become.
+          As is the case with any data storage scheme, the larger your
+          record, the longer it takes to read the information from storage,
+          and to write the information to storage.  If your values become
+          so large that they impact store read/write performance, or are
+          even too large to fit into your memory cache (or even your Java
+          heap space) then you should consider storing your values using
+          Oracle NoSQL Database's large object support. See the
+          <a href="../booklets/lobs/index.html#introduction" class="olink">Oracle NoSQL API Large Object API</a>
+          introduction for details.
+      </p>
+      <p>
+          On the other hand, every record carries with it some amount of
+          overhead. Also, as the number of your records grows very large,
+          search times may begin to be adversely affected. As a result,
+          choosing to store an extremely large number of very small records
+          can also harm your store's performance.
+      </p>
+      <p>
+          Therefore, when designing your store's content, you must find the
+          appropriate balance between a small number of very large records
+          and a large number of very small records. You should also
+          consider how frequently any given piece of information will be
+          accessed. 
+      </p>
+      <p>
+          For example, suppose your store contains information about users,
+          where each user is identified by their email address. There is a
+          set of information that you want to maintain about each user.
+          Some of this information is small in size, and some of it is
+          large. Some of it you expect will be frequently accessed, while
+          other information is infrequently accessed.
+      </p>
+      <p>
+          Small properties are:
+      </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                  name
+              </p>
+          </li>
+          <li>
+            <p>
+                  gender
+              </p>
+          </li>
+          <li>
+            <p>
+                  address
+              </p>
+          </li>
+          <li>
+            <p>
+                  phone number
+              </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+          Large properties are:
+      </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    image file
+              </p>
+          </li>
+          <li>
+            <p>
+                  public key 1
+              </p>
+          </li>
+          <li>
+            <p>
+                  public key 2
+              </p>
+          </li>
+          <li>
+            <p>
+                  recorded voice greeting
+              </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+          There are several possible ways you can organize this data. How
+          you should do it depends on your data access patterns.
+      </p>
+      <p>
+          For example, suppose your application requires you to read and
+          write all of the properties identified above every time you
+          access a record. (This is unlikely, but it does represent the
+          simplest case.) In that event, you might create a single Avro
+          schema that represents each of the properties you maintain for
+          the users in your application.  You can then trivially organize
+          your records using only major key components so that, for
+          example, all of the data for user Bob Smith can be accessed using
+          the key
+          <code class="literal">/Smith/Bob</code>.
+      </p>
+      <p>
+          However, the chances are good that your application will not
+          require you to access <span class="emphasis"><em>all</em></span> of the properties
+          for a user's record every time you access that record. While it is
+          possible that you will always need to read all of the properties every
+          time you perform a user look up, it is likely that on updates you
+          will operate only on some properties.
+      </p>
+      <p>
+          Given this, it is useful to consider how frequently data will be
+          accessed, and its size. Large, infrequently accessed properties
+          should use a key other than that used by the frequently accessed
+          properties. The different keys for these large properties can
+          share major key components, while differing in their minor key
+          components.  However, if you are using large object support for
+          your large properties, then these must be under a major key that
+          is different from the major key you use for the other properties
+          you are storing.
+      </p>
+      <p>
+          At the same time, there is overhead involved with every key your
+          store contains, so you do not want to create a key for every
+          possible user property. For this reason, if you have a lot of
+          small properties, you might want to organize them all under a
+          single key even if only some of them are likely to be updated or
+          read for any given operation.
+      </p>
+      <p>
+         For example, for the properties identified above, suppose the
+         application requires: 
+      </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                  all of the small properties to always be used whenever
+                  the user's record is accessed.
+              </p>
+          </li>
+          <li>
+            <p>
+                  all of the large properties to be read for simple user
+                  look ups.
+              </p>
+          </li>
+          <li>
+            <p>
+                  on user record updates, the public keys are always
+                  updated (written) at the same time.
+              </p>
+          </li>
+          <li>
+            <p>
+                  The image file and recorded voice greeting can be updated
+                  independently of everything else.
+              </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+          In this case, you might store user properties using four keys
+          per user. Each key shares the same major components, and differs
+          in its minor component, in the following way: 
+      </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                  <span class="emphasis"><em>/surname</em></span>/<span class="emphasis"><em>familiar
+                      name</em></span>/-/contact
+              </p>
+            <p>
+                  The value for this key is a Avro record that contains
+                  all of the small user properties (name, phone number,
+                  address, and so forth).
+              </p>
+          </li>
+          <li>
+            <p>
+                  <span class="emphasis"><em>/surname</em></span>/<span class="emphasis"><em>familiar
+                      name</em></span>/-/publickeys
+              </p>
+            <p>
+                  The value for this key is an Avro record that contains
+                  the user's public keys. These are always read and written
+                  at the same time, so it makes sense to organize them
+                  under one key.
+              </p>
+          </li>
+          <li>
+            <p>
+                  /image.lob/-/<span class="emphasis"><em>surname/familiar
+                      name</em></span>
+              </p>
+            <p>
+                  The value for this key is an image file, saved using
+                  Oracle NoSQL Database's large object support.
+              </p>
+          </li>
+          <li>
+            <p>
+                  /audio.lob/-/voicegreeting/<span class="emphasis"><em>surname/familiar
+                      name</em></span>
+              </p>
+            <p>
+                  The value for this key is an mp3 file, also saved using
+                  the large object support.
+              </p>
+          </li>
+        </ol>
+      </div>
+      <p>
+          Any data organized under different keys which differ only in the
+          minor key component allows you to read and update the various
+          properties all at once using a single atomic operation, which
+          gives you full ACID support for user record updates.  At the same
+          time, your application does not have to be reading and writing
+          large properties (image files, voice recordings, and so forth)
+          unless it is absolutely necessary. When it is necessary to read
+          or write these large objects, you can use the Oracle NoSQL Database stream
+          interface which is optimized for that kind of traffic.
+      </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="schema.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="schema.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="storewrites.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 3. Record Design Considerations </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 4. Writing and Deleting Records</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

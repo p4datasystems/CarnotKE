@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Example5.java: SPARQL query with JOIN_METHOD</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="quickstart.html" title="Chapter 8. Quick Start for the RDF Graph Feature" />
+    <link rel="prev" href="example4.html" title="Example4.java: Query family relationships on a named graph" />
+    <link rel="next" href="example5b.html" title="Example5b.java: SPARQL query with ORDERED query option" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center"> Example5.java: SPARQL query with JOIN_METHOD</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="example4.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 8. Quick Start for the RDF Graph Feature</th>
+          <td width="20%" align="right"> <a accesskey="n" href="example5b.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="example5"></a> Example5.java: SPARQL query with JOIN_METHOD</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+            This example shows a SPARQL query with additional
+            features including the selection of a join_method
+            (JOIN_METHOD={nl, hash}) used to select the join method to
+            use in operations over query patterns. It loads the quads
+            contained in RDF file example.nt located in the examples
+            directory of the RDF Graph feature that assert the
+            following:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p> 
+                    In graph
+                    &lt;http://example.org/alice/foaf.rdf&gt;: 
+                </p>
+            <div class="itemizedlist">
+              <ul type="circle">
+                <li>
+                  <p> 
+                            Alice is a Person.
+                        </p>
+                </li>
+                <li>
+                  <p> 
+                            Alice's name is "Alice".
+                        </p>
+                </li>
+                <li>
+                  <p> 
+                            Alice knows Bob.
+                        </p>
+                </li>
+                <li>
+                  <p> 
+                            Bob has a home page with URL
+                            http://example.org/bob.
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            To see more details on Bob, refer to
+                            http://example.org/alice/foaf.rdf. 
+                        </p>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <p> 
+                    In graph
+                    &lt;http://example.org/bob/foaf.rdf&gt;: 
+                </p>
+            <div class="itemizedlist">
+              <ul type="circle">
+                <li>
+                  <p>
+                            Bob is a Person. 
+                        </p>
+                </li>
+                <li>
+                  <p> 
+                            Bob's name is "Bob".
+                        </p>
+                </li>
+                <li>
+                  <p>
+                            Bob has a home page with URL
+                            http://example.org/bob. 
+                        </p>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <p>
+            It then finds all the names of the people in graph
+            &lt;http://example.org/alice/foaf.rdf&gt; who knows
+            another person, using nested loop join operations to merge
+            bindings retrieved between the query patterns in the
+            SPARQL query. 
+        </p>
+      <pre class="programlisting">import com.hp.hpl.jena.query.*;
+import org.openjena.riot.Lang;
+import com.hp.hpl.jena.sparql.core.DatasetImpl;
+import oracle.rdf.kv.client.jena.*;
+
+public class Example5
+{
+  
+public static void main(String[] args) throws Exception
+  {
+ 
+String szStoreName  = args[0];
+String szHostName   = args[1];
+String szHostPort   = args[2];
+   
+// Create connection    
+OracleNoSqlConnection conn 
+     = OracleNoSqlConnection.createInstance(szStoreName,
+                                            szHostName, 
+                                            szHostPort);
+
+// Create the datasetgraph    
+OracleGraphNoSql graph = new OracleGraphNoSql(conn);
+DatasetGraphNoSql datasetGraph = DatasetGraphNoSql.createFrom(graph);
+   
+// Close graph, as it is no longer needed
+graph.close();
+    
+// Clear dataset
+datasetGraph.clearRepository();
+    
+Dataset ds = DatasetImpl.wrap(datasetGraph);
+    
+// Load data from file into the dataset    
+DatasetGraphNoSql.load("example.nt", Lang.NQUADS, conn, 
+                           "http://example.com"); //base URI
+
+// change hint to hash to test hash join, or remove to use default
+// join settings
+String szQuery = 
+" PREFIX ORACLE_SEM_FS_NS: "                         +
+" &lt;http://oracle.com/semtech#join_method=nl&gt;"        +
+" PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;"         +
+" SELECT ?name1 ?name2 "                             +
+" WHERE { "                                          +
+"   graph &lt;http://example.org/alice/foaf.rdf&gt; { "    +
+"     ?person1 foaf:knows ?person2 . "               +
+"     ?person1 foaf:name ?name1 . "                  +
+"     ?person2 foaf:name ?name2 . "                  +
+"   } "                                              +
+" } ";
+    
+System.out.println("Execute query " + szQuery);
+    
+Query query = QueryFactory.create(szQuery);
+QueryExecution qexec = QueryExecutionFactory.create(query, ds);
+    
+try {
+      ResultSet results = qexec.execSelect();
+      ResultSetFormatter.out(System.out, results, query);
+    }
+    
+finally {
+      qexec.close();
+    }
+    
+ds.close();
+conn.dispose();   
+  }
+}</pre>
+      <p>
+            The following are the commands to compile and run
+            this example, as well as the expected output of the java
+            command.
+        </p>
+      <pre class="programlisting">javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar:./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar:./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example5.java
+
+javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar:./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar:./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example5 &lt;store_name&gt; \
+&lt;host_name&gt; &lt;host_port&gt;
+-------------------
+| name1   | name2 |
+===================
+| "Alice" | "Bob" |
+------------------- </pre>
+      <p> 
+            You can test hash join selection by modifying the
+            following line in the code. The output of this Java class
+            will be the same as the one presented before. 
+        </p>
+      <pre class="programlisting">PREFIX ORACLE_SEM_FS_NS: &lt;http://oracle.com/semtech#join_method=hash&gt;</pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="example4.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="quickstart.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="example5b.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top"> Example4.java: Query family relationships on a named graph </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Example5b.java: SPARQL query with ORDERED query option</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

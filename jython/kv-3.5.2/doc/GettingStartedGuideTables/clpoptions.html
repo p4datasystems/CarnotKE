@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>kvlite Utility Command Line Parameter Options</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="kvlite-usage.html" title="Chapter 2. Introduction to Oracle KVLite" />
+    <link rel="prev" href="verifykvlite.html" title="Verifying the Installation" />
+    <link rel="next" href="tablesapi.html" title="Chapter 3. Introducing Oracle NoSQL Database Tables and Indexes" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">kvlite Utility Command Line Parameter Options</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="verifykvlite.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 2. Introduction to Oracle KVLite</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tablesapi.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="clpoptions"></a>kvlite Utility Command Line Parameter Options</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            This section describes the command line options that you can
+            use with the <code class="literal">kvlite</code> utility.
+        </p>
+      <p>
+            Note that you can only specify these options the first time 
+            KVLite is started. Most of the parameter values specified here
+            are recorded in the KVHOME directory, and will be used when you
+            restart the KVLite process regardless of what you provide as
+            command line options. If you want to change your initial
+            values, either delete your KVHOME directory before starting KVLite
+            again, or specify the <code class="literal">-root</code> option
+            (with a different KVHOME location than you initially used) when
+            you provide the new values.
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    <code class="literal">-admin &lt;port&gt;</code>
+                </p>
+            <p>
+                    If this option is specified, the administration user
+                    interface is started. The port identified here is the port
+                    you use to connect to the UI.
+                </p>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">-help</code>
+                </p>
+            <p>
+                    Print a brief usage message, and exit.
+                </p>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">-host &lt;hostname&gt;</code>
+                </p>
+            <p>
+                    Identifies the name of the host on which KVLite is
+                    running. Use this option ONLY if you are creating a new
+                    store.
+                </p>
+            <p>
+                    If you want to access this instance of KVLite from remote
+                    machines, supply the local host's real hostname. Otherwise,
+                    specify <code class="literal">localhost</code> for this option.
+                </p>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">-logging</code>
+                </p>
+            <p>
+                    Turns on Java application logging. The log files are
+                    placed in the examples directory in your Oracle NoSQL Database
+                    distribution.
+                </p>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">-port &lt;port&gt;</code>
+                </p>
+            <p>
+                    Identifies the port on which KVLite is listening for
+                    client connections. Use this option ONLY if you are
+                    creating a new store.
+                </p>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">-root &lt;path&gt;</code>
+                </p>
+            <p>
+                    Identifies the path to the Oracle NoSQL Database home directory. This is
+                    the location where the store's database files are
+                    contained. The directory identified here must exist. If the
+                    appropriate database files do not exist at the location
+                    identified by the option, they are created for you.
+                </p>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">-store &lt;storename&gt;</code>
+                </p>
+            <p>
+                    Identifies the name of a new store. Use this option ONLY if
+                    you are creating a new store.
+                </p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="verifykvlite.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="kvlite-usage.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tablesapi.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Verifying the Installation </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 3. Introducing Oracle NoSQL Database Tables and Indexes</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

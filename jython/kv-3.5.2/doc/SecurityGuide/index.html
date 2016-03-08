@@ -1,0 +1,676 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Oracle NoSQL Database Security Guide</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="next" href="preface.html" title="Preface" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Oracle NoSQL Database Security Guide</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="preface.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="book" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h1 class="title"><a id="id1215760"></a>Oracle NoSQL Database Security Guide</h1>
+          </div>
+          <div>
+            <div class="legalnotice">
+              <a id="id2044689"></a>
+              <p class="legalnotice-title">
+                <b>Legal Notice</b>
+              </p>
+              <span>
+        <p>
+            Copyright © 2011, 2012, 2013, 2014, 2015 Oracle and/or its affiliates. All rights
+            reserved.
+        </p>
+        <p>
+            This software and related documentation are provided under a
+            license agreement containing restrictions on use and disclosure
+            and are protected by intellectual property laws. Except as
+            expressly permitted in your license agreement or allowed by
+            law, you may not use, copy, reproduce, translate, broadcast,
+            modify, license, transmit, distribute, exhibit, perform,
+            publish, or display any part, in any form, or by any means.
+            Reverse engineering, disassembly, or decompilation of this
+            software, unless required by law for interoperability, is
+            prohibited.
+        </p>
+        <p>
+            The information contained herein is subject to change without
+            notice and is not warranted to be error-free. If you find any
+            errors, please report them to us in writing.
+        </p>
+        
+        <p>
+            If this is software or related documentation that is delivered
+            to the U.S. Government or anyone licensing it on behalf of the
+            U.S. Government, the following notice is applicable:
+        </p>
+        <p>
+            U.S. GOVERNMENT END USERS: Oracle programs, including any
+            operating system, integrated software, any programs installed
+            on the hardware, and/or documentation, delivered to U.S.
+            Government end users are "commercial computer software"
+            pursuant to the applicable Federal Acquisition Regulation and
+            agency-specific supplemental regulations. As such, use,
+            duplication, disclosure, modification, and adaptation of the
+            programs, including any operating system, integrated software,
+            any programs installed on the hardware, and/or documentation,
+            shall be subject to license terms and license restrictions
+            applicable to the programs. No other rights are granted to the
+            U.S. Government.
+        </p>
+        <p>
+            This software or hardware is developed for general use in a
+            variety of information management applications. It is not
+            developed or intended for use in any inherently dangerous
+            applications, including applications that may create a risk of
+            personal injury. If you use this software or hardware in
+            dangerous applications, then you shall be responsible to take
+            all appropriate fail-safe, backup, redundancy, and other
+            measures to ensure its safe use. Oracle Corporation and its
+            affiliates disclaim any liability for any damages caused by use
+            of this software or hardware in dangerous applications.
+        </p>
+        <p>
+            Oracle and Java are registered trademarks of Oracle and/or its
+            affiliates. Other names may be trademarks of their respective
+            owners.
+        </p>
+        <p>
+            Intel and Intel Xeon are trademarks or registered trademarks of
+            Intel Corporation. All SPARC trademarks are used under license
+            and are trademarks or registered trademarks of SPARC
+            International, Inc. AMD, Opteron, the AMD logo, and the AMD
+            Opteron logo are trademarks or registered trademarks of
+            Advanced Micro Devices. UNIX is a registered trademark of The
+            Open Group.
+        </p>
+        <p>
+            This software or hardware and documentation may provide access
+            to or information on content, products, and services from third
+            parties. Oracle Corporation and its affiliates are not
+            responsible for and expressly disclaim all warranties of any
+            kind with respect to third-party content, products, and
+            services. Oracle Corporation and its affiliates will not be
+            responsible for any loss, costs, or damages incurred due to
+            your access to or use of third-party content, products, or
+            services.
+        </p>
+    </span>
+            </div>
+          </div>
+          <div>
+            <p class="pubdate">12/3/2015</p>
+          </div>
+        </div>
+        <hr />
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="preface">
+              <a href="preface.html">Preface</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="preface.html#conventions">Conventions Used in This Book</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="introduction_security.html">1. Introducing Oracle NoSQL Database Security</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="chapter">
+              <a href="security_config.html">2. Security Configuration</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="security_config.html#security_usage">Security Configuration Overview</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="security_cli.html">Configuring Security with Makebootconfig</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="security_command.html">Configuring Security with Securityconfig</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="sect2">
+                      <a href="security_command.html#create_security">Creating the security configuration</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="security_command.html#add_security">Adding the security configuration</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="security_command.html#remove_security">Removing the security configuration</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="security_command.html#merge_security">Merging truststore configuration</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="secure_installation.html">3. Performing a Secure Oracle NoSQL Database Installation</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="secure_installation.html#single_node">Single Node Secure Deployment</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="sect2">
+                      <a href="secure_installation.html#new_installation">Adding Security to a New Installation</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="secure_installation.html#existing_installation">Adding Security to an Existing Installation</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+              <dt>
+                <span class="sect1">
+                  <a href="multi_node.html">Multiple Node Secure Deployment</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="sect2">
+                      <a href="multi_node.html#new_multiinstallation">Adding Security to a New Installation</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="multi_node.html#existing_multiinstallation">Adding Security to an Existing Installation</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="kerberos.html">4. Kerberos Authentication Service</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="kerberos.html#prereq">Installation Prerequisites</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="service_principal.html">Kerberos principal</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="keytab.html">Keytabs</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="kadmin.html">Kadmin and kadmin.local</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="kerberos_properties.html">Kerberos Security Properties</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="sect2">
+                      <a href="kerberos_properties.html#setprop_file">Setting Security Properties in a security login file</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="kerberos_properties.html#setprop_kvstoreconfig">Setting Security Properties through KVStoreConfig</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="kerberos_properties.html#login_secprop">Using security properties to login</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+              <dt>
+                <span class="sect1">
+                  <a href="jaas.html">JAAS programming framework integration</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="kerbinstall.html">Performing a Secure Oracle NoSQL Database Installation with Kerberos</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="sect2">
+                      <a href="kerbinstall.html#kerb_new">Adding Kerberos to a New Installation</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="kerbinstall.html#kerb_existing">Adding Kerberos to an Existing Secure Installation</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="password_storage.html">5. External Password Storage</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="password_storage.html#oracle_wallet">Oracle Wallet</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="ce_password.html">Password store file</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="security_xml.html">6. Security.xml parameters</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="security_xml.html#top_parameters">Top-level parameters</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="transport_parameters.html">Transport parameters</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="encryption.html">7. Encryption</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="encryption.html#ssl_model">SSL model</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="ssl_comm.html">SSL communication properties</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="config_auth.html">8. Configuring Authentication</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="config_auth.html#user_management">User Management</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="sect2">
+                      <a href="config_auth.html#user_creation">User Creation</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="config_auth.html#user_modification">User Modification</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="config_auth.html#user_removal">User Removal</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="config_auth.html#user_status">User Status</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="config_auth.html#user_login">User Login</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="config_auth.html#password_management">Password Management</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+              <dt>
+                <span class="sect1">
+                  <a href="sessions.html">Sessions</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="authorization.html">9. Configuring Authorization</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="authorization.html#privileges">Privileges</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="sect2">
+                      <a href="authorization.html#system_privileges">System Privileges</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="authorization.html#object_privileges">Object Privileges</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="authorization.html#tableownership">Table Ownership</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="authorization.html#privilege_hierarchy">Privilege Hierarchy</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+              <dt>
+                <span class="sect1">
+                  <a href="roles.html">Roles</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="sect2">
+                      <a href="roles.html#system_roles">System Built-in Roles</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="roles.html#user_defined_roles">User-Defined Roles</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+              <dt>
+                <span class="sect1">
+                  <a href="managing_roles.html">Managing Roles, Privileges and Users</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="sect2">
+                      <a href="managing_roles.html#role_creation">Role Creation</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="managing_roles.html#role_removal">Role Removal</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="managing_roles.html#role_status">Role Status</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="managing_roles.html#grant_role">Grant Roles or Privileges</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="sect2">
+                      <a href="managing_roles.html#revoke_role">Revoke Roles or Privileges</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="security_policies.html">10. Security Policies</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="security_policies.html#policy-modification">Security Policy Modifications</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="audit.html">11. Audit Logging</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="audit.html#audit_log">Security Log Messages</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="security_guidelines.html">12. Keeping Oracle NoSQL Database Secure</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="security_guidelines.html#guide_security">Guidelines for Securing the Configuration</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="guide_deploy.html">Guidelines for Deploying Secure Applications</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="guide_ssl.html">Guidelines for Securing the SSL protocol</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="guide_jmx.html">Guidelines for using JMX securely</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="update_keystore.html">Guidelines for Updating Keystore Passwords</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="update_kerbpass.html">Guidelines for Updating Kerberos Passwords</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="update_cert.html">Guidelines for Updating the SSL key/certificate</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="os-security.html">Guidelines for Operating System Security</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="appendix">
+              <a href="appendix_keytool.html">A. SSL keystore generation</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="appendix">
+              <a href="required_privileges.html">B. KVStore Required Privileges</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect1">
+                  <a href="required_privileges.html#cli_privileges">Privileges for Accessing CLI Commands</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="ddl_privileges.html">Privileges for DDL Commands</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="kvstore_api.html">Privileges for Accessing KVStore APIs</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="kvstore_tableapi.html">Privileges for Accessing KVStore TableAPIs</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect1">
+                  <a href="kvstore_lobapi.html">Privileges for Accessing KvLargeObject APIs</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="appendix">
+              <a href="using_kadmin.html">C. Configuring the Kerberos Administrative Utility</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="appendix">
+              <a href="manual_service.html">D. Manually Registering Oracle NoSQL Database Service Principal</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="appendix">
+              <a href="thirdpartylicenses.html">E. Third Party Licenses</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="preface.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top"> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right" valign="top"> Preface</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

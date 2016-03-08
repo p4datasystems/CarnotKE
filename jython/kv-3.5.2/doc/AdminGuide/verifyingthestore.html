@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Verifying the Store</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="procedures.html" title="Chapter 6. Administrative Procedures" />
+    <link rel="prev" href="disableservices.html" title="Disabling Storage Node Agent Hosted Services" />
+    <link rel="next" href="monitoring.html" title="Monitoring the Store" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Verifying the Store</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="disableservices.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Administrative Procedures</th>
+          <td width="20%" align="right"> <a accesskey="n" href="monitoring.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="verifyingthestore"></a>Verifying the Store</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            Verification is a tool you can use to:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                  Perform general troubleshooting of the store.
+              </p>
+            <p>
+                  Verification inspects all components of the store. It
+                  also checks whether all store services are available, and
+                  for those services it checks whether there are any
+                  version or metadata mismatches.
+              </p>
+          </li>
+          <li>
+            <p>
+                  Check the status of a long-running plan
+              </p>
+            <p>
+                  Some plans require many steps and may take some time to execute.
+                  The administrator can verify plans to check on progress of the
+                  plan, or as an aid to diagnose a plan that is in an ERROR state.
+                  For example, if you can verify a <code class="literal">Deploy Store</code>
+                  plan while it is running against many Storage Nodes. You can
+                  watch the verify report at each iteration to see that more and
+                  more nodes have created and have come online.
+              </p>
+            <p>
+                  For more information on how to manage plans, see
+                  <a class="xref" href="plans.html" title="Chapter 2. Plans">Plans</a>.
+              </p>
+          </li>
+          <li>
+            <p>
+                  Provide additional information about a plan that is in an
+                  ERROR state.
+              </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+            You run store verification using the <code class="literal">verify</code>
+            command in the CLI. It requires no parameters, and by default it
+            runs in verbose mode. For example:
+        </p>
+      <pre class="programlisting">kv-&gt; verify configuration
+Verify: starting verification of store MetroArea based upon
+topology sequence #117
+100 partitions and 6 storage nodes
+Time: 2015-06-16 00:01:05 UTC   Version: 12.1.3.4.0
+See node01:Data/virtualroot/datacenter1/kvroot/MetroArea/
+                                          log/MetroArea_{0..N}.log for
+                                          progress messages
+Verify: Shard Status: healthy:2 writable-degraded:0 
+                                            read-only:0 offline:0
+Verify: Admin Status: healthy
+Verify: Zone [name=Manhattan id=zn1 type=PRIMARY]   
+   RN Status: online:2 offline: 0 maxDelayMillis:1 maxCatchupTimeSecs:0
+Verify: Zone [name=JerseyCity id=zn2 type=PRIMARY]   
+   RN Status: online:2 offline: 0 maxDelayMillis:1 maxCatchupTimeSecs:0
+Verify: Zone [name=Queens id=zn3 type=PRIMARY]   
+   RN Status: online:2 offline: 0
+Verify: == checking storage node sn1 ==
+Verify: Storage Node [sn1] on node01:5000    
+   Zone: [name=Manhattan id=zn1 type=PRIMARY]    Status: RUNNING   
+   Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+Verify:         Admin [admin1]          Status: RUNNING,MASTER
+Verify:         Rep Node [rg1-rn2]      Status: RUNNING,REPLICA 
+   sequenceNumber:127 haPort:5011 delayMillis:1 catchupTimeSecs:0
+Verify: == checking storage node sn2 ==
+Verify: Storage Node [sn2] on node02:6000    
+   Zone: [name=Manhattan id=zn1 type=PRIMARY]    Status: RUNNING   
+   Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+Verify:         Rep Node [rg2-rn2]      Status: RUNNING,REPLICA 
+   sequenceNumber:127 haPort:6010 delayMillis:1 catchupTimeSecs:0
+Verify: == checking storage node sn3 ==
+Verify: Storage Node [sn3] on node03:7000    
+   Zone: [name=JerseyCity id=zn2 type=PRIMARY]    Status: RUNNING   
+   Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+Verify:         Admin [admin2]          Status: RUNNING,REPLICA
+Verify:         Rep Node [rg1-rn3]      Status: RUNNING,REPLICA 
+   sequenceNumber:127 haPort:7011 delayMillis:1 catchupTimeSecs:0
+Verify: == checking storage node sn4 ==
+Verify: Storage Node [sn4] on node04:8000    
+   Zone: [name=JerseyCity id=zn2 type=PRIMARY]    Status: RUNNING   
+   Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+Verify:         Rep Node [rg2-rn3]      Status: RUNNING,REPLICA 
+   sequenceNumber:127 haPort:8010 delayMillis:1 catchupTimeSecs:0
+Verify: == checking storage node sn5 ==
+Verify: Storage Node [sn5] on node05:9000    
+   Zone: [name=Queens id=zn3 type=PRIMARY]    Status: RUNNING   
+   Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+Verify:         Admin [admin3]          Status: RUNNING,REPLICA
+Verify:         Rep Node [rg1-rn1]      Status: RUNNING,MASTER 
+   sequenceNumber:127 haPort:9011
+Verify: == checking storage node sn6 ==
+Verify: Storage Node [sn6] on node06:10000    
+   Zone: [name=Queens id=zn3 type=PRIMARY]    Status: RUNNING   
+   Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+Verify:         Rep Node [rg2-rn1]      Status: RUNNING,MASTER 
+   sequenceNumber:127 haPort:10010
+
+Verification complete, no violations.   </pre>
+      <p>
+            A silent mode is available which shows only problems.
+        </p>
+      <pre class="programlisting">kv-&gt; verify configuration -silent
+Verify: starting verification of store MetroArea based upon
+topology sequence #117
+100 partitions and 6 storage nodes
+Time: 2015-06-16 04:00:02 UTC   Version: 12.1.3.4.0
+See node01:Data/virtualroot/datacenter1/kvroot/MetroArea/
+                            log/MetroArea_{0..N}.log for progress messages
+Verification complete, no violations. </pre>
+      <p>
+            Problems with the store are clearly reported. For example, if a
+            Storage Node is unavailable, then in silent mode that problem is
+            displayed in the following way:
+        </p>
+      <pre class="programlisting">kv-&gt; verify configuration -silent
+Verify: starting verification of store MetroArea based upon 
+topology sequence #117
+100 partitions and 6 storage nodes
+Time: 2015-06-16 04:09:18 UTC   Version: 12.1.3.4.0
+See node01:Data/virtualroot/datacenter1/kvroot/MetroArea/
+                            log/MetroArea_{0..N}.log for progress messages
+Verification complete, 2 violations, 0 notes found.
+Verification violation: [rg2-rn2]       ping() failed for rg2-rn2 : 
+Unable to connect to the storage node agent at host node02, port 6000, 
+which may not be running; nested exception is: 
+        java.rmi.ConnectException: Connection refused to host: node02; 
+        nested exception is: 
+        java.net.ConnectException: Connection refused
+Verification violation: [sn2]   ping() failed for sn2 : Unable to connect 
+        to the storage node agent at host node02, port 6000, 
+        which may not be running; nested exception is: 
+        java.rmi.ConnectException: Connection refused to host: node02; 
+        nested exception is: 
+        java.net.ConnectException: Connection refused </pre>
+      <p>
+            In verbose mode, the above problem is shown in the following
+            way:
+        </p>
+      <pre class="programlisting">kv-&gt; verify configuration
+Verify: starting verification of store MetroArea based upon 
+topology sequence #117
+100 partitions and 6 storage nodes
+Time: 2015-06-16 04:17:31 UTC   Version: 12.1.3.4.0
+See node01:Data/virtualroot/datacenter1/kvroot/MetroArea/
+                            log/MetroArea_{0..N}.log for progress messages
+Verify: Shard Status: healthy:1 writable-degraded:1 
+                                                read-only:0 offline:0
+Verify: Admin Status: healthy
+Verify: Zone [name=Manhattan id=zn1 type=PRIMARY]   
+   RN Status: online:1 offline: 1 maxDelayMillis:1 maxCatchupTimeSecs:0
+Verify: Zone [name=JerseyCity id=zn2 type=PRIMARY]   
+   RN Status: online:2 offline: 0 maxDelayMillis:1 maxCatchupTimeSecs:0
+Verify: Zone [name=Queens id=zn3 type=PRIMARY]   
+   RN Status: online:2 offline: 0
+Verify: == checking storage node sn1 ==
+Verify: Storage Node [sn1] on node01:5000    
+   Zone: [name=Manhattan id=zn1 type=PRIMARY]    Status: RUNNING   
+   Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+Verify:         Admin [admin1]          Status: RUNNING,MASTER
+Verify:         Rep Node [rg1-rn2]      Status: RUNNING,REPLICA 
+   sequenceNumber:127 haPort:5011 delayMillis:1 catchupTimeSecs:0
+Verify: == checking storage node sn2 ==
+Verify:         sn2: ping() failed for sn2 : 
+Unable to connect to the storage node agent at host node02, port 6000, 
+which may not be running; nested exception is: 
+        java.rmi.ConnectException: Connection refused to host: node02; 
+        nested exception is: 
+        java.net.ConnectException: Connection refused
+Verify: Storage Node [sn2] on node02:6000  
+   Zone: [name=Manhattan id=zn1 type=PRIMARY] UNREACHABLE
+Verify:         rg2-rn2: ping() failed for rg2-rn2 : 
+Unable to connect to the storage node agent at host node02, port 6000, 
+which may not be running; nested exception is: 
+        java.rmi.ConnectException: Connection refused to host: node02; 
+        nested exception is: 
+        java.net.ConnectException: Connection refused
+Verify:         Rep Node [rg2-rn2]      Status: UNREACHABLE
+Verify: == checking storage node sn3 ==
+Verify: Storage Node [sn3] on node03:7000    
+  Zone: [name=JerseyCity id=zn2 type=PRIMARY]    Status: RUNNING   
+  Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+Verify:         Admin [admin2]          Status: RUNNING,REPLICA
+Verify:         Rep Node [rg1-rn3]      Status: RUNNING,REPLICA 
+  sequenceNumber:127 haPort:7011 delayMillis:1 catchupTimeSecs:0
+Verify: == checking storage node sn4 ==
+Verify: Storage Node [sn4] on node04:8000    
+  Zone: [name=JerseyCity id=zn2 type=PRIMARY]    Status: RUNNING   
+  Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+Verify:         Rep Node [rg2-rn3]      Status: RUNNING,REPLICA 
+  sequenceNumber:127 haPort:8010 delayMillis:0 catchupTimeSecs:0
+Verify: == checking storage node sn5 ==
+Verify: Storage Node [sn5] on node05:9000    
+  Zone: [name=Queens id=zn3 type=PRIMARY]    Status: RUNNING   
+  Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+Verify:         Admin [admin3]          Status: RUNNING,REPLICA
+Verify:         Rep Node [rg1-rn1]      Status: RUNNING,MASTER 
+  sequenceNumber:127 haPort:9011
+Verify: == checking storage node sn6 ==
+Verify: Storage Node [sn6] on node06:10000    
+  Zone: [name=Queens id=zn3 type=PRIMARY]    Status: RUNNING   
+  Ver: 12cR1.3.4.0 2015-05-29 12:09:04 UTC  Build id: db9ec397225c
+Verify:         Rep Node [rg2-rn1]      Status: RUNNING,MASTER 
+  sequenceNumber:127 haPort:10010
+
+Verification complete, 2 violations, 0 notes found.
+Verification violation: [rg2-rn2]       ping() failed for rg2-rn2 : 
+Unable to connect to the storage node agent at host node02, port 6000, 
+which may not be running; nested exception is: 
+        java.rmi.ConnectException: Connection refused to host: node02; 
+        nested exception is: 
+        java.net.ConnectException: Connection refused
+Verification violation: [sn2]   ping() failed for sn2 : 
+Unable to connectto the storage node agent at host node02, port 6000, 
+which may not be running; nested exception is: 
+        java.rmi.ConnectException: Connection refused to host: node02; 
+        nested exception is: 
+        java.net.ConnectException: Connection refused </pre>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+                The verify output is only displayed in the shell when the
+                command is finished. You can tail or grep the Oracle NoSQL Database log
+                file in order to get a sense of how the verify is progressing.
+                Look for the string <code class="literal">Verify</code>. For example:
+            </p>
+        <pre class="programlisting">grep Verify /KVRT1/mystore/log/mystore_0.log</pre>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="disableservices.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="procedures.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="monitoring.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Disabling Storage Node Agent Hosted Services </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Monitoring the Store</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

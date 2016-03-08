@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Performing a Secure Oracle NoSQL Database Installation with Kerberos</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="kerberos.html" title="Chapter 4. Kerberos Authentication Service" />
+    <link rel="prev" href="jaas.html" title="JAAS programming framework integration" />
+    <link rel="next" href="password_storage.html" title="Chapter 5. External Password Storage" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Performing a Secure Oracle NoSQL Database Installation with Kerberos</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="jaas.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 4. Kerberos Authentication Service</th>
+          <td width="20%" align="right"> <a accesskey="n" href="password_storage.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="kerbinstall"></a>Performing a Secure Oracle NoSQL Database Installation with Kerberos</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="kerbinstall.html#kerb_new">Adding Kerberos to a New Installation</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="kerbinstall.html#kerb_existing">Adding Kerberos to an Existing Secure Installation</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p> 
+            It is possible to add Kerberos to a new or an existing Oracle NoSQL Database
+            secure installation.
+        </p>
+      <p> 
+            At a high-level, to configure a Oracle NoSQL Database installation to use
+            Kerberos, you first need to register Oracle NoSQL Database as a service principal
+            in KDC and extract corresponding keytab files on each database
+            server node. Then, to allow client login, a user principal must be
+            added in KDC and a mapped user account with the same name of
+            principal needs to be created in the database. Finally, login can be
+            performed through the CLI or the kvclient driver. 
+        </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="kerb_new"></a>Adding Kerberos to a New Installation</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                To install Oracle NoSQL Database with Kerberos authentication: 
+            </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+                    The following example assumes you have configured an
+                    admin/admin principal on the KDC and that you distributed
+                    its keytab (kadm5.keytab) to the Oracle NoSQL Database Storage Nodes. For
+                    more information, see <a class="xref" href="using_kadmin.html" title="Appendix C. Configuring the Kerberos Administrative Utility">Configuring the Kerberos Administrative Utility</a>. 
+                </p>
+        </div>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p> 
+                        Run the <code class="literal">makebootconfig</code> utility
+                        with the <code class="literal">-store-security configure</code>
+                        and <code class="literal">-external-auth kerberos</code> flags to
+                        set up the basic store configuration with Kerberos
+                        security:
+                    </p>
+              <pre class="programlisting">java -jar KVHOME/lib/kvstore.jar makebootconfig \
+-root KVROOT -port 5000 \
+-admin 5001 -host node01 -harange 5010,5020 \
+-capacity 3 \
+-store-security configure \
+-external-auth kerberos \
+-instance-name node01.example.com \
+-kadmin-keytab /kerberos/kadm5.keytab \
+-admin-principal admin/admin </pre>
+            </li>
+            <li>
+              <p> 
+                        In this example, <code class="literal">-store-security
+                            configure</code> is used, so the
+                            <code class="literal">security configuration</code> utility is
+                        run as part of the makebootconfig process and you are
+                        prompted for a password to use for your keystore file: 
+                    </p>
+              <pre class="programlisting">Enter a password for the Java KeyStore: </pre>
+            </li>
+            <li>
+              <p>
+                        Enter a password for your store and then reenter it
+                        for verification. In this case, Oracle Wallet is used.
+                        Oracle Wallet and Kerberos support are only available in
+                        the Oracle NoSQL Database EE version.
+                    </p>
+              <pre class="programlisting">Enter a password for the Java KeyStore: ***********
+Re-enter the KeyStore password for verification: *********** </pre>
+            </li>
+            <li>
+              <p> 
+                        In this case, <code class="literal">-kadmin-keytab</code>
+                        points to the admin/admin keytab file you distributed
+                        earlier. Once authenticated, the configuration tool will
+                        automatically generate some security related files: 
+                    </p>
+              <pre class="programlisting">Login Kerberos admin via 
+keytab /kerberos/kadm5.keytab
+Adding principal oraclenosql/node01.example.com@EXAMPLE.COM
+Authenticating as principal admin/admin with
+keytab /kerberos/kadm5.keytab
+Extracting keytab KVROOT/security/store.keytab
+Created files:
+security/security.xml
+security/store.keys
+security/store.trust
+security/store.wallet/cwallet.sso 
+security/store.keytab
+security/client.security 
+security/client.trust  </pre>
+            </li>
+            <li>
+              <p> 
+                        In a multi-host store environment, the security
+                        directory and all files contained in it should be copied
+                        from the first node to each server that will host a
+                        Storage Node, to setup internal cluster authentication.
+                        For example, the following commands assume that the
+                        different nodes are visible and accessible on the
+                        current node (node01):
+                    </p>
+              <pre class="programlisting">cp -R node01/KVROOT/security node02/KVROOT/
+cp -R node01/KVROOT/security node03/KVROOT/</pre>
+              <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                <h3 class="title">Note</h3>
+                <p>
+                            You may need to use a remote copying command,
+                            like <code class="literal">scp</code>, to do the copying if
+                            the files for the different nodes are not visible on
+                            the current node. 
+                        </p>
+              </div>
+            </li>
+            <li>
+              <p> 
+                        Run makebootconfig on the other two nodes to enable
+                        Kerberos authentication. 
+                    </p>
+              <pre class="programlisting">java -jar KVHOME/lib/kvstore.jar makebootconfig \
+-root KVROOT -port 6000 \
+-admin 5001 -host node01 -harange 6010,6020 \
+-capacity 3 \
+-store-security configure \
+-external-auth kerberos \
+-instance-name node02.example.com \
+-kadmin-keytab /kerberos/kadm5.keytab \
+-admin-principal admin/admin </pre>
+              <pre class="programlisting">java -jar KVHOME/lib/kvstore.jar makebootconfig \
+-root KVROOT -port 7000 \
+-admin 5001 -host node01 -harange 7010,7020 \
+-capacity 3 \
+-store-security configure \
+-external-auth kerberos \
+-instance-name node03.example.com \
+-kadmin-keytab /kerberos/kadm5.keytab \
+-admin-principal admin/admin </pre>
+            </li>
+            <li>
+              <p> 
+                        Start the Storage Node Agent (SNA) on each node: 
+                    </p>
+              <pre class="programlisting">nohup java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar start -root KVROOT&amp;</pre>
+              <p> 
+                        When a newly created store with a secure
+                        configuration is first started, there are no user
+                        definitions available against which to authenticate
+                        access. In order to reduce risk of unauthorized access,
+                        an admin will only allow you to connect to it from the
+                        host on which it is running. This security measure is
+                        not a complete safeguard against unauthorized access. It
+                        is important that you do not provide local access to
+                        machines running KVStore. In addition, you should
+                        perform the following steps soon after this step in
+                        order to minimize the time period in which the admin
+                        might be accessible without full authentication. For
+                        more information on maintaining a secure store see <a class="xref" href="security_guidelines.html#guide_security" title="Guidelines for Securing the Configuration">Guidelines for Securing the Configuration</a>.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        Start <code class="literal">runadmin</code> in security mode on
+                        the KVStore server host (node01). To do this, use the
+                        following command:
+                    </p>
+              <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar \
+runadmin -port 5000 -host node01 \
+-security KVROOT/security/client.security
+Logged in admin as anonymous </pre>
+            </li>
+            <li>
+              <p>
+                        Use the <code class="literal">configure -name</code> command to
+                        specify the name of the KVStore that you want to
+                        configure: 
+                    </p>
+              <pre class="programlisting">kv-&gt; configure -name mystore
+Store configured: mystore </pre>
+            </li>
+            <li>
+                    Register the user principal on the KDC. To do this,
+                    use <code class="literal">kadmin</code> or <code class="literal">
+                        kadmin.local</code>: <pre class="programlisting">kadmin.local: addprinc  krbuser@EXAMPLE.COM
+Enter password for principal: "krbuser@EXAMPLE.COM": ***********
+Re-enter password for principal: "krbuser@EXAMPLE.COM": ********** </pre></li>
+            <li>
+              <p>
+                        After user principal is registered on KDC, create the
+                        user in Oracle NoSQL Database. The username needs to match the full
+                        principal name in the KDC (includes realm name). In this
+                        case, user <code class="literal">krbuser</code> is defined: 
+                    </p>
+              <pre class="programlisting">kv-&gt; execute 'CREATE USER "krbuser@EXAMPLE.COM" IDENTIFIED EXTERNALLY' </pre>
+              <p> 
+                        For more information on user creation and
+                        administration, see <a class="xref" href="config_auth.html#user_management" title="User Management">User Management</a>.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        At this point, it is possible to connect to the store
+                        as the krbuser. To login, you can use credential cache,
+                        a keytab file or enter the principal password. 
+                    </p>
+              <p> 
+                        In this example, a keytab file is used. To do this,
+                        first extract the keytab of principal
+                        krbuser@EXAMPLE.COM on the KDC host by using
+                            <code class="literal">kadmin.local</code>. 
+                    </p>
+              <pre class="programlisting">kadmin.local:  ktadd -k /tmp/mykeytab  krbuser@EXAMPLE.COM
+Entry for principal krbuser@EXAMPLE.COM added to 
+keytab WRFILE:/tmp/mykeytab. </pre>
+            </li>
+            <li>
+              <p>
+                        Copy the keytab file to client machines that will use
+                        the krbuser@EXAMPLE.COM principal to login automatically
+                        to Oracle NoSQL Database. 
+                    </p>
+            </li>
+            <li>
+              <p> 
+                        Set the Kerberos security properties, including the
+                        keytab file location, on each client by specifying them
+                        in a security file or through the
+                            <code class="classname">KVStoreConfig</code> class. 
+                    </p>
+              <p> 
+                        In this example, a security file (mylogin.txt) is
+                        used. To login, specify the file location by using the
+                            <code class="literal">oracle.kv.security property</code>. 
+                        For example: 
+                    </p>
+              <pre class="programlisting">java -Xmx256m -Xms256m \
+-Doracle.kv.security=mylogin.txt \
+-jar KVHOME/lib/kvstore.jar runadmin -port 5000 -host localhost
+Logged in admin as krbuser</pre>
+              <p>
+                        The file <code class="literal">mylogin.txt</code> should be a
+                        copy of the <code class="literal">client.security</code> file with
+                        additional properties settings for Kerberos
+                        authentication. The file would then contain content like
+                        this: 
+                    </p>
+              <pre class="programlisting">oracle.kv.auth.kerberos.keytab = kerberos/mykeytab
+oracle.kv.auth.username = krbuser@EXAMPLE.COM 
+oracle.kv.auth.external.mechanism=kerberos
+oracle.kv.auth.kerberos.services=
+                 node01:oraclenosql/node01.example.com@EXAMPLE.COM
+oracle.kv.auth.kerberos.mutualAuth=false </pre>
+              <p> 
+                        In this case, Oracle NoSQL Database reads the keytab and logins to
+                        Kerberos without needing a password. 
+                    </p>
+              <p>
+                        For more information on Kerberos security properties,
+                        see <a class="xref" href="kerberos_properties.html" title="Kerberos Security Properties">Kerberos Security Properties</a>.
+                    </p>
+            </li>
+          </ol>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="kerb_existing"></a>Adding Kerberos to an Existing Secure Installation</h3>
+            </div>
+          </div>
+        </div>
+        <p> 
+                To add Kerberos to an existing Oracle NoSQL Database secure installation: 
+            </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p> 
+                    The following example assumes you have configured an
+                    admin/admin principal on the KDC and that you distributed
+                    its keytab (kadm5.keytab) to the Oracle NoSQL Database Storage Nodes. For
+                    more information, see <a class="xref" href="using_kadmin.html" title="Appendix C. Configuring the Kerberos Administrative Utility">Configuring the Kerberos Administrative Utility</a>.
+                </p>
+        </div>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p>
+                        Shut down the KVStore instance: 
+                    </p>
+              <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar stop \
+-root KVROOT</pre>
+            </li>
+            <li>
+              <p>
+                        Use the <code class="literal">config add-kerberos</code>
+                        command to add Kerberos authentication:
+                    </p>
+              <pre class="programlisting">java -jar KVHOME/lib/kvstore.jar securityconfig
+config add-kerberos -root KVROOT \
+-secdir security \
+-admin-principal admin/admin
+
+Adding principal oraclenosql@EXAMPLE.COM
+Password for admin/admin: *******
+Created files:
+   security/store.keytab
+Updated Kerberos configuration </pre>
+              <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                <h3 class="title">Note</h3>
+                <p>
+                            When running this command, the
+                                <code class="literal">securityconfig</code> tool will
+                            verify the existence of the referenced files and
+                            will update the specified bootstrap configuration
+                            file to refer to the security configuration. This
+                            process is normally done with the KVStore instance
+                            stopped, and must be performed on each Storage Node
+                            of the store.
+                        </p>
+              </div>
+            </li>
+            <li>
+              <p> 
+                        Start the Storage Node Agent (SNA) on each node: 
+                    </p>
+              <pre class="programlisting">nohup java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar start -root KVROOT&amp;</pre>
+            </li>
+            <li>
+              <p> 
+                        Start <code class="literal">runadmin</code> in security mode on
+                        the KVStore server host (node01). To do this, use the
+                        following command: 
+                    </p>
+              <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar \
+runadmin -port 5000 -host node01 \
+-security KVROOT/security/client.security 
+Logged in admin as anonymous.</pre>
+              <p> 
+                        This command sets SSL as a connection method and
+                        names a copy of the generated truststore file
+                        (client.security). For more information on SSL
+                        properties, see <a class="xref" href="ssl_comm.html" title="SSL communication properties">SSL communication properties</a>.
+                    </p>
+            </li>
+            <li>
+                    Register the user principal on the KDC. To do this,
+                    use <code class="literal">kadmin</code> or <code class="literal">
+                        kadmin.local</code>: <pre class="programlisting">kadmin.local: addprinc  krbuser@EXAMPLE.COM
+Enter password for principal: "krbuser@EXAMPLE.COM": ***********
+Re-enter password for principal: "krbuser@EXAMPLE.COM": ********** </pre></li>
+            <li>
+              <p> 
+                        After user principal is registered on KDC, create the
+                        user in Oracle NoSQL Database. The username needs to match the full
+                        principal name in the KDC (includes realm name). In this
+                        case, user <code class="literal">krbuser</code> is defined:
+                    </p>
+              <pre class="programlisting">kv-&gt; execute 'CREATE USER "krbuser@EXAMPLE.COM" IDENTIFIED EXTERNALLY' </pre>
+              <p> 
+                        For more information on user creation and
+                        administration, see <a class="xref" href="config_auth.html#user_management" title="User Management">User Management</a>. 
+                    </p>
+            </li>
+            <li>
+              <p>
+                        At this point, it is possible to connect to the store
+                        as the krbuser. To login, you can use credential cache,
+                        a keytab file or enter the principal password.
+                    </p>
+              <p> 
+                        In this example, a keytab file is used. To do this,
+                        first extract the keytab of principal
+                        krbuser@EXAMPLE.COM on the KDC host by using
+                            <code class="literal">kadmin.local</code>. 
+                    </p>
+              <pre class="programlisting">kadmin.local:  ktadd -k /tmp/mykeytab  krbuser@EXAMPLE.COM
+Entry for principal krbuser@EXAMPLE.COM added to 
+keytab WRFILE:/tmp/mykeytab. </pre>
+            </li>
+            <li>
+              <p> 
+                        Copy the keytab file to any client machine that will use
+                        the krbuser@EXAMPLE.COM principal to login automatically
+                        to Oracle NoSQL Database. 
+                    </p>
+            </li>
+            <li>
+              <p> 
+                        Set the Kerberos security properties, including the
+                        keytab file location, on each client by specifying them
+                        in a security file or through the
+                            <code class="classname">KVStoreConfig</code> class. 
+                    </p>
+              <p>
+                        In this example, a security file (mylogin.txt) is
+                        used. To login, specify the file location by using the
+                        <code class="literal">oracle.kv.security property</code>. 
+                        For example:
+                    </p>
+              <pre class="programlisting">java -Xmx256m -Xms256m \
+-Doracle.kv.security=mylogin.txt \
+-jar KVHOME/lib/kvstore.jar runadmin -port 5000 -host localhost
+Logged in admin as krbuser</pre>
+              <p> 
+                        The file <code class="literal">mylogin.txt</code> should be a
+                        copy of the <code class="literal">client.security</code> file with
+                        additional properties settings for Kerberos
+                        authentication. The file would then contain content like
+                        this: 
+                    </p>
+              <pre class="programlisting">oracle.kv.auth.kerberos.keytab = kerberos/mykeytab
+oracle.kv.auth.username = krbuser@EXAMPLE.COM 
+oracle.kv.auth.external.mechanism=kerberos
+oracle.kv.auth.kerberos.services=
+                 node01:oraclenosql/node01.example.com@EXAMPLE.COM
+oracle.kv.auth.kerberos.mutualAuth=false </pre>
+              <p> 
+                        In this case, Oracle NoSQL Database reads the keytab and logins to
+                        Kerberos without needing a password.
+                    </p>
+              <p>
+                        For more information on Kerberos security properties,
+                        see <a class="xref" href="kerberos_properties.html" title="Kerberos Security Properties">Kerberos Security Properties</a>.
+                    </p>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="jaas.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="kerberos.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="password_storage.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">JAAS programming framework integration </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 5. External Password Storage</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

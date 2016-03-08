@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Using multiGetIterator()</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="recordget.html" title="Chapter 5. Reading Records" />
+    <link rel="prev" href="multiget.html" title="Using multiGet()" />
+    <link rel="next" href="storeiterator.html" title="Using storeIterator()" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Using multiGetIterator()</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="multiget.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 5. Reading Records</th>
+          <td width="20%" align="right"> <a accesskey="n" href="storeiterator.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="multigetiterator"></a>Using multiGetIterator()</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            If you believe your return set will be so large that
+            it cannot fit into memory, use
+            <code class="methodname">KVStore.multiGetIterator()</code>
+            instead of <code class="methodname">KVStore.multiGet()</code>.
+        </p>
+      <p>
+            <code class="methodname">KVStore.multiGetIterator()</code>
+            allows you to perform an ordered traversal of a set of keys, as
+            defined by a key and, optionally, a key range.  Use this method
+            if you believe your return set will not fit into memory, or if
+            you believe the return set will be so large that it might
+            strain your network resources.
+        </p>
+      <p>
+            <code class="methodname">KVStore.multiGetIterator()</code> does not
+            return the entire set of records all at once. Instead, it
+            batches the fetching of key-value pairs in the iterator, to
+            minimize the number of network round trips, while not
+            monopolizing the available bandwidth.
+        </p>
+      <p>
+            Note that this method does not result in a transactional
+            operation. Because the retrieval is batched, the return set can
+            change over the course of the entire retrieval operation. As a
+            result, you lose the atomicity of the operation when you use
+            this method.
+        </p>
+      <p>
+            This method provides for an ordered traversal of records that
+            share the same major path components. The major path components
+            that you provide must represent a <span class="emphasis"><em>complete</em></span>
+            set of components.
+        </p>
+      <p>
+            To use this method, you must provide:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    A traversal direction. 
+                </p>
+          </li>
+          <li>
+            <p>
+                    The suggested number of keys to fetch during each
+                    network round trip. If you provide a value of 0, an
+                    internally determined default is used.
+                </p>
+          </li>
+          <li>
+            <p>
+                    The key whose child pairs are to be fetched.
+                </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+            Note that there are other possible parameters that you can
+            provide, but this above list represents the minimum information
+            required to use this method.
+        </p>
+      <p>
+            For example, suppose the following is representative of the
+            keys that you use:
+        </p>
+      <pre class="programlisting">/Hats/-/baseball
+/Hats/-/baseball/longbill
+/Hats/-/baseball/longbill/blue
+/Hats/-/baseball/longbill/red
+/Hats/-/baseball/shortbill
+/Hats/-/baseball/shortbill/blue
+/Hats/-/baseball/shortbill/red
+/Hats/-/western
+/Hats/-/western/felt
+/Hats/-/western/felt/black
+/Hats/-/western/felt/gray
+/Hats/-/western/leather
+/Hats/-/western/leather/black
+/Hats/-/western/leather/gray</pre>
+      <p>
+            Then you can retrieve all of the records that use the major key
+            component <code class="literal">Hats</code> as follows:
+        </p>
+      <a id="multigetiterator-1"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.Direction;
+import oracle.kv.Key;
+import oracle.kv.Value;
+import oracle.kv.KeyValueVersion;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+...
+
+ArrayList&lt;String&gt; majorComponents = new ArrayList&lt;String&gt;();
+
+...
+
+// Define the major and minor path components for the key
+majorComponents.add("Hats");
+
+// Create the retrieval key
+Key myKey = Key.createKey(majorComponents);
+
+// Now retrieve the records. Note that we do not show the creation of 
+// the kvstore handle here.
+
+
+Iterator&lt;KeyValueVersion&gt; i = 
+    kvstore.multiGetIterator(Direction.FORWARD, 0,
+                             myKey, null, null);
+while (i.hasNext()) {
+    Value v = i.next().getValue(); 
+    // Do some work with the Value here
+} </pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="multiget.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="recordget.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="storeiterator.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Using multiGet() </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Using storeIterator()</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

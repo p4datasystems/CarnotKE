@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Appendix B. Generating a New SPARQL Service WAR file</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="prev" href="prerequisite.html" title="Appendix A. Prerequisite Software" />
+    <link rel="next" href="thirdpartylicenses.html" title="Appendix C. Third Party Licenses" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Appendix B. Generating a New SPARQL Service WAR file</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="prerequisite.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="thirdpartylicenses.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="appendix" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="generate-war"></a>Appendix B. Generating a New SPARQL Service WAR file</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+                It is possible to modify the SPARQL endpoint Web Application
+                Archive (WAR file), for instance, to enhance its logic by adding
+                a servlet or a filter. Generating a new SPARQL endpoint WAR file
+                involves downloading Apache Jena Joseki, an open source SPARQL
+                server that supports the SPARQL protocol and SPARQL
+                queries. This section explains how to generate a web
+                application archive (joseki.war) for the SPARQL
+                Service endpoint.
+            </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                        Ensure that you have Java 6 installed,
+                        because it is required by Joseki 3.4.4.
+                    </p>
+          </li>
+          <li>
+            <p>
+                        Download Apache Jena Joseki 3.4.4 (joseki-3.4.4.zip)
+                        from
+                        <a class="ulink" href="http://sourceforge.net/projects/joseki/" target="_top">http://sourceforge.net/projects/joseki/</a>.
+                    </p>
+          </li>
+          <li>
+            <p> 
+                        Unpack joseki-3.4.4.zip into a temporary
+                        directory. For example: 
+                    </p>
+            <pre class="programlisting">mkdir /tmp/joseki
+cp joseki-3.4.4.zip /tmp/joseki
+cd /tmp/joseki
+unzip joseki-3.4.4.zip</pre>
+          </li>
+          <li>
+            <p>
+                        Ensure that you have downloaded and
+                        unzipped the RDF Graph feature for the Oracle
+                        NoSQL Database, as explained in 
+                        <a class="xref" href="setup.html#setup-env" title="Setup the System Environment">Setup the System Environment</a>.
+                    </p>
+          </li>
+          <li>
+            <p>
+                        Create a directory named <code class="literal">joseki.war</code> at the
+                        same level as the jena_adapter directory, and
+                        go to it. For example: 
+                    </p>
+            <pre class="programlisting">mkdir /tmp/joseki.war
+cd /tmp/joseki.war</pre>
+          </li>
+          <li>
+            <p> 
+                        Copy necessary files into the directory
+                        created in the preceding step:
+                    </p>
+            <pre class="programlisting">cp /tmp/jena_adapter/joseki/* /tmp/joseki.war
+cp -rf /tmp/joseki/Joseki-3.4.4/webapps/joseki/StyleSheets \
+/tmp/joseki.war</pre>
+          </li>
+          <li>
+            <p> 
+                        Create directories and copy necessary files
+                        into them, as follows:
+                    </p>
+            <pre class="programlisting">mkdir /tmp/joseki.war/WEB-INF
+cp /tmp/jena_adapter/web/* /tmp/joseki.war/WEB-INF 
+
+mkdir /tmp/joseki.war/WEB-INF/lib
+cp /tmp/joseki/Joseki-3.4.4/lib/joseki-3.4.4.jar \
+/tmp/joseki.war/WEB-INF/lib
+cp /tmp/jena_adapter/jar/*.jar /tmp/joseki.war/WEB-INF/lib
+cp &lt;#JENA_DIR&gt;/lib/* /tmp/joseki.war/WEB-INF/lib
+
+## Assume KV_HOME points to the home directory of an 
+## Oracle NoSQL Database 
+## Release &lt;#ORACLE&gt;. 
+cp $KVHOME/lib/kvclient.jar /tmp/joseki.war/WEB-INF/lib</pre>
+          </li>
+          <li>
+            <p>
+                        Modify Apache Jena Joseki's configuration file
+                        (<code class="literal">joseki-config.ttl</code>) file located in
+                        <code class="literal">/tmp/joseki.war</code> to specify the store name,
+                        host name, and host port to access the Oracle
+                        NoSQL Database. This data will be used by the
+                        SPARQL Service endpoint to establish
+                        connections to the Oracle NoSQL Database and
+                        execute update and query operations. For
+                        detailed information about this configuration,
+                        see 
+                        <a class="xref" href="setup-sparql.html#nosqlconnection" title="Configuring an Oracle NoSQL Database connection in the SPARQL service">Configuring an Oracle NoSQL Database connection in the SPARQL service</a>.
+                    </p>
+          </li>
+          <li>
+            <p>
+                        Check the files and the directory structure
+                        to make sure they reflect the following:
+                    </p>
+            <pre class="programlisting">.
+|-- META-INF
+| |-- MANIFEST.MF
+|-- StyleSheets
+| |-- joseki.css
+|-- WEB-INF
+| |-- lib
+| | |-- common-codec-1.5.jar            
+| | |-- httpclient-4.1.2.jar
+| | |-- httpcore-4.1.3.jar
+| | |-- jena-arq-2.9.4.jar
+| | |-- jena-core-2.7.4.jar
+| | |-- jena-iri-0.9.4.jar
+| | |-- jena-tdb-0.9.4.jar
+| | |-- joseki-3.4.4.jar
+| | |-- kvclient.jar
+| | |-- log4j-1.2.16.jar
+| | |-- sdordfnosqlclient.jar
+| | |-- slf4j-api-1.6.4.jar
+| | |-- slf4j-log4j12-1.6.4.jar
+| | |-- xercesImpl-2.10.0.jar
+| | |-- xml-apis-1.4.01.jar
+| |-- web.xml
+|-- application.xml
+|-- index.html
+|-- joseki-config.ttl
+|-- update.html
+|-- xml-to-html.xsl</pre>
+          </li>
+          <li>
+            <p> 
+                        Build a .war file from the
+                        <code class="literal">/tmp/joseki.war</code>
+                        directory (a .war file is required if you want
+                        to deploy Apache Jena Joseki to an OC4J container), 
+                        using the following commands: 
+                    </p>
+            <pre class="programlisting">cd /tmp/joseki.war
+jar cvf /tmp/joseki_app.war *</pre>
+          </li>
+        </ol>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="prerequisite.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="thirdpartylicenses.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Appendix A. Prerequisite Software </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Appendix C. Third Party Licenses</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

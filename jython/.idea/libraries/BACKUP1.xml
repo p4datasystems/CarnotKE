@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="BACKUP1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dist/javalib/BACKUP/jena-core-2.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dist/javalib/BACKUP/jena-arq-2.9.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dist/javalib/BACKUP/openrdf-sesame-2.6.8-onejar.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dist/javalib/BACKUP/jena-iri-0.9.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dist/javalib/BACKUP/agraph-4.14.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

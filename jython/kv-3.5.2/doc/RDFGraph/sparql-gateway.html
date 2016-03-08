@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Using SPARQL Gateway with RDF Data</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="sparql.html" title="Chapter 9. SPARQL Gateway for XML-based Tools" />
+    <link rel="prev" href="install-configure.html" title="Installing and Configuring SPARQL Gateway" />
+    <link rel="next" href="customizing-xslt.html" title="Customizing the Default XSLT File" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Using SPARQL Gateway with RDF Data</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="install-configure.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 9. SPARQL Gateway for XML-based
+        Tools</th>
+          <td width="20%" align="right"> <a accesskey="n" href="customizing-xslt.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="sparql-gateway"></a>Using SPARQL Gateway with RDF Data</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="sparql-gateway.html#storing-queries">Storing SPARQL Queries and XSL Transformations</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="sparql-gateway.html#specifying-timeout">Specifying a Timeout Value</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="sparql-gateway.html#specifying-effort">Specifying Best Effort Query Execution</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="sparql-gateway.html#content-type">Specifying a Content Type Other Than text/xml</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p> 
+            The primary interface for an application to interact
+            with SPARQL Gateway is through a URL with the following
+            format: 
+        </p>
+      <pre class="programlisting">http://host:port/sparqlgateway/sg?&lt;SPARQL_ENDPOINT&gt;
+&amp;&lt;SPARQL_QUERY&gt;&amp;&lt;XSLT&gt;</pre>
+      <p>
+            In the preceding format:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    &lt;SPARQL_ENDPOINT&gt; specifies the
+                    <code class="literal">ee</code> parameter, which contains a URL
+                    encoded form of a SPARQL endpoint.
+                </p>
+            <p>
+                    For example, <code class="literal">ee=http%3A%2F%2Fsparql.org%2Fbooks</code>
+                    is the URL encoded string for SPARQL endpoint
+                    http://sparql.org/books. It means that SPARQL
+                    queries are to be executed against endpoint
+                    http://sparql.org/books. 
+                </p>
+          </li>
+          <li>
+            <p>
+                    &lt;SPARQL_QUERY&gt; specifies either the
+                    SPARQL query, or the location of the SPARQL query.
+                </p>
+            <p> 
+                    If it is feasible for an application to accept
+                    a very long URL, you can encode the whole SPARQL
+                    query and set <code class="literal">eq=&lt;encoded_SPARQL_query&gt;</code> in
+                    the URL. If it is not feasible for an application
+                    to accept a very long URL, you can store the
+                    SPARQL queries and make them available to SPARQL
+                    Gateway using one of the approaches described in
+                    <a class="xref" href="sparql-gateway.html#storing-queries" title="Storing SPARQL Queries and XSL Transformations">Storing SPARQL Queries and XSL Transformations</a>. 
+                </p>
+          </li>
+          <li>
+            <p> 
+                    &lt;XSLT&gt; specifies either the XSL
+                    transformation, or the location of the XSL
+                    transformation.
+                </p>
+            <p> 
+                    If it is feasible for an application to accept
+                    a very long URL, you can encode the whole XSL
+                    transformation and set <code class="literal">ex=&lt;encoded_XSLT&gt;</code> in
+                    the URL. If it is not feasible for an application
+                    to accept a very long URL, you can store the XSL
+                    transformations and make them available to SPARQL
+                    Gateway using one of the approaches described in
+                    <a class="xref" href="sparql-gateway.html#storing-queries" title="Storing SPARQL Queries and XSL Transformations">Storing SPARQL Queries and XSL Transformations</a>. 
+                </p>
+          </li>
+        </ul>
+      </div>
+      <p> Related topics: </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p> 
+                    <a class="xref" href="sparql-gateway.html#storing-queries" title="Storing SPARQL Queries and XSL Transformations">Storing SPARQL Queries and XSL Transformations</a>. 
+                </p>
+          </li>
+          <li>
+            <p>
+                    <a class="xref" href="sparql-gateway.html#specifying-timeout" title="Specifying a Timeout Value">Specifying a Timeout Value</a>
+                </p>
+          </li>
+          <li>
+            <p> 
+                    <a class="xref" href="sparql-gateway.html#specifying-effort" title="Specifying Best Effort Query Execution">Specifying Best Effort Query Execution</a>
+                </p>
+          </li>
+          <li>
+            <p> 
+                    <a class="xref" href="sparql-gateway.html#content-type" title="Specifying a Content Type Other Than text/xml">Specifying a Content Type Other Than text/xml</a>
+                </p>
+          </li>
+        </ul>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="storing-queries"></a>Storing SPARQL Queries and XSL Transformations</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                If it is not feasible for an application to accept
+                a very long URL, you can specify the location of the
+                SPARQL query and the XSL transformation in the
+                &lt;SPARQL_QUERY&gt; and &lt;XSLT&gt; portions of the
+                URL format described in 
+                <a class="xref" href="sparql-gateway.html" title="Using SPARQL Gateway with RDF Data">Using SPARQL Gateway with RDF Data</a>,
+                using any of the following approaches:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                        Store the SPARQL queries and XSL
+                        transformations in the SPARQL Gateway Web
+                        application itself. 
+                    </p>
+              <p>
+                        To do this, unpack the
+                        <code class="literal">sparqlgateway.war</code> file, and
+                        store the SPARQL queries and XSL transformations in
+                        the top-level directory; then pack the
+                        <code class="literal">sparqlgateway.war</code> file and
+                        redeploy it. 
+                    </p>
+              <p> 
+                        The <code class="literal">sparqlgateway.war</code> file
+                        includes the following example files:
+                        <code class="literal">qb1.sparql</code> (SPARQL query) and
+                        <code class="literal">default.xslt</code> (XSL
+                        transformation).
+                    </p>
+              <p>
+                        </p>
+              <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>
+                            Use the file extension
+                            <code class="literal">.sparql</code> for SPARQL query
+                            files, and the file extension
+                            <code class="literal">.xslt</code> for XSL transformation
+                            files.
+                        </div>
+              <p>
+                    </p>
+              <p> 
+                        The syntax for specifying these files
+                        (using the provided example file names) is
+                        <code class="literal">wq=qb1.sparql</code> for a SPARQL query file and
+                        <code class="literal">wx=default.xslt</code> for an XSL transformation
+                        file.
+                    </p>
+              <p>
+                        If you want to customize the default XSL
+                        transformations, see the examples in 
+                        <a class="xref" href="customizing-xslt.html" title="Customizing the Default XSLT File">Customizing the Default XSLT File</a>.
+                    </p>
+              <p>
+                        If you specify <code class="literal">wx=noop.xslt</code>, XSL
+                        transformation is not performed and the SPARQL
+                        response is returned "as is" to the client.
+                    </p>
+            </li>
+            <li>
+              <p> 
+                        Store the SPARQL queries and XSL
+                        transformations in a file system directory,
+                        and make sure that the directory is accessible
+                        for the deployed SPARQL Gateway Web
+                        application. 
+                    </p>
+              <p> 
+                        By default, the directory is set to
+                        <code class="literal">/tmp</code>,
+                        as shown in the following &lt;init-param&gt;
+                        setting:
+                    </p>
+              <pre class="programlisting">&lt;init-param&gt;
+&lt;param-name&gt;sparql_gateway_repository_filedir&lt;/param-name&gt;
+&lt;param-value&gt;/tmp/&lt;/param-value&gt;
+&lt;/init-param&gt; </pre>
+              <p>
+                        It is recommended that you customize this
+                        directory before deploying the SPARQL Gateway.
+                        To change the directory setting, edit the text
+                        in between the <code class="literal">&lt;param-value&gt;</code> and
+                        <code class="literal">&lt;/param-value&gt;</code> tags. 
+                    </p>
+              <p> 
+                        The following examples specify a SPARQL
+                        query file and an XSL transformation file that
+                        are in the directory specified in the
+                        <code class="literal">&lt;init-param&gt;</code> element for
+                        <code class="literal">sparql_gateway_repository_filedir</code>: 
+                    </p>
+              <pre class="programlisting">fq=qb1.sparql
+fx=myxslt1.xslt</pre>
+            </li>
+            <li>
+              <p> 
+                        Make the SPARQL queries and XSL
+                        transformations accessible from a website. 
+                    </p>
+              <p> 
+                        By default, the website directory is set to
+                        http://127.0.0.1/queries/, as shown in the
+                        following &lt;init-param&gt; setting:
+                    </p>
+              <pre class="programlisting">&lt;init-param&gt;
+&lt;param-name&gt;sparql_gateway_repository_url&lt;/param-name&gt;
+&lt;/param-name&gt;http://127.0.0.1/queries/&lt;/param-name&gt;
+&lt;/init-param&gt; </pre>
+              <p>
+                        Customize this directory before deploying the
+                        SPARQL Gateway. To change the website setting, edit
+                        the text in between the
+                        <code class="literal">&lt;/param-name&gt;</code> and
+                        <code class="literal">&lt;/param-name&gt;</code> tags.
+                    </p>
+              <p>
+                        The following example specifies a SPARQL
+                        query file and an XSL transformation file that
+                        are in the URL specified in the
+                        <code class="literal">&lt;init-param&gt;</code> element for
+                        <code class="literal">sparql_gateway_repository_url</code>. 
+                    </p>
+              <pre class="programlisting">uq=qb1.sparql
+ux=myxslt1.xslt </pre>
+              <p>
+                        Internally, SPARQL Gateway computes the
+                        appropriate complete URL, fetches the content,
+                        starts query execution, and applies the XSL
+                        transformation to the query response
+                        XML.
+                    </p>
+            </li>
+          </ul>
+        </div>
+        <div class="sect3" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h4 class="title"><a id="configure-oraclesgds"></a>Configure the OracleSGDS Data Source</h4>
+              </div>
+            </div>
+          </div>
+          <p>
+                    If an Oracle database is used for storage of and
+                    access to SPARQL queries and XSL transformations for
+                    SPARQL Gateway, then you must configure a data source
+                    named <code class="literal">OracleSGDS</code>. 
+                </p>
+          <p> 
+                    To create this data source, follow the instructions in
+                    <a class="xref" href="setup-sparql.html#weblogic" title="Use Oracle WebLogic Server">Use Oracle WebLogic Server</a>;
+                    however, specify OracleSGDS as the data source name instead
+                    of OracleSemDS.
+                </p>
+          <p>
+                    If the OracleSGDS data source is configured and
+                    available, SPARQL Gateway servlet will automatically
+                    create all the necessary tables and indexes upon
+                    initialization. 
+                </p>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="specifying-timeout"></a>Specifying a Timeout Value</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                When you submit a potentially long-running query
+                using the URL format described in 
+                <a class="xref" href="sparql-gateway.html" title="Using SPARQL Gateway with RDF Data">Using SPARQL Gateway with RDF Data</a>,
+                you can limit the execution time by specifying a timeout
+                value in milliseconds. For example, the following shows the
+                URL format and a timeout specification that the SPARQL
+                query execution started from SPARQL Gateway is to be ended
+                after 1000 milliseconds (1 second):
+            </p>
+        <pre class="programlisting">http://host:port/sparqlgateway/sg?&lt;SPARQL_ENDPOINT&gt;&amp;&lt;
+SPARQL_QUERY&gt;&amp;&lt;XSLT&gt;&amp;t=1000</pre>
+        <p>
+                If a query does not finish when timeout occurs,
+                then an empty SPARQL response is constructed by SPARQL
+                Gateway.
+            </p>
+        <p>
+                Note that even if SPARQL Gateway times out a query
+                execution at the HTTP connection level, the query may
+                still be running on the server side. The actual
+                behavior will be vendor-dependent.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="specifying-effort"></a>Specifying Best Effort Query Execution</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3> 
+                    You can specify best effort query execution
+                    only if you also specify a timeout value
+                    (described in the previous section,
+                    <a class="xref" href="sparql-gateway.html#specifying-timeout" title="Specifying a Timeout Value">Specifying a Timeout Value</a>).
+                </div>
+        <p>
+            </p>
+        <p> 
+                When you submit a potentially long-running query
+                using the URL format described in 
+                <a class="xref" href="sparql-gateway.html" title="Using SPARQL Gateway with RDF Data">Using SPARQL Gateway with RDF Data</a>,
+                if you specify a timeout value, you can also specify a
+                "best effort" limitation on the query. For example, the
+                following shows the URL format with a timeout specification
+                of 1000 milliseconds (1 second) and a best effort
+                specification (&amp;b=t):
+            </p>
+        <pre class="programlisting">http://host:port/sparqlgateway/sg?&lt;SPARQL_ENDPOINT&gt;&amp;
+&lt;SPARQL_QUERY&gt;&amp;&lt;XSLT&gt;&amp;t=1000&amp;b=t</pre>
+        <p> 
+                The <code class="literal">web.xml</code> file includes two parameter settings
+                that affect the behavior of the best effort option:
+                <code class="literal">sparql_gateway_besteffort_maxrounds</code> and
+                <code class="literal">sparql_gateway_besteffort_maxthreads</code>. The following
+                show the default definitions: 
+            </p>
+        <pre class="programlisting">&lt;init-param&gt;
+&lt;param-name&gt;sparql_gateway_besteffort_maxrounds&lt;/param-name&gt;
+&lt;/param-name&gt;10&lt;/param-name&gt;
+&lt;/init-param&gt; </pre>
+        <pre class="programlisting">&lt;init-param&gt;
+&lt;param-name&gt;sparql_gateway_besteffort_maxthreads&lt;/param-name&gt;
+&lt;/param-name&gt;3&lt;/param-name&gt;
+&lt;/init-param&gt; </pre>
+        <p>
+                When a SPARQL SELECT query is executed in best
+                effort style, a series of queries will be executed
+                with an increasing LIMIT value setting in the SPARQL
+                query body. (The core idea is based on the observation
+                that a SPARQL query runs faster with a smaller LIMIT
+                setting.) SPARQL Gateway starts query execution with a
+                "LIMIT 1" setting. Ideally, this query can finish
+                before the timeout is due. Assume that is the case,
+                the next query will have its LIMIT setting
+                increased, and subsequent queries have higher limits.
+                The maximum number of query executions is controlled
+                by the <code class="literal">sparql_gateway_besteffort_maxrounds</code>
+                parameter.
+            </p>
+        <p>
+                If it is possible to run the series of queries in
+                parallel, the
+                <code class="literal">sparql_gateway_besteffort_maxthreads</code>
+                parameter controls the degree of parallelism.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="content-type"></a>Specifying a Content Type Other Than text/xml</h3>
+            </div>
+          </div>
+        </div>
+        <p> 
+                By default, SPARQL Gateway assumes that XSL
+                transformations generate XML, and so the default
+                content type set for HTTP response is text/xml.
+                However, if your application requires a response
+                format other than XML, you can specify the format in
+                an additional URL parameter (with syntax &amp;rt=),
+                using the following format: 
+            </p>
+        <pre class="programlisting">http://host:port/sparqlgateway/sg?&lt;SPARQL_ENDPOINT&gt;&amp;
+&lt;SPARQL_QUERY&gt;&amp;&lt;XSLT&gt;&amp;rt=&lt;content_type&gt;</pre>
+        <p>
+                Note that &lt;content_type&gt; must be URL encoded.
+            </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="install-configure.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="sparql.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="customizing-xslt.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Installing and Configuring SPARQL Gateway </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Customizing the Default XSLT File</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 1. Installing Oracle NoSQL Database</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="prev" href="preface.html" title="Preface" />
+    <link rel="next" href="install.html" title="Installation" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 1. Installing Oracle NoSQL Database</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="preface.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="install.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="installation"></a>Chapter 1. Installing Oracle NoSQL Database</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="installation.html#install-prereqs">Installation Prerequisites</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="install.html">Installation</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="install-config.html">Installation Configuration</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="config-firewall.html">Configuring the Firewall</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+        This chapter describes the installation process for Oracle NoSQL Database in a
+        multi-host environment. If you are planning a large system for production
+        use, please read
+        <a class="xref" href="initialcapacityplanning.html" title="Appendix B. Initial Capacity Planning">Initial Capacity Planning</a> 
+        to estimate the number of storage nodes on which you will need to install 
+        the software. For simple uses when you already know the storage nodes you intend 
+        to use, simply follow the instructions below and Oracle NoSQL Database will make the best use 
+        of the storage nodes you provide.
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="install-prereqs"></a>Installation Prerequisites</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+            Make sure that you have Java SE 7 or later installed on
+            all of the hosts that you are going to use for the Oracle NoSQL Database
+            installation. The command:
+        </p>
+        <pre class="programlisting">java -version</pre>
+        <p>
+            can be used to verify this.
+        </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+           Oracle NoSQL Database is compatible with Java SE 7 and later, and has been tested
+           and certified against Oracle Java SE 7. It is recommended that you upgrade
+           to the latest Java releases to take advantage of the latest bug fixes and performance
+           improvements. The release notes included in the Oracle NoSQL Database download 
+           specify the exact Java versions that have been used for certification.
+        </p>
+        </div>
+        <p>
+            Make sure that the <code class="literal">jps</code> utility is working.
+            Installing the JDK allows the <code class="literal">jps</code> 
+            tools to be available for use by the Storage Node Agent (SNA) in
+            order to optimally manage Oracle NoSQL Database processes. The jps tools also allow
+            you to diagnose any issues that may turn up. While Oracle NoSQL Database can continue to operate in the absence of the
+            <code class="literal">jps</code> tools, it diminishes its ability to
+            manage its processes. 
+        </p>
+        <p>
+           If the JDK and its tools have been correctly installed, the output
+           from <code class="literal">jps</code> should list at least one Java process
+           (the jps process itself). Use the following command to verify
+           this:
+        </p>
+        <pre class="programlisting">% jps
+16216 Jps </pre>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+           You must run the commands listed above as the OS user that will
+           run the Oracle NoSQL Database SNA processes. 
+        </p>
+        </div>
+        <p>
+            Only Linux and Solaris 10 are officially supported platforms
+            for Oracle NoSQL Database.  It may be that platforms other than Linux or
+            Solaris 10 could work for your deployment. However, Oracle does
+            not test Oracle NoSQL Database on platforms other than Linux and Solaris 10,
+            and so makes no claims as to the suitability of other platforms
+            for Oracle NoSQL Database deployments. 
+        </p>
+        <p>
+            In addition, it is preferable that virtual machines not be used
+            for any of the Oracle NoSQL Database nodes. This is because the usage of
+            virtual machines makes it difficult to characterize Oracle NoSQL Database
+            performance. For best results, run the Oracle NoSQL Database nodes natively
+            (that is, without VMs) on Linux or Solaris 10 platforms.
+        </p>
+        <p>
+            You do not necessarily need root access on each node for the
+            installation process.
+        </p>
+        <p>
+            Finally, <span class="bold"><strong>make sure</strong></span> that some
+            sort of reliable clock synchronization is running on each of
+            the machines. Generally, a synchronization delta of less than
+            half a second is required. Network Time Protocol <code class="literal">(ntp)</code> is
+            sufficient for this purpose.
+        </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="preface.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="install.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Preface </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Installation</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

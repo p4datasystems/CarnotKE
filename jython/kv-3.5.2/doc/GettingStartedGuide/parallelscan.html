@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Parallel Scans</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="recordget.html" title="Chapter 5. Reading Records" />
+    <link rel="prev" href="readsubranges.html" title="Specifying Subranges" />
+    <link rel="next" href="bulkget.html" title="Bulk Get Operations" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Parallel Scans</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="readsubranges.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 5. Reading Records</th>
+          <td width="20%" align="right"> <a accesskey="n" href="bulkget.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="parallelscan"></a>Parallel Scans</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            Until now the reads that we have discussed in this chapter are
+            single-threaded. Reads are performed one shard at a time, in
+            sequence, until all the desired records are retrieved. This has
+            obvious performance implications if you are retrieving a large
+            number of records that span multiple shards. However, you can
+            speed up the read performance by using parallel scans.
+        </p>
+      <p>
+            That is, suppose you have a keyspace that looks like this:
+        </p>
+      <pre class="programlisting">/trades/&lt;timestamp&gt;/&lt;symbol&gt;/-/: &lt;price&gt;;&lt;qty&gt;</pre>
+      <p>
+            If you want to locate all trades for ORCL which are more than
+            10k shares, you would have to scan all the records under 
+            <code class="literal">/trades</code>
+            (this part could be done with a key prefix restriction) and
+            examine each record. You would use the
+            <code class="methodname">storeIterator()</code> call to perform this
+            search. The single-threaded <code class="methodname">storeIterator()</code>
+            retrieves records from each shard consecutively (that is, all
+            records from shard 1, then all from shard 2, etc.). 
+        </p>
+      <p>
+            Parallel Scan retrieves the records from each shard in parallel
+            and allows the client to receive and process them in parallel.
+            You can specify how many threads to use to perform the
+            retrieval.  If more threads are specified on the client side,
+            then the user can expect better retrieval performance —
+            until processor or network resources are saturated.
+        </p>
+      <p>
+            To specify that a parallel scan is to be performed, you use
+            <code class="classname">StoreIteratorConfig</code> to identify the
+            maximum number of client-side threads to be used for the scan.
+            You can also set the number of results per request, and the
+            maximum number of result batches that the Oracle NoSQL Database client can
+            hold before the scan pauses. You provide this to
+            <code class="classname">StoreIteratorConfig</code>, and then pass that
+            instance to the overloaded form of
+            <code class="methodname">KVStore.storeIterator()</code> which accepts
+            it. This creates a <code class="classname">ParallelScanIterator</code>.
+            instance which you use to perform the parallel scan.
+        </p>
+      <p>
+            For example, to retrieve all of the records in the store using
+            5 threads in parallel, you would do this:
+        </p>
+      <a id="storeiterator-2"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.Consistency;
+import oracle.kv.Direction;
+import oracle.kv.ParallelScanIterator;
+import oracle.kv.StoreIteratorConfig;
+
+...
+    /*
+     * 
+
+    /* 
+     * Use multi-threading for this store iteration and limit the number 
+     * of threads (degree of parallelism) to 5. 
+     */
+    final StoreIteratorConfig sc = new StoreIteratorConfig().
+        setMaxConcurrentRequests(5);
+    ParallelScanIterator&lt;KeyValueVersion&gt; iter = kvstore.storeIterator
+        (Direction.UNORDERED, 
+         0,
+         null /* parentKey */,
+         null /* subRange */,
+         null /* Depth */,
+         Consistency.NONE,
+         0 /* timeout */,
+         null /* timeoutUnit */,
+         sc, /* New Arg: StoreIteratorConfig */);
+
+    try {
+        while (iter.hasNext()) {
+            KeyValueVersion kvv = iter.next();
+            ...
+        }
+    } finally {
+        if (iter != null) {
+            iter.close();
+        }
+    } </pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="readsubranges.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="recordget.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="bulkget.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Specifying Subranges </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Bulk Get Operations</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

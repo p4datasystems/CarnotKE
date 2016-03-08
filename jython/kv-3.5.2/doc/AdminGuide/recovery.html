@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Recovering the Store</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="procedures.html" title="Chapter 6. Administrative Procedures" />
+    <link rel="prev" href="procedures.html" title="Chapter 6. Administrative Procedures" />
+    <link rel="next" href="provideschema.html" title="Managing Avro Schema" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Recovering the Store</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="procedures.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 6. Administrative Procedures</th>
+          <td width="20%" align="right"> <a accesskey="n" href="provideschema.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="recovery"></a>Recovering the Store</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="recovery.html#usingload">Using the Load Program</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="recovery.html#restoredirect">Restoring Directly from a Snapshot</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+            There are two ways to recover your store from a previously
+            created snapshot. The first mechanism allows you to use a
+            backup to create a store with any desired topology. The second
+            method requires you to restore the store using the 
+            <span class="emphasis"><em>exact same</em></span> topology as was in use when the
+            snapshot was taken.
+        </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+                If you had to replace a failed Storage Node, that qualifies
+                as a topology change. In that case, you must use the
+                <code class="literal">Load</code> program to restore your store.
+            </p>
+        <p>
+                For information on how to replace a failed Storage Node,
+                see <a class="xref" href="replacefailedsn.html" title="Replacing a Failed Storage Node">Replacing a Failed Storage Node</a>.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="usingload"></a>Using the Load Program</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                You can use the <code class="classname">oracle.kv.util.Load</code>
+                program to restore a store from a previously created
+                snapshot. You can run this program directly, or you can
+                access it using <code class="literal">kvstore.jar</code>, as
+                shown in the examples in this section.
+            </p>
+        <p>
+                By using this tool, you can restore the store to
+                any topology, not just the one that was in use when the
+                snapshot was created. 
+            </p>
+        <p>
+                This mechanism works by iterating through all records in a
+                snapshot, putting each record into the target store as it
+                proceeds through the snapshot. It should be used only to
+                restore to a new, empty store. Do not use this with an
+                existing store because it only writes records if they
+                do not already exist.
+            </p>
+        <p>
+                Note that to recover the store, you must load records from
+                snapshot data captured for each shard in the store.
+                For best results, you should load records using snapshot
+                data captured from the replication nodes that were running as
+                Master at the time the snapshot was taken. (If you have
+                three shards in your store, then there are
+                three Masters at any given time, and so you need to
+                load data from three sets of snapshot data). To identify the master, use
+                ping at the time the snapshot was taken.
+            </p>
+        <p>
+                You should use snapshot data taken at the same point in time;
+                do not, for example, use snapshot data for shard 1 that was
+                taken on Monday, and snapshot data for shard 2
+                that was taken on Wednesday because this can cause your
+                store to be restored in an inconsistent state.
+            </p>
+        <p>
+                This mechanism can only go at the speed of insertion of the
+                new store. Because you probably have multiple shards in
+                your store, you should be restoring your store from data
+                taken from each shard.  To do this, run the
+                <code class="literal">Load</code> program in parallel, with each
+                instance operating on data captured from different
+                replication nodes.
+            </p>
+        <p>
+                The program's usage is:
+            </p>
+        <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar load [-verbose]
+-source &lt;backupDir&gt; -host &lt;hostname&gt; -port &lt;port&gt;
+-store &lt;storeName&gt; -username &lt;user&gt; -security &lt;security-file-path&gt;
+[-load-admin] [-force] [-status &lt;pathToFile&gt;] </pre>
+        <p>
+                where:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                        <code class="literal">-load-admin</code>
+                        Loads the store metadata from the snapshot to the new
+                        store. In this case the <code class="literal">-source</code> directory
+                        must point to the environment directory of the admin node from 
+                        the snapshot. The store must not be available for use by users 
+                        at the time of this operation.
+                    </p>
+              <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                <h3 class="title">Note</h3>
+                <p>
+                        This option should not be used on a store unless
+                        that store is being restored from scratch. If <code class="literal">-force</code>
+                        is specified in conjunction with <code class="literal">-load-admin</code>,
+                        any existing metadata in the store, including tables and
+                        security metadata, will be overwritten. For more information,
+                        see <a class="xref" href="recovery.html#loadwithmeta" title="Load Program and Metadata">Load Program and Metadata</a>.
+                      </p>
+              </div>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-host &lt;hostname&gt;</code>
+                        identifies the host name of a node in your store.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-port &lt;port&gt;</code> identifies
+                        the registry port in use by the store's node.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-status &lt;pathToFile&gt;</code> is an
+                        optional parameter that causes the status of the
+                        load operation to be saved in the named location on
+                        the local machine.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-security &lt;security-file-path&gt;</code>
+                        identifies the security file used to specify properties
+                        for login.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-source &lt;backupDir&gt;</code>
+                        identifies the on-disk location where the snapshot
+                        data is stored.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-store &lt;storeName&gt;</code>
+                        identifies the name of the store.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">-username &lt;user&gt;</code>
+                        identifies the name of the user to login to the
+                        secured store.
+                    </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+                For example, suppose there is a snapshot in
+                <code class="literal">/var/backups/snapshots/110915-153828-later</code>,
+                and there is a new store named "NewStore" on host "NewHost"
+                using registry port 12345. Run the <code class="literal">Load</code>
+                program on the host that has the
+                <code class="literal">/var/backups/snapshots</code> directory:
+            </p>
+        <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar load \
+-source /var/backups/snapshots/110915-153828-later -store NewStore \
+-host NewHost -port 12345</pre>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+                     If the load fails part way through the restore, it can
+                     start where it left off by using the status file. The
+                     granularity of the status file is per-partition in
+                     this NoSQL DB release.  If a status file is not used and there
+                     is a failure, the load needs to start over from the
+                     beginning. The target store does not need to be
+                     re-created if this happens, existing records are skipped.
+                 </p>
+        </div>
+        <div class="sect3" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h4 class="title"><a id="loadwithmeta"></a>Load Program and Metadata</h4>
+              </div>
+            </div>
+          </div>
+          <p>
+               You can use the Load program to restore a store with metadata
+               (tables, security) from a previously created snapshot. 
+            </p>
+          <p>
+               The following steps describe how to load from a snapshot with metadata
+               to a newly created store:
+            </p>
+          <div class="orderedlist">
+            <ol type="1">
+              <li>
+                <p>
+                    Create, start and configure the new store (target).
+                    Do not configure security yet, even though the target store
+                    will eventually have security information. Also, do not make
+                    the store accessible to applications yet.
+                </p>
+                <p>
+                   Create the new store:
+                </p>
+                <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar makebootconfig \
+-root KVROOT \
+-host NewHost -port 8000 -admin 8001 \
+-harange 8010,8020 \
+-capacity 1 \
+-store-security none </pre>
+                <p>
+                   Start the new store:
+                </p>
+                <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar start \
+-root KVROOT&amp;
+</pre>
+                <p>
+                   Configure the new store:
+                </p>
+                <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar runadmin \
+-port 8000 -host NewHost
+kv-&gt; configure -name NewStore 
+Store configured: NewStore </pre>
+                <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                  <h3 class="title">Note</h3>
+                  <p>
+                   Loading security metadata requires the names of the source
+                   store and the target store to be the same, otherwise the
+                   security metadata cannot be used later.
+                </p>
+                </div>
+              </li>
+              <li>
+                <p>
+                    Locate the snapshot directories for the source store. There should
+                    be one for the admin nodes plus one for each shard. For example in
+                    a 3x3 store there should be 4 snapshot directories used for the load. 
+                    The load program must have direct file-based access to each snapshot 
+                    directory loaded.
+                </p>
+                <p>
+                   In this case, the snapshot source directory is in datacenter1/kvroot/newstore/sn1/admin1/env.
+                </p>
+              </li>
+              <li>
+                <p>
+                    Load the store metadata using the <code class="literal">-load-admin</code> option.
+                    Host, port, and store refer to the target store. In this case the 
+                    <code class="literal">-source</code> directory must point to the environment
+                    directory of the admin node from the snapshot.
+                </p>
+                <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar load \
+-source datacenter1/kvroot/newstore/sn1/admin1/env/ \
+-store NewStore -host NewHost -port 8000 -load-admin</pre>
+                <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                  <h3 class="title">Note</h3>
+                  <p>
+                  This command can be run more than once if something goes wrong,
+                  as long as the store is not accessible to applications.
+               </p>
+                </div>
+              </li>
+              <li>
+                <p>
+                  Once the topology is deployed, load the shard data for each shard. To do this,
+                  run the Load program in parallel, with each instance operating on data
+                  captured from different replication nodes. For example,
+                  suppose there is a snapshot of <code class="literal">OldStore</code>
+                  in var/backups/snapshots/140827-144141-back.
+                </p>
+                <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar load \
+-source var/backups/snapshots/140827-144141-back -store NewStore \
+-host NewHost -port 8000</pre>
+                <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                  <h3 class="title">Note</h3>
+                  <p>
+                  This step may take a long time or might need to be restarted.
+                  In order to significantly reduce retry time, the use of a status file
+                  is recommended.
+               </p>
+                </div>
+              </li>
+              <li>
+                <p>
+                   Configure security if the store is to be secure. For more
+                   information on configuring Oracle NoSQL Database securely, see
+                   the Oracle NoSQL Database Security Guide.
+                </p>
+              </li>
+              <li>
+                <p>
+                    The store is now ready for applications.
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="restoredirect"></a>Restoring Directly from a Snapshot</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                You can restore a store directly from a snapshot. 
+                This mechanism is faster than using the <code class="literal">Load</code>
+                program described in the previous section, but it can be
+                used only to restore to the <span class="emphasis"><em>exact same</em></span>
+                topology as was used when the snapshot was taken. This
+                means that all ports and host names or IP addresses (depending on
+                your configuration) must be exactly the same as when the snapshot was taken.
+            </p>
+        <p>
+                You must perform this procedure for each Storage Node in
+                your store, and for each service running on each Storage
+                Node.
+            </p>
+        <div class="orderedlist">
+          <ol type="1">
+            <li>
+              <p>
+                        Put the to-be-recovered snapshot data in the recovery
+                        directory for the service corresponding to the
+                        snapshot data. For example, if
+                        you are recovering Storage Node sn1, service
+                        rg1-rn1 in store <code class="literal">mystore</code> , then
+                        log in to the node where that service is running and:
+                    </p>
+              <pre class="programlisting">&gt; mkdir KVROOT/mystore/sn1/rg1-sn1/recovery
+&gt; mv /var/kvroot/mystore/sn1/rg1-rn1/snapshots/110915-153828-later \
+KVROOT/mystore/sn1/rg1-sn1/recovery/110915-153828-later </pre>
+              <p>
+                        Do this for each service running on the Storage
+                        Node. Production systems should have only one
+                        resource running on a given Storage Node, but it is
+                        possible to deploy, for example, multiple
+                        replication nodes on a single Storage Node.
+                        A Storage Node can also have an administration
+                        process running on it, and this also needs to be
+                        restored.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        Having done this, restart the Storage Node
+                    </p>
+              <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar stop -root /var/kvroot \
+&gt; nohup java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar start -root /var/kvroot&amp; </pre>
+            </li>
+          </ol>
+        </div>
+        <p>
+                On startup, the Storage Node notices the recovery
+                directory, and moves that directory to the resource's
+                environment directory and use it.
+            </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <h3 class="title">Note</h3>
+          <p>
+                    Remember that this procedure recovers the store to the time
+                    of the snapshot. If your store was active since the time of
+                    the snapshot, then all data modifications made since the
+                    time of the last snapshot are lost.
+                </p>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="procedures.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="procedures.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="provideschema.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 6. Administrative Procedures </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Managing Avro Schema</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Create an Administration Process on a Specific Host</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="configure.html" title="Chapter 3. Configuring the KVStore" />
+    <link rel="prev" href="cli-datacenter.html" title="Create a Zone" />
+    <link rel="next" href="cli-createpool.html" title="Create a Storage Node Pool" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Create an Administration Process on a Specific Host</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="cli-datacenter.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 3. Configuring the KVStore</th>
+          <td width="20%" align="right"> <a accesskey="n" href="cli-createpool.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="cli-adminproc"></a>Create an Administration Process on a Specific Host</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            Every KVStore has an administration database. You must deploy
+            the Storage Node to which the command line interface is
+            currently connecting to, in this case, "node01", and then
+            deploy an Administration process on that same node, in order to
+            proceed to configure this database. Use the
+            <code class="literal">deploy-sn</code> and
+            <code class="literal">deploy-admin</code> commands to complete this step.
+        </p>
+      <p>
+            The <code class="literal">deploy-admin</code> command will create an Administration
+            process which is the same type as the zone the Storage Node is in. If 
+            the zone is primary, the admin will be a primary admin. If the zone is
+            secondary, the admin will be a secondary admin. Secondary admins 
+            are needed to support failover, where a failed admin will be converted 
+            to an offline secondary in order to reestablish quorum using existing admins,
+            and a secondary admin converted to a primary to take over for failed primaries.
+            For more information on quorum, see the Oracle NoSQL Database Concepts manual.
+        </p>
+      <p>
+           To support failover, you must make sure that any zones
+           that will be used to continue the operation of the store after a failure
+           contain at least one admin node. 
+        </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+              A deployed admin must be the same type (PRIMARY/SECONDARY) as 
+              the zone they are in. Also, the number of admins deployed in a 
+              zone should be equal to the zone’s Replication Factor. 
+           </p>
+      </div>
+      <p>
+            Note that <code class="literal">deploy-sn</code> requires you to provide
+            a Zone ID. You can get this ID by using the
+            <code class="literal">show topology</code> command:
+        </p>
+      <pre class="programlisting">kv-&gt; show topology
+store=mystore numPartitions=0 sequence=1
+ zn: id=zn1 name=Boston repFactor=3 type=PRIMARY </pre>
+      <p>
+            The Zone ID is "zn1" in the above output.
+        </p>
+      <p>
+            When you deploy the node, provide the Zone
+            ID, the node's network name, and its registry port number.
+            For example:
+        </p>
+      <pre class="programlisting">kv-&gt; plan deploy-sn -zn zn1 -host node01 -port 5000 -wait
+Executed plan 2, waiting for completion...
+Plan 2 ended successfully </pre>
+      <p>
+            Having done that, create the administration process on the node
+            that you just deployed. You do this using the
+            <code class="literal">deploy-admin</code> command. This command requires
+            the Storage Node ID (which you can obtain using
+            the <code class="literal">show topology</code> command), the
+            administration port number and an optional plan name. You defined the administration
+            port number during the installation process. This book is
+            using <code class="literal">5001</code> as an example.
+        </p>
+      <pre class="programlisting">kv-&gt; plan deploy-admin -sn sn1 -port 5001 -wait
+Executed plan 3, waiting for completion...
+Plan 3 ended successfully </pre>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <h3 class="title">Note</h3>
+        <p>
+                At this point you have a single administration process
+                deployed in your store. This is enough to proceed with
+                store configuration. However, to increase your store's
+                reliability, you should deploy multiple administration
+                processes, each running on a different storage node. In
+                this way, you are able to continue to administer
+                your store even if one Storage Node goes down, taking
+                an administration process with it.  It also means
+                that you can continue to monitor your store, even if
+                you lose a node running an administration process.
+            </p>
+        <p>
+                Oracle strongly recommends that you deploy three
+                administration processes for a production
+                store. The additional administration processes do
+                not consume many resources.
+            </p>
+        <p>
+                Before you can deploy any more administration
+                processes, you must first deploy the rest of your
+                Storage Nodes. This is described in the following
+                sections.
+            </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="cli-datacenter.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="configure.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="cli-createpool.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Create a Zone </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Create a Storage Node Pool</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

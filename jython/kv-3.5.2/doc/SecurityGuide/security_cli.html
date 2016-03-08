@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Configuring Security with Makebootconfig</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="security_config.html" title="Chapter 2. Security Configuration" />
+    <link rel="prev" href="security_config.html" title="Chapter 2. Security Configuration" />
+    <link rel="next" href="security_command.html" title="Configuring Security with Securityconfig" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Configuring Security with Makebootconfig</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="security_config.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 2. Security Configuration</th>
+          <td width="20%" align="right"> <a accesskey="n" href="security_command.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="security_cli"></a>Configuring Security with Makebootconfig</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+            Use the <code class="literal">makebootconfig</code> command with the
+            required <code class="literal">-store-security</code> option to set up the
+            basic store configuration with security:
+        </p>
+      <pre class="programlisting">java -jar KVHOME/lib/kvstore.jar makebootconfig 
+-root &lt;kvroot&gt; -port &lt;port&gt; 
+-admin &lt;adminport&gt; -host &lt;hostname&gt; -harange &lt;harange&gt; 
+-store-security configure -capacity &lt;capacity&gt; 
+[-secdir &amp;lt;security dir&amp;gt;] 
+[-pwdmgr {pwdfile | wallet | &amp;lt;class-name&amp;gt;}]
+[-kspwd &amp;lt;password&amp;gt;]
+[-external-auth {kerberos}]
+  [-krb-conf &amp;lt;kerberos configuration&amp;gt;]
+  [-kadmin-path &amp;lt;kadmin utility path&amp;gt;]
+  [-instance-name &amp;lt;database instance name&amp;gt;]
+  [-admin-principal &amp;lt;kerberos admin principal name&amp;gt;]
+  [-kadmin-keytab &amp;lt;keytab file&amp;gt;]
+  [-kadmin-ccache &amp;lt;credential cache file&amp;gt;]
+  [-princ-conf-param &amp;lt;param=value&amp;gt;]*
+[-security-param &amp;lt;param=value&amp;gt;]* </pre>
+      <p> 
+            where <code class="literal">-store-security</code> has the following
+            options:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    <code class="literal">-store-security none</code>
+                </p>
+            <p> 
+                    No security will be used. If a directory named "security"
+                    exists, a warning message will be displayed. When you opt
+                    out of security, you lose all the security features in your
+                    store; you are not able to set password authentication for
+                    users and systems, encrypt your data to prevent unauthorized
+                    access, etc. 
+                </p>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">-store-security configure</code>
+                </p>
+            <p>
+                    Security will be used and the <code class="literal">security
+                        configuration</code> utility will be invoked as part
+                    of the makebootconfig process. If the security directory
+                    already exists, an error message is displayed, otherwise the
+                    directory will be created. 
+                </p>
+            <p> 
+                    For script-based configuration you can use the
+                        <code class="literal">-kspwd&lt;password&gt;</code> option to
+                    allow tools to specify the keystore password on the command
+                    line. If it is not specified, the user is prompted to enter
+                    the password.
+                </p>
+            <p> 
+                    Use the <code class="literal">-pwdmgr</code> option to select a
+                    password manager implementation. Its usage is introduced
+                    later in this section.
+                </p>
+            <p>
+                    Use the <code class="literal">-external-auth</code> option to
+                    specify Kerberos as an external authentication service. This option 
+                    is only available in the Oracle NoSQL Database EE version. If
+                    information for the Kerberos admin interface (e.g. password)
+                    is needed and no keytab or credential cache has been
+                    specified on the command line, an interactive version of
+                    securityconfig <code class="literal">config create</code> utility will
+                    run.
+                </p>
+            <p> 
+                    Using the <code class="literal">-external-auth</code> flag allows
+                    Oracle NoSQL Database to generate the security files needed for Kerberos
+                    authentication, based on a standard configuration. Although
+                    not recommended, it is possible to use a non-standard
+                    configuration. To do this, see <a class="xref" href="manual_service.html" title="Appendix D. Manually Registering Oracle NoSQL Database Service Principal">Manually Registering Oracle NoSQL Database Service Principal</a>
+                </p>
+          </li>
+          <li>
+            <p>
+                    <code class="literal">-store-security enable</code>
+                </p>
+            <p> 
+                    Security will be used. You will need to configure
+                    security either by utilizing the <code class="literal">security
+                        configuration</code> utility or by copying a
+                    previously created configuration from another system.
+                </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+            For more information on configuring security with makebootconfig,
+            see <a class="xref" href="secure_installation.html#new_installation" title="Adding Security to a New Installation">Adding Security to a New Installation</a>. 
+        </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="security_config.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="security_config.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="security_command.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 2. Security Configuration </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Configuring Security with Securityconfig</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

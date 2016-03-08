@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Example12.java: SPARQL Involving Named Graphs</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="quickstart.html" title="Chapter 8. Quick Start for the RDF Graph Feature" />
+    <link rel="prev" href="example11.html" title="Example11.java: SPARQL query with SELECT Cast" />
+    <link rel="next" href="example13.html" title="Example13.java: SPARQL Query with ARQ Built-in Functions" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Example12.java: SPARQL Involving Named Graphs</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="example11.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 8. Quick Start for the RDF Graph Feature</th>
+          <td width="20%" align="right"> <a accesskey="n" href="example13.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="example12"></a>Example12.java: SPARQL Involving Named Graphs</h2>
+          </div>
+        </div>
+      </div>
+      <p> 
+            This example shows a query involving named graphs. It
+            involves a default graph that has information about named
+            graph URIs and their publishers. The query finds graph
+            names, their publishers, and within each named graph finds
+            the mailbox value using the foaf:mbox predicate.
+        </p>
+      <pre class="programlisting">import com.hp.hpl.jena.graph.*;
+import com.hp.hpl.jena.sparql.core.*;
+import com.hp.hpl.jena.query.*;
+import oracle.rdf.kv.client.jena.*;
+
+public class Example12
+{
+  
+  public static void main(String[] args) throws Exception
+  {
+  
+String szStoreName  = args[0];
+String szHostName   = args[1];
+String szHostPort   = args[2];
+    
+// Create Oracle NoSQL connection 
+OracleNoSqlConnection conn 
+       = OracleNoSqlConnection.createInstance(szStoreName,
+                                              szHostName, 
+                                              szHostPort);
+    
+// Create Oracle NoSQL graph and dataset 
+OracleGraphNoSql graph = new OracleGraphNoSql(conn);
+DatasetGraphNoSql datasetGraph = DatasetGraphNoSql.createFrom(graph);
+
+// Close graph, as it is no longer needed
+graph.close(); 
+    
+// Clear dataset
+datasetGraph.clearRepository();
+    
+// add data to the default graph
+datasetGraph.add(new Quad(
+        Quad.defaultGraphIRI, // specifies default graph
+        Node.createURI("http://example.org/bob"),
+        Node.createURI("http://purl.org/dc/elements/1.1/publisher"),
+        Node.createLiteral("Bob Hacker")));
+    
+datasetGraph.add(new Quad(
+        Quad.defaultGraphIRI, // specifies default graph
+        Node.createURI("http://example.org/alice"),
+        Node.createURI("http://purl.org/dc/elements/1.1/publisher"),
+        Node.createLiteral("alice Hacker")));
+    
+// add data to the bob named graph
+datasetGraph.add(new Quad(
+        Node.createURI("http://example.org/bob"), // graph name
+        Node.createURI("urn:bob"),
+        Node.createURI("http://xmlns.com/foaf/0.1/name"),
+        Node.createLiteral("Bob")));
+    
+datasetGraph.add(new Quad(
+        Node.createURI("http://example.org/bob"), // graph name
+        Node.createURI("urn:bob"),
+        Node.createURI("http://xmlns.com/foaf/0.1/mbox"),
+        Node.createURI("mailto:bob@example")));
+
+// add data to the alice named graph
+datasetGraph.add(new Quad(
+        Node.createURI("http://example.org/alice"), // graph name
+        Node.createURI("urn:alice"),
+        Node.createURI("http://xmlns.com/foaf/0.1/name"),
+        Node.createLiteral("Alice")));
+    
+datasetGraph.add(new Quad(
+        Node.createURI("http://example.org/alice"), // graph name
+        Node.createURI("urn:alice"),
+        Node.createURI("http://xmlns.com/foaf/0.1/mbox"),
+        Node.createURI("mailto:alice@example")));
+    
+Dataset ds = DatasetImpl.wrap(datasetGraph);
+    
+String szQuery = " PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;"    +
+" PREFIX dc: &lt;http://purl.org/dc/elements/1.1/&gt; "    +
+" SELECT ?who ?graph ?mbox "                         +
+" FROM NAMED &lt;http://example.org/alice&gt;"            +
+" FROM NAMED &lt;http://example.org/bob&gt;"              +
+" WHERE "                                            +
+" { "                                                +
+" ?graph dc:publisher ?who . "                       +
+" GRAPH ?graph { ?x foaf:mbox ?mbox } "              +
+" } ";
+    
+Query query = QueryFactory.create(szQuery);
+QueryExecution qexec = QueryExecutionFactory.create(query, ds);
+    
+try {
+      ResultSet results = qexec.execSelect();
+      ResultSetFormatter.out(System.out, results, query);
+    }
+    
+finally {
+      qexec.close();
+    }
+    
+ds.close();
+conn.dispose();  
+  }
+}</pre>
+      <p>
+            The following are the commands to compile and run
+            this example, as well as the expected output of the java
+            command.
+        </p>
+      <pre class="programlisting">javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar:./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar:./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example12.java
+
+javac -classpath ./:./jena-core-2.7.4.jar:./jena-arq-2.9.4.jar: \
+./sdordfnosqlclient.jar:./kvclient.jar:./xercesImpl-2.10.0.jar: \
+./slf4j-api-1.6.4.jar:./slf4j-log4j12-1.6.4.jar:./log4j/1.2.16.jar: \
+./jena-iri-0.9.4.jar:./xml-apis-1.4.01.jar Example12 &lt;store_name&gt; \
+&lt;host_name&gt; &lt;host_port&gt; 
+
+----------------------------------------------------------------------
+| who            | graph                      | mbox                 |
+======================================================================
+| "Bob Hacker"   | &lt;http://example.org/bob&gt;   | &lt;mailto:bob@example&gt; |
+|"alice Hacker"  | &lt;http://example.org/alice&gt; | &lt;mailto:alice@example&gt;|
+---------------------------------------------------------------------</pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="example11.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="quickstart.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="example13.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Example11.java: SPARQL query with SELECT Cast </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Example13.java: SPARQL Query with ARQ Built-in Functions</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

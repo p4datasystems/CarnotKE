@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Semantic Data Modeling</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="RDF Graph for Oracle NoSQL Database" />
+    <link rel="up" href="overview.html" title="Chapter 1. RDF Graph for NoSQL Database Overview" />
+    <link rel="prev" href="overview.html" title="Chapter 1. RDF Graph for NoSQL Database Overview" />
+    <link rel="next" href="semanticdata.html" title="Semantic Data in the Database" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Semantic Data Modeling</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="overview.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 1. RDF Graph for NoSQL Database Overview </th>
+          <td width="20%" align="right"> <a accesskey="n" href="semanticdata.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="datamodeling"></a>Semantic Data Modeling</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="datamodeling.html#namedgraphs">Named Graphs</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p> 
+            In addition to its formal semantics, semantic data has
+            a simple data structure that is effectively modeled using
+            a directed graph. The metadata statements are represented
+            as triples: nodes are used to represent two parts of the
+            triple, and the third part is represented by a directed
+            link that describes the relationship between the nodes.
+        </p>
+      <p> 
+            Statements are expressed in triples: 
+            <code class="literal">{subject or resource, predicate or property, object or value}</code>. 
+            In this manual, <code class="literal">{subject, property, object}</code> 
+            is used to describe a triple, and the terms statement and
+            triple may sometimes be used interchangeably. Each triple is a
+            complete and unique fact about a specific domain, and can be
+            represented by a link in a directed graph. 
+        </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="namedgraphs"></a>Named Graphs</h3>
+            </div>
+          </div>
+        </div>
+        <p> 
+                The RDF Graph feature supports the use of named graphs,
+                which are described in the "RDF Dataset" section of the
+                W3C SPARQL Query Language for RDF recommendation
+                (<a class="ulink" href="http://www.w3.org/TR/rdf-sparql-query/#rdfDataset" target="_top">http://www.w3.org/TR/rdf-sparql-query/#rdfDataset</a>).
+            </p>
+        <p> 
+                This support is provided by extending an RDF triple
+                consisting of the traditional subject, predicate, and
+                object so as to include an additional component
+                representing a graph name. The extended RDF triple, despite
+                having four components, will continue to be referred to as
+                an RDF triple in this document. In addition, the following
+                terms are sometimes used:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                        <code class="literal">N-Triple</code> is a format that does
+                        not allow extended triples. Thus, n-triples can
+                        include only triples with three components. 
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">N-Quad</code> is a format that allows both "regular" triples
+                        (three components) and extended triples (four components,
+                        including the graph name). For more information, see
+                        <a class="ulink" href="http://sw.deri.org/2008/07/n-quads/" target="_top">
+                            N-Quads: Extending N-Triples with Context.
+                        </a>
+                    </p>
+            </li>
+            <li>
+              <p>
+                        The graph name component of an RDF triple must either be
+                        null or a URI. If it is null, the RDF triple is said to
+                        belong to the default graph; otherwise it is said to belong
+                        to the named graph whose name is designated by the URI.
+                    </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="overview.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="overview.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="semanticdata.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 1. RDF Graph for NoSQL Database Overview  </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Semantic Data in the Database</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

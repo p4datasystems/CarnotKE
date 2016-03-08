@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 6. Reading Table Rows</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="prev" href="recorddelete.html" title="Deleting Rows from the Store" />
+    <link rel="next" href="singleget.html" title="Retrieving a Single Row" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 6. Reading Table Rows</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="recorddelete.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="singleget.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="tableget"></a>Chapter 6. Reading Table Rows</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="tableget.html#readexceptions">Read Exceptions</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="singleget.html">Retrieving a Single Row</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="singleget.html#getChild">Retrieve a Child Table</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="multiget.html">Using multiGet()</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="tableiterator.html">Iterating over Table Rows</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="readfieldranges.html">Specifying Field Ranges</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="childparenttableiter.html">Iterating with Nested Tables</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="indexread.html">Reading Indexes</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="parallelscan.html">Parallel Scans</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="bulkget.html">Bulk Get Operations</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+      There are several ways to retrieve table rows from the store. You
+      can:
+    </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+              Retrieve a single row at a time using the
+              <code class="methodname">TableAPI.get()</code>
+              
+              method.
+          </p>
+          </li>
+          <li>
+            <p>
+              Retrieve rows associated with a shard key (which is based on
+              at least part of your primary keys) using 
+              
+              <span>
+                  either the
+                  <code class="methodname">TableAPI.multiGet()</code>
+                  or 
+                  <code class="methodname">TableAPI.multiGetIterator()</code>
+                  methods.
+              </span>
+              
+              
+          </p>
+          </li>
+          <li>
+            <p>
+              Retrieve table rows that share a shard key, or an
+              index key, using the
+              <code class="methodname">TableAPI.tableIterator()</code>
+              
+              
+              method.
+          </p>
+          </li>
+          <li>
+            <p>
+              Retrieve and process records from each shard in parallel using
+              a single key as the retrieval criteria. Use one of the
+              <code class="methodname">TableAPI.tableIterator()</code> or
+              <code class="methodname">TableAPI.tableKeysIterator()</code> methods that
+              provide parallel scans.
+          </p>
+          </li>
+          <li>
+            <p>
+              Retrieve and process records from each shard in parallel using
+              a sequence of keys as the retrieval criteria. Use one of the
+              <code class="methodname">TableAPI.tableIterator()</code> or
+              <code class="methodname">TableAPI.tableKeysIterator()</code> methods that
+              provide bulk retrievals.
+          </p>
+          </li>
+        </ol>
+      </div>
+      <p>
+      Each of these are described in the following sections.
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="readexceptions"></a>Read Exceptions</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+            Several exceptions can occur when you attempt a read operation
+            in the store. The first of these is
+            <code class="classname">ConsistencyException</code>.
+            This exception indicates that the operation cannot be completed
+            because the consistency policy cannot be met. For more
+            information, see
+            <a class="xref" href="consistency.html" title="Chapter 10. Consistency Guarantees">Consistency Guarantees</a>.
+        </p>
+        <p>
+            The second exception is
+            <code class="classname">RequestTimeoutException</code>. This means that
+            the operation could not be completed within the amount of time
+            provided by the store's timeout property. This probably
+            indicates a store that is attempting to service too many read
+            requests all at once.  Remember that your data is partitioned
+            across the shards in your store, with the partitioning
+            occurring based on your shard keys.  If you designed your keys
+            such that a large number of read requests are occurring against
+            a single key, you could see request timeouts even if some of
+            the shards in your store are idle.
+        </p>
+        <p>
+            A request timeout could also be indicative of a network
+            problem that is causing the network to be slow or even
+            completely unresponsive.
+        </p>
+        <p>
+            To handle a <code class="classname">RequestTimeoutException</code>,
+            you could simply log the error and move on, or you could pause for
+            a short period of time and then retry the operation. You could
+            also retry the operation, but use a longer timeout value.
+        </p>
+        <p>
+            You can also receive an <code class="classname">IllegalArgumentException</code>,
+            which will be thrown if a <code class="classname">Row</code> that you
+            are writing to the store does not have a primary key or is
+            otherwise invalid.
+        </p>
+        <p>
+            You can also receive a general
+            <code class="classname">FaultException</code>, which indicates that
+            some exception occurred which is neither a problem with
+            consistency nor a problem with the request timeout.  Your only
+            recourse here is to either log the error and move along, or
+            retry the operation.
+        </p>
+        <p>
+            You can also receive a
+            <code class="classname">MetadataNotFoundException</code>, which indicates that
+            a client's metadata may be out of sync. It extends <code class="classname">FaultException</code>
+            and can be caught by applications to trigger the need for a refresh of 
+            their metadata, and in particular, Table handles obtained via TableAPI.getTable().
+        </p>
+        <p>
+            Finally, if you are using a secure store that requires
+            authentication, you can receive
+            <code class="classname">AuthenticationFailureException</code> or
+            <code class="classname">AuthenticationRequiredException</code> if you
+            do not provide the proper authentication credentials. When
+            using a secure store, you can also see
+            <code class="classname">UnauthorizedException</code>, which means you
+            are attempting an operation for which the authenticated user
+            does not have the proper permissions.
+        </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="recorddelete.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="singleget.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Deleting Rows from the Store </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Retrieving a Single Row</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

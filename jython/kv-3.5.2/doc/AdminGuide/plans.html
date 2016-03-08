@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 2. Plans</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="prev" href="config-firewall.html" title="Configuring the Firewall" />
+    <link rel="next" href="planstates.html" title="Plan States" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 2. Plans</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="config-firewall.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="planstates.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="plans"></a>Chapter 2. Plans</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="plans.html#usingplans">Using Plans</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="plans.html#planexecutefeedback">Feedback While a Plan is Running</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="planstates.html">Plan States</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="reviewplans.html">Reviewing Plans</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="plan_ownership.html">Plan Ownership</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+        This chapter describes <code class="literal">plans</code>, which are useful to
+        perform the configuration of your store. If you are installing a store 
+        for the first time, you can skip ahead
+        to the next chapter 
+        <a class="xref" href="configure.html" title="Chapter 3. Configuring the KVStore">Configuring the KVStore</a>.
+    </p>
+      <p> 
+        You configure Oracle NoSQL Database with administrative commands called
+            <span class="emphasis"><em>plans</em></span>. A plan is made up of multiple
+        operations. Plans may modify state managed by the Admin
+        service, and may issue requests to kvstore components such as
+        Storage Nodes and Replication Nodes. Some plans are simple
+        state-changing operations, while others may be long-running
+        operations that affect every node in the store over time. 
+    </p>
+      <p>
+        For example, you use a plan to create a Zone or a
+        Storage Node or to reconfigure the parameters on a Replication
+        Node.
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="usingplans"></a>Using Plans</h2>
+            </div>
+          </div>
+        </div>
+        <div class="toc">
+          <dl>
+            <dt>
+              <span class="sect2">
+                <a href="plans.html#planexecutefeedback">Feedback While a Plan is Running</a>
+              </span>
+            </dt>
+          </dl>
+        </div>
+        <p>
+            You create and execute plans using the
+                <code class="literal">plan</code> command in the administrative
+            command line interface. By default, the command line
+            prompt will return immediately, and the plan will execute
+            asynchronously, in the background. You can check the
+            progress of the plan using the show plan id command.
+        </p>
+        <p>
+            If you use the optional <code class="literal">-wait</code> flag
+            for the plan command, the plan will run synchronously, and
+            the command line prompt will only return when the plan has
+            completed. The <code class="literal">plan wait</code> command can be
+            used for the same purpose, and also lets you specify a
+            time period. The -wait flag and the plan wait command are
+            particularly useful when issuing plans from scripts,
+            because scripts often expect that each command is finished
+            before the next one is issued.
+        </p>
+        <p> 
+            You can also create, but defer execution of the plan by
+            using the optional <code class="literal">-noexecute</code> flag. If
+            -noexecute is specified, the plan can be run later using
+            the <code class="literal">plan execute -id &lt;id&gt;</code>
+            command.
+        </p>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="planexecutefeedback"></a>Feedback While a Plan is Running</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+                There are several ways to track the progress of a
+                plan. 
+            </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p> 
+                        The <code class="literal">show plan -id </code>
+                        command provides information about the
+                        progress of a running plan. Note that the
+                            <code class="literal">-verbose </code> optional plan
+                        flag can be used to get more detail. 
+                    </p>
+              </li>
+              <li>
+                <p>
+                        The Admin Console's Topology tab refreshes
+                        as Oracle NoSQL Database services are created and brought
+                        online.
+                    </p>
+              </li>
+              <li>
+                <p>
+                        You can issue the <code class="literal">verify</code>
+                        command using the Topology tab or the CLI as
+                        plans are executing. The
+                            <code class="literal">verify</code> plan provides
+                        service status information as services come
+                        up. 
+                    </p>
+                <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                  <h3 class="title">Note</h3>
+                  <p> 
+                            The Topology tab and verify command are
+                            really only of interest for
+                            topology-related plans. For example, if
+                            the user is modifying parameters, the
+                            changes may not be visible via the
+                            topology tab or verify command.
+                        </p>
+                </div>
+              </li>
+              <li>
+                <p> 
+                        You can follow the store-wide log using the
+                        Admin Console's Logs tab, or by using the
+                        CLI's <code class="literal">logtail</code> command.
+                    </p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="config-firewall.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="planstates.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Configuring the Firewall </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Plan States</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

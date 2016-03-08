@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Setting Durability Guarantees</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="durability.html" title="Chapter 11. Durability Guarantees" />
+    <link rel="prev" href="durability-sync.html" title="Setting Synchronization-Based Durability Policies" />
+    <link rel="next" href="multiop.html" title="Chapter 12. Executing a Sequence of Operations" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Setting Durability Guarantees</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="durability-sync.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 11. Durability Guarantees</th>
+          <td width="20%" align="right"> <a accesskey="n" href="multiop.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="durability-set"></a>Setting Durability Guarantees</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+              To set a durability guarantee, use the
+              <code class="classname">Durability</code> class. When you do this,
+              you must provide three pieces of information:
+          </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                      The acknowledgment policy.
+                  </p>
+          </li>
+          <li>
+            <p>
+                      A synchronization policy at the master node.
+                  </p>
+          </li>
+          <li>
+            <p>
+                      A synchronization policy at the replica nodes.
+                  </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+              The combination of policies that you use is driven by how
+              sensitive your application might be to potential data loss,
+              and by your write performance requirements.
+          </p>
+      <p>
+              For example, the fastest possible write performance can be
+              achieved through a durability policy that requires:
+          </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                      No acknowledgments.
+                  </p>
+          </li>
+          <li>
+            <p>
+                      NO_SYNC at the master.
+                  </p>
+          </li>
+          <li>
+            <p>
+                      NO_SYNC at the replicas.
+                  </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+              However, this durability policy also leaves your data with
+              the greatest risk of loss due to application or machine
+              failure between the time the operation returns and the time
+              when the data is written to stable storage.
+          </p>
+      <p>
+              On the other hand, if you want the highest possible
+              durability guarantee, you can use:
+          </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                      All replicas must acknowledge the write operation.
+                  </p>
+          </li>
+          <li>
+            <p>
+                        SYNC at the master. 
+                  </p>
+          </li>
+          <li>
+            <p>
+                      SYNC at the replicas.
+                  </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+              Of course, this also results in the slowest possible write
+              performance.
+          </p>
+      <p>
+              Most commonly, durability policies attempt to strike a
+              balance between write performance and data durability
+              guarantees. For example:
+          </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                      Simple majority of replicas must acknowledge the
+                      write.
+                  </p>
+          </li>
+          <li>
+            <p>
+                      SYNC at the master.
+                  </p>
+          </li>
+          <li>
+            <p>
+                      NO_SYNC at the replicas.
+                  </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+              Note that you can set a default durability policy for your 
+              <code class="classname">KVStore</code> 
+              
+              handle, but you can also
+              override the policy on a per-operation basis for those
+              situations where some of your data need not be as durable (or
+              needs to be MORE durable) than the default.
+          </p>
+      <p>
+              For example, suppose you want an intermediate durability
+              policy for most of your data, but sometimes you have
+              transient or easily re-created data whose durability really
+              is not very important. Then you would do something like this:
+          </p>
+      <p>
+              First, set the default durability policy for the
+              <code class="classname">KVStore</code> 
+              
+              handle:
+          </p>
+      <a id="dur-1"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+import oracle.kv.Durability;
+import oracle.kv.KVStore;
+import oracle.kv.KVStoreConfig;
+import oracle.kv.KVStoreFactory;
+
+...
+
+KVStoreConfig kconfig = new KVStoreConfig("exampleStore", 
+    "node1.example.org:5088, node2.example.org:4129");
+
+Durability defaultDurability = 
+    new Durability(Durability.SyncPolicy.SYNC,    // Master sync
+                   Durability.SyncPolicy.NO_SYNC, // Replica sync
+                   Durability.ReplicaAckPolicy.SIMPLE_MAJORITY);
+kconfig.setDurability(defaultDurability);
+
+KVStore kvstore = KVStoreFactory.getStore(kconfig); </pre>
+      <p>
+                In another part of your code, for some unusual write
+                operations, you might then want to relax the
+                durability guarantee so as to speed up the write
+                performance for those specific write operations:
+            </p>
+      <a id="durtables-2"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.Durability;
+import oracle.kv.DurabilityException;
+import oracle.kv.KVStore;
+import oracle.kv.table.Row;
+import oracle.kv.table.Table;
+import oracle.kv.table.TableAPI;
+
+...
+
+TableAPI tableH = kvstore.getTableAPI();
+
+// The name you give to getTable() must be identical
+// to the name that you gave the table when you created
+// the table using the CREATE TABLE DDL statement.
+Table myTable = tableH.getTable("myTable");
+
+// Get a Row instance
+Row row = myTable.createRow();
+
+// Now put all of the cells in the row.
+
+row.put("item", "Bolts");
+row.put("description", "Hex head, stainless");
+row.put("count", 5);
+row.put("percentage", 0.2173913);
+
+// Construct a durability policy
+Durability durability = 
+    new Durability(Durability.SyncPolicy.NO_SYNC, // Master sync
+                   Durability.SyncPolicy.NO_SYNC, // Replica sync
+                   Durability.ReplicaAckPolicy.NONE);
+
+// Construct a WriteOptions object using the durability policy.
+WriteOptions wo = new WriteOptions(durability, 0, null);
+
+// Now write the table to the store using the durability policy
+// defined, above.
+tableH.put(row, null, wo); </pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="durability-sync.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="durability.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="multiop.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Setting Synchronization-Based Durability Policies </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 12. Executing a Sequence of Operations</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

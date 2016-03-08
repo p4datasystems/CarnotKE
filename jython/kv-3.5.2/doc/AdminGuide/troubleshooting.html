@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Troubleshooting</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="configure.html" title="Chapter 3. Configuring the KVStore" />
+    <link rel="prev" href="smoketest.html" title="Smoke Testing the System" />
+    <link rel="next" href="managing-topology.html" title="Chapter 4. Determining Your Store's Configuration" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version 12.1.3.5</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Troubleshooting</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="smoketest.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 3. Configuring the KVStore</th>
+          <td width="20%" align="right"> <a accesskey="n" href="managing-topology.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="troubleshooting"></a>Troubleshooting</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="troubleshooting.html#findingerrorinfo">Where to Find Error Information</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="troubleshooting.html#servicestates">Service States</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect2">
+              <a href="troubleshooting.html#usefulcommands">Useful Commands</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+            Typical errors when bringing up a store are typos and
+            misconfiguration.  It is also possible to run into network port
+            conflicts, especially if the deployment failed and you are
+            starting over.  In that case be sure to remove all partial
+            store data and configuration and kill any remnant processes.
+            Processes associated with a store as reported by "jps -m" are
+            one of these:
+        </p>
+      <table class="simplelist" border="0" summary="Simple list">
+        <tr>
+          <td>StorageNodeAgentImpl</td>
+        </tr>
+        <tr>
+          <td>ManagedService</td>
+        </tr>
+      </table>
+      <p>
+            If you kill the StorageNodeAgentImpl it should also kill its
+            managed processes.
+        </p>
+      <p>
+            You can use the monitoring tab in the Admin Console to look at
+            various log files.
+        </p>
+      <p>
+            There are detailed log files available in
+            <code class="literal">KVROOT/storename/log</code> as well as logs of the
+            bootstrap process in <code class="literal">KVROOT/*.log</code>.  The
+            bootstrap logs are most useful in diagnosing initial startup
+            problems.  The logs in <code class="literal">storename/log</code> appear
+            once the store has been configured.  The logs on the host
+            chosen for the admin process are the most detailed and include
+            a store-wide consolidated log file:
+            <code class="literal">KVROOT/storename/log/storename_*.log</code>
+        </p>
+      <p>
+            Each line in a log file is prefixed with the date of the message,
+            its severity, and the name of the component which issued it. For
+            example:
+        </p>
+      <pre class="programlisting">2012-10-25 14:28:26.982 UTC INFO [admin1] Initializing Admin for store:
+kvstore </pre>
+      <p>
+            When looking for more context for events at a given time, use
+            the timestamp and component name to narrow down the section of
+            log to peruse.
+        </p>
+      <p>
+            Error messages in the logs show up with "SEVERE" in them so you
+            can grep for that if you are troubleshooting.  SEVERE error
+            messages are also displayed in the Admin's Topology tab, in the
+            CLI's <code class="literal">show events</code> command, and when you use
+            the <code class="literal">ping</code> command.
+        </p>
+      <p>
+            In addition to log files, these directories may also contain
+            *.perf files, which are performance files for the Replication
+            Nodes.
+        </p>
+      <p>
+           In general, <code class="literal">verify configuration</code> is the tool of
+           choice for understanding the state of the cluster. In addition to 
+           contacting the components, it will cross check each component's parameters
+           against the Admin database. For example, <code class="literal">verify configuration</code> might
+           report that a Replication Node's helperHosts parameter was at odds 
+           with the Admin. If this were the case then it might explain why a Replication Node
+           cannot come up. <code class="literal">Verify configuration</code> also checks
+           on Admins.
+        </p>
+      <p> 
+            Additionally, in order to catch configuration errors early, you can use the 
+            diagnostics tool when troubleshooting your KVStore. Also, you can use this tool to package 
+            important information and files to be able to send them to Oracle Support, for example. 
+            For more information, see <a class="xref" href="diag_util.html" title="Appendix E. Diagnostics Utility">Diagnostics Utility</a> 
+        </p>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="findingerrorinfo"></a>Where to Find Error Information</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+              As your store operates, you can discover information about
+              any problems that may be occurring by looking at the plan
+              history and by looking at error logs.
+            </p>
+        <p>
+              The plan history indicates if any configuration or
+              operational actions you attempted to take against the store
+              encountered problems. This information is available as the
+              plan executes and finishes. Errors are reported in the plan
+              history each time an attempt to run the plan fails. The plan
+              history can be seen using the CLI <code class="literal">show plan</code>
+              command, or in the Admin's <code class="literal">Plan History</code>
+              tab.
+            </p>
+        <p>
+              Other problems may occur asynchronously. You can learn about
+              unexpected failures, service downtime, and performance issues
+              through the Admin's critical events display in the Logs tab,
+              or through the CLI's <code class="literal">show events</code> command.
+              Events come with a time stamp, and the description may
+              contain enough information to diagnose the issue. In other
+              cases, more context may be needed, and the administrator may
+              want to see what else happened around that time.
+            </p>
+        <p>
+              The store-wide log consolidates logging output from all
+              services. Browsing this file might give you a more complete
+              view of activity during the problem period. It can be viewed
+              using the Admin's Logs tab, by using the CLI's
+              <code class="literal">logtail</code> command, or by directly viewing
+              the &lt;storename&gt;_N.log file in the
+              &lt;KVHOME&gt;/&lt;storename&gt;/log directory. It is also
+              possible to download the store-wide log file using the Admin's
+              Logs tab.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="servicestates"></a>Service States</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                Oracle NoSQL Database uses three different types of services, all of which
+                should be running correctly in order for your store to be
+                in a healthy state. The three service types are the Admin,
+                Storage Nodes, and Replication Nodes. You should have
+                multiple instances of these services running throughout
+                your store.
+            </p>
+        <p>
+                Each service has a status that can be viewed using any of
+                the following:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                        The Topology tab in the Admin Console
+                    </p>
+            </li>
+            <li>
+              <p>
+                        The <code class="literal">show topology</code> command in the
+                        Administration CLI.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        Using the <code class="literal">ping</code> command.
+                    </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+              The status values can be one of the following:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                        <code class="literal">STARTING</code>
+                    </p>
+              <p>
+                        The service is coming up.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">RUNNING</code>
+                    </p>
+              <p>
+                        The service is running normally.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">STOPPING</code>
+                    </p>
+              <p>
+                        The service is stopping. This may take some time as
+                        some services can be involved in time-consuming
+                        activities when they are asked to stop.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">WAITING_FOR_DEPLOY</code>
+                    </p>
+              <p>
+                        The service is waiting for commands or
+                        acknowledgments from other services during its
+                        startup processing. If it is a Storage Node, it is
+                        waiting for the initial deploy-SN command. Other
+                        services should transition out of this phase
+                        without any administrative intervention from the
+                        user.
+                    </p>
+            </li>
+            <li>
+              <p>
+                        <code class="literal">STOPPED</code>
+                    </p>
+              <p>
+                        The service was stopped intentionally and cleanly.
+                    </p>
+            </li>
+            <li>
+              <p>
+                      <code class="literal">ERROR_RESTARTING</code>
+                    </p>
+              <p>
+                      The service is in an error state. Oracle NoSQL Database attempts
+                      to restart the service.
+                    </p>
+            </li>
+            <li>
+              <p>
+                      <code class="literal">ERROR_NO_RESTART</code>
+                    </p>
+              <p>
+                      The service is in an error state and is not automatically
+                      restarted. Administrative intervention is required.
+                    </p>
+            </li>
+            <li>
+              <p>
+                      <code class="literal">UNREACHABLE</code>
+                    </p>
+              <p>
+                      The service is not reachable by the Admin. If the status
+                      was seen using a command issued by the Admin, this
+                      state may mask a STOPPED or ERROR state. 
+                    </p>
+              <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                <h3 class="title">Note</h3>
+                <p>
+                      If an SN is UNREACHABLE, or an RN is having problems and its SN is UNREACHABLE, 
+                      the first thing to check is the network connectivity between the Admin and the SN.
+                      However, if the managing SNA is reachable and the managed Replication Node is not,
+                      we can guess that the network is OK and the problem lies elsewhere.
+                    </p>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <p>
+                A healthy service begins with <code class="literal">STARTING</code>.
+                It may transition to <code class="literal">WAITING_FOR_DEPLOY</code>
+                for a short period before going on to
+                <code class="literal">RUNNING</code>.
+            </p>
+        <p>
+                <code class="literal">ERROR_RESTARTING</code> and
+                <code class="literal">ERROR_NO_RESTART</code> indicate that there has
+                been a problem that should be investigated.  An
+                <code class="literal">UNREACHABLE</code> service may only be in that
+                state temporarily, although if that state persists, the
+                service may be truly in an
+                <code class="literal">ERROR_RESTARTING</code> or
+                <code class="literal">ERROR_NO_RESTART</code> state.
+            </p>
+        <p>
+                Note that the Admin's Topology tab only shows abnormal
+                service statuses. A service that is
+                <code class="literal">RUNNING</code> does not display its status in
+                that tab.
+            </p>
+      </div>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="usefulcommands"></a>Useful Commands</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+                The following commands may be useful to you when
+                troubleshooting your KVStore:
+            </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                        <code class="literal">java -Xmx256m -Xms256m 
+                        -jar KVHOME/lib/kvstore.jar ping -host &lt;host&gt; -port &lt;registryport&gt;</code>
+                    </p>
+              <p>
+                        Reports the status of the store running on the
+                        specified host and port.  This command can be used
+                        against any of the host and port pairs used for
+                        Storage Nodes.
+                    </p>
+            </li>
+            <li>
+              <p>
+                      <code class="literal">jps -m</code>
+                    </p>
+              <p>
+                      Reports the Java processes running on a machine. If
+                      the Oracle NoSQL Database processes are running, they are reported by this 
+                      command.
+                    </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+              In addition you can use the administration console to
+              investigate the state of the KVStore.  Point your browser to
+              the administration port chosen on the administration host.
+            </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="smoketest.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="configure.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="managing-topology.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Smoke Testing the System </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 4. Determining Your Store's Configuration</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>
