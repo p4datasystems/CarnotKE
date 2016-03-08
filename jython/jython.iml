@@ -22,12 +22,12 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="javalib" level="project" />
+    <orderEntry type="library" exported="" name="javalib" level="project" />
     <orderEntry type="library" name="lib1" level="project" />
     <orderEntry type="library" name="servlet1" level="project" />
     <orderEntry type="library" name="extlibs" level="project" />
     <orderEntry type="library" name="ant-bootstrap" level="project" />
-    <orderEntry type="library" name="extlibs.orig" level="project" />
+    <orderEntry type="library" exported="" name="extlibs.orig" level="project" />
     <orderEntry type="library" name="servlet" level="project" />
     <orderEntry type="library" name="BACKUP1" level="project" />
     <orderEntry type="library" name="dist" level="project" />
@@ -42,7 +42,7 @@
     <orderEntry type="library" name="Python 3.5.0 (C:\Users\nelma\AppData\Local\Programs\Python\Python35-32\python.exe) interpreter library" level="application" />
     <orderEntry type="library" name="target" level="project" />
     <orderEntry type="library" name="lib" level="project" />
-    <orderEntry type="library" name="jdk1.8" level="application" />
+    <orderEntry type="library" exported="" name="jdk1.8" level="application" />
     <orderEntry type="library" name="bug1126" level="project" />
     <orderEntry type="library" name="test1" level="project" />
     <orderEntry type="library" name="javacc1" level="project" />

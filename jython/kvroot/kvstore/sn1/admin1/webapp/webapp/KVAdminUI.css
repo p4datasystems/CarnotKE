@@ -1,0 +1,200 @@
+a {
+    outline 0;
+    text-decoration: none;
+    border-style: none;
+}
+
+img {
+    border-style: none;
+}
+
+h1 {
+    font-size: 2em;
+    font-weight: bold;
+    color: #003d5b;
+}
+
+h2 {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #003d5b;
+}
+
+h3 {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #003d5b;
+}
+
+.title {
+    font-size: 2em;
+    font-weight: bold;
+    color: #003d5b;
+}
+
+.subtitle {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #003d5b;
+}
+
+.subsubtitle {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #003d5b;
+}
+
+.deck {
+    font-size: 0.7em;
+    font-style: italic;
+}
+
+/* Most GWT widgets already have a style name defined */
+.gwt-DialogBox {
+  width: 400px;
+}
+
+.dialogVPanel {
+  margin: 5px;
+}
+
+.serverResponseLabelError {
+  color: red;
+}
+
+.header-row {
+    font-size: 1.5em;
+    font-style: italic;
+    border-bottom-style: dotted;
+    background: #e3e6ec;
+}
+
+.odd-row {
+/*    background: #649dca; */
+}
+
+.even-row {
+/*    background: #96d065; */
+}
+
+.gwt-DecoratedPopupPanel .popupMiddleCenter {
+   height: 100%;
+   width: 100%;
+}
+
+.elljoint {
+    background: url(images/elljoint.png) 18px 50% no-repeat;
+    padding-left: 26px;
+}
+
+.teejoint {
+    background: url(images/teejoint.png) 18px 50% no-repeat;
+    padding-left: 26px;
+}
+
+.pipe {
+    background: url(images/pipe.png) 18px 50% no-repeat;
+    padding-left: 26px;
+}
+
+.mirrorelljoint {
+    background: url(images/mirrorelljoint.png) 100% 50% no-repeat;
+    padding-left: 26px;
+}
+
+.mirrorteejoint {
+    background: url(images/mirrorteejoint.png) 100% 50% no-repeat;
+    padding-left: 26px;
+}
+
+.topoRow {
+    height: 26px;
+}
+
+.topoTable {
+    border-collapse: collapse;
+}
+
+.topoCell {
+    padding-right: 10px;
+}
+
+.mirrorTopoCell {
+    text-align: right;
+}
+
+.hilitCell {
+    background: #e3e6ec;
+    cursor: pointer;
+}
+
+.criticalCell {
+    background: red;
+}
+
+.textInput-prompt {
+    background-image: url('images/newpoolprompt.png');
+}
+
+.gwt-DecoratorPanel {
+   height: 100%;
+   width: 100%;
+}    
+
+.gwt-DecoratorPanel .middleCenter {
+   height: 100%;
+   width: 100%;
+}
+
+.gwt-DecoratorPanel .topLeft {
+  background: url(images/dbcts.png) no-repeat 0px 0px !important;
+}
+.gwt-DecoratorPanel .topRight {
+  background: url(images/dbctz.png) no-repeat 0px 0px !important;
+}
+.gwt-DecoratorPanel .topCenter {
+  background: url(images/dbctz.png) 0px 0px !important;
+}
+.gwt-DecoratorPanel .bottomCenter {
+  background: url(images/dbctz.png) 0px 0px !important;
+}
+.gwt-DecoratorPanel .bottomLeft {
+  background: url(images/dbctz.png) no-repeat 0px 0px !important;
+}
+.gwt-DecoratorPanel .bottomRight {
+  background: url(images/dbctz.png) no-repeat 0px 0px !important;
+}
+.gwt-DecoratorPanel .middleRight {
+  background: url(images/dbctz.png) 0px 0px !important;
+}
+.gwt-DecoratorPanel .middleLeft {
+  background: url(images/dbctz.png) 0px 0px !important;
+}
+
+.perfCell {
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-right-color: black;
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-left-color: black;
+  text-align: center;
+  width: 9em;
+}
+.perfTable {
+  border-collapse: collapse;
+}
+
+.tty {
+    font: 1em Andale Mono, monospace;
+}
+.clabel {
+    padding: 0px 0px 0px 8px;
+}
+.cbar {
+    margin: 6px 0px 6px 0px;
+}
+.evItem {
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+}

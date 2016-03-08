@@ -101,6 +101,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
      * currently at a subquery
      */
     private boolean sq = false;
+	private boolean subWhere = false;
 	private List<String> subtTables = new ArrayList<String>();
     private LinkedHashMap<String,String> subColumnsAs = new LinkedHashMap<String,String>();
 
@@ -503,6 +504,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 			String fColumns = "";
 			String filter = "\tFILTER(";
 			n = 1;
+			String innerSubquery = "";
 			for (String c : whereClauses) {
 				for (String ineq : inequalities) {
 					if (c.contains(ineq)) {
@@ -511,7 +513,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 						if(left.equals(""))
 							filter += c.split(ineq)[0];
 						else {
-							fColumns += "\t?" + tableSymbols.get(tablesAliases.get(left.split("\\.")[0])) + " :" + left.split("\\.")[1] + " ?f" + n + " .\n";
+							fColumns += "\n\t?" + tableSymbols.get(tablesAliases.get(left.split("\\.")[0])) + " :" + left.split("\\.")[1] + " ?f" + n + " .\n";
 							filter += "?f" + n;
 							n++;
 						}
@@ -520,15 +522,36 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 						if(right.equals(""))
 							filter += ":" + c.split(ineq)[1];
 						else {
-							fColumns += "\t?" + tableSymbols.get(tablesAliases.get(right.split("\\.")[0])) + " :" + left.split("\\.")[1] + " ?f" + n + " .\n";
+							fColumns += "\n\t?" + tableSymbols.get(tablesAliases.get(right.split("\\.")[0])) + " :" + left.split("\\.")[1] + " ?f" + n + " .\n";
 			                	    // So fColumns will be set = ?s1 :eventType ?f1 .
 							filter += "?f" + n;
 							n++;
 						}
+						String x = "select";
+						if (!sq) {
+							if ((c.indexOf(x) >= 0) || (c.indexOf(x.toUpperCase()) >= 0)) {
+								try {
+									String subsq = c.substring(c.indexOf("(") + 1, c.indexOf(")"));
+									PlainSelect plainSelect2 = (PlainSelect) ((Select) parserManager.parse(new StringReader(subsq))).getSelectBody();
+
+									visit(plainSelect2);
+
+									innerSubquery = subq.pop();
+									innerSubquery= "\nFILTER " + "( "+innerSubquery+"\t )";
+									subWhere = true;
+								}catch(Exception e){
+									System.out.println("We exploded " + e.getMessage());
+								}
+							}
+						}
 					}
 				}
 			}
-			filters.add(fColumns + filter.replace("'", "") + ") ");
+			if (subWhere) {
+				filters.add(innerSubquery);
+			} else {
+				filters.add(fColumns + filter.replace("'", "") + ") ");
+			}
 		}
 
 	// End processing WHERE statement.
@@ -730,8 +753,10 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 						break;
 					}
 				}
-		    	if(!connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += col + " " + columnsAs.get(col);
-                else SPARQL += "(" + col + " AS ?" + columnsAs.get(col).replaceAll("\"", "") + ")";
+                //if (!subWhere) {
+                    if (!connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += col + " " + columnsAs.get(col);
+                    else SPARQL += "(" + col + " AS ?" + columnsAs.get(col).replaceAll("\"", "") + ")";
+                //}
 			}
 			if (n != allCols.size())
                 if(!connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += ", ";

@@ -1,0 +1,26 @@
+2016-03-08 07:32:14.608 UTC INFO [1] Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5005
+2016-03-08 07:32:14.609 UTC INFO [1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-03-08 07:32:14.656 UTC INFO [1] Current group size: 0
+2016-03-08 07:32:14.657 UTC INFO [1] New node 1(-1) unknown to rep group
+2016-03-08 07:32:14.658 UTC INFO [1] Master changed to 1
+2016-03-08 07:32:14.658 UTC INFO [1] Nascent group. 1 is master by virtue of being the first node.
+2016-03-08 07:32:14.681 UTC INFO [1] Successfully added node:1(1) HostPort = DESKTOP-BS7Q9BS: 5005 [ELECTABLE]
+2016-03-08 07:32:14.684 UTC INFO [1] Refreshed 0 monitors.
+2016-03-08 07:32:14.688 UTC INFO [1] Node 1 started
+2016-03-08 07:32:14.689 UTC INFO [1] Feeder manager accepting requests.
+2016-03-08 07:32:14.690 UTC INFO [1] Joining group as master
+2016-03-08 07:32:14.690 UTC INFO [1] Refreshed 0 monitors.
+2016-03-08 08:03:00.555 UTC INFO [1] Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5005
+2016-03-08 08:03:00.556 UTC INFO [1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-03-08 08:03:00.647 UTC INFO [1] Current group size: 1
+2016-03-08 08:03:00.648 UTC INFO [1] Existing node 1 querying for a current master.
+2016-03-08 08:03:00.682 UTC INFO [1] Node 1 started
+2016-03-08 08:03:00.683 UTC INFO [1] Election initiated; election #1
+2016-03-08 08:03:00.690 UTC INFO [1] Started election thread Tue Mar 08 02:03:00 CST 2016
+2016-03-08 08:03:02.710 UTC INFO [1] Winning proposal: Proposal(0000015355402da3:204f1a9915cf1a263708f576f19a02f0:00000001) Value: Value:DESKTOP-BS7Q9BS$$$5005$$$1$$$1
+2016-03-08 08:03:02.716 UTC INFO [1] Master changed to 1
+2016-03-08 08:03:02.717 UTC INFO [1] Election finished. Elapsed time: 2034ms
+2016-03-08 08:03:02.718 UTC INFO [1] Election thread exited. Group master: 1(1)
+2016-03-08 08:03:02.720 UTC INFO [1] Feeder manager accepting requests.
+2016-03-08 08:03:02.736 UTC INFO [1] Joining group as master
+2016-03-08 08:03:02.739 UTC INFO [1] Refreshed 0 monitors.
