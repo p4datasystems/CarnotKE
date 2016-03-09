@@ -1,22 +1,11 @@
 package org.python.ReL;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-
-import java.io.*;
-import java.util.*;
-import java.lang.*;
-import java.lang.reflect.Array;
+import org.python.core.PyObject;
 import wdb.metadata.Adapter;
-
-import org.python.core.*;
-import org.python.antlr.base.expr;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * A class that is resposible for communicating with a database.

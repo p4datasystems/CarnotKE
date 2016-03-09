@@ -1,31 +1,21 @@
 package org.python.ReL;
 
+import batch.json.JSONTransport;
 import batch.tcp.TCPClient;
 import batch.util.BatchTransport;
-import batch.json.JSONTransport;
+import org.python.core.*;
+import org.python.expose.ExposedType;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import org.python.expose.ExposedType;
-
-import org.python.core.PyObject;
-import org.python.core.PyType;
-import org.python.core.PyObjectDerived;
-import org.python.core.PyStringMap;
-import org.python.core.BuiltinDocs;
-import org.python.core.PyInteger;
-import org.python.core.PyTuple;
 
 /**
  * A class that is resposible for communicating with a database.
@@ -167,13 +157,13 @@ public class PyRelConnection extends PyObject {
         int prev_id = getDBUNIQUEID(obj); 
         if (prev_id > -1) {
             // If this instance already exists in our session. Then do not add it again. 
-            if (!instances_map.containsKey(new Integer(prev_id))) {
-                instances_map.put(new Integer(prev_id), obj); 
+            if (!instances_map.containsKey(prev_id)) {
+                instances_map.put(prev_id, obj);
             }
             return prev_id; 
         } else {
             int id = SPARQLDoer.getNextGUID(this);
-            instances_map.put(new Integer(id), obj);
+            instances_map.put(id, obj);
             inst_dict.put("DBUNIQUEID", new PyInteger(id)); 
             return id; 
         }
@@ -187,7 +177,7 @@ public class PyRelConnection extends PyObject {
         for(PyObject obj : instances_map.values()) {
             //We delete the object if it was already in the database. 
             TreeMap<String, Object> key_vals = new TreeMap<String, Object>();
-            key_vals.put("DBUNIQUEID", new Integer(getDBUNIQUEID(obj)));
+            key_vals.put("DBUNIQUEID", getDBUNIQUEID(obj));
             //Do the delete on all objects with this DBUNIQUEID
             SPARQLDoer.deleteSubjectsWithAttrValues(this, obj.getType().getName(), key_vals);
             //Then we repopulate the instance in the database. 

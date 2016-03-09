@@ -1,43 +1,31 @@
 // Copyright (c) Corporation for National Research Initiatives
 package org.python.core;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-
-import java.io.*;
-import java.util.*;
-import java.lang.*;
-import java.lang.reflect.Array;
-
-import org.python.ReL.*;
+import net.sf.jsqlparser.parser.CCJSqlParserManager;
+import net.sf.jsqlparser.statement.Statement;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.python.ReL.OracleNoSQLDatabase;
+import org.python.ReL.ProcessLanguages;
+import org.python.ReL.ProcessOracleEESQL;
+import org.python.ReL.PyRelConnection;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
 import org.python.expose.ExposedType;
 import org.python.expose.MethodType;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.lang.reflect.Array;
+import java.util.*;
 import java.util.concurrent.ConcurrentMap;
-
-import net.sf.jsqlparser.expression.*;
-import net.sf.jsqlparser.parser.*;
-import net.sf.jsqlparser.statement.select.*;
-import net.sf.jsqlparser.statement.insert.Insert;
-import net.sf.jsqlparser.statement.update.Update;
-import net.sf.jsqlparser.statement.delete.Delete;
-import net.sf.jsqlparser.statement.drop.Drop;
-import net.sf.jsqlparser.statement.create.table.CreateTable;
-import net.sf.jsqlparser.expression.Expression;
-
-import org.apache.http.client.methods.HttpPost;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
 
 /**
  * A builtin python tuple.
@@ -47,8 +35,8 @@ public class PyTuple extends PySequenceList implements List {
 
     public static final PyType TYPE = PyType.fromClass(PyTuple.class);
     // If we use a class type, mark down that we may have a select that is expected to return an instance of the type
-    private ArrayList<PyType> relQueryInstancesType = new ArrayList<PyType>();
-    private Collection<String> relQueryInstancesTypeNames = new ArrayList<String>(); 
+    private ArrayList<PyType> relQueryInstancesType = new ArrayList<>();
+    private ArrayList<String> relQueryInstancesTypeNames = new ArrayList<>();
 
     // private final PyObject[] array;
     private PyObject[] array;           // Changed for ReL
@@ -194,7 +182,7 @@ public class PyTuple extends PySequenceList implements List {
                 //System.out.println(json);
                 rows.add(new PyTuple(new PyString(json)));
                 //a lot of conversion going on here. . .
-                PyObject[] results = listtoarray(rows);
+                PyObject[] results = rows.toArray(new PyObject[rows.size()]);
                 //put results in array for this tuple object
                 array = new PyObject[results.length];
                 System.arraycopy(results, 0, array, 0, results.length);
@@ -215,7 +203,7 @@ public class PyTuple extends PySequenceList implements List {
         if(ReLmode == "SPARQL") {
             rows = conn.getDatabase().OracleNoSQLRunSPARQL(ReLstmt);
             //a lot of conversion going on here. . .
-            PyObject[] results = listtoarray(rows);
+            PyObject[] results = rows.toArray(new PyObject[rows.size()]);
             //put results in array for this tuple object
             array = new PyObject[results.length];
             System.arraycopy(results, 0, array, 0, results.length);
@@ -237,25 +225,31 @@ public class PyTuple extends PySequenceList implements List {
                 // runAndOutputTuples(conn, ReLstmt);
                 ProcessOracleEESQL processOracleEESQL = new ProcessOracleEESQL(conn, relQueryInstancesType, relQueryInstancesTypeNames);
                 try {
-                  ArrayList<PyObject> rowResults = processOracleEESQL.processSQL(ReLstmt);
-                  //a lot of conversion going on here. . .
-                  PyObject[] results = listtoarray(rowResults);
-                  //put results in array for this tuple object
-                  array = new PyObject[results.length];
-                  System.arraycopy(results, 0, array, 0, results.length);
+                    ArrayList<PyObject> rowResults = processOracleEESQL.processSQL(ReLstmt);
+                    //a lot of conversion going on here. . .
+                    PyObject[] results = rows.toArray(new PyObject[rows.size()]);
+                    //put results in array for this tuple object
+                    array = new PyObject[results.length];
+                    System.arraycopy(results, 0, array, 0, results.length);
                 } catch (Exception e) {
-                  System.out.println(e);
+                    System.out.println(e);
                 }
             } else if (conn.getConnectionType() == "rdf_mode") { 
                  CCJSqlParserManager pm = new CCJSqlParserManager();
-                 net.sf.jsqlparser.statement.Statement statement = null;
+                 Statement statement = null;
                  try {
-                     statement = (net.sf.jsqlparser.statement.Statement)pm.parse(new StringReader(ReLstmt));
+                     statement = pm.parse(new StringReader(ReLstmt));
                      } catch (Exception e) {
                         System.out.println(e);
                  }
-                 if (conn.getDebug() == "debug") System.out.println("jsqlstmt is: " + statement.toString());
-                 processSQLRdfMode(statement, conn);
+                 if (conn.getDebug() == "debug")
+                     System.out.println("jsqlstmt is: " + statement.toString());
+                ProcessLanguages processLanguage = new ProcessLanguages(conn);
+                PyObject[] results = processLanguage.processSQLRdfMode(statement, conn, relQueryInstancesType, relQueryInstancesTypeNames);
+                if (results != null) {
+                    array = new PyObject[results.length];
+                    System.arraycopy(results, 0, array, 0, results.length);
+                }
             } else {
                 System.out.println("Connection type must be \"native_mode\", or \"rdf_mode\", not \"" + conn.getConnectionType() + "\"");
             }
@@ -284,7 +278,7 @@ public class PyTuple extends PySequenceList implements List {
                     if(connection_DB.equals("OracleNoSQL")) {
                         rows = conn.getDatabase().OracleNoSQLRunSPARQL(sparql);
                         //a lot of conversion going on here. . .
-                        PyObject[] results = listtoarray(rows);
+                        PyObject[] results = rows.toArray(new PyObject[rows.size()]);
                         //put results in array for this tuple object
                         array = new PyObject[results.length];
                         System.arraycopy(results, 0, array, 0, results.length);
@@ -293,7 +287,7 @@ public class PyTuple extends PySequenceList implements List {
                         try {
                             ArrayList<PyObject> rowResults = processOracleEESQL.processSQL(sparql);
                             //a lot of conversion going on here. . .
-                            PyObject[] results = listtoarray(rowResults);
+                            PyObject[] results = rows.toArray(new PyObject[rows.size()]);
                             //put results in array for this tuple object
                             array = new PyObject[results.length];
                             System.arraycopy(results, 0, array, 0, results.length);
@@ -306,233 +300,7 @@ public class PyTuple extends PySequenceList implements List {
         }
     }
     
-    public void processSQLRdfMode(net.sf.jsqlparser.statement.Statement statement, PyRelConnection conn) {
-        if (statement instanceof CreateTable) {
-           try {
-              net.sf.jsqlparser.statement.create.table.CreateTable caststmt =
-                    (net.sf.jsqlparser.statement.create.table.CreateTable)statement;
-              SQLVisitor visitor = new SQLVisitor(conn);
-              visitor.doCreateTable(caststmt);
-           } catch (Exception e) {
-              System.out.println(e);
-              e.printStackTrace();
-              //PyObject[] temp = new PyObject[1];
-              //temp[0] = new PyString(e.toString());
-              //rows.add(new PyTuple(temp));
-           }
-        } else if (statement instanceof Insert) {
-           try { 
-              net.sf.jsqlparser.statement.insert.Insert caststmt =
-                    (net.sf.jsqlparser.statement.insert.Insert)statement;
-              SQLVisitor visitor = new SQLVisitor(conn);
-              visitor.doInsert(caststmt, conn.getConnectionType());//visitor.doInsert takes 2 arguments now instead of 1 argument
-           } catch (Exception e) {
-              System.out.println(e);
-              e.printStackTrace();
-              //PyObject[] temp = new PyObject[1];
-              //temp[0] = new PyString(e.toString());
-              //rows.add(new PyTuple(temp));
-           }
-        } else if (statement instanceof Select) {
-           try {
 
-              net.sf.jsqlparser.statement.select.Select caststmt = (net.sf.jsqlparser.statement.select.Select)statement;
-              SQLVisitor visitor = new SQLVisitor(conn);
-              String sparql = ""; 
-              if (this.relQueryInstancesTypeNames.size() > 0)
-              {
-                  sparql = visitor.getSelect(caststmt, relQueryInstancesTypeNames, conn.getConnectionType());
-              }
-              else {
-                  sparql = visitor.getSelect(caststmt, null, conn.getConnectionType());
-              }
-              // an oo query forces the session to be committed first. 
-              conn.commit_oorel_session();
-              ArrayList<PyObject> rowResults;
-              if(conn.getConnectionDB().equals("OracleNoSQL")) {    
-                  rowResults = conn.getDatabase().OracleNoSQLRunSPARQL(sparql);
-                  //a lot of conversion going on here. . .
-                  PyObject[] results = listtoarray(rowResults);
-                  //put results in array for this tuple object
-                  array = new PyObject[results.length];
-                  System.arraycopy(results, 0, array, 0, results.length);
-              } else {
-                  ProcessOracleEESQL processOracleEESQL = new ProcessOracleEESQL(conn, relQueryInstancesType, relQueryInstancesTypeNames);
-                  rowResults = processOracleEESQL.processSQL(sparql);
-                  //a lot of conversion going on here. . .
-                  PyObject[] results = listtoarray(rowResults);
-                  //put results in array for this tuple object
-                  array = new PyObject[results.length];
-                  System.arraycopy(results, 0, array, 0, results.length);
-              }
-           } catch (Exception e) {
-              System.out.println(e);
-              e.printStackTrace();
-           }
-        } else if (statement instanceof Delete)
-        {
-            net.sf.jsqlparser.statement.delete.Delete caststmt = (net.sf.jsqlparser.statement.delete.Delete) statement;
-            String sqlstmt = "";
-
-            BinaryExpression expression = ((BinaryExpression)caststmt.getWhere());
-            Expression left = expression.getLeftExpression();
-            Expression right = expression.getRightExpression();
-            String left_exp = left + "";
-            String right_exp = right + "";
-            if(right.toString().charAt(0) == '\'') {
-                right_exp = right_exp.substring(1, right_exp.length()-1);
-            }
-                
-            String table = conn.getTable();
-            String this_value = right_exp;
-            String this_column = left_exp;
-            String rvalue = "";
-            String lvalue = "";
-            try  
-            {  
-               Double.parseDouble(this_value); 
-               try { 
-                  Integer.parseInt(this_value); 
-                  rvalue  = "a.triple.get_obj_value() = '\"" + this_value + "\"^^<http://www.w3.org/2001/XMLSchema#integer>'";
-               } catch(NumberFormatException e) { 
-                  rvalue  = "a.triple.get_obj_value() = '\"" + this_value + "\"^^<http://www.w3.org/2001/XMLSchema#float>'";
-               }
-            } catch(NumberFormatException e)  
-            {  
-                  rvalue  = "a.triple.get_obj_value() = '\"" + this_value + "\"^^<http://www.w3.org/2001/XMLSchema#string>'";
-            }  
-            try  
-            {  
-               Double.parseDouble(this_column); 
-               try { 
-                  Integer.parseInt(this_column); 
-                  lvalue  = "a.triple.get_obj_value() = '\"" + this_column + "\"^^<http://www.w3.org/2001/XMLSchema#integer>'";
-               } catch(NumberFormatException e) { 
-                  lvalue  = "a.triple.get_obj_value() = '\"" + this_column + "\"^^<http://www.w3.org/2001/XMLSchema#float>'";
-               }
-            } catch(NumberFormatException e)  
-            {  
-                  lvalue  = "a.triple.get_obj_value() = '\"" + this_column + "\"^^<http://www.w3.org/2001/XMLSchema#string>'";
-            }  
-
-            String lcolumn = "a.triple.get_property() = '<" + conn.getNamespace() + this_column + ">'";
-            String rcolumn = "a.triple.get_property() = '<" + conn.getNamespace() + this_value + ">'";
-            String subject = "a.triple.get_subject() IN (SELECT distinct b.triple.GET_SUBJECT()  from " + conn.getTable() +
-" b where b.triple.get_property() = '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>' and b.triple.get_obj_value() = '<" + 
-conn.getNamespace() + caststmt.getTable() + ">')";
-
-            /* Example: 
-            DELETE FROM RDF_CS347_PROF_DATA a
-            WHERE ((a.triple.get_property() = '<http://www.example.org/people.owl#VAL1>' AND a.triple.get_obj_value() = '"one"^^<http://www.w3.org/2001/XMLSchema#string>')
-            OR (a.triple.get_property() = '<http://www.example.org/people.owl#one>' AND a.triple.get_obj_value() = '"VAL1"^^<http://www.w3.org/2001/XMLSchema#string>'))
-            AND a.triple.get_subject() IN
-            (SELECT distinct b.triple.GET_SUBJECT()
-               from RDF_CS347_PROF_DATA b
-               where b.triple.get_property() = '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>' and b.triple.get_obj_value() = '<http://www.example.org/people.owl#TEST_DELETE>')
-            */
-
-            sqlstmt = "DELETE FROM " + table + " a WHERE ((" + lcolumn + " AND " + rvalue + ") OR (" + rcolumn + " AND " + lvalue + ")) AND " + subject;
-            if (conn.getDebug() == "debug") System.out.println();
-            if (conn.getDebug() == "debug") System.out.println(sqlstmt);
-            if (conn.getDebug() == "debug") System.out.println();
-            try{ conn.executeStatement(sqlstmt);
-            } catch (Exception e) {
-              System.out.println(e);
-              e.printStackTrace();
-           }
-        } else if (statement instanceof Update) {
-            net.sf.jsqlparser.statement.update.Update caststmt = (net.sf.jsqlparser.statement.update.Update) statement;
-            String sqlstmt = "";
-
-            String table = conn.getTable();
-            String subject = "a.triple.get_subject() IN (SELECT distinct b.triple.GET_SUBJECT()  from " + conn.getTable() +
-" b where b.triple.get_obj_value() = '<" + 
-conn.getNamespace() + ">')";
-            System.out.println("In Update\ntable is : " + table);
-            System.out.println("subject is : " + subject);
-/*
-            sqlstmt = "";
-            List cols = caststmt.getColumns();
-            List expr = caststmt.getExpressions();
-            
-            if(network.equals("remote")) {
-              String col_query = "";
-              for(int i = 0; i < cols.size(); i++){
-                if(i+1 == cols.size()){
-                    col_query += cols.get(i) + " = " + expr.get(i);
-                }
-                else {
-                    col_query += cols.get(i) + " = " + expr.get(i) + ", ";
-                }
-              }
-              
-              sqlstmt = "UPDATE " + caststmt.getTable() + " SET " + col_query + " WHERE " + caststmt.getWhere();
-
-              stmt.execute(sqlstmt);
-            }
-            else {
-              String user = "CS345_cjr739";
-              String table = caststmt.getTable() + "_RDF_DATA";
-              String declaration = "SDO_RDF_TRIPLE_S('" + caststmt.getTable() + "_" + user + "', ";
-              String subject = "a.triple.get_subject()";
-
-              // could have multiple where clauses!
-              //String right_exp = right + "";
-              //if(right.toString().charAt(0) == '\'') {
-              //right_exp = right_exp.substring(1, right_exp.length()-1);
-              //}
-
-
-              for(int i = 0; i < cols.size(); i++) {
-                // UDPATE TABLE SET __property__ = __object__  ...
-                String property = website + cols.get(i);
-                String object   = website + expr.get(i);
-                String triple   = declaration + subject + ", '" + property + "', '" + object + "') ";
-
-                // ... WHERE __left__ = __right__
-                BinaryExpression expression = ((BinaryExpression)caststmt.getWhere());
-                Expression left  = expression.getLeftExpression();
-                Expression right = expression.getRightExpression();
-                
-                String where_expr = website + left;
-                String where_val  = website + right;
-                //System.out.println("left: " + where_expr);;
-                //System.out.println("right: " + where_val);
-                
-                String whereclause = "WHERE (a.triple.get_property() = '" + where_expr + "' OR a.triple.get_property() = '<" + where_expr + ">') ";
-                whereclause +=         "AND (a.triple.get_obj_value() = '" + where_val + "' OR a.triple.get_obj_value() = '<" + where_val + ">')";
-
-                sqlstmt = "UPDATE " + table + " a SET a.triple = " + triple + whereclause;
-
-                if (conn.getDebug() == "debug") System.out.println();
-                if (conn.getDebug() == "debug") System.out.println(sqlstmt);
-                if (conn.getDebug() == "debug") System.out.println();
-
-                stmt.execute(sqlstmt);
-              }
-            }
-*/
-        } else if (statement instanceof Drop) {
-           net.sf.jsqlparser.statement.drop.Drop caststmt = (net.sf.jsqlparser.statement.drop.Drop) statement;
-            String sqlstmt = "";
-
-            String table = conn.getTable();
-            String subject = "a.triple.get_subject() IN (SELECT distinct b.triple.GET_SUBJECT()  from " + conn.getTable() +
-" b where b.triple.get_obj_value() = '<" + 
-conn.getNamespace() + caststmt.getName() + ">')";
-   
-            sqlstmt = "DELETE FROM " + table + " a WHERE " + subject;
-            if (conn.getDebug() == "debug") System.out.println();
-            if (conn.getDebug() == "debug") System.out.println(sqlstmt);
-            if (conn.getDebug() == "debug") System.out.println();
-            try{ conn.executeStatement(sqlstmt);
-            } catch (Exception e) {
-              System.out.println(e);
-              e.printStackTrace();
-           }
-        }
-    }
-  
     /* A helper for creating user object instances.
        This is useful for returning instance during joins. This guy expects the columns associated with
        each type to have the types name_ appended to the front of the column name. 
@@ -562,18 +330,6 @@ conn.getNamespace() + caststmt.getName() + ">')";
         return instance;
     }
 
-    //helper to convert lists to arrays
-
-    private PyObject[] listtoarray(ArrayList<PyObject> a) {
-        PyObject[] results = new PyObject[a.size()];
-        int iter = 0;
-        for (PyObject pt : a) {
-            results[iter] = pt;
-            iter++;
-        }
-        return results;
-    }
-    
 // End ReL addition
 
     private static PyTuple fromArrayNoCopy(PyObject[] elements) {

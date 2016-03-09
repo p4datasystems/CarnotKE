@@ -1,0 +1,80 @@
+/* Test python statements:
+global_conn = connectTo 'jdbc:oracle:thin:@rising-sun.microlab.cs.utexas.edu:1521:orcl' 'CS347_prof' 'orcl_prof' 'rdf_mode' 'EVENTS'
+SQL on global_conn """select * from Events e where EventType='AUTHENTICATION_FAILED_EVENT'"""
+
+emp_conn = connectTo 'jdbc:oracle:thin:@rising-sun.microlab.cs.utexas.edu:1521:orcl' 'CS347_prof' 'orcl_prof' 'rdf_mode' 'ReLEMP'
+SQL on emp_conn """select e.EMPNO, e.ENAME from EMP e"""
+SQL on emp_conn """select * from EMP"""
+SQL on emp_conn """select * from EMP e where e.EMPNO = 7934"""
+SQL on emp_conn """select * from emp e join dept d on (e.deptno = d.deptno) where e.EMPNO = 7934"""
+*/
+		
+/* Here's an example of this process:
+		
+>>> SQL on global_conn """select * from EVENTS where EventType='AUTHENTICATION_FAILED_EVENT'"""
+ReLstmt is: select * from EVENTS where EventType='AUTHENTICATION_FAILED_EVENT'
+jsqlstmt is: SELECT * FROM EVENTS WHERE EventType = 'AUTHENTICATION_FAILED_EVENT'
+SQL statement: |SELECT * FROM EVENTS WHERE EventType = 'AUTHENTICATION_FAILED_EVENT'|
+In executeRdfSelect, selectStmt is: select distinct col from table(sem_match(
+'select * where {
+	?col rdfs:domain :EVENTS .
+	?s1 ?col ?v .
+}' ,
+SEM_MODELS('EVENTS_CS347_PROF'), null,
+SEM_ALIASES( SEM_ALIAS('', 'http://www.example.org/people.owl#')), null) )
+Column name EventType is ambiguously defined, using EVENTS.eventType
+
+visitSelect_buildSPARQL Structures necessary to build the SPARQL statement:
+	 - plainSelect: SELECT * FROM EVENTS WHERE EventType = 'AUTHENTICATION_FAILED_EVENT'
+	 - tables: [EVENTS]
+	 - tablesAliases: {EVENTS=EVENTS}
+	 - tables2alias: {EVENTS=EVENTS}
+	 - tableSymbols: {EVENTS=s1}
+	 - columnNames: [EVENTS.userID, EVENTS.eventDate, EVENTS.sentDelayedToLocalSelf, EVENTS.requestInfo_platform, EVENTS.sentToLocalSelf, EVENTS.groupName, EVENTS.inviterID, EVENTS.DBUNIQUEID, EVENTS.requestInfo_userAgent, EVENTS.sizeInBytes, EVENTS.creationDate, EVENTS.serialNumber, EVENTS.extension, EVENTS.IP, EVENTS.displayName, EVENTS.sentToRemoteSelf, EVENTS.guest, EVENTS.osInfo, EVENTS.sentDelayedToLocal, EVENTS.ID, EVENTS.errorReasonCode, EVENTS.fromGroupID, EVENTS.who, EVENTS.groupID, EVENTS.source, EVENTS.requestInfo_serialNumber, EVENTS.email, EVENTS.requestInfo_IP, EVENTS.requestInfo_pairingToken, EVENTS.eventBody, EVENTS.port, EVENTS.version, EVENTS.reason, EVENTS.fromUserAccountID, EVENTS.sentToRemote, EVENTS.loginRefuseRule, EVENTS.authenticationID, EVENTS.userAccountID, EVENTS.devicePairingID, EVENTS.sentToLocal, EVENTS.inviterUserID, EVENTS.productID, EVENTS.enabled, EVENTS.language, EVENTS.usageType, EVENTS.eventType, EVENTS.domain, EVENTS.eventID, EVENTS.toUserAccountID, EVENTS.invitationToken, EVENTS.requestInfo_version, EVENTS.errorCode, EVENTS.TCAcceptanceDate, EVENTS.requestInfo_userLogin, EVENTS.adminAccountID, EVENTS.platform, EVENTS.toGroupID]
+	 - columnsAs: {*=*}
+	 - joinColumns: []
+	 - filters: [	?s1 :eventType ?f1 .
+	FILTER(?f1 = "AUTHENTICATION_FAILED_EVENT") ]
+	 - orderby: []
+In executeRdfSelect, selectStmt is: select distinct col from table(sem_match(
+'select * where {
+	?col rdfs:domain :EVENTS .
+	?s1 ?col ?v .
+	?s1 :eventType ?f1 .
+	FILTER(?f1 = "AUTHENTICATION_FAILED_EVENT") }' ,
+SEM_MODELS('EVENTS_CS347_PROF'), null,
+SEM_ALIASES( SEM_ALIAS('', 'http://www.example.org/people.owl#')), null) )
+	 - columnsAs: {EVENTS.eventDate=eventDate, EVENTS.requestInfo_platform=requestInfo_platform, EVENTS.DBUNIQUEID=DBUNIQUEID, EVENTS.requestInfo_userAgent=requestInfo_userAgent, EVENTS.guest=guest, EVENTS.ID=ID, EVENTS.errorReasonCode=errorReasonCode, EVENTS.groupID=groupID, EVENTS.source=source, EVENTS.requestInfo_serialNumber=requestInfo_serialNumber, EVENTS.requestInfo_IP=requestInfo_IP, EVENTS.requestInfo_pairingToken=requestInfo_pairingToken, EVENTS.eventBody=eventBody, EVENTS.version=version, EVENTS.userAccountID=userAccountID, EVENTS.eventType=eventType, EVENTS.domain=domain, EVENTS.eventID=eventID, EVENTS.requestInfo_version=requestInfo_version, EVENTS.errorCode=errorCode, EVENTS.requestInfo_userLogin=requestInfo_userLogin}
+RDF conversion of select:
+ |SELECT v1 eventDate, v2 requestInfo_platform, v3 DBUNIQUEID, v4 requestInfo_userAgent, v5 guest, v6 ID, v7 errorReasonCode, v8 groupID, v9 source, v10 requestInfo_serialNumber, v11 requestInfo_IP, v12 requestInfo_pairingToken, v13 eventBody, v14 version, v15 userAccountID, v16 eventType, v17 domain, v18 eventID, v19 requestInfo_version, v20 errorCode, v21 requestInfo_userLogin
+ FROM TABLE(SEM_MATCH('SELECT * WHERE {
+	?s1 rdf:type :EVENTS .
+	OPTIONAL { ?s1 :eventDate ?v1 }
+	OPTIONAL { ?s1 :requestInfo_platform ?v2 }
+	OPTIONAL { ?s1 :DBUNIQUEID ?v3 }
+	OPTIONAL { ?s1 :requestInfo_userAgent ?v4 }
+	OPTIONAL { ?s1 :guest ?v5 }
+	OPTIONAL { ?s1 :ID ?v6 }
+	OPTIONAL { ?s1 :errorReasonCode ?v7 }
+	OPTIONAL { ?s1 :groupID ?v8 }
+	OPTIONAL { ?s1 :source ?v9 }
+	OPTIONAL { ?s1 :requestInfo_serialNumber ?v10 }
+	OPTIONAL { ?s1 :requestInfo_IP ?v11 }
+	OPTIONAL { ?s1 :requestInfo_pairingToken ?v12 }
+	OPTIONAL { ?s1 :eventBody ?v13 }
+	OPTIONAL { ?s1 :version ?v14 }
+	OPTIONAL { ?s1 :userAccountID ?v15 }
+	OPTIONAL { ?s1 :eventType ?v16 }
+	OPTIONAL { ?s1 :domain ?v17 }
+	OPTIONAL { ?s1 :eventID ?v18 }
+	OPTIONAL { ?s1 :requestInfo_version ?v19 }
+	OPTIONAL { ?s1 :errorCode ?v20 }
+	OPTIONAL { ?s1 :requestInfo_userLogin ?v21 }
+	?s1 :eventType ?f1 .
+	FILTER(?f1 = "AUTHENTICATION_FAILED_EVENT") }' ,
+SEM_MODELS('EVENTS_CS347_PROF'), null,
+SEM_ALIASES( SEM_ALIAS('', 'http://www.example.org/people.owl#')), null) )| END
+(('EVENTDATE', 'REQUESTINFO_PLATFORM', 'DBUNIQUEID', 'REQUESTINFO_USERAGENT', 'GUEST', 'ID', 'ERRORREASONCODE', 'GROUPID', 'SOURCE', 'REQUESTINFO_SERIALNUMBER', 'REQUESTINFO_IP', 'REQUESTINFO_PAIRINGTOKEN', 'EVENTBODY', 'VERSION', 'USERACCOUNTID', 'EVENTTYPE', 'DOMAIN', 'EVENTID', 'REQUESTINFO_VERSION', 'ERRORCODE', 'REQUESTINFO_USERLOGIN'), ('java.lang.NullPointerException',))
+>>> 
+
+*/

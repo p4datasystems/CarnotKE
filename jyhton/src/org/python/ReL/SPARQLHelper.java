@@ -1,17 +1,11 @@
 package org.python.ReL;
 
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+import org.python.core.PyObject;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.python.core.PyObject;
-import org.python.ReL.SPARQLDoer;
-import org.python.ReL.PyRelConnection;
 
 /**
  * SPARQLHelper is a set of utility functions that are useful
@@ -27,7 +21,7 @@ public class SPARQLHelper {
      * Note:  The connection should not be closed within this class, as it will be closed
      * by its parent (invoker).
      *
-     * @param connection
+     * @param conn
      */
     public SPARQLHelper(PyRelConnection conn) {
         this.connection = conn; 
