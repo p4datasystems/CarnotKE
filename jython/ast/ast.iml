@@ -2,7 +2,7 @@
 <module type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="Python" name="Python">
-      <configuration sdkName="Python 3.5.0 (C:\Users\nelma\AppData\Local\Programs\Python\Python35-32\python.exe)" />
+      <configuration sdkName="" />
     </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
@@ -15,6 +15,6 @@
     <orderEntry type="library" name="extlibs" level="project" />
     <orderEntry type="library" name="javalib" level="project" />
     <orderEntry type="library" name="extlibs.orig" level="project" />
-    <orderEntry type="library" name="Python 3.5.0 (C:\Users\nelma\AppData\Local\Programs\Python\Python35-32\python.exe) interpreter library" level="application" />
+    <orderEntry type="library" name="exposed" level="project" />
   </component>
 </module>

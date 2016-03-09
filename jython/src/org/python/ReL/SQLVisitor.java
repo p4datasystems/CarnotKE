@@ -130,7 +130,6 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 		String command = "";
     }
 
-    //public void doInsert(Insert stmt) throws SQLException { // Old method signature
     public void doInsert(Insert stmt, String getConnectionType) throws SQLException {//New method signature
         if (stmt.getColumns() != null) {
         	this.connectionType = getConnectionType;
@@ -205,14 +204,14 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 	    String SPARQL = "";
 	    this.connectionType = getConnectionType;
 		
-		if (connection.getDebug() == "nodebug") System.out.println("SQL statement: |" + select + "|");
+		if (connection.getDebug() == "debug") System.out.println("SQL statement: |" + select + "|");
 
 		//Setting depth for subqueries, asumming subqueries on the where clause
 		select.getSelectBody().accept(this);
 
 		SPARQL += subq.pop() + endOfStmt;
 		
-		if (connection.getDebug() == "nodebug") System.out.println("RDF conversion of select:\n |" + SPARQL + "| END");
+		if (connection.getDebug() == "debug") System.out.println("RDF conversion of select:\n |" + SPARQL + "| END");
 		return SPARQL;
 	}
 	/* Current subquery */
@@ -654,7 +653,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 			having.add(str + ")");
 		}
 
-		if (connection.getDebug() == "nodebug") {
+		if (connection.getDebug() == "debug") {
 			System.out.println("\nvisitSelect_buildSPARQL Structures necessary to build the SPARQL statement:");
 			System.out.println("\t - plainSelect: " + plainSelect);
 			System.out.println("\t - RDFTableNames: " + RDFTableNames);
@@ -715,7 +714,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 			    } 
 			  }      
 		   }
-		   if (connection.getDebug() == "nodebug") System.out.println("\t - columnsAs: " + columnsAs + "\naggrColumnsAs: " + aggrColumnsAs);
+		   if (connection.getDebug() == "debug") System.out.println("\t - columnsAs: " + columnsAs + "\naggrColumnsAs: " + aggrColumnsAs);
 		}
         int aggrPos = 0;
 
@@ -916,10 +915,6 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 	}
 
 	private String getColumns(LinkedHashMap<String,String> columnsAs){
-        //creating columns for ORACLE SQL from regular SQL statement,
-        //current part to create, e.g. SELECT E.A AS CS345, G.B CS370 FROM D AS E, F AS G ...
-        //will result in SELECT A_D CS345, B_F CS370 FROM TABLE( SEM_MATCH('SELECT * WHERE {
-        //note aliases mapping for table names where done while "visiting"
         
         String s = "";
             
@@ -937,11 +932,11 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
         
         int var = 1;
         for (String entry : columnsAs.keySet()) {
-            if (connection.getDebug() == "nodebug") System.out.println("SQLVisitor-getColumns, entry: " + entry);
-            if (connection.getDebug() == "nodebug") System.out.println("SQLVisitor-getColumns, colname(entry): " + colname(entry));
-            if (connection.getDebug() == "nodebug") System.out.println("SQLVisitor-getColumns, tablename(entry): " + tablename(entry));
-            if (connection.getDebug() == "nodebug") System.out.println("SQLVisitor-getColumns, columnsAs.get(entry): " + columnsAs.get(entry));
-            if (connection.getDebug() == "nodebug") System.out.println("SQLVisitor-getColumns, colname(columnsAs.get(entry)): " + colname(columnsAs.get(entry)));
+            if (connection.getDebug() == "debug") System.out.println("SQLVisitor-getColumns, entry: " + entry);
+            if (connection.getDebug() == "debug") System.out.println("SQLVisitor-getColumns, colname(entry): " + colname(entry));
+            if (connection.getDebug() == "debug") System.out.println("SQLVisitor-getColumns, tablename(entry): " + tablename(entry));
+            if (connection.getDebug() == "debug") System.out.println("SQLVisitor-getColumns, columnsAs.get(entry): " + columnsAs.get(entry));
+            if (connection.getDebug() == "debug") System.out.println("SQLVisitor-getColumns, colname(columnsAs.get(entry)): " + colname(columnsAs.get(entry)));
             // So if we are returning instances. We need a way to determine which instance the data belongs too.
             // To do this i append the tablename_ as part of the column's "as" statement, so the columns returned will start
             // with the name of the instance for which they belong too. 
@@ -1085,8 +1080,8 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 	}
 
 	private void printList(String field, List<String> list){ 
-		if (connection.getDebug() == "nodebug") System.out.println(field);
-		if (connection.getDebug() == "nodebug") for(Iterator fI=list.iterator(); fI.hasNext();) {
+		if (connection.getDebug() == "debug") System.out.println(field);
+		if (connection.getDebug() == "debug") for(Iterator fI=list.iterator(); fI.hasNext();) {
 			System.out.println("\t"+fI.next());
 		}
 	}

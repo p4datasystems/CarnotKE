@@ -41,3 +41,22 @@
 2016-03-08 08:03:03.566 UTC INFO [sn1] Thread returning for service rg1-rn1
 2016-03-08 08:03:03.570 UTC INFO [sn1] Topology acquired from RN: rg1-rn1 Topo seq#: 14
 2016-03-08 08:03:24.811 UTC INFO [sn1] Thread returning for service admin1
+2016-03-08 09:39:08.020 UTC INFO [sn1] Starting StorageNodeAgent for kvstore
+2016-03-08 09:39:08.023 UTC INFO [sn1] Creating a Registry on port DESKTOP-BS7Q9BS:5000 server socket factory:<ClearServerSocketFactory name=registry backlog=1024 port range=0,0>
+2016-03-08 09:39:08.116 UTC INFO [sn1] Using mgmt class oracle.kv.impl.mgmt.NoOpAgent
+2016-03-08 09:41:02.116 UTC INFO [sn1] Starting StorageNodeAgent for kvstore
+2016-03-08 09:41:02.123 UTC INFO [sn1] Creating a Registry on port DESKTOP-BS7Q9BS:5000 server socket factory:<ClearServerSocketFactory name=registry backlog=1024 port range=0,0>
+2016-03-08 09:41:02.416 UTC INFO [sn1] Using mgmt class oracle.kv.impl.mgmt.NoOpAgent
+2016-03-08 09:41:23.120 UTC INFO [sn1] Starting StorageNodeAgent for kvstore
+2016-03-08 09:41:23.123 UTC INFO [sn1] Creating a Registry on port DESKTOP-BS7Q9BS:5000 server socket factory:<ClearServerSocketFactory name=registry backlog=1024 port range=0,0>
+2016-03-08 09:41:23.176 UTC INFO [sn1] Using mgmt class oracle.kv.impl.mgmt.NoOpAgent
+2016-03-08 09:41:58.489 UTC INFO [sn1] Starting StorageNodeAgent for kvstore
+2016-03-08 09:41:58.497 UTC INFO [sn1] Creating a Registry on port DESKTOP-BS7Q9BS:5000 server socket factory:<ClearServerSocketFactory name=registry backlog=1024 port range=0,0>
+2016-03-08 09:41:59.050 UTC INFO [sn1] Using mgmt class oracle.kv.impl.mgmt.NoOpAgent
+2016-03-08 21:40:55.140 UTC INFO [sn1] Starting StorageNodeAgent for kvstore
+2016-03-08 21:40:55.143 UTC INFO [sn1] Creating a Registry on port DESKTOP-BS7Q9BS:5000 server socket factory:<ClearServerSocketFactory name=registry backlog=1024 port range=0,0>
+2016-03-08 22:11:09.062 UTC INFO [sn1] Starting StorageNodeAgent for kvstore
+2016-03-08 22:11:09.064 UTC INFO [sn1] Creating a Registry on port DESKTOP-BS7Q9BS:5000 server socket factory:<ClearServerSocketFactory name=registry backlog=1024 port range=0,0>
+2016-03-08 23:37:07.689 UTC INFO [sn1] Starting StorageNodeAgent for kvstore
+2016-03-08 23:37:07.694 UTC INFO [sn1] Creating a Registry on port DESKTOP-BS7Q9BS:5000 server socket factory:<ClearServerSocketFactory name=registry backlog=1024 port range=0,0>
+2016-03-08 23:37:07.824 UTC INFO [sn1] Using mgmt class oracle.kv.impl.mgmt.NoOpAgent

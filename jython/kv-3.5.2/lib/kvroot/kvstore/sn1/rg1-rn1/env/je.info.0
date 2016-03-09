@@ -1,180 +1,67 @@
-2016-02-28 06:46:45.534 UTC INFO [rg1-rn1] Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5006
-2016-02-28 06:46:45.535 UTC INFO [rg1-rn1] Current group size: 0
-2016-02-28 06:46:45.539 UTC INFO [rg1-rn1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
-2016-02-28 06:46:45.540 UTC INFO [rg1-rn1] New node rg1-rn1(-1) unknown to rep group
-2016-02-28 06:46:45.545 UTC INFO [rg1-rn1] Master changed to rg1-rn1
-2016-02-28 06:46:45.547 UTC INFO [rg1-rn1] Nascent group. rg1-rn1 is master by virtue of being the first node.
-2016-02-28 06:46:45.561 UTC INFO [rg1-rn1] Successfully added node:rg1-rn1(1) HostPort = DESKTOP-BS7Q9BS: 5006 [ELECTABLE]
-2016-02-28 06:46:45.562 UTC INFO [rg1-rn1] Refreshed 0 monitors.
-2016-02-28 06:46:45.562 UTC INFO [rg1-rn1] Node rg1-rn1 started
-2016-02-28 06:46:45.563 UTC INFO [rg1-rn1] Feeder manager accepting requests.
-2016-02-28 06:46:45.563 UTC INFO [rg1-rn1] Joining group as master
-2016-02-28 06:46:45.564 UTC INFO [rg1-rn1] Refreshed 0 monitors.
-2016-02-28 06:50:37.481 UTC INFO [rg1-rn1] Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5006
-2016-02-28 06:50:37.481 UTC INFO [rg1-rn1] Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5006
-2016-02-28 06:50:37.482 UTC INFO [rg1-rn1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
-2016-02-28 06:50:37.482 UTC INFO [rg1-rn1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
-2016-02-28 06:50:37.536 UTC INFO [rg1-rn1] Current group size: 1
-2016-02-28 06:50:37.536 UTC INFO [rg1-rn1] Current group size: 1
-2016-02-28 06:50:37.537 UTC INFO [rg1-rn1] Existing node rg1-rn1 querying for a current master.
-2016-02-28 06:50:37.537 UTC INFO [rg1-rn1] Existing node rg1-rn1 querying for a current master.
-2016-02-28 06:50:37.554 UTC INFO [rg1-rn1] Node rg1-rn1 started
-2016-02-28 06:50:37.554 UTC INFO [rg1-rn1] Node rg1-rn1 started
-2016-02-28 06:50:37.555 UTC INFO [rg1-rn1] Election initiated; election #1
-2016-02-28 06:50:37.555 UTC INFO [rg1-rn1] Election initiated; election #1
-2016-02-28 06:50:37.557 UTC INFO [rg1-rn1] Started election thread Sun Feb 28 00:50:37 CST 2016
-2016-02-28 06:50:37.557 UTC INFO [rg1-rn1] Started election thread Sun Feb 28 00:50:37 CST 2016
-2016-02-28 06:50:39.579 UTC INFO [rg1-rn1] Winning proposal: Proposal(0000015326a4ac46:b65fef56b970b046f30b78050bc7a2e2:00000002) Value: Value:DESKTOP-BS7Q9BS$$$5006$$$rg1-rn1$$$1
-2016-02-28 06:50:39.579 UTC INFO [rg1-rn1] Winning proposal: Proposal(0000015326a4ac46:b65fef56b970b046f30b78050bc7a2e2:00000002) Value: Value:DESKTOP-BS7Q9BS$$$5006$$$rg1-rn1$$$1
-2016-02-28 06:50:39.586 UTC INFO [rg1-rn1] Master changed to rg1-rn1
-2016-02-28 06:50:39.586 UTC INFO [rg1-rn1] Master changed to rg1-rn1
-2016-02-28 06:50:39.588 UTC INFO [rg1-rn1] Election finished. Elapsed time: 2032ms
-2016-02-28 06:50:39.588 UTC INFO [rg1-rn1] Election finished. Elapsed time: 2032ms
-2016-02-28 06:50:39.588 UTC INFO [rg1-rn1] Election thread exited. Group master: rg1-rn1(1)
-2016-02-28 06:50:39.588 UTC INFO [rg1-rn1] Election thread exited. Group master: rg1-rn1(1)
-2016-02-28 06:50:39.590 UTC INFO [rg1-rn1] Feeder manager accepting requests.
-2016-02-28 06:50:39.590 UTC INFO [rg1-rn1] Feeder manager accepting requests.
-2016-02-28 06:50:39.609 UTC INFO [rg1-rn1] Joining group as master
-2016-02-28 06:50:39.609 UTC INFO [rg1-rn1] Joining group as master
-2016-02-28 06:50:39.611 UTC INFO [rg1-rn1] Refreshed 0 monitors.
-2016-02-28 06:50:39.611 UTC INFO [rg1-rn1] Refreshed 0 monitors.
-2016-02-28 23:37:24.090 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 192.168.2.8
-2016-02-28 23:37:24.090 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 192.168.2.8
-2016-02-28 23:37:24.802 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.2.8,localport=5006]
-2016-02-28 23:37:24.802 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.2.8,localport=5006]
-2016-02-28 23:37:54.812 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.2.8 to 192.168.56.1
-2016-02-28 23:37:54.812 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.2.8 to 192.168.56.1
-2016-02-28 23:37:54.813 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-02-28 23:37:54.813 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-02-29 22:06:21.173 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-02-29 22:06:21.173 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-02-29 22:06:21.460 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-02-29 22:06:21.460 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-02-29 22:06:51.472 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-02-29 22:06:51.472 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-02-29 22:06:51.473 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-02-29 22:06:51.473 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 03:12:23.550 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 192.168.2.8
-2016-03-01 03:12:23.550 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 192.168.2.8
-2016-03-01 03:12:23.552 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.2.8,localport=5006]
-2016-03-01 03:12:23.552 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.2.8,localport=5006]
-2016-03-01 03:12:53.564 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.2.8 to 192.168.56.1
-2016-03-01 03:12:53.564 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.2.8 to 192.168.56.1
-2016-03-01 03:12:53.565 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 03:12:53.565 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 06:16:18.946 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 192.168.2.8
-2016-03-01 06:16:18.946 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 192.168.2.8
-2016-03-01 06:16:18.947 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.2.8,localport=5006]
-2016-03-01 06:16:18.947 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.2.8,localport=5006]
-2016-03-01 06:16:48.957 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.2.8 to 192.168.56.1
-2016-03-01 06:16:48.957 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.2.8 to 192.168.56.1
-2016-03-01 06:16:48.958 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 06:16:48.958 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 06:18:49.858 UTC INFO [rg1-rn1] Current group size: 1
-2016-03-01 06:18:49.858 UTC INFO [rg1-rn1] Existing node rg1-rn1 querying for a current master.
-2016-03-01 06:18:49.866 UTC INFO [rg1-rn1] Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5006
-2016-03-01 06:18:49.866 UTC INFO [rg1-rn1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
-2016-03-01 06:18:49.884 UTC INFO [rg1-rn1] Node rg1-rn1 started
-2016-03-01 06:18:49.884 UTC INFO [rg1-rn1] Election initiated; election #1
-2016-03-01 06:18:49.885 UTC INFO [rg1-rn1] Started election thread Tue Mar 01 00:18:49 CST 2016
-2016-03-01 06:18:51.964 UTC INFO [rg1-rn1] Winning proposal: Proposal(0000015330d4489f:1abe558f60a9ad191b414aaf5448a05d:00000002) Value: Value:DESKTOP-BS7Q9BS$$$5006$$$rg1-rn1$$$1
-2016-03-01 06:18:51.967 UTC INFO [rg1-rn1] Master changed to rg1-rn1
-2016-03-01 06:18:51.967 UTC INFO [rg1-rn1] Election finished. Elapsed time: 2083ms
-2016-03-01 06:18:51.967 UTC INFO [rg1-rn1] Election thread exited. Group master: rg1-rn1(1)
-2016-03-01 06:18:51.968 UTC INFO [rg1-rn1] Feeder manager accepting requests.
-2016-03-01 06:18:51.969 UTC INFO [rg1-rn1] Joining group as master
-2016-03-01 06:18:51.970 UTC INFO [rg1-rn1] Refreshed 0 monitors.
-2016-03-01 20:43:53.441 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 20:43:53.442 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 20:44:23.457 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 20:44:23.458 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 20:48:59.910 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 192.168.2.8
-2016-03-01 20:48:59.911 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.2.8,localport=5006]
-2016-03-01 20:49:29.927 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.2.8 to 192.168.56.1
-2016-03-01 20:49:29.928 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 21:02:37.657 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 21:02:37.657 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 21:03:07.671 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 21:03:07.671 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 21:06:09.995 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 21:06:09.997 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 21:06:40.012 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 21:06:40.013 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 21:16:13.347 UTC INFO [rg1-rn1] Current group size: 1
-2016-03-01 21:16:13.347 UTC INFO [rg1-rn1] Existing node rg1-rn1 querying for a current master.
-2016-03-01 21:16:13.382 UTC INFO [rg1-rn1] Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5006
-2016-03-01 21:16:13.383 UTC INFO [rg1-rn1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
-2016-03-01 21:16:13.410 UTC INFO [rg1-rn1] Node rg1-rn1 started
-2016-03-01 21:16:13.412 UTC INFO [rg1-rn1] Election initiated; election #1
-2016-03-01 21:16:13.415 UTC INFO [rg1-rn1] Started election thread Tue Mar 01 15:16:13 CST 2016
-2016-03-01 21:16:15.420 UTC INFO [rg1-rn1] Winning proposal: Proposal(000001533409deb8:79594bcc12f78081560304e734d511fa:00000002) Value: Value:DESKTOP-BS7Q9BS$$$5006$$$rg1-rn1$$$1
-2016-03-01 21:16:15.422 UTC INFO [rg1-rn1] Master changed to rg1-rn1
-2016-03-01 21:16:15.422 UTC INFO [rg1-rn1] Election finished. Elapsed time: 2010ms
-2016-03-01 21:16:15.423 UTC INFO [rg1-rn1] Feeder manager accepting requests.
-2016-03-01 21:16:15.423 UTC INFO [rg1-rn1] Election thread exited. Group master: rg1-rn1(1)
-2016-03-01 21:16:15.425 UTC INFO [rg1-rn1] Joining group as master
-2016-03-01 21:16:15.426 UTC INFO [rg1-rn1] Refreshed 0 monitors.
-2016-03-01 22:29:31.386 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 10.147.221.180
-2016-03-01 22:29:31.387 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/10.147.221.180,localport=5006]
-2016-03-01 22:30:01.424 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 10.147.221.180 to 192.168.56.1
-2016-03-01 22:30:01.424 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 22:45:05.330 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 10.147.221.180
-2016-03-01 22:45:05.331 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/10.147.221.180,localport=5006]
-2016-03-01 22:47:29.223 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 10.147.221.180 to 127.0.0.1
-2016-03-01 22:47:29.223 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 22:47:59.301 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 22:47:59.302 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 22:59:02.503 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 22:59:02.503 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 23:06:11.877 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 23:06:11.878 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 23:08:47.099 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 23:08:47.100 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 23:09:17.240 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 23:09:17.241 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 23:12:14.531 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 169.254.106.102
-2016-03-01 23:12:14.531 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/169.254.106.102,localport=5006]
-2016-03-01 23:12:44.669 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 169.254.106.102 to 192.168.56.1
-2016-03-01 23:12:44.669 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 23:19:57.613 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 23:19:57.614 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 23:20:27.706 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 23:20:27.706 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 23:31:26.620 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 23:31:26.620 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 23:31:56.814 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 23:31:56.814 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 23:34:26.213 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 23:34:26.213 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 23:34:56.337 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 23:34:56.338 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 23:36:59.446 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 23:36:59.446 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 23:37:29.631 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 23:37:29.631 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 23:53:20.735 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 23:53:20.735 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 23:53:50.929 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 23:53:50.929 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 23:59:02.649 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 23:59:02.650 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 23:59:32.770 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 23:59:32.770 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-02 00:01:33.198 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-02 00:01:33.199 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-02 00:04:00.567 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-02 00:04:00.568 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-07 23:03:01.645 UTC INFO [rg1-rn1] Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5006
-2016-03-07 23:03:01.659 UTC INFO [rg1-rn1] Current group size: 1
-2016-03-07 23:03:01.661 UTC INFO [rg1-rn1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
-2016-03-07 23:03:01.664 UTC INFO [rg1-rn1] Existing node rg1-rn1 querying for a current master.
-2016-03-07 23:03:01.689 UTC INFO [rg1-rn1] Node rg1-rn1 started
-2016-03-07 23:03:01.692 UTC INFO [rg1-rn1] Election initiated; election #1
-2016-03-07 23:03:01.698 UTC INFO [rg1-rn1] Started election thread Mon Mar 07 17:03:01 CST 2016
-2016-03-07 23:03:03.708 UTC INFO [rg1-rn1] Winning proposal: Proposal(000001535351cf15:8014f3a2cf73f09846991a9e4fe27a72:00000002) Value: Value:DESKTOP-BS7Q9BS$$$5006$$$rg1-rn1$$$1
-2016-03-07 23:03:03.710 UTC INFO [rg1-rn1] Master changed to rg1-rn1
-2016-03-07 23:03:03.711 UTC INFO [rg1-rn1] Election finished. Elapsed time: 2019ms
-2016-03-07 23:03:03.711 UTC INFO [rg1-rn1] Feeder manager accepting requests.
-2016-03-07 23:03:03.711 UTC INFO [rg1-rn1] Election thread exited. Group master: rg1-rn1(1)
-2016-03-07 23:03:03.714 UTC INFO [rg1-rn1] Joining group as master
-2016-03-07 23:03:03.715 UTC INFO [rg1-rn1] Refreshed 0 monitors.
+2016-03-08 09:44:12.004 UTC INFO [rg1-rn1] Started ServiceDispatcher. HostPort=Nelmas-MacBook-Pro.local:5006
+2016-03-08 09:44:12.005 UTC INFO [rg1-rn1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-03-08 09:44:12.010 UTC INFO [rg1-rn1] Current group size: 0
+2016-03-08 09:44:12.012 UTC INFO [rg1-rn1] New node rg1-rn1(-1) unknown to rep group
+2016-03-08 09:44:12.012 UTC INFO [rg1-rn1] Master changed to rg1-rn1
+2016-03-08 09:44:12.013 UTC INFO [rg1-rn1] Nascent group. rg1-rn1 is master by virtue of being the first node.
+2016-03-08 09:44:12.025 UTC INFO [rg1-rn1] Successfully added node:rg1-rn1(1) HostPort = Nelmas-MacBook-Pro.local: 5006 [ELECTABLE]
+2016-03-08 09:44:12.026 UTC INFO [rg1-rn1] Refreshed 0 monitors.
+2016-03-08 09:44:12.027 UTC INFO [rg1-rn1] Node rg1-rn1 started
+2016-03-08 09:44:12.028 UTC INFO [rg1-rn1] Feeder manager accepting requests.
+2016-03-08 09:44:12.028 UTC INFO [rg1-rn1] Joining group as master
+2016-03-08 09:44:12.029 UTC INFO [rg1-rn1] Refreshed 0 monitors.
+2016-03-08 21:05:11.342 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 192.168.2.2 to 127.0.0.1
+2016-03-08 21:05:11.347 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
+2016-03-08 21:05:46.693 UTC INFO [rg1-rn1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local: unknown error
+2016-03-08 21:05:47.699 UTC INFO [rg1-rn1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:48.709 UTC INFO [rg1-rn1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:49.710 UTC INFO [rg1-rn1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:50.711 UTC INFO [rg1-rn1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:51.721 UTC INFO [rg1-rn1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:52.722 UTC INFO [rg1-rn1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:53.729 UTC INFO [rg1-rn1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:54.739 UTC INFO [rg1-rn1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:55.747 UTC INFO [rg1-rn1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:01.873 UTC INFO [rg1-rn1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local: unknown error
+2016-03-08 21:06:02.881 UTC INFO [rg1-rn1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:03.886 UTC INFO [rg1-rn1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:04.892 UTC INFO [rg1-rn1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:05.902 UTC INFO [rg1-rn1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:06.902 UTC INFO [rg1-rn1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:07.910 UTC INFO [rg1-rn1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:10.026 UTC INFO [rg1-rn1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:11.029 UTC INFO [rg1-rn1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:12.035 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 127.0.0.1 to 10.147.138.130
+2016-03-08 21:06:12.035 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/10.147.138.130,localport=5006]
+2016-03-08 21:07:33.783 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 10.147.138.130 to 127.0.0.1
+2016-03-08 21:07:33.788 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
+2016-03-08 21:09:19.845 UTC INFO [rg1-rn1] ServiceDispatcher IP changed, from 127.0.0.1 to 10.147.138.130
+2016-03-08 21:09:19.847 UTC INFO [rg1-rn1] Rebind ServiceDispatcher socket: ServerSocket[addr=/10.147.138.130,localport=5006]
+2016-03-08 21:42:01.873 UTC INFO [rg1-rn1] Started ServiceDispatcher. HostPort=Nelmas-MacBook-Pro.local:5006
+2016-03-08 21:42:01.874 UTC INFO [rg1-rn1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-03-08 21:42:01.878 UTC INFO [rg1-rn1] Current group size: 1
+2016-03-08 21:42:01.878 UTC INFO [rg1-rn1] Existing node rg1-rn1 querying for a current master.
+2016-03-08 21:42:01.881 UTC INFO [rg1-rn1] Node rg1-rn1 started
+2016-03-08 21:42:01.881 UTC INFO [rg1-rn1] Election initiated; election #1
+2016-03-08 21:42:01.882 UTC INFO [rg1-rn1] Started election thread Tue Mar 08 15:42:01 CST 2016
+2016-03-08 21:42:03.900 UTC INFO [rg1-rn1] Winning proposal: Proposal(00000153582e036b:6270dad1c38dc5f13fa962cbe5cb86f7:00000002) Value: Value:Nelmas-MacBook-Pro.local$$$5006$$$rg1-rn1$$$1
+2016-03-08 21:42:03.905 UTC INFO [rg1-rn1] Master changed to rg1-rn1
+2016-03-08 21:42:03.905 UTC INFO [rg1-rn1] Election finished. Elapsed time: 2024ms
+2016-03-08 21:42:03.906 UTC INFO [rg1-rn1] Feeder manager accepting requests.
+2016-03-08 21:42:03.909 UTC INFO [rg1-rn1] Joining group as master
+2016-03-08 21:42:03.910 UTC INFO [rg1-rn1] Election thread exited. Group master: rg1-rn1(1)
+2016-03-08 21:42:03.910 UTC INFO [rg1-rn1] Refreshed 0 monitors.
+2016-03-08 23:37:30.676 UTC INFO [rg1-rn1] Started ServiceDispatcher. HostPort=Nelmas-MacBook-Pro.local:5006
+2016-03-08 23:37:30.677 UTC INFO [rg1-rn1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-03-08 23:37:30.692 UTC INFO [rg1-rn1] Current group size: 1
+2016-03-08 23:37:30.692 UTC INFO [rg1-rn1] Existing node rg1-rn1 querying for a current master.
+2016-03-08 23:37:30.700 UTC INFO [rg1-rn1] Node rg1-rn1 started
+2016-03-08 23:37:30.701 UTC INFO [rg1-rn1] Election initiated; election #1
+2016-03-08 23:37:30.702 UTC INFO [rg1-rn1] Started election thread Tue Mar 08 17:37:30 CST 2016
+2016-03-08 23:37:32.721 UTC INFO [rg1-rn1] Winning proposal: Proposal(000001535897bd1f:1908b0a63491d467d307c6b773ae07dd:00000002) Value: Value:Nelmas-MacBook-Pro.local$$$5006$$$rg1-rn1$$$1
+2016-03-08 23:37:32.729 UTC INFO [rg1-rn1] Master changed to rg1-rn1
+2016-03-08 23:37:32.730 UTC INFO [rg1-rn1] Election finished. Elapsed time: 2029ms
+2016-03-08 23:37:32.730 UTC INFO [rg1-rn1] Feeder manager accepting requests.
+2016-03-08 23:37:32.732 UTC INFO [rg1-rn1] Joining group as master
+2016-03-08 23:37:32.733 UTC INFO [rg1-rn1] Refreshed 0 monitors.
+2016-03-08 23:37:32.737 UTC INFO [rg1-rn1] Election thread exited. Group master: rg1-rn1(1)

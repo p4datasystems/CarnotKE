@@ -12,7 +12,7 @@
     <property name="snLoginSOReadTimeout" value="5 SECONDS" type="DURATION"/>
     <property name="capacity" value="1" type="INT"/>
     <property name="memoryMB" value="0" type="INT"/>
-    <property name="hostname" value="DESKTOP-BS7Q9BS" type="STRING"/>
+    <property name="hostname" value="Nelmas-MacBook-Pro.local" type="STRING"/>
     <property name="processStartupPrefix" value="" type="STRING"/>
     <property name="rnHeapMaxMB" value="0" type="LONG"/>
     <property name="connectTimeout" value="10 SECONDS" type="DURATION"/>
@@ -31,7 +31,7 @@
     <property name="gcThreadThreshold" value="8" type="INT"/>
     <property name="snAdminSOBacklog" value="0" type="INT"/>
     <property name="adminCommandServiceSOBacklog" value="0" type="INT"/>
-    <property name="haHostname" value="DESKTOP-BS7Q9BS" type="STRING"/>
+    <property name="haHostname" value="Nelmas-MacBook-Pro.local" type="STRING"/>
     <property name="gcThreadPercent" value="62" type="INT"/>
     <property name="rootDirPath" value="./kvroot" type="STRING"/>
     <property name="serviceLogFileCount" value="20" type="INT"/>
@@ -72,12 +72,12 @@
     <property name="loggingConfigProps" value="" type="STRING"/>
     <property name="waitUnreachableService" value="3 SECONDS" type="DURATION"/>
     <property name="hideUserData" value="true" type="BOOLEAN"/>
-    <property name="helperHosts" value="DESKTOP-BS7Q9BS:5005" type="STRING"/>
+    <property name="helperHosts" value="Nelmas-MacBook-Pro.local:5005" type="STRING"/>
     <property name="adminCommandServiceSOBacklog" value="0" type="INT"/>
     <property name="numGCLogFiles" value="10" type="INT"/>
     <property name="maxTopoChanges" value="1000" type="INT"/>
     <property name="waitRNConsistency" value="60 MINUTES" type="DURATION"/>
-    <property name="nodeHostPort" value="DESKTOP-BS7Q9BS:5005" type="STRING"/>
+    <property name="nodeHostPort" value="Nelmas-MacBook-Pro.local:5005" type="STRING"/>
     <property name="checkPartitionMigration" value="10 SECONDS" type="DURATION"/>
     <property name="waitRNFailover" value="1 MINUTES" type="DURATION"/>
     <property name="collectorPollPeriod" value="20 SECONDS" type="DURATION"/>
@@ -139,9 +139,9 @@
     <property name="rnStatisticsRequestThreshold" value="2" type="INT"/>
     <property name="rnPMWaitAfterBusy" value="60 SECONDS" type="DURATION"/>
     <property name="hideUserData" value="true" type="BOOLEAN"/>
-    <property name="helperHosts" value="DESKTOP-BS7Q9BS:5006" type="STRING"/>
+    <property name="helperHosts" value="Nelmas-MacBook-Pro.local:5006" type="STRING"/>
     <property name="rnRHSOReadTimeout" value="30 SECONDS" type="DURATION"/>
-    <property name="nodeHostPort" value="DESKTOP-BS7Q9BS:5006" type="STRING"/>
+    <property name="nodeHostPort" value="Nelmas-MacBook-Pro.local:5006" type="STRING"/>
     <property name="rnLoginSOConnectTimeout" value="10 SECONDS" type="DURATION"/>
     <property name="masterBalance" value="true" type="BOOLEAN"/>
     <property name="rnLoginSOBacklog" value="0" type="INT"/>

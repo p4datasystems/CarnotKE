@@ -1,482 +1,253 @@
-2016-02-28 06:46:45.307 UTC INFO [rg1-rn1] JVM java.net.InetAddress properties: cache.ttl=-1 cache.negative.ttl=-1
-2016-02-28 06:46:45.343 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_RepNodeStateUpdateThread,5,RMI Runtime] started
-2016-02-28 06:46:45.361 UTC INFO [rg1-rn1] NoSQL version:12cR1.3.5.2 2015-12-03 08:36:49 UTC  Build id: 0c693aa1a5a0 JE version:6.4.15 Java version:1.8.0_71
-2016-02-28 06:46:45.361 UTC INFO [rg1-rn1] JVM Runtime maxMemory:1,839,104 kB JE cache size:0 kB Max Offheap cache size:0 kB
-2016-02-28 06:46:45.362 UTC INFO [rg1-rn1] Non-default JE properties for environment: {je.rep.vlsn.logCacheSize=128, je.rep.envUnknownStateTimeout=10 s, je.log.faultReadSize=4096, je.rep.vlsn.distance=1000000, je.rep.replicaTimeout=10 s, je.env.runEvictor=true, je.cleaner.minUtilization=40, je.rep.replicaAckTimeout=5 s, je.lock.nLockTables=97, je.cleaner.threads=2, je.rep.replayMaxOpenDbHandles=100, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.log.iteratorReadSize=1048576, je.log.numBuffers=16, je.rep.feederTimeout=10 s, je.nodeMaxEntries=128, je.lock.timeout=10 s, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.checkpointer.bytesInterval=500000000, je.txn.durability=write_no_sync,write_no_sync,simple_majority, je.cleaner.readSize=1048576, je.rep.ignoreSecondaryNodeId=true, je.rep.txnRollbackLimit=10, je.log.fileCacheSize=2000, je.log.fileMax=1073741824}
-2016-02-28 06:46:45.363 UTC INFO [rg1-rn1] DataChannelFactory: basic
-2016-02-28 06:46:45.366 UTC INFO [rg1-rn1] Created new environment dir: .\kvroot\kvstore\sn1\rg1-rn1\env
-2016-02-28 06:46:45.371 UTC INFO [rg1-rn1] Table manager created
-2016-02-28 06:46:45.374 UTC INFO [rg1-rn1] Partition database cache mode: EVICT_LN
-2016-02-28 06:46:45.389 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_MetadataUpdateThread,5,RMI Runtime] started
-2016-02-28 06:46:45.401 UTC INFO [rg1-rn1] Starting RepNodeService
-2016-02-28 06:46:45.402 UTC INFO [rg1-rn1] Starting RN MonitorAgent.  Server socket factory:<ClearServerSocketFactory name=monitor backlog=0 port range=0,0> Client socket connect factory: <ClientSocketFactory name=kvstore|rn|monitor id=139775770 connectMs=10000 readMs=10000>
-2016-02-28 06:46:45.417 UTC INFO [rg1-rn1] Starting MonitorAgent
-2016-02-28 06:46:45.432 UTC INFO [rg1-rn1] Successfully created secure proxy for the repnode admin
-2016-02-28 06:46:45.457 UTC INFO [rg1-rn1] RepNodeAdmin registered
-2016-02-28 06:46:45.498 UTC INFO [rg1-rn1] JE recovery: POPULATE_UTILIZATION_PROFILE
-2016-02-28 06:46:45.500 UTC INFO [rg1-rn1] JE recovery: REMOVE_TEMP_DBS
-2016-02-28 06:46:45.501 UTC INFO [rg1-rn1] JE recovery: CKPT
-2016-02-28 06:46:45.518 UTC INFO [rg1-rn1] JE recovery: RECOVERY_FINISHED
-2016-02-28 06:46:45.535 UTC INFO [rg1-rn1] JE: Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5006
-2016-02-28 06:46:45.540 UTC INFO [rg1-rn1] JE: Current group size: 0
-2016-02-28 06:46:45.540 UTC INFO [rg1-rn1] JE: DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
-2016-02-28 06:46:45.540 UTC INFO [rg1-rn1] JE: New node rg1-rn1(-1) unknown to rep group
-2016-02-28 06:46:45.547 UTC INFO [rg1-rn1] JE: Master changed to rg1-rn1
-2016-02-28 06:46:45.547 UTC INFO [rg1-rn1] JE: Nascent group. rg1-rn1 is master by virtue of being the first node.
-2016-02-28 06:46:45.562 UTC INFO [rg1-rn1] JE: Successfully added node:rg1-rn1(1) HostPort = DESKTOP-BS7Q9BS: 5006 [ELECTABLE]
-2016-02-28 06:46:45.562 UTC INFO [rg1-rn1] JE: Refreshed 0 monitors.
-2016-02-28 06:46:45.562 UTC INFO [rg1-rn1] JE recovery: BECOME_CONSISTENT
-2016-02-28 06:46:45.563 UTC INFO [rg1-rn1] JE: Node rg1-rn1 started
-2016-02-28 06:46:45.563 UTC INFO [rg1-rn1] JE: Feeder manager accepting requests.
-2016-02-28 06:46:45.563 UTC INFO [rg1-rn1] JE: Joining group as master
-2016-02-28 06:46:45.564 UTC INFO [rg1-rn1] JE: Refreshed 0 monitors.
-2016-02-28 06:46:45.564 UTC INFO [rg1-rn1] Opened JE environment: 6.4.15 JVM max heap: 1,883,242,496 JE properties: allowCreate=true
-cacheSize=1129945497
+2016-03-08 09:44:11.808 UTC INFO [rg1-rn1] JVM java.net.InetAddress properties: cache.ttl=-1 cache.negative.ttl=-1
+2016-03-08 09:44:11.847 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_RepNodeStateUpdateThread,5,RMI Runtime] started
+2016-03-08 09:44:11.871 UTC INFO [rg1-rn1] NoSQL version:12cR1.3.5.2 2015-12-03 08:36:49 UTC  Build id: 0c693aa1a5a0 JE version:6.4.15 Java version:1.8.0_72
+2016-03-08 09:44:11.872 UTC INFO [rg1-rn1] JVM Runtime maxMemory:1,864,192 kB JE cache size:0 kB Max Offheap cache size:0 kB
+2016-03-08 09:44:11.873 UTC INFO [rg1-rn1] Non-default JE properties for environment: {je.rep.vlsn.logCacheSize=128, je.rep.envUnknownStateTimeout=10 s, je.log.faultReadSize=4096, je.rep.vlsn.distance=1000000, je.rep.replicaTimeout=10 s, je.env.runEvictor=true, je.cleaner.minUtilization=40, je.rep.replicaAckTimeout=5 s, je.lock.nLockTables=97, je.cleaner.threads=2, je.rep.replayMaxOpenDbHandles=100, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.log.iteratorReadSize=1048576, je.log.numBuffers=16, je.rep.feederTimeout=10 s, je.nodeMaxEntries=128, je.lock.timeout=10 s, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.checkpointer.bytesInterval=500000000, je.txn.durability=write_no_sync,write_no_sync,simple_majority, je.cleaner.readSize=1048576, je.rep.ignoreSecondaryNodeId=true, je.rep.txnRollbackLimit=10, je.log.fileCacheSize=2000, je.log.fileMax=1073741824}
+2016-03-08 09:44:11.873 UTC INFO [rg1-rn1] DataChannelFactory: basic
+2016-03-08 09:44:11.873 UTC INFO [rg1-rn1] Created new environment dir: ./kvroot/kvstore/sn1/rg1-rn1/env
+2016-03-08 09:44:11.880 UTC INFO [rg1-rn1] Table manager created
+2016-03-08 09:44:11.885 UTC INFO [rg1-rn1] Partition database cache mode: EVICT_LN
+2016-03-08 09:44:11.900 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_MetadataUpdateThread,5,RMI Runtime] started
+2016-03-08 09:44:11.910 UTC INFO [rg1-rn1] Starting RepNodeService
+2016-03-08 09:44:11.910 UTC INFO [rg1-rn1] Starting RN MonitorAgent.  Server socket factory:<ClearServerSocketFactory name=monitor backlog=0 port range=0,0> Client socket connect factory: <ClientSocketFactory name=kvstore|rn|monitor id=1075789890 connectMs=10000 readMs=10000>
+2016-03-08 09:44:11.923 UTC INFO [rg1-rn1] Starting MonitorAgent
+2016-03-08 09:44:11.939 UTC INFO [rg1-rn1] Successfully created secure proxy for the repnode admin
+2016-03-08 09:44:11.962 UTC INFO [rg1-rn1] RepNodeAdmin registered
+2016-03-08 09:44:11.985 UTC INFO [rg1-rn1] JE recovery: POPULATE_UTILIZATION_PROFILE
+2016-03-08 09:44:11.986 UTC INFO [rg1-rn1] JE recovery: REMOVE_TEMP_DBS
+2016-03-08 09:44:11.987 UTC INFO [rg1-rn1] JE recovery: CKPT
+2016-03-08 09:44:11.995 UTC INFO [rg1-rn1] JE recovery: RECOVERY_FINISHED
+2016-03-08 09:44:12.004 UTC INFO [rg1-rn1] JE: Started ServiceDispatcher. HostPort=Nelmas-MacBook-Pro.local:5006
+2016-03-08 09:44:12.005 UTC INFO [rg1-rn1] JE: DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-03-08 09:44:12.012 UTC INFO [rg1-rn1] JE: Current group size: 0
+2016-03-08 09:44:12.012 UTC INFO [rg1-rn1] JE: New node rg1-rn1(-1) unknown to rep group
+2016-03-08 09:44:12.012 UTC INFO [rg1-rn1] JE: Master changed to rg1-rn1
+2016-03-08 09:44:12.013 UTC INFO [rg1-rn1] JE: Nascent group. rg1-rn1 is master by virtue of being the first node.
+2016-03-08 09:44:12.025 UTC INFO [rg1-rn1] JE: Successfully added node:rg1-rn1(1) HostPort = Nelmas-MacBook-Pro.local: 5006 [ELECTABLE]
+2016-03-08 09:44:12.026 UTC INFO [rg1-rn1] JE: Refreshed 0 monitors.
+2016-03-08 09:44:12.027 UTC INFO [rg1-rn1] JE recovery: BECOME_CONSISTENT
+2016-03-08 09:44:12.027 UTC INFO [rg1-rn1] JE: Node rg1-rn1 started
+2016-03-08 09:44:12.028 UTC INFO [rg1-rn1] JE: Feeder manager accepting requests.
+2016-03-08 09:44:12.029 UTC INFO [rg1-rn1] JE: Joining group as master
+2016-03-08 09:44:12.029 UTC INFO [rg1-rn1] JE: Refreshed 0 monitors.
+2016-03-08 09:44:12.029 UTC INFO [rg1-rn1] Opened JE environment: 6.4.15 JVM max heap: 1,908,932,608 JE properties: allowCreate=true
+cacheSize=1145359564
 txnNoSync=false
 txnWriteNoSync=false
-{je.lock.timeout=10 s, je.cleaner.readSize=1048576, je.log.faultReadSize=4096, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.log.fileMax=1073741824, je.rep.feederTimeout=10 s, je.rep.nodeName=rg1-rn1, je.nodeMaxEntries=128, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.rep.electableGroupSizeOverride=0, je.env.runEvictor=true, je.log.iteratorReadSize=1048576, je.txn.durability=WRITE_NO_SYNC,WRITE_NO_SYNC,SIMPLE_MAJORITY, je.maxOffHeapMemory=0, je.checkpointer.bytesInterval=500000000, je.log.numBuffers=16, je.rep.nodeHostPort=DESKTOP-BS7Q9BS:5006, je.rep.vlsn.distance=1000000, je.rep.txnRollbackLimit=10, je.rep.replayMaxOpenDbHandles=100, je.rep.ignoreSecondaryNodeId=true, je.maxMemory=0, je.cleaner.minUtilization=40, je.env.isTransactional=true, je.log.fileCacheSize=2000, je.rep.helperHosts=DESKTOP-BS7Q9BS:5006, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.vlsn.logCacheSize=128, je.rep.replicaTimeout=10 s, je.lock.nLockTables=97, je.rep.nodeType=ELECTABLE, je.rep.envUnknownStateTimeout=10 s, je.rep.preserveRecordVersion=true, je.rep.groupName=rg1, je.rep.replicaAckTimeout=5 s, je.cleaner.threads=2}
+{je.lock.timeout=10 s, je.cleaner.readSize=1048576, je.log.faultReadSize=4096, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.log.fileMax=1073741824, je.rep.feederTimeout=10 s, je.rep.nodeName=rg1-rn1, je.nodeMaxEntries=128, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.rep.electableGroupSizeOverride=0, je.env.runEvictor=true, je.log.iteratorReadSize=1048576, je.txn.durability=WRITE_NO_SYNC,WRITE_NO_SYNC,SIMPLE_MAJORITY, je.maxOffHeapMemory=0, je.checkpointer.bytesInterval=500000000, je.log.numBuffers=16, je.rep.nodeHostPort=Nelmas-MacBook-Pro.local:5006, je.rep.vlsn.distance=1000000, je.rep.txnRollbackLimit=10, je.rep.replayMaxOpenDbHandles=100, je.rep.ignoreSecondaryNodeId=true, je.maxMemory=0, je.cleaner.minUtilization=40, je.env.isTransactional=true, je.log.fileCacheSize=2000, je.rep.helperHosts=Nelmas-MacBook-Pro.local:5006, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.vlsn.logCacheSize=128, je.rep.replicaTimeout=10 s, je.lock.nLockTables=97, je.rep.nodeType=ELECTABLE, je.rep.envUnknownStateTimeout=10 s, je.rep.preserveRecordVersion=true, je.rep.groupName=rg1, je.rep.replicaAckTimeout=5 s, je.cleaner.threads=2}
 
-2016-02-28 06:46:45.568 UTC INFO [rg1-rn1] Local Environment version updated to: 12cR1.3.5.2 2015-12-03 08:36:49 UTC  Build id: 0c693aa1a5a0 Previous version:  none
-2016-02-28 06:46:45.569 UTC INFO [rg1-rn1] State change event: Sun Feb 28 00:46:45 CST 2016, State: MASTER, Type: ELECTABLE, Master: rg1-rn1
-2016-02-28 06:46:45.569 UTC INFO [rg1-rn1] MigrationStateTracker queue added:MASTER
-2016-02-28 06:46:45.569 UTC INFO [rg1-rn1] TableManagerStateTracker queue added:MASTER
-2016-02-28 06:46:45.569 UTC INFO [rg1-rn1] MasterBalanceStateTracker queue added:MASTER
-2016-02-28 06:46:45.569 UTC INFO [rg1-rn1] Replicated environment handle established. Cache size: 1129945497, State: MASTER
-2016-02-28 06:46:45.570 UTC INFO [rg1-rn1] Environment does not contain topology store.
-2016-02-28 06:46:45.570 UTC INFO [rg1-rn1] Topology needs to be pushed to this node.
-2016-02-28 06:46:45.570 UTC INFO [rg1-rn1] MasterBalanceStateTracker thread start: rg1-rn1
-2016-02-28 06:46:45.571 UTC INFO [rg1-rn1] MigrationStateTracker thread start: null
-2016-02-28 06:46:45.570 UTC INFO [rg1-rn1] TableManagerStateTracker thread start: rg1-rn1
-2016-02-28 06:46:45.571 UTC INFO [rg1-rn1] Migration manager change state to MASTER.
-2016-02-28 06:46:45.571 UTC INFO [rg1-rn1] Table manager change state to MASTER
-2016-02-28 06:46:45.580 UTC INFO [rg1-rn1] Migration service accepting requests.
-2016-02-28 06:46:45.588 UTC INFO [rg1-rn1] No RN Login configured. 
-2016-02-28 06:46:45.588 UTC INFO [rg1-rn1] Service status changed from STARTING to RUNNING
-2016-02-28 06:46:45.593 UTC INFO [rg1-rn1] Started RepNodeService
-2016-02-28 06:46:45.593 UTC INFO [rg1-rn1] Topology not immediately available - waiting
-2016-02-28 06:46:46.348 UTC INFO [rg1-rn1] Topology updated from seq#: 0 to 4
-2016-02-28 06:46:46.357 UTC INFO [rg1-rn1] Environment changed, ignoring trigger for SecurityMetadata
-2016-02-28 06:46:46.357 UTC INFO [rg1-rn1] Open SecurityMetadata DB
-2016-02-28 06:46:46.362 UTC INFO [rg1-rn1] Established 0 partition database handles, topology seq#: 4
-2016-02-28 06:46:46.363 UTC INFO [rg1-rn1] Environment changed, ignoring trigger for TableMetadata
-2016-02-28 06:46:46.363 UTC INFO [rg1-rn1] Open TableMetadata DB
-2016-02-28 06:46:46.375 UTC INFO [rg1-rn1] Found 0 indexes and 0 tables marked for deletion in TableMetadata[0, 0, 0]
-2016-02-28 06:46:46.376 UTC INFO [rg1-rn1] Established 0 secondary database handles
-2016-02-28 06:46:46.441 UTC INFO [rg1-rn1] Topology stored seq#: 4
-2016-02-28 06:46:46.484 UTC INFO [rg1-rn1] newParameters are identical to old parameters
-2016-02-28 06:46:46.530 UTC INFO [rg1-rn1] Topology incrementally updated from seq#: 4 to 14
-2016-02-28 06:46:46.540 UTC INFO [rg1-rn1] Found 0 indexes and 0 tables marked for deletion in TableMetadata[0, 0, 0]
-2016-02-28 06:46:46.552 UTC INFO [rg1-rn1] Established 0 secondary database handles
-2016-02-28 06:46:46.572 UTC INFO [rg1-rn1] Established 10 partition database handles, topology seq#: 14
-2016-02-28 06:46:46.578 UTC INFO [rg1-rn1] Topology stored seq#: 14
-2016-02-28 06:46:46.629 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
-2016-02-28 06:46:46.639 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
-2016-02-28 06:46:46.641 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
-2016-02-28 06:50:36.722 UTC INFO [rg1-rn1] JVM java.net.InetAddress properties: cache.ttl=-1 cache.negative.ttl=-1
-2016-02-28 06:50:36.883 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_RepNodeStateUpdateThread,5,main] started
-2016-02-28 06:50:36.899 UTC INFO [rg1-rn1] NoSQL version:12cR1.3.5.2 2015-12-03 08:36:49 UTC  Build id: 0c693aa1a5a0 JE version:6.4.15 Java version:1.8.0_71
-2016-02-28 06:50:36.902 UTC INFO [rg1-rn1] JVM Runtime maxMemory:1,839,104 kB JE cache size:0 kB Max Offheap cache size:0 kB
-2016-02-28 06:50:36.903 UTC INFO [rg1-rn1] Non-default JE properties for environment: {je.rep.vlsn.logCacheSize=128, je.rep.envUnknownStateTimeout=10 s, je.log.faultReadSize=4096, je.rep.vlsn.distance=1000000, je.rep.replicaTimeout=10 s, je.env.runEvictor=true, je.cleaner.minUtilization=40, je.rep.replicaAckTimeout=5 s, je.lock.nLockTables=97, je.cleaner.threads=2, je.rep.replayMaxOpenDbHandles=100, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.log.iteratorReadSize=1048576, je.log.numBuffers=16, je.rep.feederTimeout=10 s, je.nodeMaxEntries=128, je.lock.timeout=10 s, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.checkpointer.bytesInterval=500000000, je.txn.durability=write_no_sync,write_no_sync,simple_majority, je.cleaner.readSize=1048576, je.rep.ignoreSecondaryNodeId=true, je.rep.txnRollbackLimit=10, je.log.fileCacheSize=2000, je.log.fileMax=1073741824}
-2016-02-28 06:50:36.903 UTC INFO [rg1-rn1] DataChannelFactory: basic
-2016-02-28 06:50:36.921 UTC INFO [rg1-rn1] Table manager created
-2016-02-28 06:50:36.950 UTC INFO [rg1-rn1] Partition database cache mode: EVICT_LN
-2016-02-28 06:50:37.002 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_MetadataUpdateThread,5,main] started
-2016-02-28 06:50:37.015 UTC INFO [rg1-rn1] Starting RepNodeService
-2016-02-28 06:50:37.015 UTC INFO [rg1-rn1] Starting RN MonitorAgent.  Server socket factory:<ClearServerSocketFactory name=monitor backlog=0 port range=0,0> Client socket connect factory: <ClientSocketFactory name=kvstore|rn|monitor id=1220431761 connectMs=10000 readMs=10000>
-2016-02-28 06:50:37.027 UTC INFO [rg1-rn1] Starting MonitorAgent
-2016-02-28 06:50:37.055 UTC INFO [rg1-rn1] Successfully created secure proxy for the repnode admin
-2016-02-28 06:50:37.089 UTC INFO [rg1-rn1] RepNodeAdmin registered
-2016-02-28 06:50:37.236 UTC INFO [rg1-rn1] JE recovery: FIND_END_OF_LOG
-2016-02-28 06:50:37.272 UTC INFO [rg1-rn1] JE recovery: FIND_LAST_CKPT
-2016-02-28 06:50:37.279 UTC INFO [rg1-rn1] JE recovery: READ_DBMAP_INFO
-2016-02-28 06:50:37.318 UTC INFO [rg1-rn1] JE recovery: REDO_DBMAP_INFO
-2016-02-28 06:50:37.328 UTC INFO [rg1-rn1] JE recovery: UNDO_DBMAP_RECORDS
-2016-02-28 06:50:37.334 UTC INFO [rg1-rn1] JE recovery: REDO_DBMAP_RECORDS
-2016-02-28 06:50:37.345 UTC INFO [rg1-rn1] JE recovery: READ_DATA_INFO
-2016-02-28 06:50:37.353 UTC INFO [rg1-rn1] JE recovery: REDO_DATA_INFO
-2016-02-28 06:50:37.356 UTC INFO [rg1-rn1] JE recovery: UNDO_DATA_RECORDS
-2016-02-28 06:50:37.359 UTC INFO [rg1-rn1] JE recovery: REDO_DATA_RECORDS
-2016-02-28 06:50:37.372 UTC INFO [rg1-rn1] JE recovery: POPULATE_UTILIZATION_PROFILE
-2016-02-28 06:50:37.381 UTC INFO [rg1-rn1] JE recovery: REMOVE_TEMP_DBS
-2016-02-28 06:50:37.404 UTC INFO [rg1-rn1] JE recovery: CKPT
-2016-02-28 06:50:37.429 UTC INFO [rg1-rn1] JE recovery: RECOVERY_FINISHED
-2016-02-28 06:50:37.482 UTC INFO [rg1-rn1] JE: Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5006
-2016-02-28 06:50:37.482 UTC INFO [rg1-rn1] JE: Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5006
-2016-02-28 06:50:37.482 UTC INFO [rg1-rn1] JE: DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
-2016-02-28 06:50:37.482 UTC INFO [rg1-rn1] JE: DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
-2016-02-28 06:50:37.536 UTC INFO [rg1-rn1] JE: Current group size: 1
-2016-02-28 06:50:37.537 UTC INFO [rg1-rn1] JE: Current group size: 1
-2016-02-28 06:50:37.537 UTC INFO [rg1-rn1] JE: Existing node rg1-rn1 querying for a current master.
-2016-02-28 06:50:37.537 UTC INFO [rg1-rn1] JE: Existing node rg1-rn1 querying for a current master.
-2016-02-28 06:50:37.554 UTC INFO [rg1-rn1] JE recovery: BECOME_CONSISTENT
-2016-02-28 06:50:37.554 UTC INFO [rg1-rn1] JE: Node rg1-rn1 started
-2016-02-28 06:50:37.555 UTC INFO [rg1-rn1] JE: Node rg1-rn1 started
-2016-02-28 06:50:37.555 UTC INFO [rg1-rn1] JE: Election initiated; election #1
-2016-02-28 06:50:37.555 UTC INFO [rg1-rn1] JE: Election initiated; election #1
-2016-02-28 06:50:37.557 UTC INFO [rg1-rn1] JE: Started election thread Sun Feb 28 00:50:37 CST 2016
-2016-02-28 06:50:37.557 UTC INFO [rg1-rn1] JE: Started election thread Sun Feb 28 00:50:37 CST 2016
-2016-02-28 06:50:39.580 UTC INFO [rg1-rn1] JE: Winning proposal: Proposal(0000015326a4ac46:b65fef56b970b046f30b78050bc7a2e2:00000002) Value: Value:DESKTOP-BS7Q9BS$$$5006$$$rg1-rn1$$$1
-2016-02-28 06:50:39.580 UTC INFO [rg1-rn1] JE: Winning proposal: Proposal(0000015326a4ac46:b65fef56b970b046f30b78050bc7a2e2:00000002) Value: Value:DESKTOP-BS7Q9BS$$$5006$$$rg1-rn1$$$1
-2016-02-28 06:50:39.587 UTC INFO [rg1-rn1] JE: Master changed to rg1-rn1
-2016-02-28 06:50:39.587 UTC INFO [rg1-rn1] JE: Master changed to rg1-rn1
-2016-02-28 06:50:39.588 UTC INFO [rg1-rn1] JE: Election finished. Elapsed time: 2032ms
-2016-02-28 06:50:39.589 UTC INFO [rg1-rn1] JE: Election finished. Elapsed time: 2032ms
-2016-02-28 06:50:39.589 UTC INFO [rg1-rn1] JE: Election thread exited. Group master: rg1-rn1(1)
-2016-02-28 06:50:39.589 UTC INFO [rg1-rn1] JE: Election thread exited. Group master: rg1-rn1(1)
-2016-02-28 06:50:39.591 UTC INFO [rg1-rn1] JE: Feeder manager accepting requests.
-2016-02-28 06:50:39.591 UTC INFO [rg1-rn1] JE: Feeder manager accepting requests.
-2016-02-28 06:50:39.609 UTC INFO [rg1-rn1] JE: Joining group as master
-2016-02-28 06:50:39.610 UTC INFO [rg1-rn1] JE: Joining group as master
-2016-02-28 06:50:39.612 UTC INFO [rg1-rn1] JE: Refreshed 0 monitors.
-2016-02-28 06:50:39.612 UTC INFO [rg1-rn1] JE: Refreshed 0 monitors.
-2016-02-28 06:50:39.612 UTC INFO [rg1-rn1] Opened JE environment: 6.4.15 JVM max heap: 1,883,242,496 JE properties: allowCreate=true
-cacheSize=1129945497
+2016-03-08 09:44:12.035 UTC INFO [rg1-rn1] Local Environment version updated to: 12cR1.3.5.2 2015-12-03 08:36:49 UTC  Build id: 0c693aa1a5a0 Previous version:  none
+2016-03-08 09:44:12.037 UTC INFO [rg1-rn1] State change event: Tue Mar 08 03:44:12 CST 2016, State: MASTER, Type: ELECTABLE, Master: rg1-rn1
+2016-03-08 09:44:12.037 UTC INFO [rg1-rn1] MigrationStateTracker queue added:MASTER
+2016-03-08 09:44:12.037 UTC INFO [rg1-rn1] TableManagerStateTracker queue added:MASTER
+2016-03-08 09:44:12.037 UTC INFO [rg1-rn1] MasterBalanceStateTracker queue added:MASTER
+2016-03-08 09:44:12.038 UTC INFO [rg1-rn1] Replicated environment handle established. Cache size: 1145359564, State: MASTER
+2016-03-08 09:44:12.038 UTC INFO [rg1-rn1] Environment does not contain topology store.
+2016-03-08 09:44:12.039 UTC INFO [rg1-rn1] MasterBalanceStateTracker thread start: rg1-rn1
+2016-03-08 09:44:12.039 UTC INFO [rg1-rn1] Topology needs to be pushed to this node.
+2016-03-08 09:44:12.039 UTC INFO [rg1-rn1] MigrationStateTracker thread start: null
+2016-03-08 09:44:12.039 UTC INFO [rg1-rn1] TableManagerStateTracker thread start: rg1-rn1
+2016-03-08 09:44:12.040 UTC INFO [rg1-rn1] Migration manager change state to MASTER.
+2016-03-08 09:44:12.040 UTC INFO [rg1-rn1] Table manager change state to MASTER
+2016-03-08 09:44:12.049 UTC INFO [rg1-rn1] Migration service accepting requests.
+2016-03-08 09:44:12.063 UTC INFO [rg1-rn1] No RN Login configured. 
+2016-03-08 09:44:12.063 UTC INFO [rg1-rn1] Service status changed from STARTING to RUNNING
+2016-03-08 09:44:12.069 UTC INFO [rg1-rn1] Started RepNodeService
+2016-03-08 09:44:12.069 UTC INFO [rg1-rn1] Topology not immediately available - waiting
+2016-03-08 09:44:12.828 UTC INFO [rg1-rn1] Topology updated from seq#: 0 to 4
+2016-03-08 09:44:12.834 UTC INFO [rg1-rn1] Environment changed, ignoring trigger for SecurityMetadata
+2016-03-08 09:44:12.834 UTC INFO [rg1-rn1] Open SecurityMetadata DB
+2016-03-08 09:44:12.837 UTC INFO [rg1-rn1] Established 0 partition database handles, topology seq#: 4
+2016-03-08 09:44:12.839 UTC INFO [rg1-rn1] Environment changed, ignoring trigger for TableMetadata
+2016-03-08 09:44:12.839 UTC INFO [rg1-rn1] Open TableMetadata DB
+2016-03-08 09:44:12.845 UTC INFO [rg1-rn1] Found 0 indexes and 0 tables marked for deletion in TableMetadata[0, 0, 0]
+2016-03-08 09:44:12.845 UTC INFO [rg1-rn1] Established 0 secondary database handles
+2016-03-08 09:44:12.906 UTC INFO [rg1-rn1] Topology stored seq#: 4
+2016-03-08 09:44:12.926 UTC INFO [rg1-rn1] newParameters are identical to old parameters
+2016-03-08 09:44:12.985 UTC INFO [rg1-rn1] Topology incrementally updated from seq#: 4 to 14
+2016-03-08 09:44:12.990 UTC INFO [rg1-rn1] Found 0 indexes and 0 tables marked for deletion in TableMetadata[0, 0, 0]
+2016-03-08 09:44:12.990 UTC INFO [rg1-rn1] Established 0 secondary database handles
+2016-03-08 09:44:13.004 UTC INFO [rg1-rn1] Established 10 partition database handles, topology seq#: 14
+2016-03-08 09:44:13.029 UTC INFO [rg1-rn1] Topology stored seq#: 14
+2016-03-08 09:44:13.093 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
+2016-03-08 09:44:13.102 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
+2016-03-08 09:44:13.104 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
+2016-03-08 21:05:11.344 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.2.2 to 127.0.0.1
+2016-03-08 21:05:11.347 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
+2016-03-08 21:05:20.081 UTC INFO [rg1-rn1] Task oracle.kv.impl.api.rgstate.RepNodeStateUpdateThread$RefreshRepNodeState@1b30aa52 execute() ignored for service rg1-rn1 since it already had an outstanding task: oracle.kv.impl.api.rgstate.RepNodeStateUpdateThread$RefreshRepNodeState@1b30aa52
+2016-03-08 21:05:40.189 UTC INFO [rg1-rn1] Inactive socket Socket[addr=Nelmas-MacBook-Pro.local/192.168.2.2,port=54815,localport=54816] timed out and was forcibly closed, timeout: 30000 ms
+2016-03-08 21:05:46.693 UTC INFO [rg1-rn1] JE: Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local: unknown error
+2016-03-08 21:05:47.699 UTC INFO [rg1-rn1] JE: Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:48.709 UTC INFO [rg1-rn1] JE: Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:49.711 UTC INFO [rg1-rn1] JE: Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:50.711 UTC INFO [rg1-rn1] JE: Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:51.721 UTC INFO [rg1-rn1] JE: Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:52.722 UTC INFO [rg1-rn1] JE: Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:53.729 UTC INFO [rg1-rn1] JE: Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:54.740 UTC INFO [rg1-rn1] JE: Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:55.747 UTC INFO [rg1-rn1] JE: Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:01.873 UTC INFO [rg1-rn1] JE: Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local: unknown error
+2016-03-08 21:06:02.881 UTC INFO [rg1-rn1] JE: Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:03.887 UTC INFO [rg1-rn1] JE: Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:04.892 UTC INFO [rg1-rn1] JE: Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:05.902 UTC INFO [rg1-rn1] JE: Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:06.903 UTC INFO [rg1-rn1] JE: Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:07.910 UTC INFO [rg1-rn1] JE: Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:10.026 UTC INFO [rg1-rn1] JE: Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:11.029 UTC INFO [rg1-rn1] JE: Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:12.035 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 127.0.0.1 to 10.147.138.130
+2016-03-08 21:06:12.035 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/10.147.138.130,localport=5006]
+2016-03-08 21:07:32.718 UTC INFO [rg1-rn1] Task oracle.kv.impl.api.rgstate.RepNodeStateUpdateThread$RefreshRepNodeState@491e9f73 execute() ignored for service rg1-rn1 since it already had an outstanding task: oracle.kv.impl.api.rgstate.RepNodeStateUpdateThread$RefreshRepNodeState@491e9f73
+2016-03-08 21:07:33.786 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 10.147.138.130 to 127.0.0.1
+2016-03-08 21:07:33.788 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
+2016-03-08 21:09:19.846 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 127.0.0.1 to 10.147.138.130
+2016-03-08 21:09:19.848 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/10.147.138.130,localport=5006]
+2016-03-08 21:39:46.020 UTC INFO [rg1-rn1] Task oracle.kv.impl.api.rgstate.RepNodeStateUpdateThread$RefreshRepNodeState@469f5717 execute() ignored for service rg1-rn1 since it already had an outstanding task: oracle.kv.impl.api.rgstate.RepNodeStateUpdateThread$RefreshRepNodeState@469f5717
+2016-03-08 21:42:00.582 UTC INFO [rg1-rn1] JVM java.net.InetAddress properties: cache.ttl=-1 cache.negative.ttl=-1
+2016-03-08 21:42:00.711 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_RepNodeStateUpdateThread,5,main] started
+2016-03-08 21:42:00.780 UTC INFO [rg1-rn1] NoSQL version:12cR1.3.5.2 2015-12-03 08:36:49 UTC  Build id: 0c693aa1a5a0 JE version:6.4.15 Java version:1.8.0_72
+2016-03-08 21:42:00.783 UTC INFO [rg1-rn1] JVM Runtime maxMemory:1,864,192 kB JE cache size:0 kB Max Offheap cache size:0 kB
+2016-03-08 21:42:00.783 UTC INFO [rg1-rn1] Non-default JE properties for environment: {je.rep.vlsn.logCacheSize=128, je.rep.envUnknownStateTimeout=10 s, je.log.faultReadSize=4096, je.rep.vlsn.distance=1000000, je.rep.replicaTimeout=10 s, je.env.runEvictor=true, je.cleaner.minUtilization=40, je.rep.replicaAckTimeout=5 s, je.lock.nLockTables=97, je.cleaner.threads=2, je.rep.replayMaxOpenDbHandles=100, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.log.iteratorReadSize=1048576, je.log.numBuffers=16, je.rep.feederTimeout=10 s, je.nodeMaxEntries=128, je.lock.timeout=10 s, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.checkpointer.bytesInterval=500000000, je.txn.durability=write_no_sync,write_no_sync,simple_majority, je.cleaner.readSize=1048576, je.rep.ignoreSecondaryNodeId=true, je.rep.txnRollbackLimit=10, je.log.fileCacheSize=2000, je.log.fileMax=1073741824}
+2016-03-08 21:42:00.783 UTC INFO [rg1-rn1] DataChannelFactory: basic
+2016-03-08 21:42:00.814 UTC INFO [rg1-rn1] Table manager created
+2016-03-08 21:42:00.864 UTC INFO [rg1-rn1] Partition database cache mode: EVICT_LN
+2016-03-08 21:42:00.889 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_MetadataUpdateThread,5,main] started
+2016-03-08 21:42:00.909 UTC INFO [rg1-rn1] Starting RepNodeService
+2016-03-08 21:42:00.909 UTC INFO [rg1-rn1] Starting RN MonitorAgent.  Server socket factory:<ClearServerSocketFactory name=monitor backlog=0 port range=0,0> Client socket connect factory: <ClientSocketFactory name=kvstore|rn|monitor id=-46275033 connectMs=10000 readMs=10000>
+2016-03-08 21:42:00.925 UTC INFO [rg1-rn1] Starting MonitorAgent
+2016-03-08 21:42:00.954 UTC INFO [rg1-rn1] Successfully created secure proxy for the repnode admin
+2016-03-08 21:42:00.986 UTC INFO [rg1-rn1] RepNodeAdmin registered
+2016-03-08 21:42:01.222 UTC INFO [rg1-rn1] JE recovery: FIND_END_OF_LOG
+2016-03-08 21:42:01.305 UTC INFO [rg1-rn1] JE recovery: FIND_LAST_CKPT
+2016-03-08 21:42:01.310 UTC INFO [rg1-rn1] JE recovery: READ_DBMAP_INFO
+2016-03-08 21:42:01.393 UTC INFO [rg1-rn1] JE recovery: REDO_DBMAP_INFO
+2016-03-08 21:42:01.397 UTC INFO [rg1-rn1] JE recovery: UNDO_DBMAP_RECORDS
+2016-03-08 21:42:01.434 UTC INFO [rg1-rn1] JE recovery: REDO_DBMAP_RECORDS
+2016-03-08 21:42:01.452 UTC INFO [rg1-rn1] JE recovery: READ_DATA_INFO
+2016-03-08 21:42:01.482 UTC INFO [rg1-rn1] JE recovery: REDO_DATA_INFO
+2016-03-08 21:42:01.491 UTC INFO [rg1-rn1] JE recovery: UNDO_DATA_RECORDS
+2016-03-08 21:42:01.506 UTC INFO [rg1-rn1] JE recovery: REDO_DATA_RECORDS
+2016-03-08 21:42:01.830 UTC INFO [rg1-rn1] JE recovery: POPULATE_UTILIZATION_PROFILE
+2016-03-08 21:42:01.831 UTC INFO [rg1-rn1] JE recovery: REMOVE_TEMP_DBS
+2016-03-08 21:42:01.836 UTC INFO [rg1-rn1] JE recovery: CKPT
+2016-03-08 21:42:01.872 UTC INFO [rg1-rn1] JE recovery: RECOVERY_FINISHED
+2016-03-08 21:42:01.873 UTC INFO [rg1-rn1] JE: Started ServiceDispatcher. HostPort=Nelmas-MacBook-Pro.local:5006
+2016-03-08 21:42:01.874 UTC INFO [rg1-rn1] JE: DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-03-08 21:42:01.878 UTC INFO [rg1-rn1] JE: Current group size: 1
+2016-03-08 21:42:01.878 UTC INFO [rg1-rn1] JE: Existing node rg1-rn1 querying for a current master.
+2016-03-08 21:42:01.881 UTC INFO [rg1-rn1] JE: Node rg1-rn1 started
+2016-03-08 21:42:01.881 UTC INFO [rg1-rn1] JE: Election initiated; election #1
+2016-03-08 21:42:01.882 UTC INFO [rg1-rn1] JE recovery: BECOME_CONSISTENT
+2016-03-08 21:42:01.882 UTC INFO [rg1-rn1] JE: Started election thread Tue Mar 08 15:42:01 CST 2016
+2016-03-08 21:42:03.901 UTC INFO [rg1-rn1] JE: Winning proposal: Proposal(00000153582e036b:6270dad1c38dc5f13fa962cbe5cb86f7:00000002) Value: Value:Nelmas-MacBook-Pro.local$$$5006$$$rg1-rn1$$$1
+2016-03-08 21:42:03.905 UTC INFO [rg1-rn1] JE: Master changed to rg1-rn1
+2016-03-08 21:42:03.905 UTC INFO [rg1-rn1] JE: Election finished. Elapsed time: 2024ms
+2016-03-08 21:42:03.906 UTC INFO [rg1-rn1] JE: Feeder manager accepting requests.
+2016-03-08 21:42:03.910 UTC INFO [rg1-rn1] JE: Joining group as master
+2016-03-08 21:42:03.910 UTC INFO [rg1-rn1] JE: Election thread exited. Group master: rg1-rn1(1)
+2016-03-08 21:42:03.910 UTC INFO [rg1-rn1] JE: Refreshed 0 monitors.
+2016-03-08 21:42:03.911 UTC INFO [rg1-rn1] Opened JE environment: 6.4.15 JVM max heap: 1,908,932,608 JE properties: allowCreate=true
+cacheSize=1145359564
 txnNoSync=false
 txnWriteNoSync=false
-{je.lock.timeout=10 s, je.cleaner.readSize=1048576, je.log.faultReadSize=4096, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.log.fileMax=1073741824, je.rep.feederTimeout=10 s, je.rep.nodeName=rg1-rn1, je.nodeMaxEntries=128, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.rep.electableGroupSizeOverride=0, je.env.runEvictor=true, je.log.iteratorReadSize=1048576, je.txn.durability=WRITE_NO_SYNC,WRITE_NO_SYNC,SIMPLE_MAJORITY, je.maxOffHeapMemory=0, je.checkpointer.bytesInterval=500000000, je.log.numBuffers=16, je.rep.nodeHostPort=DESKTOP-BS7Q9BS:5006, je.rep.vlsn.distance=1000000, je.rep.txnRollbackLimit=10, je.rep.replayMaxOpenDbHandles=100, je.rep.ignoreSecondaryNodeId=true, je.maxMemory=0, je.cleaner.minUtilization=40, je.env.isTransactional=true, je.log.fileCacheSize=2000, je.rep.helperHosts=DESKTOP-BS7Q9BS:5006, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.vlsn.logCacheSize=128, je.rep.replicaTimeout=10 s, je.lock.nLockTables=97, je.rep.nodeType=ELECTABLE, je.rep.envUnknownStateTimeout=10 s, je.rep.preserveRecordVersion=true, je.rep.groupName=rg1, je.rep.replicaAckTimeout=5 s, je.cleaner.threads=2}
+{je.lock.timeout=10 s, je.cleaner.readSize=1048576, je.log.faultReadSize=4096, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.log.fileMax=1073741824, je.rep.feederTimeout=10 s, je.rep.nodeName=rg1-rn1, je.nodeMaxEntries=128, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.rep.electableGroupSizeOverride=0, je.env.runEvictor=true, je.log.iteratorReadSize=1048576, je.txn.durability=WRITE_NO_SYNC,WRITE_NO_SYNC,SIMPLE_MAJORITY, je.maxOffHeapMemory=0, je.checkpointer.bytesInterval=500000000, je.log.numBuffers=16, je.rep.nodeHostPort=Nelmas-MacBook-Pro.local:5006, je.rep.vlsn.distance=1000000, je.rep.txnRollbackLimit=10, je.rep.replayMaxOpenDbHandles=100, je.rep.ignoreSecondaryNodeId=true, je.maxMemory=0, je.cleaner.minUtilization=40, je.env.isTransactional=true, je.log.fileCacheSize=2000, je.rep.helperHosts=Nelmas-MacBook-Pro.local:5006, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.vlsn.logCacheSize=128, je.rep.replicaTimeout=10 s, je.lock.nLockTables=97, je.rep.nodeType=ELECTABLE, je.rep.envUnknownStateTimeout=10 s, je.rep.preserveRecordVersion=true, je.rep.groupName=rg1, je.rep.replicaAckTimeout=5 s, je.cleaner.threads=2}
 
-2016-02-28 06:50:39.630 UTC INFO [rg1-rn1] State change event: Sun Feb 28 00:50:39 CST 2016, State: MASTER, Type: ELECTABLE, Master: rg1-rn1
-2016-02-28 06:50:39.631 UTC INFO [rg1-rn1] MigrationStateTracker queue added:MASTER
-2016-02-28 06:50:39.631 UTC INFO [rg1-rn1] TableManagerStateTracker queue added:MASTER
-2016-02-28 06:50:39.631 UTC INFO [rg1-rn1] MasterBalanceStateTracker queue added:MASTER
-2016-02-28 06:50:39.631 UTC INFO [rg1-rn1] Replicated environment handle established. Cache size: 1129945497, State: MASTER
-2016-02-28 06:50:39.802 UTC INFO [rg1-rn1] Topology updated from seq#: 0 to 14
-2016-02-28 06:50:39.826 UTC INFO [rg1-rn1] Open SecurityMetadata DB
-2016-02-28 06:50:39.832 UTC INFO [rg1-rn1] Open TableMetadata DB
-2016-02-28 06:50:39.847 UTC INFO [rg1-rn1] Established 10 partition database handles, topology seq#: 14
-2016-02-28 06:50:39.861 UTC INFO [rg1-rn1] Topology stored seq#: 14
-2016-02-28 06:50:39.862 UTC INFO [rg1-rn1] Topology fetched sequence#: 14, updated topology seq# 14
-2016-02-28 06:50:39.863 UTC INFO [rg1-rn1] Found 0 indexes and 0 tables marked for deletion in TableMetadata[0, 0, 0]
-2016-02-28 06:50:39.863 UTC INFO [rg1-rn1] Established 0 secondary database handles
-2016-02-28 06:50:39.864 UTC INFO [rg1-rn1] MasterBalanceStateTracker thread start: rg1-rn1
-2016-02-28 06:50:39.864 UTC INFO [rg1-rn1] MigrationStateTracker thread start: null
-2016-02-28 06:50:39.864 UTC INFO [rg1-rn1] Migration manager change state to MASTER.
-2016-02-28 06:50:39.871 UTC INFO [rg1-rn1] TableManagerStateTracker thread start: rg1-rn1
-2016-02-28 06:50:39.871 UTC INFO [rg1-rn1] Table manager change state to MASTER
-2016-02-28 06:50:39.872 UTC INFO [rg1-rn1] Migration service accepting requests.
-2016-02-28 06:50:39.885 UTC INFO [rg1-rn1] No RN Login configured. 
-2016-02-28 06:50:39.886 UTC INFO [rg1-rn1] Service status changed from STARTING to RUNNING
-2016-02-28 06:50:39.892 UTC INFO [rg1-rn1] Started RepNodeService
-2016-02-28 06:50:39.972 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
-2016-02-28 06:50:39.983 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
-2016-02-28 06:50:39.984 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
-2016-02-28 23:37:24.801 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 192.168.2.8
-2016-02-28 23:37:24.801 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 192.168.2.8
-2016-02-28 23:37:24.802 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.2.8,localport=5006]
-2016-02-28 23:37:24.802 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.2.8,localport=5006]
-2016-02-28 23:37:54.812 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.2.8 to 192.168.56.1
-2016-02-28 23:37:54.813 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.2.8 to 192.168.56.1
-2016-02-28 23:37:54.813 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-02-28 23:37:54.813 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-02-29 22:06:21.174 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-02-29 22:06:21.174 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-02-29 22:06:21.460 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-02-29 22:06:21.460 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-02-29 22:06:51.473 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-02-29 22:06:51.473 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-02-29 22:06:51.473 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-02-29 22:06:51.473 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 03:12:23.551 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 192.168.2.8
-2016-03-01 03:12:23.551 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 192.168.2.8
-2016-03-01 03:12:23.552 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.2.8,localport=5006]
-2016-03-01 03:12:23.552 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.2.8,localport=5006]
-2016-03-01 03:12:53.564 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.2.8 to 192.168.56.1
-2016-03-01 03:12:53.564 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.2.8 to 192.168.56.1
-2016-03-01 03:12:53.565 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 03:12:53.565 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 06:16:18.946 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 192.168.2.8
-2016-03-01 06:16:18.946 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 192.168.2.8
-2016-03-01 06:16:18.947 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.2.8,localport=5006]
-2016-03-01 06:16:18.947 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.2.8,localport=5006]
-2016-03-01 06:16:48.958 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.2.8 to 192.168.56.1
-2016-03-01 06:16:48.958 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.2.8 to 192.168.56.1
-2016-03-01 06:16:48.958 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 06:16:48.958 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 06:18:48.229 UTC INFO [rg1-rn1] JVM java.net.InetAddress properties: cache.ttl=-1 cache.negative.ttl=-1
-2016-03-01 06:18:48.416 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_RepNodeStateUpdateThread,5,main] started
-2016-03-01 06:18:48.486 UTC INFO [rg1-rn1] NoSQL version:12cR1.3.5.2 2015-12-03 08:36:49 UTC  Build id: 0c693aa1a5a0 JE version:6.4.15 Java version:1.8.0_71
-2016-03-01 06:18:48.492 UTC INFO [rg1-rn1] JVM Runtime maxMemory:1,839,104 kB JE cache size:0 kB Max Offheap cache size:0 kB
-2016-03-01 06:18:48.492 UTC INFO [rg1-rn1] Non-default JE properties for environment: {je.rep.vlsn.logCacheSize=128, je.rep.envUnknownStateTimeout=10 s, je.log.faultReadSize=4096, je.rep.vlsn.distance=1000000, je.rep.replicaTimeout=10 s, je.env.runEvictor=true, je.cleaner.minUtilization=40, je.rep.replicaAckTimeout=5 s, je.lock.nLockTables=97, je.cleaner.threads=2, je.rep.replayMaxOpenDbHandles=100, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.log.iteratorReadSize=1048576, je.log.numBuffers=16, je.rep.feederTimeout=10 s, je.nodeMaxEntries=128, je.lock.timeout=10 s, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.checkpointer.bytesInterval=500000000, je.txn.durability=write_no_sync,write_no_sync,simple_majority, je.cleaner.readSize=1048576, je.rep.ignoreSecondaryNodeId=true, je.rep.txnRollbackLimit=10, je.log.fileCacheSize=2000, je.log.fileMax=1073741824}
-2016-03-01 06:18:48.492 UTC INFO [rg1-rn1] DataChannelFactory: basic
-2016-03-01 06:18:48.515 UTC INFO [rg1-rn1] Table manager created
-2016-03-01 06:18:48.534 UTC INFO [rg1-rn1] Partition database cache mode: EVICT_LN
-2016-03-01 06:18:48.557 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_MetadataUpdateThread,5,main] started
-2016-03-01 06:18:48.586 UTC INFO [rg1-rn1] Starting RepNodeService
-2016-03-01 06:18:48.586 UTC INFO [rg1-rn1] Starting RN MonitorAgent.  Server socket factory:<ClearServerSocketFactory name=monitor backlog=0 port range=0,0> Client socket connect factory: <ClientSocketFactory name=kvstore|rn|monitor id=903535750 connectMs=10000 readMs=10000>
-2016-03-01 06:18:48.604 UTC INFO [rg1-rn1] Starting MonitorAgent
-2016-03-01 06:18:48.631 UTC INFO [rg1-rn1] Successfully created secure proxy for the repnode admin
-2016-03-01 06:18:48.675 UTC INFO [rg1-rn1] RepNodeAdmin registered
-2016-03-01 06:18:48.983 UTC INFO [rg1-rn1] JE recovery: FIND_END_OF_LOG
-2016-03-01 06:18:49.050 UTC INFO [rg1-rn1] JE recovery: FIND_LAST_CKPT
-2016-03-01 06:18:49.051 UTC INFO [rg1-rn1] JE recovery: READ_DBMAP_INFO
-2016-03-01 06:18:49.225 UTC INFO [rg1-rn1] JE recovery: REDO_DBMAP_INFO
-2016-03-01 06:18:49.237 UTC INFO [rg1-rn1] JE recovery: UNDO_DBMAP_RECORDS
-2016-03-01 06:18:49.282 UTC INFO [rg1-rn1] JE recovery: REDO_DBMAP_RECORDS
-2016-03-01 06:18:49.300 UTC INFO [rg1-rn1] JE recovery: READ_DATA_INFO
-2016-03-01 06:18:49.362 UTC INFO [rg1-rn1] JE recovery: REDO_DATA_INFO
-2016-03-01 06:18:49.383 UTC INFO [rg1-rn1] JE recovery: UNDO_DATA_RECORDS
-2016-03-01 06:18:49.430 UTC INFO [rg1-rn1] JE recovery: REDO_DATA_RECORDS
-2016-03-01 06:18:49.807 UTC INFO [rg1-rn1] JE recovery: POPULATE_UTILIZATION_PROFILE
-2016-03-01 06:18:49.810 UTC INFO [rg1-rn1] JE recovery: REMOVE_TEMP_DBS
-2016-03-01 06:18:49.818 UTC INFO [rg1-rn1] JE recovery: CKPT
-2016-03-01 06:18:49.851 UTC INFO [rg1-rn1] JE recovery: RECOVERY_FINISHED
-2016-03-01 06:18:49.858 UTC INFO [rg1-rn1] JE: Current group size: 1
-2016-03-01 06:18:49.858 UTC INFO [rg1-rn1] JE: Existing node rg1-rn1 querying for a current master.
-2016-03-01 06:18:49.866 UTC INFO [rg1-rn1] JE: Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5006
-2016-03-01 06:18:49.867 UTC INFO [rg1-rn1] JE: DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
-2016-03-01 06:18:49.877 UTC INFO [rg1-rn1] JE recovery: BECOME_CONSISTENT
-2016-03-01 06:18:49.884 UTC INFO [rg1-rn1] JE: Node rg1-rn1 started
-2016-03-01 06:18:49.885 UTC INFO [rg1-rn1] JE: Election initiated; election #1
-2016-03-01 06:18:49.886 UTC INFO [rg1-rn1] JE: Started election thread Tue Mar 01 00:18:49 CST 2016
-2016-03-01 06:18:51.964 UTC INFO [rg1-rn1] JE: Winning proposal: Proposal(0000015330d4489f:1abe558f60a9ad191b414aaf5448a05d:00000002) Value: Value:DESKTOP-BS7Q9BS$$$5006$$$rg1-rn1$$$1
-2016-03-01 06:18:51.967 UTC INFO [rg1-rn1] JE: Master changed to rg1-rn1
-2016-03-01 06:18:51.967 UTC INFO [rg1-rn1] JE: Election finished. Elapsed time: 2083ms
-2016-03-01 06:18:51.967 UTC INFO [rg1-rn1] JE: Election thread exited. Group master: rg1-rn1(1)
-2016-03-01 06:18:51.968 UTC INFO [rg1-rn1] JE: Feeder manager accepting requests.
-2016-03-01 06:18:51.970 UTC INFO [rg1-rn1] JE: Joining group as master
-2016-03-01 06:18:51.970 UTC INFO [rg1-rn1] JE: Refreshed 0 monitors.
-2016-03-01 06:18:51.971 UTC INFO [rg1-rn1] Opened JE environment: 6.4.15 JVM max heap: 1,883,242,496 JE properties: allowCreate=true
-cacheSize=1129945497
+2016-03-08 21:42:03.919 UTC INFO [rg1-rn1] State change event: Tue Mar 08 15:42:03 CST 2016, State: MASTER, Type: ELECTABLE, Master: rg1-rn1
+2016-03-08 21:42:03.919 UTC INFO [rg1-rn1] MigrationStateTracker queue added:MASTER
+2016-03-08 21:42:03.920 UTC INFO [rg1-rn1] TableManagerStateTracker queue added:MASTER
+2016-03-08 21:42:03.920 UTC INFO [rg1-rn1] MasterBalanceStateTracker queue added:MASTER
+2016-03-08 21:42:03.920 UTC INFO [rg1-rn1] Replicated environment handle established. Cache size: 1145359564, State: MASTER
+2016-03-08 21:42:04.103 UTC INFO [rg1-rn1] Topology updated from seq#: 0 to 14
+2016-03-08 21:42:04.109 UTC INFO [rg1-rn1] Open SecurityMetadata DB
+2016-03-08 21:42:04.120 UTC INFO [rg1-rn1] Open TableMetadata DB
+2016-03-08 21:42:04.133 UTC INFO [rg1-rn1] Established 10 partition database handles, topology seq#: 14
+2016-03-08 21:42:04.136 UTC INFO [rg1-rn1] Found 0 indexes and 0 tables marked for deletion in TableMetadata[0, 0, 0]
+2016-03-08 21:42:04.137 UTC INFO [rg1-rn1] Established 0 secondary database handles
+2016-03-08 21:42:04.141 UTC INFO [rg1-rn1] Topology stored seq#: 14
+2016-03-08 21:42:04.147 UTC INFO [rg1-rn1] Topology fetched sequence#: 14, updated topology seq# 14
+2016-03-08 21:42:04.148 UTC INFO [rg1-rn1] MasterBalanceStateTracker thread start: rg1-rn1
+2016-03-08 21:42:04.149 UTC INFO [rg1-rn1] MigrationStateTracker thread start: null
+2016-03-08 21:42:04.149 UTC INFO [rg1-rn1] Migration manager change state to MASTER.
+2016-03-08 21:42:04.154 UTC INFO [rg1-rn1] TableManagerStateTracker thread start: rg1-rn1
+2016-03-08 21:42:04.154 UTC INFO [rg1-rn1] Table manager change state to MASTER
+2016-03-08 21:42:04.175 UTC INFO [rg1-rn1] Migration service accepting requests.
+2016-03-08 21:42:04.230 UTC INFO [rg1-rn1] No RN Login configured. 
+2016-03-08 21:42:04.234 UTC INFO [rg1-rn1] Service status changed from STARTING to RUNNING
+2016-03-08 21:42:04.272 UTC INFO [rg1-rn1] Started RepNodeService
+2016-03-08 21:42:04.319 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
+2016-03-08 21:42:04.323 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
+2016-03-08 21:42:04.325 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
+2016-03-08 23:37:28.099 UTC INFO [rg1-rn1] JVM java.net.InetAddress properties: cache.ttl=-1 cache.negative.ttl=-1
+2016-03-08 23:37:28.325 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_RepNodeStateUpdateThread,5,main] started
+2016-03-08 23:37:28.391 UTC INFO [rg1-rn1] NoSQL version:12cR1.3.5.2 2015-12-03 08:36:49 UTC  Build id: 0c693aa1a5a0 JE version:6.4.15 Java version:1.8.0_72
+2016-03-08 23:37:28.398 UTC INFO [rg1-rn1] JVM Runtime maxMemory:1,864,192 kB JE cache size:0 kB Max Offheap cache size:0 kB
+2016-03-08 23:37:28.398 UTC INFO [rg1-rn1] Non-default JE properties for environment: {je.rep.vlsn.logCacheSize=128, je.rep.envUnknownStateTimeout=10 s, je.log.faultReadSize=4096, je.rep.vlsn.distance=1000000, je.rep.replicaTimeout=10 s, je.env.runEvictor=true, je.cleaner.minUtilization=40, je.rep.replicaAckTimeout=5 s, je.lock.nLockTables=97, je.cleaner.threads=2, je.rep.replayMaxOpenDbHandles=100, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.log.iteratorReadSize=1048576, je.log.numBuffers=16, je.rep.feederTimeout=10 s, je.nodeMaxEntries=128, je.lock.timeout=10 s, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.checkpointer.bytesInterval=500000000, je.txn.durability=write_no_sync,write_no_sync,simple_majority, je.cleaner.readSize=1048576, je.rep.ignoreSecondaryNodeId=true, je.rep.txnRollbackLimit=10, je.log.fileCacheSize=2000, je.log.fileMax=1073741824}
+2016-03-08 23:37:28.398 UTC INFO [rg1-rn1] DataChannelFactory: basic
+2016-03-08 23:37:28.507 UTC INFO [rg1-rn1] Table manager created
+2016-03-08 23:37:28.538 UTC INFO [rg1-rn1] Partition database cache mode: EVICT_LN
+2016-03-08 23:37:28.604 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_MetadataUpdateThread,5,main] started
+2016-03-08 23:37:28.629 UTC INFO [rg1-rn1] Starting RepNodeService
+2016-03-08 23:37:28.630 UTC INFO [rg1-rn1] Starting RN MonitorAgent.  Server socket factory:<ClearServerSocketFactory name=monitor backlog=0 port range=0,0> Client socket connect factory: <ClientSocketFactory name=kvstore|rn|monitor id=2015022457 connectMs=10000 readMs=10000>
+2016-03-08 23:37:28.648 UTC INFO [rg1-rn1] Starting MonitorAgent
+2016-03-08 23:37:28.699 UTC INFO [rg1-rn1] Successfully created secure proxy for the repnode admin
+2016-03-08 23:37:28.737 UTC INFO [rg1-rn1] RepNodeAdmin registered
+2016-03-08 23:37:29.222 UTC INFO [rg1-rn1] JE recovery: FIND_END_OF_LOG
+2016-03-08 23:37:29.380 UTC INFO [rg1-rn1] JE recovery: FIND_LAST_CKPT
+2016-03-08 23:37:29.381 UTC INFO [rg1-rn1] JE recovery: READ_DBMAP_INFO
+2016-03-08 23:37:29.650 UTC INFO [rg1-rn1] JE recovery: REDO_DBMAP_INFO
+2016-03-08 23:37:29.662 UTC INFO [rg1-rn1] JE recovery: UNDO_DBMAP_RECORDS
+2016-03-08 23:37:29.698 UTC INFO [rg1-rn1] JE recovery: REDO_DBMAP_RECORDS
+2016-03-08 23:37:29.715 UTC INFO [rg1-rn1] JE recovery: READ_DATA_INFO
+2016-03-08 23:37:29.735 UTC INFO [rg1-rn1] JE recovery: REDO_DATA_INFO
+2016-03-08 23:37:29.754 UTC INFO [rg1-rn1] JE recovery: UNDO_DATA_RECORDS
+2016-03-08 23:37:29.782 UTC INFO [rg1-rn1] JE recovery: REDO_DATA_RECORDS
+2016-03-08 23:37:30.623 UTC INFO [rg1-rn1] JE recovery: POPULATE_UTILIZATION_PROFILE
+2016-03-08 23:37:30.630 UTC INFO [rg1-rn1] JE recovery: REMOVE_TEMP_DBS
+2016-03-08 23:37:30.638 UTC INFO [rg1-rn1] JE recovery: CKPT
+2016-03-08 23:37:30.674 UTC INFO [rg1-rn1] JE recovery: RECOVERY_FINISHED
+2016-03-08 23:37:30.677 UTC INFO [rg1-rn1] JE: Started ServiceDispatcher. HostPort=Nelmas-MacBook-Pro.local:5006
+2016-03-08 23:37:30.678 UTC INFO [rg1-rn1] JE: DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-03-08 23:37:30.692 UTC INFO [rg1-rn1] JE: Current group size: 1
+2016-03-08 23:37:30.692 UTC INFO [rg1-rn1] JE: Existing node rg1-rn1 querying for a current master.
+2016-03-08 23:37:30.701 UTC INFO [rg1-rn1] JE: Node rg1-rn1 started
+2016-03-08 23:37:30.701 UTC INFO [rg1-rn1] JE recovery: BECOME_CONSISTENT
+2016-03-08 23:37:30.701 UTC INFO [rg1-rn1] JE: Election initiated; election #1
+2016-03-08 23:37:30.702 UTC INFO [rg1-rn1] JE: Started election thread Tue Mar 08 17:37:30 CST 2016
+2016-03-08 23:37:32.721 UTC INFO [rg1-rn1] JE: Winning proposal: Proposal(000001535897bd1f:1908b0a63491d467d307c6b773ae07dd:00000002) Value: Value:Nelmas-MacBook-Pro.local$$$5006$$$rg1-rn1$$$1
+2016-03-08 23:37:32.729 UTC INFO [rg1-rn1] JE: Master changed to rg1-rn1
+2016-03-08 23:37:32.730 UTC INFO [rg1-rn1] JE: Election finished. Elapsed time: 2029ms
+2016-03-08 23:37:32.730 UTC INFO [rg1-rn1] JE: Feeder manager accepting requests.
+2016-03-08 23:37:32.732 UTC INFO [rg1-rn1] JE: Joining group as master
+2016-03-08 23:37:32.733 UTC INFO [rg1-rn1] JE: Refreshed 0 monitors.
+2016-03-08 23:37:32.734 UTC INFO [rg1-rn1] Opened JE environment: 6.4.15 JVM max heap: 1,908,932,608 JE properties: allowCreate=true
+cacheSize=1145359564
 txnNoSync=false
 txnWriteNoSync=false
-{je.lock.timeout=10 s, je.cleaner.readSize=1048576, je.log.faultReadSize=4096, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.log.fileMax=1073741824, je.rep.feederTimeout=10 s, je.rep.nodeName=rg1-rn1, je.nodeMaxEntries=128, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.rep.electableGroupSizeOverride=0, je.env.runEvictor=true, je.log.iteratorReadSize=1048576, je.txn.durability=WRITE_NO_SYNC,WRITE_NO_SYNC,SIMPLE_MAJORITY, je.maxOffHeapMemory=0, je.checkpointer.bytesInterval=500000000, je.log.numBuffers=16, je.rep.nodeHostPort=DESKTOP-BS7Q9BS:5006, je.rep.vlsn.distance=1000000, je.rep.txnRollbackLimit=10, je.rep.replayMaxOpenDbHandles=100, je.rep.ignoreSecondaryNodeId=true, je.maxMemory=0, je.cleaner.minUtilization=40, je.env.isTransactional=true, je.log.fileCacheSize=2000, je.rep.helperHosts=DESKTOP-BS7Q9BS:5006, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.vlsn.logCacheSize=128, je.rep.replicaTimeout=10 s, je.lock.nLockTables=97, je.rep.nodeType=ELECTABLE, je.rep.envUnknownStateTimeout=10 s, je.rep.preserveRecordVersion=true, je.rep.groupName=rg1, je.rep.replicaAckTimeout=5 s, je.cleaner.threads=2}
+{je.lock.timeout=10 s, je.cleaner.readSize=1048576, je.log.faultReadSize=4096, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.log.fileMax=1073741824, je.rep.feederTimeout=10 s, je.rep.nodeName=rg1-rn1, je.nodeMaxEntries=128, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.rep.electableGroupSizeOverride=0, je.env.runEvictor=true, je.log.iteratorReadSize=1048576, je.txn.durability=WRITE_NO_SYNC,WRITE_NO_SYNC,SIMPLE_MAJORITY, je.maxOffHeapMemory=0, je.checkpointer.bytesInterval=500000000, je.log.numBuffers=16, je.rep.nodeHostPort=Nelmas-MacBook-Pro.local:5006, je.rep.vlsn.distance=1000000, je.rep.txnRollbackLimit=10, je.rep.replayMaxOpenDbHandles=100, je.rep.ignoreSecondaryNodeId=true, je.maxMemory=0, je.cleaner.minUtilization=40, je.env.isTransactional=true, je.log.fileCacheSize=2000, je.rep.helperHosts=Nelmas-MacBook-Pro.local:5006, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.vlsn.logCacheSize=128, je.rep.replicaTimeout=10 s, je.lock.nLockTables=97, je.rep.nodeType=ELECTABLE, je.rep.envUnknownStateTimeout=10 s, je.rep.preserveRecordVersion=true, je.rep.groupName=rg1, je.rep.replicaAckTimeout=5 s, je.cleaner.threads=2}
 
-2016-03-01 06:18:51.980 UTC INFO [rg1-rn1] State change event: Tue Mar 01 00:18:51 CST 2016, State: MASTER, Type: ELECTABLE, Master: rg1-rn1
-2016-03-01 06:18:51.981 UTC INFO [rg1-rn1] MigrationStateTracker queue added:MASTER
-2016-03-01 06:18:51.981 UTC INFO [rg1-rn1] TableManagerStateTracker queue added:MASTER
-2016-03-01 06:18:51.981 UTC INFO [rg1-rn1] MasterBalanceStateTracker queue added:MASTER
-2016-03-01 06:18:51.981 UTC INFO [rg1-rn1] Replicated environment handle established. Cache size: 1129945497, State: MASTER
-2016-03-01 06:18:52.065 UTC INFO [rg1-rn1] Topology updated from seq#: 0 to 14
-2016-03-01 06:18:52.075 UTC INFO [rg1-rn1] Open SecurityMetadata DB
-2016-03-01 06:18:52.081 UTC INFO [rg1-rn1] Open TableMetadata DB
-2016-03-01 06:18:52.102 UTC INFO [rg1-rn1] Established 10 partition database handles, topology seq#: 14
-2016-03-01 06:18:52.145 UTC INFO [rg1-rn1] Topology stored seq#: 14
-2016-03-01 06:18:52.154 UTC INFO [rg1-rn1] Topology fetched sequence#: 14, updated topology seq# 14
-2016-03-01 06:18:52.154 UTC INFO [rg1-rn1] Found 0 indexes and 0 tables marked for deletion in TableMetadata[0, 0, 0]
-2016-03-01 06:18:52.157 UTC INFO [rg1-rn1] Established 0 secondary database handles
-2016-03-01 06:18:52.193 UTC INFO [rg1-rn1] MigrationStateTracker thread start: null
-2016-03-01 06:18:52.194 UTC INFO [rg1-rn1] Migration manager change state to MASTER.
-2016-03-01 06:18:52.197 UTC INFO [rg1-rn1] MasterBalanceStateTracker thread start: rg1-rn1
-2016-03-01 06:18:52.208 UTC INFO [rg1-rn1] Migration service accepting requests.
-2016-03-01 06:18:52.193 UTC INFO [rg1-rn1] TableManagerStateTracker thread start: rg1-rn1
-2016-03-01 06:18:52.210 UTC INFO [rg1-rn1] Table manager change state to MASTER
-2016-03-01 06:18:52.246 UTC INFO [rg1-rn1] No RN Login configured. 
-2016-03-01 06:18:52.247 UTC INFO [rg1-rn1] Service status changed from STARTING to RUNNING
-2016-03-01 06:18:52.254 UTC INFO [rg1-rn1] Started RepNodeService
-2016-03-01 06:18:52.327 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
-2016-03-01 06:18:52.331 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
-2016-03-01 06:18:52.333 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
-2016-03-01 20:43:53.441 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 20:43:53.442 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 20:44:23.457 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 20:44:23.458 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 20:48:59.910 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 192.168.2.8
-2016-03-01 20:48:59.911 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.2.8,localport=5006]
-2016-03-01 20:49:29.927 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.2.8 to 192.168.56.1
-2016-03-01 20:49:29.928 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 21:02:37.657 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 21:02:37.657 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 21:03:07.671 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 21:03:07.672 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 21:06:09.996 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 21:06:09.997 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 21:06:40.012 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 21:06:40.013 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 21:16:07.381 UTC INFO [rg1-rn1] JVM java.net.InetAddress properties: cache.ttl=-1 cache.negative.ttl=-1
-2016-03-01 21:16:07.529 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_RepNodeStateUpdateThread,5,main] started
-2016-03-01 21:16:07.598 UTC INFO [rg1-rn1] NoSQL version:12cR1.3.5.2 2015-12-03 08:36:49 UTC  Build id: 0c693aa1a5a0 JE version:6.4.15 Java version:1.8.0_71
-2016-03-01 21:16:07.598 UTC INFO [rg1-rn1] JVM Runtime maxMemory:1,839,104 kB JE cache size:0 kB Max Offheap cache size:0 kB
-2016-03-01 21:16:07.598 UTC INFO [rg1-rn1] Non-default JE properties for environment: {je.rep.vlsn.logCacheSize=128, je.rep.envUnknownStateTimeout=10 s, je.log.faultReadSize=4096, je.rep.vlsn.distance=1000000, je.rep.replicaTimeout=10 s, je.env.runEvictor=true, je.cleaner.minUtilization=40, je.rep.replicaAckTimeout=5 s, je.lock.nLockTables=97, je.cleaner.threads=2, je.rep.replayMaxOpenDbHandles=100, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.log.iteratorReadSize=1048576, je.log.numBuffers=16, je.rep.feederTimeout=10 s, je.nodeMaxEntries=128, je.lock.timeout=10 s, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.checkpointer.bytesInterval=500000000, je.txn.durability=write_no_sync,write_no_sync,simple_majority, je.cleaner.readSize=1048576, je.rep.ignoreSecondaryNodeId=true, je.rep.txnRollbackLimit=10, je.log.fileCacheSize=2000, je.log.fileMax=1073741824}
-2016-03-01 21:16:07.598 UTC INFO [rg1-rn1] DataChannelFactory: basic
-2016-03-01 21:16:07.613 UTC INFO [rg1-rn1] Table manager created
-2016-03-01 21:16:07.629 UTC INFO [rg1-rn1] Partition database cache mode: EVICT_LN
-2016-03-01 21:16:07.660 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_MetadataUpdateThread,5,main] started
-2016-03-01 21:16:07.682 UTC INFO [rg1-rn1] Starting RepNodeService
-2016-03-01 21:16:07.682 UTC INFO [rg1-rn1] Starting RN MonitorAgent.  Server socket factory:<ClearServerSocketFactory name=monitor backlog=0 port range=0,0> Client socket connect factory: <ClientSocketFactory name=kvstore|rn|monitor id=-285092861 connectMs=10000 readMs=10000>
-2016-03-01 21:16:07.682 UTC INFO [rg1-rn1] Starting MonitorAgent
-2016-03-01 21:16:07.713 UTC INFO [rg1-rn1] Successfully created secure proxy for the repnode admin
-2016-03-01 21:16:07.744 UTC INFO [rg1-rn1] RepNodeAdmin registered
-2016-03-01 21:16:07.982 UTC INFO [rg1-rn1] JE recovery: FIND_END_OF_LOG
-2016-03-01 21:16:08.408 UTC INFO [rg1-rn1] JE recovery: FIND_LAST_CKPT
-2016-03-01 21:16:08.409 UTC INFO [rg1-rn1] JE recovery: READ_DBMAP_INFO
-2016-03-01 21:16:08.788 UTC INFO [rg1-rn1] JE recovery: REDO_DBMAP_INFO
-2016-03-01 21:16:08.872 UTC INFO [rg1-rn1] JE recovery: UNDO_DBMAP_RECORDS
-2016-03-01 21:16:09.029 UTC INFO [rg1-rn1] JE recovery: REDO_DBMAP_RECORDS
-2016-03-01 21:16:09.131 UTC INFO [rg1-rn1] JE recovery: READ_DATA_INFO
-2016-03-01 21:16:09.211 UTC INFO [rg1-rn1] JE recovery: REDO_DATA_INFO
-2016-03-01 21:16:09.334 UTC INFO [rg1-rn1] JE recovery: UNDO_DATA_RECORDS
-2016-03-01 21:16:09.483 UTC INFO [rg1-rn1] JE recovery: REDO_DATA_RECORDS
-2016-03-01 21:16:13.189 UTC INFO [rg1-rn1] JE recovery: POPULATE_UTILIZATION_PROFILE
-2016-03-01 21:16:13.193 UTC INFO [rg1-rn1] JE recovery: REMOVE_TEMP_DBS
-2016-03-01 21:16:13.228 UTC INFO [rg1-rn1] JE recovery: CKPT
-2016-03-01 21:16:13.338 UTC INFO [rg1-rn1] JE recovery: RECOVERY_FINISHED
-2016-03-01 21:16:13.347 UTC INFO [rg1-rn1] JE: Current group size: 1
-2016-03-01 21:16:13.347 UTC INFO [rg1-rn1] JE: Existing node rg1-rn1 querying for a current master.
-2016-03-01 21:16:13.383 UTC INFO [rg1-rn1] JE: Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5006
-2016-03-01 21:16:13.383 UTC INFO [rg1-rn1] JE: DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
-2016-03-01 21:16:13.402 UTC INFO [rg1-rn1] JE recovery: BECOME_CONSISTENT
-2016-03-01 21:16:13.411 UTC INFO [rg1-rn1] JE: Node rg1-rn1 started
-2016-03-01 21:16:13.412 UTC INFO [rg1-rn1] JE: Election initiated; election #1
-2016-03-01 21:16:13.415 UTC INFO [rg1-rn1] JE: Started election thread Tue Mar 01 15:16:13 CST 2016
-2016-03-01 21:16:15.420 UTC INFO [rg1-rn1] JE: Winning proposal: Proposal(000001533409deb8:79594bcc12f78081560304e734d511fa:00000002) Value: Value:DESKTOP-BS7Q9BS$$$5006$$$rg1-rn1$$$1
-2016-03-01 21:16:15.422 UTC INFO [rg1-rn1] JE: Master changed to rg1-rn1
-2016-03-01 21:16:15.422 UTC INFO [rg1-rn1] JE: Election finished. Elapsed time: 2010ms
-2016-03-01 21:16:15.423 UTC INFO [rg1-rn1] JE: Feeder manager accepting requests.
-2016-03-01 21:16:15.423 UTC INFO [rg1-rn1] JE: Election thread exited. Group master: rg1-rn1(1)
-2016-03-01 21:16:15.426 UTC INFO [rg1-rn1] JE: Joining group as master
-2016-03-01 21:16:15.426 UTC INFO [rg1-rn1] JE: Refreshed 0 monitors.
-2016-03-01 21:16:15.427 UTC INFO [rg1-rn1] Opened JE environment: 6.4.15 JVM max heap: 1,883,242,496 JE properties: allowCreate=true
-cacheSize=1129945497
-txnNoSync=false
-txnWriteNoSync=false
-{je.lock.timeout=10 s, je.cleaner.readSize=1048576, je.log.faultReadSize=4096, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.log.fileMax=1073741824, je.rep.feederTimeout=10 s, je.rep.nodeName=rg1-rn1, je.nodeMaxEntries=128, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.rep.electableGroupSizeOverride=0, je.env.runEvictor=true, je.log.iteratorReadSize=1048576, je.txn.durability=WRITE_NO_SYNC,WRITE_NO_SYNC,SIMPLE_MAJORITY, je.maxOffHeapMemory=0, je.checkpointer.bytesInterval=500000000, je.log.numBuffers=16, je.rep.nodeHostPort=DESKTOP-BS7Q9BS:5006, je.rep.vlsn.distance=1000000, je.rep.txnRollbackLimit=10, je.rep.replayMaxOpenDbHandles=100, je.rep.ignoreSecondaryNodeId=true, je.maxMemory=0, je.cleaner.minUtilization=40, je.env.isTransactional=true, je.log.fileCacheSize=2000, je.rep.helperHosts=DESKTOP-BS7Q9BS:5006, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.vlsn.logCacheSize=128, je.rep.replicaTimeout=10 s, je.lock.nLockTables=97, je.rep.nodeType=ELECTABLE, je.rep.envUnknownStateTimeout=10 s, je.rep.preserveRecordVersion=true, je.rep.groupName=rg1, je.rep.replicaAckTimeout=5 s, je.cleaner.threads=2}
-
-2016-03-01 21:16:15.441 UTC INFO [rg1-rn1] State change event: Tue Mar 01 15:16:15 CST 2016, State: MASTER, Type: ELECTABLE, Master: rg1-rn1
-2016-03-01 21:16:15.442 UTC INFO [rg1-rn1] MigrationStateTracker queue added:MASTER
-2016-03-01 21:16:15.442 UTC INFO [rg1-rn1] TableManagerStateTracker queue added:MASTER
-2016-03-01 21:16:15.442 UTC INFO [rg1-rn1] MasterBalanceStateTracker queue added:MASTER
-2016-03-01 21:16:15.442 UTC INFO [rg1-rn1] Replicated environment handle established. Cache size: 1129945497, State: MASTER
-2016-03-01 21:16:15.486 UTC INFO [rg1-rn1] Topology updated from seq#: 0 to 14
-2016-03-01 21:16:15.495 UTC INFO [rg1-rn1] Open SecurityMetadata DB
-2016-03-01 21:16:15.504 UTC INFO [rg1-rn1] Open TableMetadata DB
-2016-03-01 21:16:15.508 UTC INFO [rg1-rn1] Established 10 partition database handles, topology seq#: 14
-2016-03-01 21:16:15.521 UTC INFO [rg1-rn1] Found 0 indexes and 0 tables marked for deletion in TableMetadata[0, 0, 0]
-2016-03-01 21:16:15.526 UTC INFO [rg1-rn1] Established 0 secondary database handles
-2016-03-01 21:16:15.536 UTC INFO [rg1-rn1] Topology stored seq#: 14
-2016-03-01 21:16:15.537 UTC INFO [rg1-rn1] Topology fetched sequence#: 14, updated topology seq# 14
-2016-03-01 21:16:15.587 UTC INFO [rg1-rn1] MasterBalanceStateTracker thread start: rg1-rn1
-2016-03-01 21:16:15.591 UTC INFO [rg1-rn1] MigrationStateTracker thread start: null
-2016-03-01 21:16:15.591 UTC INFO [rg1-rn1] Migration manager change state to MASTER.
-2016-03-01 21:16:15.596 UTC INFO [rg1-rn1] TableManagerStateTracker thread start: rg1-rn1
-2016-03-01 21:16:15.596 UTC INFO [rg1-rn1] Table manager change state to MASTER
-2016-03-01 21:16:15.603 UTC INFO [rg1-rn1] Migration service accepting requests.
-2016-03-01 21:16:15.616 UTC INFO [rg1-rn1] No RN Login configured. 
-2016-03-01 21:16:15.616 UTC INFO [rg1-rn1] Service status changed from STARTING to RUNNING
-2016-03-01 21:16:15.624 UTC INFO [rg1-rn1] Started RepNodeService
-2016-03-01 21:16:15.709 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
-2016-03-01 21:16:15.744 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
-2016-03-01 21:16:15.756 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
-2016-03-01 22:29:31.386 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 10.147.221.180
-2016-03-01 22:29:31.387 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/10.147.221.180,localport=5006]
-2016-03-01 22:30:01.424 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 10.147.221.180 to 192.168.56.1
-2016-03-01 22:30:01.424 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 22:45:05.331 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 10.147.221.180
-2016-03-01 22:45:05.332 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/10.147.221.180,localport=5006]
-2016-03-01 22:47:29.223 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 10.147.221.180 to 127.0.0.1
-2016-03-01 22:47:29.223 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 22:47:59.301 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 22:47:59.302 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 22:59:02.503 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 22:59:02.503 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 23:06:11.877 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 23:06:11.878 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 23:08:47.099 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 23:08:47.100 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 23:09:17.240 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 23:09:17.241 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 23:12:14.531 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 169.254.106.102
-2016-03-01 23:12:14.531 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/169.254.106.102,localport=5006]
-2016-03-01 23:12:44.669 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 169.254.106.102 to 192.168.56.1
-2016-03-01 23:12:44.669 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 23:19:57.613 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 23:19:57.614 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 23:20:27.706 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 23:20:27.706 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 23:31:26.620 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 23:31:26.620 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 23:31:56.814 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 23:31:56.814 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 23:34:26.213 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 23:34:26.213 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 23:34:56.337 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 23:34:56.338 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 23:36:59.446 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 23:36:59.446 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 23:37:29.631 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 23:37:29.631 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 23:53:20.735 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 23:53:20.735 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 23:53:50.929 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 23:53:50.929 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-01 23:59:02.650 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 23:59:02.650 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-01 23:59:32.770 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-01 23:59:32.770 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-02 00:01:33.199 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-02 00:01:33.199 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/127.0.0.1,localport=5006]
-2016-03-02 00:04:00.567 UTC INFO [rg1-rn1] JE: ServiceDispatcher IP changed, from 127.0.0.1 to 192.168.56.1
-2016-03-02 00:04:00.568 UTC INFO [rg1-rn1] JE: Rebind ServiceDispatcher socket: ServerSocket[addr=/192.168.56.1,localport=5006]
-2016-03-07 23:02:58.398 UTC INFO [rg1-rn1] JVM java.net.InetAddress properties: cache.ttl=-1 cache.negative.ttl=-1
-2016-03-07 23:02:58.802 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_RepNodeStateUpdateThread,5,main] started
-2016-03-07 23:02:58.921 UTC INFO [rg1-rn1] NoSQL version:12cR1.3.5.2 2015-12-03 08:36:49 UTC  Build id: 0c693aa1a5a0 JE version:6.4.15 Java version:1.8.0_71
-2016-03-07 23:02:58.930 UTC INFO [rg1-rn1] JVM Runtime maxMemory:1,839,104 kB JE cache size:0 kB Max Offheap cache size:0 kB
-2016-03-07 23:02:58.930 UTC INFO [rg1-rn1] Non-default JE properties for environment: {je.rep.vlsn.logCacheSize=128, je.rep.envUnknownStateTimeout=10 s, je.log.faultReadSize=4096, je.rep.vlsn.distance=1000000, je.rep.replicaTimeout=10 s, je.env.runEvictor=true, je.cleaner.minUtilization=40, je.rep.replicaAckTimeout=5 s, je.lock.nLockTables=97, je.cleaner.threads=2, je.rep.replayMaxOpenDbHandles=100, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.log.iteratorReadSize=1048576, je.log.numBuffers=16, je.rep.feederTimeout=10 s, je.nodeMaxEntries=128, je.lock.timeout=10 s, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.checkpointer.bytesInterval=500000000, je.txn.durability=write_no_sync,write_no_sync,simple_majority, je.cleaner.readSize=1048576, je.rep.ignoreSecondaryNodeId=true, je.rep.txnRollbackLimit=10, je.log.fileCacheSize=2000, je.log.fileMax=1073741824}
-2016-03-07 23:02:58.930 UTC INFO [rg1-rn1] DataChannelFactory: basic
-2016-03-07 23:02:58.948 UTC INFO [rg1-rn1] Table manager created
-2016-03-07 23:02:58.959 UTC INFO [rg1-rn1] Partition database cache mode: EVICT_LN
-2016-03-07 23:02:58.974 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_MetadataUpdateThread,5,main] started
-2016-03-07 23:02:58.997 UTC INFO [rg1-rn1] Starting RepNodeService
-2016-03-07 23:02:58.997 UTC INFO [rg1-rn1] Starting RN MonitorAgent.  Server socket factory:<ClearServerSocketFactory name=monitor backlog=0 port range=0,0> Client socket connect factory: <ClientSocketFactory name=kvstore|rn|monitor id=-826269197 connectMs=10000 readMs=10000>
-2016-03-07 23:02:59.017 UTC INFO [rg1-rn1] Starting MonitorAgent
-2016-03-07 23:02:59.044 UTC INFO [rg1-rn1] Successfully created secure proxy for the repnode admin
-2016-03-07 23:02:59.080 UTC INFO [rg1-rn1] RepNodeAdmin registered
-2016-03-07 23:02:59.326 UTC INFO [rg1-rn1] JE recovery: FIND_END_OF_LOG
-2016-03-07 23:02:59.774 UTC INFO [rg1-rn1] JE recovery: FIND_LAST_CKPT
-2016-03-07 23:02:59.775 UTC INFO [rg1-rn1] JE recovery: READ_DBMAP_INFO
-2016-03-07 23:03:00.090 UTC INFO [rg1-rn1] JE recovery: REDO_DBMAP_INFO
-2016-03-07 23:03:00.139 UTC INFO [rg1-rn1] JE recovery: UNDO_DBMAP_RECORDS
-2016-03-07 23:03:00.235 UTC INFO [rg1-rn1] JE recovery: REDO_DBMAP_RECORDS
-2016-03-07 23:03:00.318 UTC INFO [rg1-rn1] JE recovery: READ_DATA_INFO
-2016-03-07 23:03:00.425 UTC INFO [rg1-rn1] JE recovery: REDO_DATA_INFO
-2016-03-07 23:03:00.488 UTC INFO [rg1-rn1] JE recovery: UNDO_DATA_RECORDS
-2016-03-07 23:03:00.564 UTC INFO [rg1-rn1] JE recovery: REDO_DATA_RECORDS
-2016-03-07 23:03:01.564 UTC INFO [rg1-rn1] JE recovery: POPULATE_UTILIZATION_PROFILE
-2016-03-07 23:03:01.568 UTC INFO [rg1-rn1] JE recovery: REMOVE_TEMP_DBS
-2016-03-07 23:03:01.587 UTC INFO [rg1-rn1] JE recovery: CKPT
-2016-03-07 23:03:01.640 UTC INFO [rg1-rn1] JE recovery: RECOVERY_FINISHED
-2016-03-07 23:03:01.654 UTC INFO [rg1-rn1] JE: Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5006
-2016-03-07 23:03:01.663 UTC INFO [rg1-rn1] JE: Current group size: 1
-2016-03-07 23:03:01.663 UTC INFO [rg1-rn1] JE: DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
-2016-03-07 23:03:01.664 UTC INFO [rg1-rn1] JE: Existing node rg1-rn1 querying for a current master.
-2016-03-07 23:03:01.681 UTC INFO [rg1-rn1] JE recovery: BECOME_CONSISTENT
-2016-03-07 23:03:01.689 UTC INFO [rg1-rn1] JE: Node rg1-rn1 started
-2016-03-07 23:03:01.693 UTC INFO [rg1-rn1] JE: Election initiated; election #1
-2016-03-07 23:03:01.699 UTC INFO [rg1-rn1] JE: Started election thread Mon Mar 07 17:03:01 CST 2016
-2016-03-07 23:03:03.708 UTC INFO [rg1-rn1] JE: Winning proposal: Proposal(000001535351cf15:8014f3a2cf73f09846991a9e4fe27a72:00000002) Value: Value:DESKTOP-BS7Q9BS$$$5006$$$rg1-rn1$$$1
-2016-03-07 23:03:03.711 UTC INFO [rg1-rn1] JE: Master changed to rg1-rn1
-2016-03-07 23:03:03.711 UTC INFO [rg1-rn1] JE: Election finished. Elapsed time: 2019ms
-2016-03-07 23:03:03.711 UTC INFO [rg1-rn1] JE: Feeder manager accepting requests.
-2016-03-07 23:03:03.712 UTC INFO [rg1-rn1] JE: Election thread exited. Group master: rg1-rn1(1)
-2016-03-07 23:03:03.714 UTC INFO [rg1-rn1] JE: Joining group as master
-2016-03-07 23:03:03.715 UTC INFO [rg1-rn1] JE: Refreshed 0 monitors.
-2016-03-07 23:03:03.715 UTC INFO [rg1-rn1] Opened JE environment: 6.4.15 JVM max heap: 1,883,242,496 JE properties: allowCreate=true
-cacheSize=1129945497
-txnNoSync=false
-txnWriteNoSync=false
-{je.lock.timeout=10 s, je.cleaner.readSize=1048576, je.log.faultReadSize=4096, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.log.fileMax=1073741824, je.rep.feederTimeout=10 s, je.rep.nodeName=rg1-rn1, je.nodeMaxEntries=128, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.rep.electableGroupSizeOverride=0, je.env.runEvictor=true, je.log.iteratorReadSize=1048576, je.txn.durability=WRITE_NO_SYNC,WRITE_NO_SYNC,SIMPLE_MAJORITY, je.maxOffHeapMemory=0, je.checkpointer.bytesInterval=500000000, je.log.numBuffers=16, je.rep.nodeHostPort=DESKTOP-BS7Q9BS:5006, je.rep.vlsn.distance=1000000, je.rep.txnRollbackLimit=10, je.rep.replayMaxOpenDbHandles=100, je.rep.ignoreSecondaryNodeId=true, je.maxMemory=0, je.cleaner.minUtilization=40, je.env.isTransactional=true, je.log.fileCacheSize=2000, je.rep.helperHosts=DESKTOP-BS7Q9BS:5006, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.vlsn.logCacheSize=128, je.rep.replicaTimeout=10 s, je.lock.nLockTables=97, je.rep.nodeType=ELECTABLE, je.rep.envUnknownStateTimeout=10 s, je.rep.preserveRecordVersion=true, je.rep.groupName=rg1, je.rep.replicaAckTimeout=5 s, je.cleaner.threads=2}
-
-2016-03-07 23:03:03.724 UTC INFO [rg1-rn1] State change event: Mon Mar 07 17:03:03 CST 2016, State: MASTER, Type: ELECTABLE, Master: rg1-rn1
-2016-03-07 23:03:03.724 UTC INFO [rg1-rn1] MigrationStateTracker queue added:MASTER
-2016-03-07 23:03:03.725 UTC INFO [rg1-rn1] TableManagerStateTracker queue added:MASTER
-2016-03-07 23:03:03.725 UTC INFO [rg1-rn1] MasterBalanceStateTracker queue added:MASTER
-2016-03-07 23:03:03.725 UTC INFO [rg1-rn1] Replicated environment handle established. Cache size: 1129945497, State: MASTER
-2016-03-07 23:03:03.777 UTC INFO [rg1-rn1] Topology updated from seq#: 0 to 14
-2016-03-07 23:03:03.783 UTC INFO [rg1-rn1] Open SecurityMetadata DB
-2016-03-07 23:03:03.802 UTC INFO [rg1-rn1] Open TableMetadata DB
-2016-03-07 23:03:03.817 UTC INFO [rg1-rn1] Established 10 partition database handles, topology seq#: 14
-2016-03-07 23:03:03.885 UTC INFO [rg1-rn1] Found 0 indexes and 0 tables marked for deletion in TableMetadata[0, 0, 0]
-2016-03-07 23:03:03.890 UTC INFO [rg1-rn1] Established 0 secondary database handles
-2016-03-07 23:03:03.895 UTC INFO [rg1-rn1] Topology stored seq#: 14
-2016-03-07 23:03:03.907 UTC INFO [rg1-rn1] Topology fetched sequence#: 14, updated topology seq# 14
-2016-03-07 23:03:03.958 UTC INFO [rg1-rn1] TableManagerStateTracker thread start: rg1-rn1
-2016-03-07 23:03:03.958 UTC INFO [rg1-rn1] Table manager change state to MASTER
-2016-03-07 23:03:03.947 UTC INFO [rg1-rn1] MasterBalanceStateTracker thread start: rg1-rn1
-2016-03-07 23:03:03.959 UTC INFO [rg1-rn1] MigrationStateTracker thread start: null
-2016-03-07 23:03:03.975 UTC INFO [rg1-rn1] Migration manager change state to MASTER.
-2016-03-07 23:03:03.982 UTC INFO [rg1-rn1] Migration service accepting requests.
-2016-03-07 23:03:03.983 UTC INFO [rg1-rn1] No RN Login configured. 
-2016-03-07 23:03:03.983 UTC INFO [rg1-rn1] Service status changed from STARTING to RUNNING
-2016-03-07 23:03:03.989 UTC INFO [rg1-rn1] Started RepNodeService
-2016-03-07 23:03:04.032 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
-2016-03-07 23:03:04.045 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
-2016-03-07 23:03:04.049 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
+2016-03-08 23:37:32.737 UTC INFO [rg1-rn1] JE: Election thread exited. Group master: rg1-rn1(1)
+2016-03-08 23:37:32.741 UTC INFO [rg1-rn1] State change event: Tue Mar 08 17:37:32 CST 2016, State: MASTER, Type: ELECTABLE, Master: rg1-rn1
+2016-03-08 23:37:32.741 UTC INFO [rg1-rn1] MigrationStateTracker queue added:MASTER
+2016-03-08 23:37:32.741 UTC INFO [rg1-rn1] TableManagerStateTracker queue added:MASTER
+2016-03-08 23:37:32.741 UTC INFO [rg1-rn1] MasterBalanceStateTracker queue added:MASTER
+2016-03-08 23:37:32.742 UTC INFO [rg1-rn1] Replicated environment handle established. Cache size: 1145359564, State: MASTER
+2016-03-08 23:37:32.919 UTC INFO [rg1-rn1] Topology updated from seq#: 0 to 14
+2016-03-08 23:37:32.937 UTC INFO [rg1-rn1] Open SecurityMetadata DB
+2016-03-08 23:37:32.945 UTC INFO [rg1-rn1] Established 10 partition database handles, topology seq#: 14
+2016-03-08 23:37:32.973 UTC INFO [rg1-rn1] Open TableMetadata DB
+2016-03-08 23:37:33.041 UTC INFO [rg1-rn1] Found 0 indexes and 0 tables marked for deletion in TableMetadata[0, 0, 0]
+2016-03-08 23:37:33.043 UTC INFO [rg1-rn1] Established 0 secondary database handles
+2016-03-08 23:37:33.071 UTC INFO [rg1-rn1] Topology stored seq#: 14
+2016-03-08 23:37:33.141 UTC INFO [rg1-rn1] Topology fetched sequence#: 14, updated topology seq# 14
+2016-03-08 23:37:33.142 UTC INFO [rg1-rn1] MasterBalanceStateTracker thread start: rg1-rn1
+2016-03-08 23:37:33.143 UTC INFO [rg1-rn1] MigrationStateTracker thread start: null
+2016-03-08 23:37:33.143 UTC INFO [rg1-rn1] Migration manager change state to MASTER.
+2016-03-08 23:37:33.150 UTC INFO [rg1-rn1] Migration service accepting requests.
+2016-03-08 23:37:33.151 UTC INFO [rg1-rn1] TableManagerStateTracker thread start: rg1-rn1
+2016-03-08 23:37:33.151 UTC INFO [rg1-rn1] Table manager change state to MASTER
+2016-03-08 23:37:33.183 UTC INFO [rg1-rn1] No RN Login configured. 
+2016-03-08 23:37:33.183 UTC INFO [rg1-rn1] Service status changed from STARTING to RUNNING
+2016-03-08 23:37:33.193 UTC INFO [rg1-rn1] Started RepNodeService
+2016-03-08 23:37:33.236 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
+2016-03-08 23:37:33.239 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
+2016-03-08 23:37:33.240 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL

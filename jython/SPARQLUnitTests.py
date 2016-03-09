@@ -1,6 +1,6 @@
 import unittest
 
-connOracleRDFNoSQL = connectTo 'OracleNoSQL' 'C##cs329e_UTEid' 'orcl_UTEid' 'rdf_mode' 'A0' nodebug
+connOracleRDFNoSQL = connectTo 'OracleNoSQL' 'C##cs329e_UTEid' 'orcl_UTEid' 'rdf_mode' 'A0'
 
 results = SQL on connOracleRDFNoSQL "select ename from emp"
 
@@ -33,19 +33,19 @@ if "ALLEN" not in results:
 
 class OracleNoSQLTestCase_SQL_project (unittest.TestCase):
 
-    """
     def test_OracleNoSQLTestCase_SQL_1(self):
         results = SQL on connOracleRDFNoSQL "select sal, ename from (select * from emp) order by ename"
         self.assertEqual(sorted(results), [('ADAMS', 1100), ('ALLEN', 1600), ('BLAKE', 2850), ('CLARK', 2450), ('FORD', 3000), ('JAMES', 950), ('JONES', 2975), ('KING', 5000), ('MARTIN', 1250), ('MILLER', 1300), ('SCOTT', 3000), ('SMITH', 800), ('TURNER', 1500), ('WARD', 1250), ('ename', 'sal')])
-    """
 
     def test_OracleNoSQLTestCase_SQL_1(self):
         results = SQL on connOracleRDFNoSQL "select ename, sal from emp where empno=7876"
         self.assertEqual(sorted(results), [('ADAMS', 1100), ('ename', 'sal')])
 
+    """
     def test_OracleNoSQLTestCase_SQL_2(self):
         results = SQL on connOracleRDFNoSQL "select ename, sal from emp where (select empno from emp)=7876"
         self.assertEqual(sorted(results), [('ADAMS', 1100), ('ename', 'sal')])
+    """
 
 # def test_OracleNoSQLTestCase_SQL_2(self):
 #    results = SQL on connOracleRDFNoSQL "SELECT ename, sal from (select * from emp)"

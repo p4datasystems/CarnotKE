@@ -1,305 +1,67 @@
-2016-02-28 06:46:39.979 UTC INFO [1] Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5005
-2016-02-28 06:46:39.979 UTC INFO [1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
-2016-02-28 06:46:40.030 UTC INFO [1] Current group size: 0
-2016-02-28 06:46:40.030 UTC INFO [1] New node 1(-1) unknown to rep group
-2016-02-28 06:46:40.031 UTC INFO [1] Master changed to 1
-2016-02-28 06:46:40.031 UTC INFO [1] Nascent group. 1 is master by virtue of being the first node.
-2016-02-28 06:46:40.050 UTC INFO [1] Successfully added node:1(1) HostPort = DESKTOP-BS7Q9BS: 5005 [ELECTABLE]
-2016-02-28 06:46:40.053 UTC INFO [1] Refreshed 0 monitors.
-2016-02-28 06:46:40.057 UTC INFO [1] Node 1 started
-2016-02-28 06:46:40.057 UTC INFO [1] Feeder manager accepting requests.
-2016-02-28 06:46:40.058 UTC INFO [1] Joining group as master
-2016-02-28 06:46:40.059 UTC INFO [1] Refreshed 0 monitors.
-2016-02-28 06:50:37.481 UTC INFO [1] Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5005
-2016-02-28 06:50:37.481 UTC INFO [1] Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5005
-2016-02-28 06:50:37.482 UTC INFO [1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
-2016-02-28 06:50:37.482 UTC INFO [1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
-2016-02-28 06:50:37.536 UTC INFO [1] Current group size: 1
-2016-02-28 06:50:37.536 UTC INFO [1] Current group size: 1
-2016-02-28 06:50:37.537 UTC INFO [1] Existing node 1 querying for a current master.
-2016-02-28 06:50:37.537 UTC INFO [1] Existing node 1 querying for a current master.
-2016-02-28 06:50:37.554 UTC INFO [1] Node 1 started
-2016-02-28 06:50:37.554 UTC INFO [1] Node 1 started
-2016-02-28 06:50:37.555 UTC INFO [1] Election initiated; election #1
-2016-02-28 06:50:37.555 UTC INFO [1] Election initiated; election #1
-2016-02-28 06:50:37.557 UTC INFO [1] Started election thread Sun Feb 28 00:50:37 CST 2016
-2016-02-28 06:50:37.557 UTC INFO [1] Started election thread Sun Feb 28 00:50:37 CST 2016
-2016-02-28 06:50:39.579 UTC INFO [1] Winning proposal: Proposal(0000015326a4ac46:b65fef56b970b046f30b78050bc7a2e2:00000001) Value: Value:DESKTOP-BS7Q9BS$$$5005$$$1$$$1
-2016-02-28 06:50:39.579 UTC INFO [1] Winning proposal: Proposal(0000015326a4ac46:b65fef56b970b046f30b78050bc7a2e2:00000001) Value: Value:DESKTOP-BS7Q9BS$$$5005$$$1$$$1
-2016-02-28 06:50:39.586 UTC INFO [1] Master changed to 1
-2016-02-28 06:50:39.586 UTC INFO [1] Master changed to 1
-2016-02-28 06:50:39.589 UTC INFO [1] Election finished. Elapsed time: 2034ms
-2016-02-28 06:50:39.589 UTC INFO [1] Election finished. Elapsed time: 2034ms
-2016-02-28 06:50:39.590 UTC INFO [1] Election thread exited. Group master: 1(1)
-2016-02-28 06:50:39.590 UTC INFO [1] Election thread exited. Group master: 1(1)
-2016-02-28 06:50:39.592 UTC INFO [1] Feeder manager accepting requests.
-2016-02-28 06:50:39.592 UTC INFO [1] Feeder manager accepting requests.
-2016-02-28 06:50:39.609 UTC INFO [1] Joining group as master
-2016-02-28 06:50:39.609 UTC INFO [1] Joining group as master
-2016-02-28 06:50:39.612 UTC INFO [1] Refreshed 0 monitors.
-2016-02-28 06:50:39.612 UTC INFO [1] Refreshed 0 monitors.
-2016-02-28 23:37:24.090 UTC INFO [1] ServiceDispatcher IP changed, from 192.168.56.1 to 192.168.2.8
-2016-02-28 23:37:24.090 UTC INFO [1] ServiceDispatcher IP changed, from 192.168.56.1 to 192.168.2.8
-2016-02-28 23:37:25.957 UTC INFO [1] ServiceDispatcher HostPort=DESKTOP-BS7Q9BS:5005 bind failed despite waiting for 0ms
-2016-02-28 23:37:25.957 UTC INFO [1] ServiceDispatcher HostPort=DESKTOP-BS7Q9BS:5005 bind failed despite waiting for 0ms
-2016-02-28 23:37:25.959 UTC SEVERE [1] Server socket exception: java.net.BindException: Address already in use: bind
-	at sun.nio.ch.Net.bind0(Native Method)
-	at sun.nio.ch.Net.bind(Unknown Source)
-	at sun.nio.ch.Net.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketChannelImpl.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketAdaptor.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketAdaptor.bind(Unknown Source)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.bindSocket(ServiceDispatcher.java:262)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.rebindSocket(ServiceDispatcher.java:878)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.run(ServiceDispatcher.java:787)
-
-2016-02-28 23:37:25.959 UTC SEVERE [1] Server socket exception: java.net.BindException: Address already in use: bind
-	at sun.nio.ch.Net.bind0(Native Method)
-	at sun.nio.ch.Net.bind(Unknown Source)
-	at sun.nio.ch.Net.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketChannelImpl.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketAdaptor.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketAdaptor.bind(Unknown Source)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.bindSocket(ServiceDispatcher.java:262)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.rebindSocket(ServiceDispatcher.java:878)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.run(ServiceDispatcher.java:787)
-
-2016-02-28 23:37:25.961 UTC SEVERE [1] 1(1):.\kvroot\kvstore\sn1\admin1\env:ServiceDispatcher-DESKTOP-BS7Q9BS:5005 exited unexpectedly with exception com.sleepycat.je.EnvironmentFailureException: (JE 6.4.15) java.net.BindException: Address already in use: bind UNEXPECTED_EXCEPTION: Unexpected internal Exception, may have side effects.com.sleepycat.je.EnvironmentFailureException: (JE 6.4.15) java.net.BindException: Address already in use: bind UNEXPECTED_EXCEPTION: Unexpected internal Exception, may have side effects.
-	at com.sleepycat.je.EnvironmentFailureException.unexpectedException(EnvironmentFailureException.java:336)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.run(ServiceDispatcher.java:801)
-Caused by: java.net.BindException: Address already in use: bind
-	at sun.nio.ch.Net.bind0(Native Method)
-	at sun.nio.ch.Net.bind(Unknown Source)
-	at sun.nio.ch.Net.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketChannelImpl.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketAdaptor.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketAdaptor.bind(Unknown Source)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.bindSocket(ServiceDispatcher.java:262)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.rebindSocket(ServiceDispatcher.java:878)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.run(ServiceDispatcher.java:787)
-
-2016-02-28 23:37:25.961 UTC SEVERE [1] 1(1):.\kvroot\kvstore\sn1\admin1\env:ServiceDispatcher-DESKTOP-BS7Q9BS:5005 exited unexpectedly with exception com.sleepycat.je.EnvironmentFailureException: (JE 6.4.15) java.net.BindException: Address already in use: bind UNEXPECTED_EXCEPTION: Unexpected internal Exception, may have side effects.com.sleepycat.je.EnvironmentFailureException: (JE 6.4.15) java.net.BindException: Address already in use: bind UNEXPECTED_EXCEPTION: Unexpected internal Exception, may have side effects.
-	at com.sleepycat.je.EnvironmentFailureException.unexpectedException(EnvironmentFailureException.java:336)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.run(ServiceDispatcher.java:801)
-Caused by: java.net.BindException: Address already in use: bind
-	at sun.nio.ch.Net.bind0(Native Method)
-	at sun.nio.ch.Net.bind(Unknown Source)
-	at sun.nio.ch.Net.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketChannelImpl.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketAdaptor.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketAdaptor.bind(Unknown Source)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.bindSocket(ServiceDispatcher.java:262)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.rebindSocket(ServiceDispatcher.java:878)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.run(ServiceDispatcher.java:787)
-
-2016-02-28 23:37:25.962 UTC INFO [1] Releasing commit block latch
-2016-02-28 23:37:26.469 UTC INFO [1] Feeder manager forced shutdown.
-2016-02-28 23:37:26.469 UTC INFO [1] Feeder manager forced shutdown.
-2016-02-28 23:37:29.046 UTC INFO [1] Feeder manager exited. CurrentTxnEnd VLSN: 191
-2016-02-28 23:37:29.046 UTC INFO [1] Feeder manager exited. CurrentTxnEnd VLSN: 191
-2016-02-28 23:37:29.055 UTC INFO [1] RepNode main thread shutting down.
-2016-02-28 23:37:29.055 UTC INFO [1] RepNode main thread shutting down.
-2016-02-28 23:37:29.057 UTC INFO [1] RepNode shutdown exception:
-Environment invalid because of previous exception: (JE 6.4.15) 1(1):.\kvroot\kvstore\sn1\admin1\env com.sleepycat.je.EnvironmentFailureException: (JE 6.4.15) java.net.BindException: Address already in use: bind UNEXPECTED_EXCEPTION: Unexpected internal Exception, may have side effects. UNCAUGHT_EXCEPTION: Uncaught Exception in internal thread, unable to continue. Environment is invalid and must be closed.1(1)[UNKNOWN] 
-No feeders.
-GlobalCBVLSN=182
-Group info [kvstoreAdmin] 0ce00e37-0b7e-4330-abec-f019473d30eb
- Format version: 3
- Change version: 1
- Max persist rep node ID: 1
- Min JE version: 6.0.1
- Node:1 DESKTOP-BS7Q9BS:5005 (is member) changeVersion:1 LocalCBVLSN:182 at:Sun Feb 28 00:50:39 CST 2016 jeVersion:6.4.15
-vlsnRange=first=1 last=191 sync=191 txnEnd=191
-lastReplayedTxn=null lastReplayedVLSN=182 numActiveReplayTxns=0
-
-2016-02-28 23:37:29.057 UTC INFO [1] RepNode shutdown exception:
-Environment invalid because of previous exception: (JE 6.4.15) 1(1):.\kvroot\kvstore\sn1\admin1\env com.sleepycat.je.EnvironmentFailureException: (JE 6.4.15) java.net.BindException: Address already in use: bind UNEXPECTED_EXCEPTION: Unexpected internal Exception, may have side effects. UNCAUGHT_EXCEPTION: Uncaught Exception in internal thread, unable to continue. Environment is invalid and must be closed.1(1)[UNKNOWN] 
-No feeders.
-GlobalCBVLSN=182
-Group info [kvstoreAdmin] 0ce00e37-0b7e-4330-abec-f019473d30eb
- Format version: 3
- Change version: 1
- Max persist rep node ID: 1
- Min JE version: 6.0.1
- Node:1 DESKTOP-BS7Q9BS:5005 (is member) changeVersion:1 LocalCBVLSN:182 at:Sun Feb 28 00:50:39 CST 2016 jeVersion:6.4.15
-vlsnRange=first=1 last=191 sync=191 txnEnd=191
-lastReplayedTxn=null lastReplayedVLSN=182 numActiveReplayTxns=0
-
-2016-02-28 23:37:29.057 UTC INFO [1] Shutting down node 1(1)
-2016-02-28 23:37:29.057 UTC INFO [1] Shutting down node 1(1)
-2016-02-28 23:37:29.058 UTC INFO [1] Elections shutdown initiated
-2016-02-28 23:37:29.058 UTC INFO [1] Elections shutdown initiated
-2016-02-28 23:37:29.058 UTC INFO [1] Acceptor Thread 1 soft shutdown initiated.
-2016-02-28 23:37:29.058 UTC INFO [1] Acceptor Thread 1 soft shutdown initiated.
-2016-02-28 23:37:29.059 UTC INFO [1] Learner Thread 1 soft shutdown initiated.
-2016-02-28 23:37:29.059 UTC INFO [1] Learner Thread 1 soft shutdown initiated.
-2016-02-28 23:37:29.060 UTC INFO [1] ElectionThread_1(1):.\kvroot\kvstore\sn1\admin1\env soft shutdown initiated.
-2016-02-28 23:37:29.060 UTC INFO [1] ElectionThread_1(1):.\kvroot\kvstore\sn1\admin1\env soft shutdown initiated.
-2016-02-28 23:37:29.060 UTC INFO [1] Elections shutdown completed
-2016-02-28 23:37:29.060 UTC INFO [1] Elections shutdown completed
-2016-02-28 23:37:29.061 UTC INFO [1] RepNode main thread: UNKNOWN 1(1) exited.
-2016-02-28 23:37:29.061 UTC INFO [1] RepNode main thread: UNKNOWN 1(1) exited.
-2016-02-28 23:37:29.061 UTC INFO [1] Feeder Manager node: 1 soft shutdown initiated.
-2016-02-28 23:37:29.061 UTC INFO [1] Feeder Manager node: 1 soft shutdown initiated.
-2016-02-28 23:37:29.062 UTC INFO [1] ServiceDispatcher shutdown starting. HostPort=DESKTOP-BS7Q9BS:5005 Registered services: []
-2016-02-28 23:37:29.062 UTC INFO [1] ServiceDispatcher shutdown starting. HostPort=DESKTOP-BS7Q9BS:5005 Registered services: []
-2016-02-28 23:37:29.062 UTC INFO [1] ServiceDispatcher-DESKTOP-BS7Q9BS:5005 soft shutdown initiated.
-2016-02-28 23:37:29.062 UTC INFO [1] ServiceDispatcher-DESKTOP-BS7Q9BS:5005 soft shutdown initiated.
-2016-02-28 23:37:29.064 UTC INFO [1] ServiceDispatcher shutdown completed. HostPort=DESKTOP-BS7Q9BS:5005
-2016-02-28 23:37:29.064 UTC INFO [1] ServiceDispatcher shutdown completed. HostPort=DESKTOP-BS7Q9BS:5005
-2016-02-28 23:37:29.064 UTC INFO [1] 1(1) shutdown completed.
-2016-02-28 23:37:29.064 UTC INFO [1] 1(1) shutdown completed.
-2016-03-01 06:18:49.418 UTC INFO [1] Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5005
-2016-03-01 06:18:49.420 UTC INFO [1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
-2016-03-01 06:18:49.510 UTC INFO [1] Current group size: 1
-2016-03-01 06:18:49.510 UTC INFO [1] Existing node 1 querying for a current master.
-2016-03-01 06:18:49.574 UTC INFO [1] Node 1 started
-2016-03-01 06:18:49.574 UTC INFO [1] Election initiated; election #1
-2016-03-01 06:18:49.585 UTC INFO [1] Started election thread Tue Mar 01 00:18:49 CST 2016
-2016-03-01 06:18:51.599 UTC INFO [1] Winning proposal: Proposal(0000015330d44744:1abe558f60a9ad191b414aaf5448a05d:00000001) Value: Value:DESKTOP-BS7Q9BS$$$5005$$$1$$$1
-2016-03-01 06:18:51.602 UTC INFO [1] Master changed to 1
-2016-03-01 06:18:51.604 UTC INFO [1] Election finished. Elapsed time: 2030ms
-2016-03-01 06:18:51.605 UTC INFO [1] Election thread exited. Group master: 1(1)
-2016-03-01 06:18:51.605 UTC INFO [1] Feeder manager accepting requests.
-2016-03-01 06:18:51.612 UTC INFO [1] Joining group as master
-2016-03-01 06:18:51.614 UTC INFO [1] Refreshed 0 monitors.
-2016-03-01 20:43:53.177 UTC INFO [1] ServiceDispatcher IP changed, from 192.168.56.1 to 127.0.0.1
-2016-03-01 20:43:54.180 UTC INFO [1] ServiceDispatcher HostPort=DESKTOP-BS7Q9BS:5005 bind failed despite waiting for 0ms
-2016-03-01 20:43:54.184 UTC SEVERE [1] Server socket exception: java.net.BindException: Address already in use: bind
-	at sun.nio.ch.Net.bind0(Native Method)
-	at sun.nio.ch.Net.bind(Unknown Source)
-	at sun.nio.ch.Net.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketChannelImpl.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketAdaptor.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketAdaptor.bind(Unknown Source)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.bindSocket(ServiceDispatcher.java:262)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.rebindSocket(ServiceDispatcher.java:878)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.run(ServiceDispatcher.java:787)
-
-2016-03-01 20:43:54.186 UTC SEVERE [1] 1(1):.\kvroot\kvstore\sn1\admin1\env:ServiceDispatcher-DESKTOP-BS7Q9BS:5005 exited unexpectedly with exception com.sleepycat.je.EnvironmentFailureException: (JE 6.4.15) java.net.BindException: Address already in use: bind UNEXPECTED_EXCEPTION: Unexpected internal Exception, may have side effects.com.sleepycat.je.EnvironmentFailureException: (JE 6.4.15) java.net.BindException: Address already in use: bind UNEXPECTED_EXCEPTION: Unexpected internal Exception, may have side effects.
-	at com.sleepycat.je.EnvironmentFailureException.unexpectedException(EnvironmentFailureException.java:336)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.run(ServiceDispatcher.java:801)
-Caused by: java.net.BindException: Address already in use: bind
-	at sun.nio.ch.Net.bind0(Native Method)
-	at sun.nio.ch.Net.bind(Unknown Source)
-	at sun.nio.ch.Net.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketChannelImpl.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketAdaptor.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketAdaptor.bind(Unknown Source)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.bindSocket(ServiceDispatcher.java:262)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.rebindSocket(ServiceDispatcher.java:878)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.run(ServiceDispatcher.java:787)
-
-2016-03-01 20:43:54.187 UTC INFO [1] Releasing commit block latch
-2016-03-01 20:43:54.452 UTC INFO [1] Feeder manager forced shutdown.
-2016-03-01 20:43:54.893 UTC INFO [1] Feeder manager exited. CurrentTxnEnd VLSN: 200
-2016-03-01 20:43:54.897 UTC INFO [1] RepNode main thread shutting down.
-2016-03-01 20:43:54.899 UTC INFO [1] RepNode shutdown exception:
-Environment invalid because of previous exception: (JE 6.4.15) 1(1):.\kvroot\kvstore\sn1\admin1\env com.sleepycat.je.EnvironmentFailureException: (JE 6.4.15) java.net.BindException: Address already in use: bind UNEXPECTED_EXCEPTION: Unexpected internal Exception, may have side effects. UNCAUGHT_EXCEPTION: Uncaught Exception in internal thread, unable to continue. Environment is invalid and must be closed.1(1)[UNKNOWN] 
-No feeders.
-GlobalCBVLSN=191
-Group info [kvstoreAdmin] 0ce00e37-0b7e-4330-abec-f019473d30eb
- Format version: 3
- Change version: 1
- Max persist rep node ID: 1
- Min JE version: 6.0.1
- Node:1 DESKTOP-BS7Q9BS:5005 (is member) changeVersion:1 LocalCBVLSN:191 at:Tue Mar 01 00:18:51 CST 2016 jeVersion:6.4.15
-vlsnRange=first=1 last=200 sync=200 txnEnd=200
-lastReplayedTxn=null lastReplayedVLSN=191 numActiveReplayTxns=0
-
-2016-03-01 20:43:54.899 UTC INFO [1] Shutting down node 1(1)
-2016-03-01 20:43:54.899 UTC INFO [1] Elections shutdown initiated
-2016-03-01 20:43:54.900 UTC INFO [1] Acceptor Thread 1 soft shutdown initiated.
-2016-03-01 20:43:54.901 UTC INFO [1] Learner Thread 1 soft shutdown initiated.
-2016-03-01 20:43:54.902 UTC INFO [1] ElectionThread_1(1):.\kvroot\kvstore\sn1\admin1\env soft shutdown initiated.
-2016-03-01 20:43:54.903 UTC INFO [1] Elections shutdown completed
-2016-03-01 20:43:54.903 UTC INFO [1] RepNode main thread: UNKNOWN 1(1) exited.
-2016-03-01 20:43:54.903 UTC INFO [1] Feeder Manager node: 1 soft shutdown initiated.
-2016-03-01 20:43:54.905 UTC INFO [1] ServiceDispatcher shutdown starting. HostPort=DESKTOP-BS7Q9BS:5005 Registered services: []
-2016-03-01 20:43:54.905 UTC INFO [1] ServiceDispatcher-DESKTOP-BS7Q9BS:5005 soft shutdown initiated.
-2016-03-01 20:43:54.906 UTC INFO [1] ServiceDispatcher shutdown completed. HostPort=DESKTOP-BS7Q9BS:5005
-2016-03-01 20:43:54.906 UTC INFO [1] 1(1) shutdown completed.
-2016-03-01 21:16:08.344 UTC INFO [1] Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5005
-2016-03-01 21:16:08.345 UTC INFO [1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
-2016-03-01 21:16:08.419 UTC INFO [1] Current group size: 1
-2016-03-01 21:16:08.419 UTC INFO [1] Existing node 1 querying for a current master.
-2016-03-01 21:16:08.448 UTC INFO [1] Node 1 started
-2016-03-01 21:16:08.449 UTC INFO [1] Election initiated; election #1
-2016-03-01 21:16:08.451 UTC INFO [1] Started election thread Tue Mar 01 15:16:08 CST 2016
-2016-03-01 21:16:10.472 UTC INFO [1] Winning proposal: Proposal(000001533409cb54:79594bcc12f78081560304e734d511fa:00000001) Value: Value:DESKTOP-BS7Q9BS$$$5005$$$1$$$1
-2016-03-01 21:16:10.478 UTC INFO [1] Master changed to 1
-2016-03-01 21:16:10.480 UTC INFO [1] Election finished. Elapsed time: 2031ms
-2016-03-01 21:16:10.481 UTC INFO [1] Feeder manager accepting requests.
-2016-03-01 21:16:10.493 UTC INFO [1] Election thread exited. Group master: 1(1)
-2016-03-01 21:16:10.497 UTC INFO [1] Joining group as master
-2016-03-01 21:16:10.503 UTC INFO [1] Refreshed 0 monitors.
-2016-03-01 22:29:31.386 UTC INFO [1] ServiceDispatcher IP changed, from 192.168.56.1 to 10.147.221.180
-2016-03-01 22:29:32.387 UTC INFO [1] ServiceDispatcher HostPort=DESKTOP-BS7Q9BS:5005 bind failed despite waiting for 0ms
-2016-03-01 22:29:32.390 UTC SEVERE [1] Server socket exception: java.net.BindException: Address already in use: bind
-	at sun.nio.ch.Net.bind0(Native Method)
-	at sun.nio.ch.Net.bind(Unknown Source)
-	at sun.nio.ch.Net.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketChannelImpl.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketAdaptor.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketAdaptor.bind(Unknown Source)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.bindSocket(ServiceDispatcher.java:262)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.rebindSocket(ServiceDispatcher.java:878)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.run(ServiceDispatcher.java:787)
-
-2016-03-01 22:29:32.391 UTC SEVERE [1] 1(1):.\kvroot\kvstore\sn1\admin1\env:ServiceDispatcher-DESKTOP-BS7Q9BS:5005 exited unexpectedly with exception com.sleepycat.je.EnvironmentFailureException: (JE 6.4.15) java.net.BindException: Address already in use: bind UNEXPECTED_EXCEPTION: Unexpected internal Exception, may have side effects.com.sleepycat.je.EnvironmentFailureException: (JE 6.4.15) java.net.BindException: Address already in use: bind UNEXPECTED_EXCEPTION: Unexpected internal Exception, may have side effects.
-	at com.sleepycat.je.EnvironmentFailureException.unexpectedException(EnvironmentFailureException.java:336)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.run(ServiceDispatcher.java:801)
-Caused by: java.net.BindException: Address already in use: bind
-	at sun.nio.ch.Net.bind0(Native Method)
-	at sun.nio.ch.Net.bind(Unknown Source)
-	at sun.nio.ch.Net.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketChannelImpl.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketAdaptor.bind(Unknown Source)
-	at sun.nio.ch.ServerSocketAdaptor.bind(Unknown Source)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.bindSocket(ServiceDispatcher.java:262)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.rebindSocket(ServiceDispatcher.java:878)
-	at com.sleepycat.je.rep.utilint.ServiceDispatcher.run(ServiceDispatcher.java:787)
-
-2016-03-01 22:29:32.392 UTC INFO [1] Releasing commit block latch
-2016-03-01 22:29:32.956 UTC INFO [1] Feeder manager forced shutdown.
-2016-03-01 22:29:33.445 UTC INFO [1] Feeder manager exited. CurrentTxnEnd VLSN: 209
-2016-03-01 22:29:33.447 UTC INFO [1] RepNode main thread shutting down.
-2016-03-01 22:29:33.448 UTC INFO [1] RepNode shutdown exception:
-Environment invalid because of previous exception: (JE 6.4.15) 1(1):.\kvroot\kvstore\sn1\admin1\env com.sleepycat.je.EnvironmentFailureException: (JE 6.4.15) java.net.BindException: Address already in use: bind UNEXPECTED_EXCEPTION: Unexpected internal Exception, may have side effects. UNCAUGHT_EXCEPTION: Uncaught Exception in internal thread, unable to continue. Environment is invalid and must be closed.1(1)[UNKNOWN] 
-No feeders.
-GlobalCBVLSN=200
-Group info [kvstoreAdmin] 0ce00e37-0b7e-4330-abec-f019473d30eb
- Format version: 3
- Change version: 1
- Max persist rep node ID: 1
- Min JE version: 6.0.1
- Node:1 DESKTOP-BS7Q9BS:5005 (is member) changeVersion:1 LocalCBVLSN:200 at:Tue Mar 01 15:16:10 CST 2016 jeVersion:6.4.15
-vlsnRange=first=1 last=209 sync=209 txnEnd=209
-lastReplayedTxn=null lastReplayedVLSN=200 numActiveReplayTxns=0
-
-2016-03-01 22:29:33.449 UTC INFO [1] Shutting down node 1(1)
-2016-03-01 22:29:33.449 UTC INFO [1] Elections shutdown initiated
-2016-03-01 22:29:33.449 UTC INFO [1] Acceptor Thread 1 soft shutdown initiated.
-2016-03-01 22:29:33.450 UTC INFO [1] Learner Thread 1 soft shutdown initiated.
-2016-03-01 22:29:33.450 UTC INFO [1] ElectionThread_1(1):.\kvroot\kvstore\sn1\admin1\env soft shutdown initiated.
-2016-03-01 22:29:33.451 UTC INFO [1] Elections shutdown completed
-2016-03-01 22:29:33.451 UTC INFO [1] RepNode main thread: UNKNOWN 1(1) exited.
-2016-03-01 22:29:33.451 UTC INFO [1] Feeder Manager node: 1 soft shutdown initiated.
-2016-03-01 22:29:33.452 UTC INFO [1] ServiceDispatcher shutdown starting. HostPort=DESKTOP-BS7Q9BS:5005 Registered services: []
-2016-03-01 22:29:33.452 UTC INFO [1] ServiceDispatcher-DESKTOP-BS7Q9BS:5005 soft shutdown initiated.
-2016-03-01 22:29:33.453 UTC INFO [1] ServiceDispatcher shutdown completed. HostPort=DESKTOP-BS7Q9BS:5005
-2016-03-01 22:29:33.453 UTC INFO [1] 1(1) shutdown completed.
-2016-03-07 23:02:59.682 UTC INFO [1] Started ServiceDispatcher. HostPort=DESKTOP-BS7Q9BS:5005
-2016-03-07 23:02:59.685 UTC INFO [1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
-2016-03-07 23:02:59.762 UTC INFO [1] Current group size: 1
-2016-03-07 23:02:59.763 UTC INFO [1] Existing node 1 querying for a current master.
-2016-03-07 23:02:59.829 UTC INFO [1] Node 1 started
-2016-03-07 23:02:59.830 UTC INFO [1] Election initiated; election #1
-2016-03-07 23:02:59.847 UTC INFO [1] Started election thread Mon Mar 07 17:02:59 CST 2016
-2016-03-07 23:03:01.856 UTC INFO [1] Winning proposal: Proposal(000001535351c7d9:8014f3a2cf73f09846991a9e4fe27a72:00000001) Value: Value:DESKTOP-BS7Q9BS$$$5005$$$1$$$1
-2016-03-07 23:03:01.859 UTC INFO [1] Master changed to 1
-2016-03-07 23:03:01.860 UTC INFO [1] Election finished. Elapsed time: 2030ms
-2016-03-07 23:03:01.860 UTC INFO [1] Election thread exited. Group master: 1(1)
-2016-03-07 23:03:01.861 UTC INFO [1] Feeder manager accepting requests.
-2016-03-07 23:03:01.867 UTC INFO [1] Joining group as master
-2016-03-07 23:03:01.869 UTC INFO [1] Refreshed 0 monitors.
+2016-03-08 09:44:09.910 UTC INFO [1] Started ServiceDispatcher. HostPort=Nelmas-MacBook-Pro.local:5005
+2016-03-08 09:44:09.910 UTC INFO [1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-03-08 09:44:09.968 UTC INFO [1] Current group size: 0
+2016-03-08 09:44:09.969 UTC INFO [1] New node 1(-1) unknown to rep group
+2016-03-08 09:44:09.969 UTC INFO [1] Master changed to 1
+2016-03-08 09:44:09.970 UTC INFO [1] Nascent group. 1 is master by virtue of being the first node.
+2016-03-08 09:44:09.982 UTC INFO [1] Successfully added node:1(1) HostPort = Nelmas-MacBook-Pro.local: 5005 [ELECTABLE]
+2016-03-08 09:44:09.985 UTC INFO [1] Refreshed 0 monitors.
+2016-03-08 09:44:09.989 UTC INFO [1] Node 1 started
+2016-03-08 09:44:09.990 UTC INFO [1] Feeder manager accepting requests.
+2016-03-08 09:44:09.992 UTC INFO [1] Joining group as master
+2016-03-08 09:44:09.993 UTC INFO [1] Refreshed 0 monitors.
+2016-03-08 21:05:11.342 UTC INFO [1] ServiceDispatcher IP changed, from 192.168.2.2 to 127.0.0.1
+2016-03-08 21:05:11.348 UTC INFO [1] Rebind ServiceDispatcher socket: ServerSocket[addr=/0:0:0:0:0:0:0:0,localport=5005]
+2016-03-08 21:05:46.693 UTC INFO [1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:47.699 UTC INFO [1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:48.709 UTC INFO [1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:49.710 UTC INFO [1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:50.711 UTC INFO [1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:51.721 UTC INFO [1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:52.722 UTC INFO [1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:53.729 UTC INFO [1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:54.739 UTC INFO [1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:05:55.747 UTC INFO [1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:01.873 UTC INFO [1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:02.881 UTC INFO [1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:03.892 UTC INFO [1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:04.901 UTC INFO [1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:05.902 UTC INFO [1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:06.902 UTC INFO [1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:07.910 UTC INFO [1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:10.019 UTC INFO [1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:11.029 UTC INFO [1] Exception while check IP: class java.net.UnknownHostException : Nelmas-MacBook-Pro.local
+2016-03-08 21:06:12.035 UTC INFO [1] ServiceDispatcher IP changed, from 127.0.0.1 to 10.147.138.130
+2016-03-08 21:06:12.036 UTC INFO [1] Rebind ServiceDispatcher socket: ServerSocket[addr=/0:0:0:0:0:0:0:0,localport=5005]
+2016-03-08 21:07:33.783 UTC INFO [1] ServiceDispatcher IP changed, from 10.147.138.130 to 127.0.0.1
+2016-03-08 21:07:33.789 UTC INFO [1] Rebind ServiceDispatcher socket: ServerSocket[addr=/0:0:0:0:0:0:0:0,localport=5005]
+2016-03-08 21:09:19.845 UTC INFO [1] ServiceDispatcher IP changed, from 127.0.0.1 to 10.147.138.130
+2016-03-08 21:09:19.847 UTC INFO [1] Rebind ServiceDispatcher socket: ServerSocket[addr=/0:0:0:0:0:0:0:0,localport=5005]
+2016-03-08 21:42:01.633 UTC INFO [1] Started ServiceDispatcher. HostPort=Nelmas-MacBook-Pro.local:5005
+2016-03-08 21:42:01.634 UTC INFO [1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-03-08 21:42:01.734 UTC INFO [1] Current group size: 1
+2016-03-08 21:42:01.735 UTC INFO [1] Existing node 1 querying for a current master.
+2016-03-08 21:42:01.773 UTC INFO [1] Node 1 started
+2016-03-08 21:42:01.774 UTC INFO [1] Election initiated; election #1
+2016-03-08 21:42:01.778 UTC INFO [1] Started election thread Tue Mar 08 15:42:01 CST 2016
+2016-03-08 21:42:03.789 UTC INFO [1] Winning proposal: Proposal(00000153582e0304:6270dad1c38dc5f13fa962cbe5cb86f7:00000001) Value: Value:Nelmas-MacBook-Pro.local$$$5005$$$1$$$1
+2016-03-08 21:42:03.792 UTC INFO [1] Master changed to 1
+2016-03-08 21:42:03.793 UTC INFO [1] Election finished. Elapsed time: 2018ms
+2016-03-08 21:42:03.793 UTC INFO [1] Election thread exited. Group master: 1(1)
+2016-03-08 21:42:03.793 UTC INFO [1] Feeder manager accepting requests.
+2016-03-08 21:42:03.799 UTC INFO [1] Joining group as master
+2016-03-08 21:42:03.801 UTC INFO [1] Refreshed 0 monitors.
+2016-03-08 23:37:29.839 UTC INFO [1] Started ServiceDispatcher. HostPort=Nelmas-MacBook-Pro.local:5005
+2016-03-08 23:37:29.840 UTC INFO [1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-03-08 23:37:30.062 UTC INFO [1] Current group size: 1
+2016-03-08 23:37:30.063 UTC INFO [1] Existing node 1 querying for a current master.
+2016-03-08 23:37:30.120 UTC INFO [1] Node 1 started
+2016-03-08 23:37:30.121 UTC INFO [1] Election initiated; election #1
+2016-03-08 23:37:30.124 UTC INFO [1] Started election thread Tue Mar 08 17:37:30 CST 2016
+2016-03-08 23:37:32.148 UTC INFO [1] Winning proposal: Proposal(000001535897bae2:1908b0a63491d467d307c6b773ae07dd:00000001) Value: Value:Nelmas-MacBook-Pro.local$$$5005$$$1$$$1
+2016-03-08 23:37:32.154 UTC INFO [1] Master changed to 1
+2016-03-08 23:37:32.155 UTC INFO [1] Election finished. Elapsed time: 2035ms
+2016-03-08 23:37:32.155 UTC INFO [1] Election thread exited. Group master: 1(1)
+2016-03-08 23:37:32.156 UTC INFO [1] Feeder manager accepting requests.
+2016-03-08 23:37:32.163 UTC INFO [1] Joining group as master
+2016-03-08 23:37:32.166 UTC INFO [1] Refreshed 0 monitors.

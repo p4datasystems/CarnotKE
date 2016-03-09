@@ -1,8 +1,8 @@
 <config version="2">
   <component name="params" type="bootstrapParams" validate="true">
-    <property name="hostname" value="DESKTOP-BS7Q9BS" type="STRING"/>
+    <property name="hostname" value="Nelmas-MacBook-Pro.local" type="STRING"/>
     <property name="storageNodeId" value="1" type="INT"/>
-    <property name="haHostname" value="DESKTOP-BS7Q9BS" type="STRING"/>
+    <property name="haHostname" value="Nelmas-MacBook-Pro.local" type="STRING"/>
     <property name="adminHttpPort" value="5001" type="INT"/>
     <property name="numCPUs" value="4" type="INT"/>
     <property name="hostingAdmin" value="true" type="BOOLEAN"/>

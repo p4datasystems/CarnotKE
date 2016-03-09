@@ -1,4 +1,4 @@
-// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /media/sf_Work/GitHub/CarnotKE/jython/grammar/Python.g 2016-02-28 01:44:40
+// $ANTLR 3.1.3 Mar 17, 2009 19:23:44 /media/sf_Work/GitHub/CarnotKE/jython/grammar/Python.g 2016-03-08 17:30:33
 
 package org.python.antlr;
 
@@ -6010,7 +6010,7 @@ public class PythonLexer extends Lexer {
                         s = -1;
                         if ( ((startPos>0)) ) {s = 141;}
 
-                        else if ( ((((startPos==0)&&(implicitLineJoiningLevel>0))||(startPos==0))) ) {s = 143;}
+                        else if ( (((startPos==0)||((startPos==0)&&(implicitLineJoiningLevel>0)))) ) {s = 143;}
 
                          
                         input.seek(index62_142);
@@ -6025,7 +6025,7 @@ public class PythonLexer extends Lexer {
                         s = -1;
                         if ( ((startPos>0)) ) {s = 141;}
 
-                        else if ( ((((startPos==0)&&(implicitLineJoiningLevel>0))||(startPos==0))) ) {s = 143;}
+                        else if ( (((startPos==0)||((startPos==0)&&(implicitLineJoiningLevel>0)))) ) {s = 143;}
 
                          
                         input.seek(index62_145);

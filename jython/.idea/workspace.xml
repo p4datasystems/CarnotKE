@@ -2,25 +2,148 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6ad7c729-cf74-4e63-9f54-8fddd3c12bdb" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/ant.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/externalDependencies.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/exposed.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Neo4j/WDB-new/src/WDB-new.iml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Neo4j/WDB-new/src/parser/parser.iml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Neo4j/WDB/src/WDB.iml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Neo4j/WDB/src/parser/parser1.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/build.iml" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/ziclix/python/sql/handler/InformixDataHandler.java" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extlibs/BACKUP/jena-arq-2.9.2.jar" afterPath="$PROJECT_DIR$/extlibs/BACKUP/jena-arq-2.9.2.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extlibs/BACKUP/jena-core-2.7.2.jar" afterPath="$PROJECT_DIR$/extlibs/BACKUP/jena-core-2.7.2.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extlibs/BACKUP/jena-iri-0.9.2.jar" afterPath="$PROJECT_DIR$/extlibs/BACKUP/jena-iri-0.9.2.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extlibs/cyphersim-0.0.1-SNAPSHOT-jar-with-dependencies.jar" afterPath="$PROJECT_DIR$/extlibs/cyphersim-0.0.1-SNAPSHOT-jar-with-dependencies.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extlibs/log4j-1.2.16.jar" afterPath="$PROJECT_DIR$/extlibs/log4j-1.2.16.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extlibs/sdordfnosqlclient.jar" afterPath="$PROJECT_DIR$/extlibs/sdordfnosqlclient.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extlibs/slf4j-api-1.6.4.jar" afterPath="$PROJECT_DIR$/extlibs/slf4j-api-1.6.4.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extlibs/slf4j-log4j12-1.6.4.jar" afterPath="$PROJECT_DIR$/extlibs/slf4j-log4j12-1.6.4.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extlibs/xercesImpl-2.10.0.jar" afterPath="$PROJECT_DIR$/extlibs/xercesImpl-2.10.0.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extlibs/xml-apis-1.4.01.jar" afterPath="$PROJECT_DIR$/extlibs/xml-apis-1.4.01.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/distutils/command/wininst-6.0.exe" afterPath="$PROJECT_DIR$/lib-python/2.7/distutils/command/wininst-6.0.exe" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/distutils/command/wininst-7.1.exe" afterPath="$PROJECT_DIR$/lib-python/2.7/distutils/command/wininst-7.1.exe" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/distutils/command/wininst-8.0.exe" afterPath="$PROJECT_DIR$/lib-python/2.7/distutils/command/wininst-8.0.exe" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/distutils/command/wininst-9.0-amd64.exe" afterPath="$PROJECT_DIR$/lib-python/2.7/distutils/command/wininst-9.0-amd64.exe" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/distutils/command/wininst-9.0.exe" afterPath="$PROJECT_DIR$/lib-python/2.7/distutils/command/wininst-9.0.exe" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/shell/jython.exe" afterPath="$PROJECT_DIR$/src/shell/jython.exe" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/shell/python27.dll" afterPath="$PROJECT_DIR$/src/shell/python27.dll" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Demo/modjy_webapp/WEB-INF/lib-python/readme.txt" afterPath="$PROJECT_DIR$/Demo/modjy_webapp/WEB-INF/lib-python/readme.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Demo/modjy_webapp/WEB-INF/lib/readme.txt" afterPath="$PROJECT_DIR$/Demo/modjy_webapp/WEB-INF/lib/readme.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Demo/modjy_webapp/demo_app.py" afterPath="$PROJECT_DIR$/Demo/modjy_webapp/demo_app.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Demo/modjy_webapp/readme.txt" afterPath="$PROJECT_DIR$/Demo/modjy_webapp/readme.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Lib/_google_ipaddr_r234.py" afterPath="$PROJECT_DIR$/Lib/_google_ipaddr_r234.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Lib/_sslcerts.py" afterPath="$PROJECT_DIR$/Lib/_sslcerts.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Lib/javashell.py" afterPath="$PROJECT_DIR$/Lib/javashell.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Lib/platform.py" afterPath="$PROJECT_DIR$/Lib/platform.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Lib/popen2.py" afterPath="$PROJECT_DIR$/Lib/popen2.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Lib/pydoc.py" afterPath="$PROJECT_DIR$/Lib/pydoc.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Lib/ssl.py" afterPath="$PROJECT_DIR$/Lib/ssl.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Lib/test/list_tests.py" afterPath="$PROJECT_DIR$/Lib/test/list_tests.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Lib/test/test_array.py" afterPath="$PROJECT_DIR$/Lib/test/test_array.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Lib/test/test_file.py" afterPath="$PROJECT_DIR$/Lib/test/test_file.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Lib/test/test_file_jy.py" afterPath="$PROJECT_DIR$/Lib/test/test_file_jy.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Lib/test/test_poll.py" afterPath="$PROJECT_DIR$/Lib/test/test_poll.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Lib/test/test_select.py" afterPath="$PROJECT_DIR$/Lib/test/test_select.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Lib/test/test_select_new.py" afterPath="$PROJECT_DIR$/Lib/test/test_select_new.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Lib/test/test_socketserver.py" afterPath="$PROJECT_DIR$/Lib/test/test_socketserver.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Lib/test/test_socketserver_jython.py" afterPath="$PROJECT_DIR$/Lib/test/test_socketserver_jython.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Lib/test/test_sort_jy.py" afterPath="$PROJECT_DIR$/Lib/test/test_sort_jy.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Lib/test/test_ssl.py" afterPath="$PROJECT_DIR$/Lib/test/test_ssl.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Lib/test/test_support.py" afterPath="$PROJECT_DIR$/Lib/test/test_support.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Lib/test/test_xml_etree_jy.py" afterPath="$PROJECT_DIR$/Lib/test/test_xml_etree_jy.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Misc/apply-github-pull-request.py" afterPath="$PROJECT_DIR$/Misc/apply-github-pull-request.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Misc/applypatches.py" afterPath="$PROJECT_DIR$/Misc/applypatches.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Misc/genpatches.py" afterPath="$PROJECT_DIR$/Misc/genpatches.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ReLUnitTests.py" afterPath="$PROJECT_DIR$/ReLUnitTests.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ast/astdump.py" afterPath="$PROJECT_DIR$/ast/astdump.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ast/astview.py" afterPath="$PROJECT_DIR$/ast/astview.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ast/explore" afterPath="$PROJECT_DIR$/ast/explore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ast/jastlib2.py" afterPath="$PROJECT_DIR$/ast/jastlib2.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ast/test/org/python/antlr/PythonTreeWalkerTestCase.java" afterPath="$PROJECT_DIR$/ast/test/org/python/antlr/PythonTreeWalkerTestCase.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ast/test/org/python/antlr/RegressionTestSuite.java" afterPath="$PROJECT_DIR$/ast/test/org/python/antlr/RegressionTestSuite.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bugtests/test385.py" afterPath="$PROJECT_DIR$/bugtests/test385.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bugtests/test386.py" afterPath="$PROJECT_DIR$/bugtests/test386.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bugtests/test386jar/test386called.py" afterPath="$PROJECT_DIR$/bugtests/test386jar/test386called.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bugtests/test394.py" afterPath="$PROJECT_DIR$/bugtests/test394.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bugtests/test394jar/MANIFEST.MF" afterPath="$PROJECT_DIR$/bugtests/test394jar/MANIFEST.MF" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bugtests/test394jar/Runner.java" afterPath="$PROJECT_DIR$/bugtests/test394jar/Runner.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bugtests/test398.py" afterPath="$PROJECT_DIR$/bugtests/test398.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bugtests/test401.py" afterPath="$PROJECT_DIR$/bugtests/test401.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bugtests/test401/to_be_executed.py" afterPath="$PROJECT_DIR$/bugtests/test401/to_be_executed.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.xml" afterPath="$PROJECT_DIR$/build.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extlibs/mockrunner-0.4.1/lib/jdk1.5/j2ee1.3/dependencies.txt" afterPath="$PROJECT_DIR$/extlibs/mockrunner-0.4.1/lib/jdk1.5/j2ee1.3/dependencies.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grammar/Python.g" afterPath="$PROJECT_DIR$/grammar/Python.g" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/installer/src/java/org/python/util/install/InstallationListener.java" afterPath="$PROJECT_DIR$/installer/src/java/org/python/util/install/InstallationListener.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/installer/src/java/org/python/util/install/StandalonePackager.java" afterPath="$PROJECT_DIR$/installer/src/java/org/python/util/install/StandalonePackager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/installer/src/java/org/python/util/install/UnicodeSequences.java" afterPath="$PROJECT_DIR$/installer/src/java/org/python/util/install/UnicodeSequences.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/installer/src/java/org/python/util/install/driver/Autotest.java" afterPath="$PROJECT_DIR$/installer/src/java/org/python/util/install/driver/Autotest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/installer/src/java/org/python/util/install/driver/GuiAutotest.java" afterPath="$PROJECT_DIR$/installer/src/java/org/python/util/install/driver/GuiAutotest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/installer/src/java/org/python/util/install/driver/Verifier.java" afterPath="$PROJECT_DIR$/installer/src/java/org/python/util/install/driver/Verifier.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/installer/test/java/org/python/util/install/StandalonePackagerTest.java" afterPath="$PROJECT_DIR$/installer/test/java/org/python/util/install/StandalonePackagerTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/installer/test/java/org/python/util/install/UnicodeSequencesTest.java" afterPath="$PROJECT_DIR$/installer/test/java/org/python/util/install/UnicodeSequencesTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/installer/test/java/org/python/util/install/driver/AutotestTest.java" afterPath="$PROJECT_DIR$/installer/test/java/org/python/util/install/driver/AutotestTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/UserString.py" afterPath="$PROJECT_DIR$/lib-python/2.7/UserString.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/base64.py" afterPath="$PROJECT_DIR$/lib-python/2.7/base64.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/cProfile.py" afterPath="$PROJECT_DIR$/lib-python/2.7/cProfile.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/cgi.py" afterPath="$PROJECT_DIR$/lib-python/2.7/cgi.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/ctypes/macholib/fetch_macholib" afterPath="$PROJECT_DIR$/lib-python/2.7/ctypes/macholib/fetch_macholib" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/ctypes/macholib/fetch_macholib.bat" afterPath="$PROJECT_DIR$/lib-python/2.7/ctypes/macholib/fetch_macholib.bat" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/email/test/data/msg_26.txt" afterPath="$PROJECT_DIR$/lib-python/2.7/email/test/data/msg_26.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/idlelib/idle.bat" afterPath="$PROJECT_DIR$/lib-python/2.7/idlelib/idle.bat" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/keyword.py" afterPath="$PROJECT_DIR$/lib-python/2.7/keyword.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/lib2to3/pgen2/token.py" afterPath="$PROJECT_DIR$/lib-python/2.7/lib2to3/pgen2/token.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/lib2to3/tests/pytree_idempotency.py" afterPath="$PROJECT_DIR$/lib-python/2.7/lib2to3/tests/pytree_idempotency.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/mimify.py" afterPath="$PROJECT_DIR$/lib-python/2.7/mimify.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/pdb.py" afterPath="$PROJECT_DIR$/lib-python/2.7/pdb.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/plat-aix3/regen" afterPath="$PROJECT_DIR$/lib-python/2.7/plat-aix3/regen" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/plat-aix4/regen" afterPath="$PROJECT_DIR$/lib-python/2.7/plat-aix4/regen" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/plat-atheos/regen" afterPath="$PROJECT_DIR$/lib-python/2.7/plat-atheos/regen" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/plat-beos5/regen" afterPath="$PROJECT_DIR$/lib-python/2.7/plat-beos5/regen" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/plat-darwin/regen" afterPath="$PROJECT_DIR$/lib-python/2.7/plat-darwin/regen" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/plat-freebsd4/regen" afterPath="$PROJECT_DIR$/lib-python/2.7/plat-freebsd4/regen" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/plat-freebsd5/regen" afterPath="$PROJECT_DIR$/lib-python/2.7/plat-freebsd5/regen" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/plat-freebsd6/regen" afterPath="$PROJECT_DIR$/lib-python/2.7/plat-freebsd6/regen" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/plat-freebsd7/regen" afterPath="$PROJECT_DIR$/lib-python/2.7/plat-freebsd7/regen" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/plat-freebsd8/regen" afterPath="$PROJECT_DIR$/lib-python/2.7/plat-freebsd8/regen" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/plat-generic/regen" afterPath="$PROJECT_DIR$/lib-python/2.7/plat-generic/regen" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/plat-irix5/regen" afterPath="$PROJECT_DIR$/lib-python/2.7/plat-irix5/regen" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/plat-irix6/regen" afterPath="$PROJECT_DIR$/lib-python/2.7/plat-irix6/regen" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/plat-linux2/regen" afterPath="$PROJECT_DIR$/lib-python/2.7/plat-linux2/regen" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/plat-mac/appletrunner.py" afterPath="$PROJECT_DIR$/lib-python/2.7/plat-mac/appletrunner.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/plat-mac/bundlebuilder.py" afterPath="$PROJECT_DIR$/lib-python/2.7/plat-mac/bundlebuilder.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/plat-netbsd1/regen" afterPath="$PROJECT_DIR$/lib-python/2.7/plat-netbsd1/regen" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/plat-next3/regen" afterPath="$PROJECT_DIR$/lib-python/2.7/plat-next3/regen" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/plat-os2emx/regen" afterPath="$PROJECT_DIR$/lib-python/2.7/plat-os2emx/regen" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/plat-sunos5/regen" afterPath="$PROJECT_DIR$/lib-python/2.7/plat-sunos5/regen" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/plat-unixware7/regen" afterPath="$PROJECT_DIR$/lib-python/2.7/plat-unixware7/regen" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/platform.py" afterPath="$PROJECT_DIR$/lib-python/2.7/platform.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/profile.py" afterPath="$PROJECT_DIR$/lib-python/2.7/profile.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/pydoc.py" afterPath="$PROJECT_DIR$/lib-python/2.7/pydoc.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/quopri.py" afterPath="$PROJECT_DIR$/lib-python/2.7/quopri.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/smtpd.py" afterPath="$PROJECT_DIR$/lib-python/2.7/smtpd.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/smtplib.py" afterPath="$PROJECT_DIR$/lib-python/2.7/smtplib.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/symbol.py" afterPath="$PROJECT_DIR$/lib-python/2.7/symbol.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/tabnanny.py" afterPath="$PROJECT_DIR$/lib-python/2.7/tabnanny.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/test/pystone.py" afterPath="$PROJECT_DIR$/lib-python/2.7/test/pystone.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/test/re_tests.py" afterPath="$PROJECT_DIR$/lib-python/2.7/test/re_tests.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/test/regrtest.py" afterPath="$PROJECT_DIR$/lib-python/2.7/test/regrtest.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/test/test_al.py" afterPath="$PROJECT_DIR$/lib-python/2.7/test/test_al.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/test/test_array.py" afterPath="$PROJECT_DIR$/lib-python/2.7/test/test_array.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/test/test_binhex.py" afterPath="$PROJECT_DIR$/lib-python/2.7/test/test_binhex.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/test/test_bsddb.py" afterPath="$PROJECT_DIR$/lib-python/2.7/test/test_bsddb.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/test/test_cd.py" afterPath="$PROJECT_DIR$/lib-python/2.7/test/test_cd.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/test/test_cl.py" afterPath="$PROJECT_DIR$/lib-python/2.7/test/test_cl.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/test/test_dl.py" afterPath="$PROJECT_DIR$/lib-python/2.7/test/test_dl.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/test/test_errno.py" afterPath="$PROJECT_DIR$/lib-python/2.7/test/test_errno.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/test/test_gl.py" afterPath="$PROJECT_DIR$/lib-python/2.7/test/test_gl.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/test/test_imageop.py" afterPath="$PROJECT_DIR$/lib-python/2.7/test/test_imageop.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/test/test_imgfile.py" afterPath="$PROJECT_DIR$/lib-python/2.7/test/test_imgfile.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/test/test_userstring.py" afterPath="$PROJECT_DIR$/lib-python/2.7/test/test_userstring.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/token.py" afterPath="$PROJECT_DIR$/lib-python/2.7/token.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib-python/2.7/uu.py" afterPath="$PROJECT_DIR$/lib-python/2.7/uu.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/org/python/ReL/DatabaseInterface.java" afterPath="$PROJECT_DIR$/src/org/python/ReL/DatabaseInterface.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/org/python/ReL/OracleInterface.java" afterPath="$PROJECT_DIR$/src/org/python/ReL/OracleInterface.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/org/python/ReL/OracleRDFNoSQLInterface.java" afterPath="$PROJECT_DIR$/src/org/python/ReL/OracleRDFNoSQLInterface.java" />
@@ -30,8 +153,32 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/org/python/ReL/SPARQLDoer.java" afterPath="$PROJECT_DIR$/src/org/python/ReL/SPARQLDoer.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/org/python/ReL/SPARQLHelper.java" afterPath="$PROJECT_DIR$/src/org/python/ReL/SPARQLHelper.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java" afterPath="$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/org/python/core/JavaImportHelper.java" afterPath="$PROJECT_DIR$/src/org/python/core/JavaImportHelper.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/org/python/core/PyTuple.java" afterPath="$PROJECT_DIR$/src/org/python/core/PyTuple.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/org/python/core/adapter/ClassAdapter.java" afterPath="$PROJECT_DIR$/src/org/python/core/adapter/ClassAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/org/python/core/adapter/ClassicPyObjectAdapter.java" afterPath="$PROJECT_DIR$/src/org/python/core/adapter/ClassicPyObjectAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/org/python/core/adapter/ExtensiblePyObjectAdapter.java" afterPath="$PROJECT_DIR$/src/org/python/core/adapter/ExtensiblePyObjectAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/org/python/core/adapter/PyObjectAdapter.java" afterPath="$PROJECT_DIR$/src/org/python/core/adapter/PyObjectAdapter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/org/python/core/io/FileIO.java" afterPath="$PROJECT_DIR$/src/org/python/core/io/FileIO.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/shell/jython" afterPath="$PROJECT_DIR$/src/shell/jython" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/shell/jython_regrtest.bat" afterPath="$PROJECT_DIR$/src/shell/jython_regrtest.bat" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/templates/README.txt" afterPath="$PROJECT_DIR$/src/templates/README.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/java/org/python/antlr/PythonPartialTester.java" afterPath="$PROJECT_DIR$/tests/java/org/python/antlr/PythonPartialTester.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/java/org/python/antlr/PythonTreeTester.java" afterPath="$PROJECT_DIR$/tests/java/org/python/antlr/PythonTreeTester.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/java/org/python/tests/identity/IdentityObject.java" afterPath="$PROJECT_DIR$/tests/java/org/python/tests/identity/IdentityObject.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/java/org/python/tests/props/PropShadow.java" afterPath="$PROJECT_DIR$/tests/java/org/python/tests/props/PropShadow.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/modjy/lib_python_folder/add_zips.pth" afterPath="$PROJECT_DIR$/tests/modjy/lib_python_folder/add_zips.pth" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/modjy/lib_python_folder/do_import.pth" afterPath="$PROJECT_DIR$/tests/modjy/lib_python_folder/do_import.pth" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/modjy/lib_python_folder/mock_framework/web/handlers/wsgi_handlers.py" afterPath="$PROJECT_DIR$/tests/modjy/lib_python_folder/mock_framework/web/handlers/wsgi_handlers.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/modjy/lib_python_folder/script_name_path_info.py" afterPath="$PROJECT_DIR$/tests/modjy/lib_python_folder/script_name_path_info.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/modjy/lib_python_folder/test_lib/__init__.py" afterPath="$PROJECT_DIR$/tests/modjy/lib_python_folder/test_lib/__init__.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/modjy/lib_python_folder/test_lib/some_libs.py" afterPath="$PROJECT_DIR$/tests/modjy/lib_python_folder/test_lib/some_libs.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/modjy/readme.txt" afterPath="$PROJECT_DIR$/tests/modjy/readme.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/modjy/test_apps_dir/post_data_tests.py" afterPath="$PROJECT_DIR$/tests/modjy/test_apps_dir/post_data_tests.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/policy/run.sh" afterPath="$PROJECT_DIR$/tests/policy/run.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/python/identity_test.py" afterPath="$PROJECT_DIR$/tests/python/identity_test.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/python/prop_test.py" afterPath="$PROJECT_DIR$/tests/python/prop_test.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/shell/test-jython.sh" afterPath="$PROJECT_DIR$/tests/shell/test-jython.sh" />
     </list>
     <ignored path="jython.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -72,31 +219,28 @@
         <entry file="file://$PROJECT_DIR$/SPARQLUnitTests.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="45" column="38" selection-start-line="45" selection-start-column="38" selection-end-line="45" selection-end-column="38" />
+              <caret line="44" column="45" selection-start-line="44" selection-start-column="45" selection-end-line="44" selection-end-column="45" />
               <folding>
-                <marker date="1457424604674" expanded="true" signature="155:176" placeholder="SELECT DISTI... emp" />
-                <marker date="1457424604674" expanded="true" signature="304:471" placeholder="INSERT INTO EMP... " />
-                <marker date="1457424604674" expanded="true" signature="505:672" placeholder="INSERT INTO EMP... " />
-                <marker date="1457424604674" expanded="true" signature="706:873" placeholder="INSERT INTO EMP... " />
-                <marker date="1457424604674" expanded="true" signature="907:1074" placeholder="INSERT INTO EMP... " />
-                <marker date="1457424604674" expanded="true" signature="1108:1275" placeholder="INSERT INTO EMP... " />
-                <marker date="1457424604674" expanded="true" signature="1309:1476" placeholder="INSERT INTO EMP... " />
-                <marker date="1457424604674" expanded="true" signature="1510:1677" placeholder="INSERT INTO EMP... " />
-                <marker date="1457424604674" expanded="true" signature="1711:1878" placeholder="INSERT INTO EMP... " />
-                <marker date="1457424604674" expanded="true" signature="1912:2079" placeholder="INSERT INTO EMP... " />
-                <marker date="1457424604674" expanded="true" signature="2113:2280" placeholder="INSERT INTO EMP... " />
-                <marker date="1457424604674" expanded="true" signature="2314:2481" placeholder="INSERT INTO EMP... " />
-                <marker date="1457424604674" expanded="true" signature="2515:2682" placeholder="INSERT INTO EMP... " />
-                <marker date="1457424604674" expanded="true" signature="2716:2883" placeholder="INSERT INTO EMP... " />
-                <marker date="1457424604674" expanded="true" signature="2917:3084" placeholder="INSERT INTO EMP... " />
-                <marker date="1457424604674" expanded="true" signature="4221:4263" placeholder="select sal, ename" />
-                <marker date="1457424604674" expanded="true" signature="4221:4278" placeholder="select sal, *" />
-                <marker date="1457424604674" expanded="true" signature="4227:4263" placeholder="SELECT ename... emp" />
-                <marker date="1457424604674" expanded="true" signature="4245:4262" placeholder="select ename... emp" />
-                <marker date="1457424604674" expanded="true" signature="4678:4717" placeholder="select sal, *" />
-                <marker date="1457424604674" expanded="true" signature="4678:4721" placeholder="select ename... emp" />
-                <marker date="1457424604674" expanded="true" signature="4894:4955" placeholder="select ename... emp" />
-                <marker date="1457424604674" expanded="true" signature="4928:4949" placeholder="select empno... emp" />
+                <marker date="1457473467000" expanded="true" signature="147:168" placeholder="select ename... emp" />
+                <marker date="1457473467000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
+                <marker date="1457473467000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
+                <marker date="1457473467000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
+                <marker date="1457473467000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
+                <marker date="1457473467000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
+                <marker date="1457473467000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
+                <marker date="1457473467000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
+                <marker date="1457473467000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
+                <marker date="1457473467000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
+                <marker date="1457473467000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
+                <marker date="1457473467000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
+                <marker date="1457473467000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
+                <marker date="1457473467000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
+                <marker date="1457473467000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
+                <marker date="1457473467000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
+                <marker date="1457473467000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
+                <marker date="1457473467000" expanded="true" signature="4654:4697" placeholder="select ename... emp" />
+                <marker date="1457473467000" expanded="true" signature="4878:4939" placeholder="select ename... emp" />
+                <marker date="1457473467000" expanded="true" signature="4912:4933" placeholder="select empno... emp" />
               </folding>
             </state>
           </provider>
@@ -105,8 +249,8 @@
       <file leaf-file-name="SQLVisitor.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.27654868">
-              <caret line="754" column="17" selection-start-line="754" selection-start-column="17" selection-end-line="754" selection-end-column="17" />
+            <state vertical-scroll-proportion="0.5555556">
+              <caret line="119" column="0" selection-start-line="119" selection-start-column="0" selection-end-line="119" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -135,10 +279,8 @@
     <detection-done>true</detection-done>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-11" />
-    <option name="y" value="-11" />
-    <option name="width" value="1942" />
-    <option name="height" value="1042" />
+    <option name="width" value="1280" />
+    <option name="height" value="800" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -191,15 +333,16 @@
   <component name="PropertiesComponent">
     <property name="aspect.path.notification.shown" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="project.structure.last.edited" value="Global Libraries" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="dynamic.classpath" value="true" />
-    <property name="settings.editor.selected.configurable" value="xpath.settings" />
+    <property name="settings.editor.selected.configurable" value="project.propDebugger" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
-    <property name="last_opened_file_path" value="C:/Program Files/Java/jdk1.8.0_60/jre/bin" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/build.xml" />
+    <property name="FullScreen" value="true" />
   </component>
-  <component name="RunManager" selected="Application.Run">
+  <component name="RunManager" selected="Application.Run DebugM">
     <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
       <module name="" />
       <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
@@ -813,7 +956,7 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="Run Debug" type="Application" factoryName="Application">
+    <configuration default="false" name="Run DebugW" type="Application" factoryName="Application">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <option name="MAIN_CLASS_NAME" value="org.python.util.jython" />
       <option name="VM_PARAMETERS" value="-agentlib:jdwp=transport=dt_shmem,server=n,address=javadebug,suspend=y -Dpython.home=dist -Dpython.console=org.python.util.InteractiveConsole" />
@@ -828,20 +971,47 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="Connect" type="JarApplication" factoryName="JAR Application" activateToolWindowBeforeRun="false">
+    <configuration default="false" name="Run DebugM" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="MAIN_CLASS_NAME" value="org.python.util.jython" />
+      <option name="VM_PARAMETERS" value="-agentlib:jdwp=transport=dt_socket,server=n,address=localhost:63341,suspend=y -Dpython.home=dist -Dpython.console=org.python.util.InteractiveConsole" />
+      <option name="PROGRAM_PARAMETERS" value="SPARQLUnitTests.py" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="jython" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="ConnectW" type="JarApplication" factoryName="JAR Application" activateToolWindowBeforeRun="false">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <option name="JAR_PATH" value="$PROJECT_DIR$/kv-3.5.2/lib/kvstore.jar" />
       <option name="VM_PARAMETERS" value="-classpath C:\Program%20Files\Java\jdk1.8.0_60\bin\" />
       <option name="PROGRAM_PARAMETERS" value="kvlite" />
-      <option name="WORKING_DIRECTORY" value="C:\Users\nelma\Google Drive\Work\GitHub\CarnotKE\jython" />
+      <option name="WORKING_DIRECTORY" value="C:$PROJECT_DIR$/../../../../../../nelma/Google Drive/Work/GitHub/CarnotKE/jython" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="ALTERNATIVE_JRE_PATH" value="C:\Program Files\Java\jdk1.8.0_60\jre" />
       <envs />
       <module name="jython" />
       <method />
     </configuration>
-    <configuration default="false" name="Debug" type="Remote" factoryName="Remote">
-      <option name="USE_SOCKET_TRANSPORT" value="false" />
+    <configuration default="false" name="ConnectM" type="JarApplication" factoryName="JAR Application" activateToolWindowBeforeRun="false">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="JAR_PATH" value="$PROJECT_DIR$/kv-3.5.2/lib/kvstore.jar" />
+      <option name="VM_PARAMETERS" value="-classpath /Library/Java/JavaVirtualMachines/jdk1.8.0_72.jdk" />
+      <option name="PROGRAM_PARAMETERS" value="kvlite" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="ALTERNATIVE_JRE_PATH" value="1.8" />
+      <envs />
+      <module name="jython" />
+      <method />
+    </configuration>
+    <configuration default="false" name="DebugW" type="Remote" factoryName="Remote">
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
       <option name="SERVER_MODE" value="true" />
       <option name="SHMEM_ADDRESS" value="javadebug" />
       <option name="HOST" value="localhost" />
@@ -849,6 +1019,18 @@
       <RunnerSettings RunnerId="Debug">
         <option name="DEBUG_PORT" value="javadebug" />
         <option name="TRANSPORT" value="1" />
+        <option name="LOCAL" value="false" />
+      </RunnerSettings>
+      <method />
+    </configuration>
+    <configuration default="false" name="DebugM" type="Remote" factoryName="Remote">
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="true" />
+      <option name="SHMEM_ADDRESS" value="javadebug" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="63341" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="63341" />
         <option name="LOCAL" value="false" />
       </RunnerSettings>
       <method />
@@ -867,12 +1049,15 @@
         <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_External Tools_connection" />
       </method>
     </configuration>
-    <list size="5">
+    <list size="8">
       <item index="0" class="java.lang.String" itemvalue="Application.Run" />
-      <item index="1" class="java.lang.String" itemvalue="Application.Run Debug" />
-      <item index="2" class="java.lang.String" itemvalue="JAR Application.Connect" />
-      <item index="3" class="java.lang.String" itemvalue="Remote.Debug" />
-      <item index="4" class="java.lang.String" itemvalue="Remote.Connect" />
+      <item index="1" class="java.lang.String" itemvalue="Application.Run DebugW" />
+      <item index="2" class="java.lang.String" itemvalue="Application.Run DebugM" />
+      <item index="3" class="java.lang.String" itemvalue="JAR Application.ConnectW" />
+      <item index="4" class="java.lang.String" itemvalue="JAR Application.ConnectM" />
+      <item index="5" class="java.lang.String" itemvalue="Remote.DebugW" />
+      <item index="6" class="java.lang.String" itemvalue="Remote.DebugM" />
+      <item index="7" class="java.lang.String" itemvalue="Remote.Connect" />
     </list>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
@@ -889,43 +1074,45 @@
       <workItem from="1457391713566" duration="1667000" />
       <workItem from="1457418256255" duration="3044000" />
       <workItem from="1457421342334" duration="6479000" />
+      <workItem from="1457427954240" duration="7028000" />
+      <workItem from="1457477215701" duration="2104000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="60282000" />
+    <option name="totallyTimeSpent" value="69414000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-11" y="-11" width="1942" height="1042" extended-state="6" />
+    <frame x="0" y="0" width="1280" height="800" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Tool Output" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33015496" sideWeight="0.4978425" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32959184" sideWeight="0.4978425" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32902467" sideWeight="0.504315" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32876712" sideWeight="0.504315" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.37367803" sideWeight="0.495685" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33254993" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32959184" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.37123287" sideWeight="0.495685" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33150685" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24973032" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.14407815" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="ANTLR Preview" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24959612" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.40423033" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.40136987" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Tool Output" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="ANTLR Preview" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3291536" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -950,97 +1137,97 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>854</line>
+          <line>853</line>
           <properties />
           <option name="timeStamp" value="72" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>856</line>
+          <line>855</line>
           <properties />
           <option name="timeStamp" value="73" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>873</line>
+          <line>872</line>
           <properties />
           <option name="timeStamp" value="85" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>881</line>
+          <line>880</line>
           <properties />
           <option name="timeStamp" value="86" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>746</line>
+          <line>745</line>
           <properties />
           <option name="timeStamp" value="107" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>744</line>
+          <line>743</line>
           <properties />
           <option name="timeStamp" value="108" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>685</line>
+          <line>684</line>
           <properties />
           <option name="timeStamp" value="111" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>479</line>
+          <line>478</line>
           <properties />
           <option name="timeStamp" value="144" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>760</line>
+          <line>759</line>
           <properties />
           <option name="timeStamp" value="145" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>757</line>
+          <line>756</line>
           <properties />
           <option name="timeStamp" value="146" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>835</line>
+          <line>834</line>
           <properties />
           <option name="timeStamp" value="147" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>553</line>
+          <line>552</line>
           <properties />
           <option name="timeStamp" value="148" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>540</line>
+          <line>539</line>
           <properties />
           <option name="timeStamp" value="149" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>837</line>
+          <line>836</line>
           <properties />
           <option name="timeStamp" value="150" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>515</line>
+          <line>514</line>
           <properties />
           <option name="timeStamp" value="151" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>524</line>
+          <line>523</line>
           <properties />
           <option name="timeStamp" value="152" />
         </line-breakpoint>
@@ -1067,6 +1254,78 @@
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
     <option name="FILTER_TARGETS" value="false" />
+    <buildFile url="file://$PROJECT_DIR$/build.xml">
+      <targetFilters>
+        <filter targetName="usage" isVisible="true" />
+        <filter targetName="jarless" isVisible="false" />
+        <filter targetName="developer-build" isVisible="true" />
+        <filter targetName="full-build" isVisible="true" />
+        <filter targetName="needed-check" isVisible="false" />
+        <filter targetName="init" isVisible="false" />
+        <filter targetName="full-preinit" isVisible="false" />
+        <filter targetName="full-check" isVisible="false" />
+        <filter targetName="dump-env" isVisible="false" />
+        <filter targetName="clean" isVisible="true" />
+        <filter targetName="devclean" isVisible="true" />
+        <filter targetName="clean-checkout-dir" isVisible="false" />
+        <filter targetName="clean-if-antlr-needed" isVisible="false" />
+        <filter targetName="prepare-output" isVisible="false" />
+        <filter targetName="prepare" isVisible="false" />
+        <filter targetName="prepare-full" isVisible="false" />
+        <filter targetName="prepare-checkout" isVisible="false" />
+        <filter targetName="checkout" isVisible="false" />
+        <filter targetName="check-hg" isVisible="false" />
+        <filter targetName="hg-id" isVisible="false" />
+        <filter targetName="hg-branch" isVisible="false" />
+        <filter targetName="hg-tag" isVisible="false" />
+        <filter targetName="hg-version" isVisible="false" />
+        <filter targetName="brand-version" isVisible="false" />
+        <filter targetName="brand-readme-version" isVisible="false" />
+        <filter targetName="template-init" isVisible="false" />
+        <filter targetName="template" isVisible="false" />
+        <filter targetName="antlr_gen" isVisible="false" />
+        <filter targetName="compile" isVisible="false" />
+        <filter targetName="compile_cpp" isVisible="false" />
+        <filter targetName="expose" isVisible="false" />
+        <filter targetName="jar-complete" isVisible="false" />
+        <filter targetName="jar-standalone" isVisible="false" />
+        <filter targetName="jar" isVisible="false" />
+        <filter targetName="javadoc" isVisible="false" />
+        <filter targetName="all-jars" isVisible="false" />
+        <filter targetName="copy-license" isVisible="false" />
+        <filter targetName="copy-full" isVisible="false" />
+        <filter targetName="pycompile" isVisible="false" />
+        <filter targetName="copy-lib" isVisible="false" />
+        <filter targetName="copy-cpythonlib" isVisible="false" />
+        <filter targetName="copy-javalib" isVisible="false" />
+        <filter targetName="installer-init" isVisible="false" />
+        <filter targetName="installer" isVisible="false" />
+        <filter targetName="test" isVisible="true" />
+        <filter targetName="singlejavatest" isVisible="true" />
+        <filter targetName="prepare-test" isVisible="false" />
+        <filter targetName="javatest" isVisible="true" />
+        <filter targetName="javatest-basepath" isVisible="false" />
+        <filter targetName="importest" isVisible="true" />
+        <filter targetName="idxtest" isVisible="false" />
+        <filter targetName="idxtest-debug" isVisible="false" />
+        <filter targetName="modjytest" isVisible="false" />
+        <filter targetName="launchertest" isVisible="false" />
+        <filter targetName="regrtest" isVisible="true" />
+        <filter targetName="regrtest-unix" isVisible="false" />
+        <filter targetName="regrtest-windows" isVisible="false" />
+        <filter targetName="regrtest-file" isVisible="true" />
+        <filter targetName="regrtest-unix-file" isVisible="false" />
+        <filter targetName="regrtest-windows-file" isVisible="false" />
+        <filter targetName="regrtest-travis" isVisible="true" />
+        <filter targetName="regrtest-unix-travis" isVisible="false" />
+        <filter targetName="regrtest-windows-travis" isVisible="false" />
+        <filter targetName="regrtest-html-report" isVisible="true" />
+        <filter targetName="bugtest" isVisible="false" />
+        <filter targetName="create-bugtest-config" isVisible="false" />
+        <filter targetName="check-bugtest-config" isVisible="false" />
+      </targetFilters>
+      <expanded value="true" />
+    </buildFile>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/SPARQLUnitTests.py">
@@ -1074,29 +1333,94 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1457424604674" expanded="true" signature="155:176" placeholder="SELECT DISTI... emp" />
-            <marker date="1457424604674" expanded="true" signature="304:471" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="505:672" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="706:873" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="907:1074" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="1108:1275" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="1309:1476" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="1510:1677" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="1711:1878" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="1912:2079" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="2113:2280" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="2314:2481" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="2515:2682" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="2716:2883" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="2917:3084" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="4221:4263" placeholder="select sal, ename" />
-            <marker date="1457424604674" expanded="true" signature="4221:4278" placeholder="select sal, *" />
-            <marker date="1457424604674" expanded="true" signature="4227:4263" placeholder="SELECT ename... emp" />
-            <marker date="1457424604674" expanded="true" signature="4245:4262" placeholder="select ename... emp" />
-            <marker date="1457424604674" expanded="true" signature="4678:4717" placeholder="select sal, *" />
-            <marker date="1457424604674" expanded="true" signature="4678:4721" placeholder="select ename... emp" />
-            <marker date="1457424604674" expanded="true" signature="4894:4955" placeholder="select ename... emp" />
-            <marker date="1457424604674" expanded="true" signature="4928:4949" placeholder="select empno... emp" />
+            <marker date="1457473467000" expanded="true" signature="147:168" placeholder="select ename... emp" />
+            <marker date="1457473467000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
+            <marker date="1457473467000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
+            <marker date="1457473467000" expanded="true" signature="4654:4697" placeholder="select ename... emp" />
+            <marker date="1457473467000" expanded="true" signature="4878:4939" placeholder="select ename... emp" />
+            <marker date="1457473467000" expanded="true" signature="4912:4933" placeholder="select empno... emp" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SPARQLUnitTests.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="45" column="38" selection-start-line="45" selection-start-column="38" selection-end-line="45" selection-end-column="38" />
+          <folding>
+            <marker date="1457473467000" expanded="true" signature="147:168" placeholder="select ename... emp" />
+            <marker date="1457473467000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
+            <marker date="1457473467000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
+            <marker date="1457473467000" expanded="true" signature="4654:4697" placeholder="select ename... emp" />
+            <marker date="1457473467000" expanded="true" signature="4878:4939" placeholder="select ename... emp" />
+            <marker date="1457473467000" expanded="true" signature="4912:4933" placeholder="select empno... emp" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SPARQLUnitTests.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1457473467000" expanded="true" signature="147:168" placeholder="select ename... emp" />
+            <marker date="1457473467000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
+            <marker date="1457473467000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
+            <marker date="1457473467000" expanded="true" signature="4654:4697" placeholder="select ename... emp" />
+            <marker date="1457473467000" expanded="true" signature="4878:4939" placeholder="select ename... emp" />
+            <marker date="1457473467000" expanded="true" signature="4912:4933" placeholder="select empno... emp" />
           </folding>
         </state>
       </provider>
@@ -1106,29 +1430,26 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="36" column="102" selection-start-line="36" selection-start-column="102" selection-end-line="36" selection-end-column="102" />
           <folding>
-            <marker date="1457424604674" expanded="true" signature="155:176" placeholder="SELECT DISTI... emp" />
-            <marker date="1457424604674" expanded="true" signature="304:471" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="505:672" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="706:873" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="907:1074" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="1108:1275" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="1309:1476" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="1510:1677" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="1711:1878" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="1912:2079" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="2113:2280" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="2314:2481" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="2515:2682" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="2716:2883" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="2917:3084" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="4221:4263" placeholder="select sal, ename" />
-            <marker date="1457424604674" expanded="true" signature="4221:4278" placeholder="select sal, *" />
-            <marker date="1457424604674" expanded="true" signature="4227:4263" placeholder="SELECT ename... emp" />
-            <marker date="1457424604674" expanded="true" signature="4245:4262" placeholder="select ename... emp" />
-            <marker date="1457424604674" expanded="true" signature="4678:4717" placeholder="select sal, *" />
-            <marker date="1457424604674" expanded="true" signature="4678:4721" placeholder="select ename... emp" />
-            <marker date="1457424604674" expanded="true" signature="4894:4955" placeholder="select ename... emp" />
-            <marker date="1457424604674" expanded="true" signature="4928:4949" placeholder="select empno... emp" />
+            <marker date="1457473467000" expanded="true" signature="147:168" placeholder="select ename... emp" />
+            <marker date="1457473467000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
+            <marker date="1457473467000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
+            <marker date="1457473467000" expanded="true" signature="4654:4697" placeholder="select ename... emp" />
+            <marker date="1457473467000" expanded="true" signature="4878:4939" placeholder="select ename... emp" />
+            <marker date="1457473467000" expanded="true" signature="4912:4933" placeholder="select empno... emp" />
           </folding>
         </state>
       </provider>
@@ -1148,29 +1469,26 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="42" column="0" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
           <folding>
-            <marker date="1457424604674" expanded="true" signature="155:176" placeholder="SELECT DISTI... emp" />
-            <marker date="1457424604674" expanded="true" signature="304:471" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="505:672" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="706:873" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="907:1074" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="1108:1275" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="1309:1476" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="1510:1677" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="1711:1878" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="1912:2079" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="2113:2280" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="2314:2481" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="2515:2682" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="2716:2883" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="2917:3084" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="4221:4263" placeholder="select sal, ename" />
-            <marker date="1457424604674" expanded="true" signature="4221:4278" placeholder="select sal, *" />
-            <marker date="1457424604674" expanded="true" signature="4227:4263" placeholder="SELECT ename... emp" />
-            <marker date="1457424604674" expanded="true" signature="4245:4262" placeholder="select ename... emp" />
-            <marker date="1457424604674" expanded="true" signature="4678:4717" placeholder="select sal, *" />
-            <marker date="1457424604674" expanded="true" signature="4678:4721" placeholder="select ename... emp" />
-            <marker date="1457424604674" expanded="true" signature="4894:4955" placeholder="select ename... emp" />
-            <marker date="1457424604674" expanded="true" signature="4928:4949" placeholder="select empno... emp" />
+            <marker date="1457473467000" expanded="true" signature="147:168" placeholder="select ename... emp" />
+            <marker date="1457473467000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
+            <marker date="1457473467000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
+            <marker date="1457473467000" expanded="true" signature="4654:4697" placeholder="select ename... emp" />
+            <marker date="1457473467000" expanded="true" signature="4878:4939" placeholder="select ename... emp" />
+            <marker date="1457473467000" expanded="true" signature="4912:4933" placeholder="select empno... emp" />
           </folding>
         </state>
       </provider>
@@ -1220,49 +1538,46 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_60/src.zip!/java/net/URLClassLoader.java">
+    <entry file="file://$PROJECT_DIR$/grammar/Python.g">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6139955">
-          <caret line="385" column="6" selection-start-line="385" selection-start-column="6" selection-end-line="385" selection-end-column="6" />
+        <state vertical-scroll-proportion="-1.2400635">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/SPARQLUnitTests.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="45" column="38" selection-start-line="45" selection-start-column="38" selection-end-line="45" selection-end-column="38" />
+          <caret line="44" column="45" selection-start-line="44" selection-start-column="45" selection-end-line="44" selection-end-column="45" />
           <folding>
-            <marker date="1457424604674" expanded="true" signature="155:176" placeholder="SELECT DISTI... emp" />
-            <marker date="1457424604674" expanded="true" signature="304:471" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="505:672" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="706:873" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="907:1074" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="1108:1275" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="1309:1476" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="1510:1677" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="1711:1878" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="1912:2079" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="2113:2280" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="2314:2481" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="2515:2682" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="2716:2883" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="2917:3084" placeholder="INSERT INTO EMP... " />
-            <marker date="1457424604674" expanded="true" signature="4221:4263" placeholder="select sal, ename" />
-            <marker date="1457424604674" expanded="true" signature="4221:4278" placeholder="select sal, *" />
-            <marker date="1457424604674" expanded="true" signature="4227:4263" placeholder="SELECT ename... emp" />
-            <marker date="1457424604674" expanded="true" signature="4245:4262" placeholder="select ename... emp" />
-            <marker date="1457424604674" expanded="true" signature="4678:4717" placeholder="select sal, *" />
-            <marker date="1457424604674" expanded="true" signature="4678:4721" placeholder="select ename... emp" />
-            <marker date="1457424604674" expanded="true" signature="4894:4955" placeholder="select ename... emp" />
-            <marker date="1457424604674" expanded="true" signature="4928:4949" placeholder="select empno... emp" />
+            <marker date="1457473467000" expanded="true" signature="147:168" placeholder="select ename... emp" />
+            <marker date="1457473467000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
+            <marker date="1457473467000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
+            <marker date="1457473467000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
+            <marker date="1457473467000" expanded="true" signature="4654:4697" placeholder="select ename... emp" />
+            <marker date="1457473467000" expanded="true" signature="4878:4939" placeholder="select ename... emp" />
+            <marker date="1457473467000" expanded="true" signature="4912:4933" placeholder="select empno... emp" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.27654868">
-          <caret line="754" column="17" selection-start-line="754" selection-start-column="17" selection-end-line="754" selection-end-column="17" />
+        <state vertical-scroll-proportion="0.5555556">
+          <caret line="119" column="0" selection-start-line="119" selection-start-column="0" selection-end-line="119" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1313,7 +1628,7 @@
       </state>
       <state key="GlobalLibrariesConfigurable.UI">
         <settings>
-          <last-edited>jdk1.8</last-edited>
+          <last-edited>Python 2.7.10 (/usr/bin/python2.7) interpreter library</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -1361,7 +1676,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
-          <last-edited>javalib</last-edited>
+          <last-edited>exposed</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

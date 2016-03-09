@@ -12,7 +12,7 @@
       </configuration>
     </facet>
     <facet type="Python" name="Python">
-      <configuration sdkName="Python 3.5.0 (C:\Users\nelma\AppData\Local\Programs\Python\Python35-32\python.exe)" />
+      <configuration sdkName="" />
     </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
@@ -26,6 +26,5 @@
     <orderEntry type="module" module-name="jython" />
     <orderEntry type="module" module-name="tests" />
     <orderEntry type="module" module-name="modjy" />
-    <orderEntry type="library" name="Python 3.5.0 (C:\Users\nelma\AppData\Local\Programs\Python\Python35-32\python.exe) interpreter library" level="application" />
   </component>
 </module>
