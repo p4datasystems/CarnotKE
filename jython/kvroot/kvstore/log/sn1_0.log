@@ -60,3 +60,9 @@
 2016-03-08 23:37:07.689 UTC INFO [sn1] Starting StorageNodeAgent for kvstore
 2016-03-08 23:37:07.694 UTC INFO [sn1] Creating a Registry on port DESKTOP-BS7Q9BS:5000 server socket factory:<ClearServerSocketFactory name=registry backlog=1024 port range=0,0>
 2016-03-08 23:37:07.824 UTC INFO [sn1] Using mgmt class oracle.kv.impl.mgmt.NoOpAgent
+2016-03-19 02:04:01.171 UTC INFO [sn1] Starting StorageNodeAgent for kvstore
+2016-03-19 02:04:01.174 UTC INFO [sn1] Creating a Registry on port DESKTOP-BS7Q9BS:5000 server socket factory:<ClearServerSocketFactory name=registry backlog=1024 port range=0,0>
+2016-03-19 02:04:01.261 UTC INFO [sn1] Using mgmt class oracle.kv.impl.mgmt.NoOpAgent
+2016-03-19 02:04:09.105 UTC INFO [sn1] Starting StorageNodeAgent for kvstore
+2016-03-19 02:04:09.109 UTC INFO [sn1] Creating a Registry on port DESKTOP-BS7Q9BS:5000 server socket factory:<ClearServerSocketFactory name=registry backlog=1024 port range=0,0>
+2016-03-19 02:04:09.257 UTC INFO [sn1] Using mgmt class oracle.kv.impl.mgmt.NoOpAgent

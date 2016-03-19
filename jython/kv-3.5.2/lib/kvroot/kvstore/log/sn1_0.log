@@ -59,3 +59,23 @@
 2016-03-08 23:37:33.194 UTC INFO [sn1] Thread returning for service rg1-rn1
 2016-03-08 23:37:33.203 UTC INFO [sn1] Topology acquired from RN: rg1-rn1 Topo seq#: 14
 2016-03-08 23:37:37.178 UTC INFO [sn1] Thread returning for service admin1
+2016-03-19 02:05:43.441 UTC INFO [sn1] Starting StorageNodeAgent for kvstore
+2016-03-19 02:05:43.443 UTC INFO [sn1] Creating a Registry on port Nelmas-MacBook-Pro.local:5000 server socket factory:<ClearServerSocketFactory name=registry backlog=1024 port range=0,0>
+2016-03-19 02:05:43.507 UTC INFO [sn1] Using mgmt class oracle.kv.impl.mgmt.NoOpAgent
+2016-03-19 02:05:44.292 UTC INFO [sn1] Started MasterRebalanceThread
+2016-03-19 02:05:44.297 UTC INFO [sn1] rg1-rn1: Starting RepNode
+2016-03-19 02:05:44.298 UTC INFO [sn1] rg1-rn1: Started RepNode
+2016-03-19 02:05:44.303 UTC INFO [sn1] admin1: Starting AdminService
+2016-03-19 02:05:44.304 UTC INFO [sn1] admin1: Started AdminService
+2016-03-19 02:05:44.368 UTC INFO [sn1] Starting MonitorAgent.  Server socket factory:<ClearServerSocketFactory name=main backlog=0 port range=0,0> Client socket factory:<ClientSocketFactory name=kvstore|sn|monitor id=-1334758788 connectMs=10000 readMs=5000>
+2016-03-19 02:05:44.458 UTC INFO [sn1] Successfully created secure proxy for the storage node agent
+2016-03-19 02:05:44.474 UTC INFO [sn1] Rebound to registry port 5000 using name sn1 with SSF:<ClearServerSocketFactory name=main backlog=0 port range=0,0>
+2016-03-19 02:05:44.475 UTC INFO [sn1] Service status changed from STARTING to RUNNING
+2016-03-19 02:05:44.475 UTC INFO [sn1] Started StorageNodeAgent for kvstore
+2016-03-19 02:05:47.656 UTC INFO [sn1] noteState called
+2016-03-19 02:05:47.656 UTC INFO [sn1] added:State RN:rg1-rn1 state: MASTER top seq num: 14
+2016-03-19 02:05:47.656 UTC INFO [sn1] sn: sn1 state transition: State RN:rg1-rn1 state: MASTER top seq num: 14 active masters:[rg1-rn1] active replicas:0 replica leases:0
+2016-03-19 02:05:47.657 UTC INFO [sn1] Acquiring initial topology from RNs
+2016-03-19 02:05:47.666 UTC INFO [sn1] Topology acquired from RN: rg1-rn1 Topo seq#: 14
+2016-03-19 02:05:47.668 UTC INFO [sn1] Thread returning for service rg1-rn1
+2016-03-19 02:05:49.736 UTC INFO [sn1] Thread returning for service admin1

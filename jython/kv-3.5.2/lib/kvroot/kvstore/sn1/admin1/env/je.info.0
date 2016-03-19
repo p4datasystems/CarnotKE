@@ -65,3 +65,18 @@
 2016-03-08 23:37:32.156 UTC INFO [1] Feeder manager accepting requests.
 2016-03-08 23:37:32.163 UTC INFO [1] Joining group as master
 2016-03-08 23:37:32.166 UTC INFO [1] Refreshed 0 monitors.
+2016-03-19 02:05:45.207 UTC INFO [1] Started ServiceDispatcher. HostPort=Nelmas-MacBook-Pro.local:5005
+2016-03-19 02:05:45.208 UTC INFO [1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-03-19 02:05:45.285 UTC INFO [1] Current group size: 1
+2016-03-19 02:05:45.286 UTC INFO [1] Existing node 1 querying for a current master.
+2016-03-19 02:05:45.317 UTC INFO [1] Node 1 started
+2016-03-19 02:05:45.318 UTC INFO [1] Election initiated; election #1
+2016-03-19 02:05:45.318 UTC INFO [1] Started election thread Fri Mar 18 21:05:45 CDT 2016
+2016-03-19 02:05:47.334 UTC INFO [1] Winning proposal: Proposal(000001538c9f0db9:44e8207b7a4b3762bb63372e55214be0:00000001) Value: Value:Nelmas-MacBook-Pro.local$$$5005$$$1$$$1
+2016-03-19 02:05:47.334 UTC INFO [1] Winning proposal: Proposal(000001538c9f0db9:44e8207b7a4b3762bb63372e55214be0:00000001) Value: Value:Nelmas-MacBook-Pro.local$$$5005$$$1$$$1
+2016-03-19 02:05:47.336 UTC INFO [1] Master changed to 1
+2016-03-19 02:05:47.337 UTC INFO [1] Election finished. Elapsed time: 2019ms
+2016-03-19 02:05:47.338 UTC INFO [1] Feeder manager accepting requests.
+2016-03-19 02:05:47.338 UTC INFO [1] Election thread exited. Group master: 1(1)
+2016-03-19 02:05:47.345 UTC INFO [1] Joining group as master
+2016-03-19 02:05:47.346 UTC INFO [1] Refreshed 0 monitors.

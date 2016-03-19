@@ -565,3 +565,147 @@ txnWriteNoSync=false
 2016-03-08 23:37:33.236 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
 2016-03-08 23:37:33.239 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
 2016-03-08 23:37:33.240 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
+2016-03-19 02:05:44.438 UTC INFO [admin1] Initializing PRIMARY Admin for store: kvstore
+2016-03-19 02:05:44.439 UTC INFO [admin1] JVM Runtime maxMemory (bytes): 1908932608
+2016-03-19 02:05:44.440 UTC INFO [admin1] Non-default JE properties for environment: {je.rep.vlsn.logCacheSize=128, je.rep.envUnknownStateTimeout=10 s, je.log.faultReadSize=4096, je.rep.vlsn.distance=1000000, je.rep.replicaTimeout=10 s, je.env.runEvictor=true, je.cleaner.minUtilization=40, je.rep.replicaAckTimeout=5 s, je.lock.nLockTables=97, je.cleaner.threads=2, je.rep.replayMaxOpenDbHandles=100, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.log.iteratorReadSize=1048576, je.log.numBuffers=16, je.rep.feederTimeout=10 s, je.nodeMaxEntries=128, je.lock.timeout=10 s, je.rep.bindInaddrAny=true, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.checkpointer.bytesInterval=500000000, je.txn.durability=write_no_sync,write_no_sync,simple_majority, je.cleaner.readSize=1048576, je.rep.ignoreSecondaryNodeId=true, je.rep.txnRollbackLimit=10, je.log.fileCacheSize=2000, je.log.fileMax=1073741824}
+2016-03-19 02:05:44.469 UTC INFO [admin1] DataChannelFactory: basic
+2016-03-19 02:05:44.472 UTC INFO [admin1] AdminStateTracker thread start: admin1
+2016-03-19 02:05:44.958 UTC INFO [admin1] JE recovery: FIND_END_OF_LOG
+2016-03-19 02:05:45.018 UTC INFO [admin1] JE recovery: FIND_LAST_CKPT
+2016-03-19 02:05:45.025 UTC INFO [admin1] JE recovery: READ_DBMAP_INFO
+2016-03-19 02:05:45.039 UTC INFO [admin1] JE recovery: REDO_DBMAP_INFO
+2016-03-19 02:05:45.040 UTC INFO [admin1] JE recovery: UNDO_DBMAP_RECORDS
+2016-03-19 02:05:45.043 UTC INFO [admin1] JE recovery: REDO_DBMAP_RECORDS
+2016-03-19 02:05:45.050 UTC INFO [admin1] JE recovery: READ_DATA_INFO
+2016-03-19 02:05:45.065 UTC INFO [admin1] JE recovery: REDO_DATA_INFO
+2016-03-19 02:05:45.068 UTC INFO [admin1] JE recovery: UNDO_DATA_RECORDS
+2016-03-19 02:05:45.069 UTC INFO [admin1] JE recovery: REDO_DATA_RECORDS
+2016-03-19 02:05:45.086 UTC INFO [admin1] JE recovery: POPULATE_UTILIZATION_PROFILE
+2016-03-19 02:05:45.101 UTC INFO [admin1] JE recovery: REMOVE_TEMP_DBS
+2016-03-19 02:05:45.133 UTC INFO [admin1] JE recovery: RECOVERY_FINISHED
+2016-03-19 02:05:45.208 UTC INFO [admin1] JE: Started ServiceDispatcher. HostPort=Nelmas-MacBook-Pro.local:5005
+2016-03-19 02:05:45.208 UTC INFO [admin1] JE: DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-03-19 02:05:45.286 UTC INFO [admin1] JE: Current group size: 1
+2016-03-19 02:05:45.286 UTC INFO [admin1] JE: Existing node 1 querying for a current master.
+2016-03-19 02:05:45.317 UTC INFO [admin1] JE recovery: BECOME_CONSISTENT
+2016-03-19 02:05:45.317 UTC INFO [admin1] JE: Node 1 started
+2016-03-19 02:05:45.318 UTC INFO [admin1] JE: Election initiated; election #1
+2016-03-19 02:05:45.318 UTC INFO [admin1] JE: Started election thread Fri Mar 18 21:05:45 CDT 2016
+2016-03-19 02:05:47.334 UTC INFO [admin1] JE: Winning proposal: Proposal(000001538c9f0db9:44e8207b7a4b3762bb63372e55214be0:00000001) Value: Value:Nelmas-MacBook-Pro.local$$$5005$$$1$$$1
+2016-03-19 02:05:47.334 UTC INFO [admin1] JE: Winning proposal: Proposal(000001538c9f0db9:44e8207b7a4b3762bb63372e55214be0:00000001) Value: Value:Nelmas-MacBook-Pro.local$$$5005$$$1$$$1
+2016-03-19 02:05:47.337 UTC INFO [admin1] JE: Master changed to 1
+2016-03-19 02:05:47.337 UTC INFO [admin1] JE: Election finished. Elapsed time: 2019ms
+2016-03-19 02:05:47.338 UTC INFO [admin1] JE: Feeder manager accepting requests.
+2016-03-19 02:05:47.338 UTC INFO [admin1] JE: Election thread exited. Group master: 1(1)
+2016-03-19 02:05:47.345 UTC INFO [admin1] JE: Joining group as master
+2016-03-19 02:05:47.347 UTC INFO [admin1] JE: Refreshed 0 monitors.
+2016-03-19 02:05:47.349 UTC INFO [admin1] State change event: Fri Mar 18 21:05:47 CDT 2016, State: MASTER, Type: PRIMARY, Master: 1
+2016-03-19 02:05:47.349 UTC INFO [admin1] AdminStateTracker queue added:MASTER
+2016-03-19 02:05:47.485 UTC INFO [admin1] Open Admin entity DB: AdminPlanDatabase
+2016-03-19 02:05:47.485 UTC INFO [admin1] Admin plan database initialized
+2016-03-19 02:05:47.486 UTC INFO [admin1] Initialized plan store to PlanDatabaseStore
+2016-03-19 02:05:47.486 UTC FINE Closing StorewideLoggingView
+2016-03-19 02:05:47.524 UTC INFO [admin1] Using existing Admin database
+2016-03-19 02:05:47.534 UTC INFO [admin1] Monitor collector: adding sn1 to monitoring
+2016-03-19 02:05:47.536 UTC INFO [admin1] Monitor collector: adding rg1-rn1 to monitoring
+2016-03-19 02:05:43.441 UTC INFO [sn1] Starting StorageNodeAgent for kvstore
+2016-03-19 02:05:43.443 UTC INFO [sn1] Creating a Registry on port Nelmas-MacBook-Pro.local:5000 server socket factory:<ClearServerSocketFactory name=registry backlog=1024 port range=0,0>
+2016-03-19 02:05:43.507 UTC INFO [sn1] Using mgmt class oracle.kv.impl.mgmt.NoOpAgent
+2016-03-19 02:05:44.292 UTC INFO [sn1] Started MasterRebalanceThread
+2016-03-19 02:05:44.297 UTC INFO [sn1] rg1-rn1: Starting RepNode
+2016-03-19 02:05:44.441 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_RepNodeStateUpdateThread,5,main] started
+2016-03-19 02:05:44.298 UTC INFO [sn1] rg1-rn1: Started RepNode
+2016-03-19 02:05:44.492 UTC INFO [rg1-rn1] NoSQL version:12cR1.3.5.2 2015-12-03 08:36:49 UTC  Build id: 0c693aa1a5a0 JE version:6.4.15 Java version:1.8.0_72
+2016-03-19 02:05:44.303 UTC INFO [sn1] admin1: Starting AdminService
+2016-03-19 02:05:44.498 UTC INFO [rg1-rn1] JVM Runtime maxMemory:1,864,192 kB JE cache size:0 kB Max Offheap cache size:0 kB
+2016-03-19 02:05:44.304 UTC INFO [sn1] admin1: Started AdminService
+2016-03-19 02:05:44.498 UTC INFO [rg1-rn1] Non-default JE properties for environment: {je.rep.vlsn.logCacheSize=128, je.rep.envUnknownStateTimeout=10 s, je.log.faultReadSize=4096, je.rep.vlsn.distance=1000000, je.rep.replicaTimeout=10 s, je.env.runEvictor=true, je.cleaner.minUtilization=40, je.rep.replicaAckTimeout=5 s, je.lock.nLockTables=97, je.cleaner.threads=2, je.rep.replayMaxOpenDbHandles=100, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.log.iteratorReadSize=1048576, je.log.numBuffers=16, je.rep.feederTimeout=10 s, je.nodeMaxEntries=128, je.lock.timeout=10 s, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.checkpointer.bytesInterval=500000000, je.txn.durability=write_no_sync,write_no_sync,simple_majority, je.cleaner.readSize=1048576, je.rep.ignoreSecondaryNodeId=true, je.rep.txnRollbackLimit=10, je.log.fileCacheSize=2000, je.log.fileMax=1073741824}
+2016-03-19 02:05:44.368 UTC INFO [sn1] Starting MonitorAgent.  Server socket factory:<ClearServerSocketFactory name=main backlog=0 port range=0,0> Client socket factory:<ClientSocketFactory name=kvstore|sn|monitor id=-1334758788 connectMs=10000 readMs=5000>
+2016-03-19 02:05:44.499 UTC INFO [rg1-rn1] DataChannelFactory: basic
+2016-03-19 02:05:44.458 UTC INFO [sn1] Successfully created secure proxy for the storage node agent
+2016-03-19 02:05:44.542 UTC INFO [rg1-rn1] Table manager created
+2016-03-19 02:05:44.474 UTC INFO [sn1] Rebound to registry port 5000 using name sn1 with SSF:<ClearServerSocketFactory name=main backlog=0 port range=0,0>
+2016-03-19 02:05:44.558 UTC INFO [rg1-rn1] Partition database cache mode: EVICT_LN
+2016-03-19 02:05:44.475 UTC INFO [sn1] Service status changed from STARTING to RUNNING
+2016-03-19 02:05:44.589 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_MetadataUpdateThread,5,main] started
+2016-03-19 02:05:44.608 UTC INFO [rg1-rn1] Starting RepNodeService
+2016-03-19 02:05:44.608 UTC INFO [rg1-rn1] Starting RN MonitorAgent.  Server socket factory:<ClearServerSocketFactory name=monitor backlog=0 port range=0,0> Client socket connect factory: <ClientSocketFactory name=kvstore|rn|monitor id=-824395101 connectMs=10000 readMs=10000>
+2016-03-19 02:05:44.617 UTC INFO [rg1-rn1] Starting MonitorAgent
+2016-03-19 02:05:44.641 UTC INFO [rg1-rn1] Successfully created secure proxy for the repnode admin
+2016-03-19 02:05:44.663 UTC INFO [rg1-rn1] RepNodeAdmin registered
+2016-03-19 02:05:44.964 UTC INFO [rg1-rn1] JE recovery: FIND_END_OF_LOG
+2016-03-19 02:05:45.058 UTC INFO [rg1-rn1] JE recovery: FIND_LAST_CKPT
+2016-03-19 02:05:45.059 UTC INFO [rg1-rn1] JE recovery: READ_DBMAP_INFO
+2016-03-19 02:05:45.089 UTC INFO [rg1-rn1] JE recovery: REDO_DBMAP_INFO
+2016-03-19 02:05:45.091 UTC INFO [rg1-rn1] JE recovery: UNDO_DBMAP_RECORDS
+2016-03-19 02:05:45.092 UTC INFO [rg1-rn1] JE recovery: REDO_DBMAP_RECORDS
+2016-03-19 02:05:45.099 UTC INFO [rg1-rn1] JE recovery: READ_DATA_INFO
+2016-03-19 02:05:45.108 UTC INFO [rg1-rn1] JE recovery: REDO_DATA_INFO
+2016-03-19 02:05:45.112 UTC INFO [rg1-rn1] JE recovery: UNDO_DATA_RECORDS
+2016-03-19 02:05:45.113 UTC INFO [rg1-rn1] JE recovery: REDO_DATA_RECORDS
+2016-03-19 02:05:45.117 UTC INFO [rg1-rn1] JE recovery: POPULATE_UTILIZATION_PROFILE
+2016-03-19 02:05:45.119 UTC INFO [rg1-rn1] JE recovery: REMOVE_TEMP_DBS
+2016-03-19 02:05:45.143 UTC INFO [rg1-rn1] JE recovery: CKPT
+2016-03-19 02:05:45.163 UTC INFO [rg1-rn1] JE recovery: RECOVERY_FINISHED
+2016-03-19 02:05:45.208 UTC INFO [rg1-rn1] JE: Started ServiceDispatcher. HostPort=Nelmas-MacBook-Pro.local:5006
+2016-03-19 02:05:45.208 UTC INFO [rg1-rn1] JE: DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-03-19 02:05:45.286 UTC INFO [rg1-rn1] JE: Current group size: 1
+2016-03-19 02:05:45.286 UTC INFO [rg1-rn1] JE: Existing node rg1-rn1 querying for a current master.
+2016-03-19 02:05:45.316 UTC INFO [rg1-rn1] JE: Node rg1-rn1 started
+2016-03-19 02:05:45.316 UTC INFO [rg1-rn1] JE: Election initiated; election #1
+2016-03-19 02:05:45.317 UTC INFO [rg1-rn1] JE recovery: BECOME_CONSISTENT
+2016-03-19 02:05:45.317 UTC INFO [rg1-rn1] JE: Started election thread Fri Mar 18 21:05:45 CDT 2016
+2016-03-19 02:05:47.334 UTC INFO [rg1-rn1] JE: Winning proposal: Proposal(000001538c9f0db9:44e8207b7a4b3762bb63372e55214be0:00000002) Value: Value:Nelmas-MacBook-Pro.local$$$5006$$$rg1-rn1$$$1
+2016-03-19 02:05:47.334 UTC INFO [rg1-rn1] JE: Winning proposal: Proposal(000001538c9f0db9:44e8207b7a4b3762bb63372e55214be0:00000002) Value: Value:Nelmas-MacBook-Pro.local$$$5006$$$rg1-rn1$$$1
+2016-03-19 02:05:47.337 UTC INFO [rg1-rn1] JE: Master changed to rg1-rn1
+2016-03-19 02:05:47.337 UTC INFO [rg1-rn1] JE: Election finished. Elapsed time: 2021ms
+2016-03-19 02:05:47.338 UTC INFO [rg1-rn1] JE: Election thread exited. Group master: rg1-rn1(1)
+2016-03-19 02:05:47.338 UTC INFO [rg1-rn1] JE: Feeder manager accepting requests.
+2016-03-19 02:05:47.345 UTC INFO [rg1-rn1] JE: Joining group as master
+2016-03-19 02:05:47.347 UTC INFO [rg1-rn1] JE: Refreshed 0 monitors.
+2016-03-19 02:05:47.347 UTC INFO [rg1-rn1] Opened JE environment: 6.4.15 JVM max heap: 1,908,932,608 JE properties: allowCreate=true
+cacheSize=1145359564
+txnNoSync=false
+txnWriteNoSync=false
+{je.lock.timeout=10 s, je.cleaner.readSize=1048576, je.log.faultReadSize=4096, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.log.fileMax=1073741824, je.rep.feederTimeout=10 s, je.rep.nodeName=rg1-rn1, je.nodeMaxEntries=128, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.rep.electableGroupSizeOverride=0, je.env.runEvictor=true, je.log.iteratorReadSize=1048576, je.txn.durability=WRITE_NO_SYNC,WRITE_NO_SYNC,SIMPLE_MAJORITY, je.maxOffHeapMemory=0, je.checkpointer.bytesInterval=500000000, je.log.numBuffers=16, je.rep.nodeHostPort=Nelmas-MacBook-Pro.local:5006, je.rep.vlsn.distance=1000000, je.rep.txnRollbackLimit=10, je.rep.replayMaxOpenDbHandles=100, je.rep.ignoreSecondaryNodeId=true, je.maxMemory=0, je.cleaner.minUtilization=40, je.env.isTransactional=true, je.log.fileCacheSize=2000, je.rep.helperHosts=Nelmas-MacBook-Pro.local:5006, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.vlsn.logCacheSize=128, je.rep.replicaTimeout=10 s, je.lock.nLockTables=97, je.rep.nodeType=ELECTABLE, je.rep.envUnknownStateTimeout=10 s, je.rep.preserveRecordVersion=true, je.rep.groupName=rg1, je.rep.replicaAckTimeout=5 s, je.cleaner.threads=2}
+
+2016-03-19 02:05:47.361 UTC INFO [rg1-rn1] State change event: Fri Mar 18 21:05:47 CDT 2016, State: MASTER, Type: ELECTABLE, Master: rg1-rn1
+2016-03-19 02:05:47.362 UTC INFO [rg1-rn1] MigrationStateTracker queue added:MASTER
+2016-03-19 02:05:47.362 UTC INFO [rg1-rn1] TableManagerStateTracker queue added:MASTER
+2016-03-19 02:05:47.362 UTC INFO [rg1-rn1] MasterBalanceStateTracker queue added:MASTER
+2016-03-19 02:05:47.362 UTC INFO [rg1-rn1] Replicated environment handle established. Cache size: 1145359564, State: MASTER
+2016-03-19 02:05:47.542 UTC INFO [rg1-rn1] Topology updated from seq#: 0 to 14
+2016-03-19 02:05:47.618 UTC INFO [admin1] [sn1] Service status: RUNNING 2016-03-19 02:05:44 UTC
+2016-03-19 02:05:44.475 UTC INFO [sn1] Started StorageNodeAgent for kvstore
+2016-03-19 02:05:47.619 UTC INFO [admin1] [rg1-rn1] Service status: STARTING 2016-03-19 02:05:47 UTC
+2016-03-19 02:05:47.741 UTC INFO [admin1] Replicated environment handle established. Cache size: 1145359564, State: MASTER
+2016-03-19 02:05:47.656 UTC INFO [sn1] noteState called
+2016-03-19 02:05:47.656 UTC INFO [sn1] added:State RN:rg1-rn1 state: MASTER top seq num: 14
+2016-03-19 02:05:47.656 UTC INFO [sn1] sn: sn1 state transition: State RN:rg1-rn1 state: MASTER top seq num: 14 active masters:[rg1-rn1] active replicas:0 replica leases:0
+2016-03-19 02:05:47.657 UTC INFO [sn1] Acquiring initial topology from RNs
+2016-03-19 02:05:47.666 UTC INFO [sn1] Topology acquired from RN: rg1-rn1 Topo seq#: 14
+2016-03-19 02:05:47.668 UTC INFO [sn1] Thread returning for service rg1-rn1
+2016-03-19 02:05:49.736 UTC INFO [sn1] Thread returning for service admin1
+2016-03-19 02:05:47.551 UTC INFO [rg1-rn1] Open SecurityMetadata DB
+2016-03-19 02:05:47.615 UTC INFO [rg1-rn1] Open TableMetadata DB
+2016-03-19 02:05:47.617 UTC INFO [rg1-rn1] Established 10 partition database handles, topology seq#: 14
+2016-03-19 02:05:47.634 UTC INFO [rg1-rn1] Found 0 indexes and 0 tables marked for deletion in TableMetadata[0, 0, 0]
+2016-03-19 02:05:47.635 UTC INFO [rg1-rn1] Established 0 secondary database handles
+2016-03-19 02:05:47.637 UTC INFO [rg1-rn1] Topology stored seq#: 14
+2016-03-19 02:05:47.638 UTC INFO [rg1-rn1] Topology fetched sequence#: 14, updated topology seq# 14
+2016-03-19 02:05:47.639 UTC INFO [rg1-rn1] MasterBalanceStateTracker thread start: rg1-rn1
+2016-03-19 02:05:47.640 UTC INFO [rg1-rn1] MigrationStateTracker thread start: null
+2016-03-19 02:05:47.640 UTC INFO [rg1-rn1] TableManagerStateTracker thread start: rg1-rn1
+2016-03-19 02:05:47.640 UTC INFO [rg1-rn1] Migration manager change state to MASTER.
+2016-03-19 02:05:47.641 UTC INFO [rg1-rn1] Table manager change state to MASTER
+2016-03-19 02:05:47.648 UTC INFO [rg1-rn1] Migration service accepting requests.
+2016-03-19 02:05:47.659 UTC INFO [rg1-rn1] No RN Login configured. 
+2016-03-19 02:05:47.659 UTC INFO [rg1-rn1] Service status changed from STARTING to RUNNING
+2016-03-19 02:06:07.597 UTC INFO [admin1] [rg1-rn1] Service status: RUNNING 2016-03-19 02:05:47 UTC
+2016-03-19 02:05:47.668 UTC INFO [rg1-rn1] Started RepNodeService
+2016-03-19 02:05:47.688 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
+2016-03-19 02:05:47.691 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
+2016-03-19 02:05:47.691 UTC INFO [rg1-rn1] Establishing RMI connection for admin DDL
+2016-03-19 04:18:21.742 UTC INFO [admin1] Inactive socket Socket[addr=Nelmas-MacBook-Pro.local/192.168.2.2,port=53128,localport=59615] timed out and was forcibly closed, timeout: 5000 ms
+2016-03-19 04:23:41.755 UTC INFO [admin1] [admin1] sn1: Service status: UNREACHABLE 2016-03-19 04:23:41 UTC
+2016-03-19 05:17:00.466 UTC INFO [admin1] Inactive socket Socket[addr=Nelmas-MacBook-Pro.local/192.168.2.2,port=5000,localport=60270] timed out and was forcibly closed, timeout: 10000 ms

@@ -219,28 +219,28 @@
         <entry file="file://$PROJECT_DIR$/SPARQLUnitTests.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="44" column="45" selection-start-line="44" selection-start-column="45" selection-end-line="44" selection-end-column="45" />
+              <caret line="45" column="78" selection-start-line="45" selection-start-column="78" selection-end-line="45" selection-end-column="78" />
               <folding>
-                <marker date="1457473467000" expanded="true" signature="147:168" placeholder="select ename... emp" />
-                <marker date="1457473467000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
-                <marker date="1457473467000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
-                <marker date="1457473467000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
-                <marker date="1457473467000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
-                <marker date="1457473467000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
-                <marker date="1457473467000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
-                <marker date="1457473467000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
-                <marker date="1457473467000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
-                <marker date="1457473467000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
-                <marker date="1457473467000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
-                <marker date="1457473467000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
-                <marker date="1457473467000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
-                <marker date="1457473467000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
-                <marker date="1457473467000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
-                <marker date="1457473467000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
-                <marker date="1457473467000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
-                <marker date="1457473467000" expanded="true" signature="4654:4697" placeholder="select ename... emp" />
-                <marker date="1457473467000" expanded="true" signature="4878:4939" placeholder="select ename... emp" />
-                <marker date="1457473467000" expanded="true" signature="4912:4933" placeholder="select empno... emp" />
+                <marker date="1458392964000" expanded="true" signature="147:168" placeholder="select ename... emp" />
+                <marker date="1458392964000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
+                <marker date="1458392964000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
+                <marker date="1458392964000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
+                <marker date="1458392964000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
+                <marker date="1458392964000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
+                <marker date="1458392964000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
+                <marker date="1458392964000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
+                <marker date="1458392964000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
+                <marker date="1458392964000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
+                <marker date="1458392964000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
+                <marker date="1458392964000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
+                <marker date="1458392964000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
+                <marker date="1458392964000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
+                <marker date="1458392964000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
+                <marker date="1458392964000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
+                <marker date="1458392964000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
+                <marker date="1458392964000" expanded="true" signature="4654:4704" placeholder="select empno... emp" />
+                <marker date="1458392964000" expanded="true" signature="4869:4930" placeholder="select ename... emp" />
+                <marker date="1458392964000" expanded="true" signature="4908:4929" placeholder="select empno... emp" />
               </folding>
             </state>
           </provider>
@@ -249,10 +249,42 @@
       <file leaf-file-name="SQLVisitor.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.5555556">
-              <caret line="119" column="0" selection-start-line="119" selection-start-column="0" selection-end-line="119" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.34653464">
+              <caret line="900" column="0" selection-start-line="900" selection-start-column="0" selection-end-line="900" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#27588#27603#0" expanded="true" />
+                <element signature="e#39273#39274#0" expanded="true" />
+                <element signature="e#39310#39311#0" expanded="true" />
+                <element signature="e#45636#45666#1" expanded="true" />
+                <element signature="e#45703#45711#0" expanded="true" />
+                <element signature="e#46725#46726#0" expanded="true" />
+                <element signature="e#46788#46789#0" expanded="true" />
+                <element signature="e#48770#48778#0" expanded="true" />
+                <element signature="e#52081#52082#0" expanded="true" />
+                <element signature="e#52134#52135#0" expanded="true" />
+                <element signature="e#54602#54603#0" expanded="true" />
+                <element signature="e#54646#54647#0" expanded="true" />
+                <element signature="e#54714#54715#0" expanded="true" />
+                <element signature="e#54771#54772#0" expanded="true" />
+                <element signature="e#54825#54826#0" expanded="true" />
+                <element signature="e#54865#54866#0" expanded="true" />
+                <element signature="e#56187#56188#0" expanded="true" />
+                <element signature="e#56221#56222#0" expanded="true" />
+                <element signature="e#56721#56722#0" expanded="true" />
+                <element signature="e#56757#56758#0" expanded="true" />
+                <element signature="e#57582#57583#0" expanded="true" />
+                <element signature="e#57627#57628#0" expanded="true" />
+                <element signature="e#57692#57693#0" expanded="true" />
+                <element signature="e#57742#57743#0" expanded="true" />
+                <element signature="e#57797#57798#0" expanded="true" />
+                <element signature="e#57842#57843#0" expanded="true" />
+                <element signature="e#58770#58771#0" expanded="true" />
+                <element signature="e#58787#58788#0" expanded="true" />
+                <element signature="e#58846#58847#0" expanded="true" />
+                <element signature="e#58863#58864#0" expanded="true" />
+                <element signature="e#58924#58925#0" expanded="true" />
+                <element signature="e#58964#58965#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -1076,35 +1108,37 @@
       <workItem from="1457421342334" duration="6479000" />
       <workItem from="1457427954240" duration="7028000" />
       <workItem from="1457477215701" duration="2104000" />
+      <workItem from="1458228918809" duration="36042000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="69414000" />
+    <option name="totallyTimeSpent" value="105456000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32959184" sideWeight="0.4978425" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32876712" sideWeight="0.49353796" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32876712" sideWeight="0.504315" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.37123287" sideWeight="0.5072698" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32959184" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.37123287" sideWeight="0.495685" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.37123287" sideWeight="0.4927302" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33150685" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.14407815" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32876712" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24959612" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.40136987" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3479452" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Tool Output" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -1112,7 +1146,6 @@
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="ANTLR Preview" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3291536" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -1137,105 +1170,153 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>853</line>
-          <properties />
-          <option name="timeStamp" value="72" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>855</line>
-          <properties />
-          <option name="timeStamp" value="73" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>872</line>
-          <properties />
-          <option name="timeStamp" value="85" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>880</line>
+          <line>900</line>
           <properties />
           <option name="timeStamp" value="86" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>745</line>
+          <line>520</line>
           <properties />
-          <option name="timeStamp" value="107" />
+          <option name="timeStamp" value="153" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>743</line>
+          <line>529</line>
           <properties />
-          <option name="timeStamp" value="108" />
+          <option name="timeStamp" value="154" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>684</line>
+          <line>527</line>
           <properties />
-          <option name="timeStamp" value="111" />
+          <option name="timeStamp" value="155" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>478</line>
+          <line>557</line>
           <properties />
-          <option name="timeStamp" value="144" />
+          <option name="timeStamp" value="156" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>759</line>
+          <line>559</line>
           <properties />
-          <option name="timeStamp" value="145" />
+          <option name="timeStamp" value="158" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>756</line>
+          <line>740</line>
           <properties />
-          <option name="timeStamp" value="146" />
+          <option name="timeStamp" value="165" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>834</line>
+          <line>744</line>
           <properties />
-          <option name="timeStamp" value="147" />
+          <option name="timeStamp" value="166" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>552</line>
+          <line>532</line>
           <properties />
-          <option name="timeStamp" value="148" />
+          <option name="timeStamp" value="171" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>539</line>
+          <line>859</line>
           <properties />
-          <option name="timeStamp" value="149" />
+          <option name="timeStamp" value="173" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>836</line>
+          <line>786</line>
           <properties />
-          <option name="timeStamp" value="150" />
+          <option name="timeStamp" value="184" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>514</line>
+          <line>789</line>
           <properties />
-          <option name="timeStamp" value="151" />
+          <option name="timeStamp" value="185" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
-          <line>523</line>
+          <line>795</line>
           <properties />
-          <option name="timeStamp" value="152" />
+          <option name="timeStamp" value="186" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
+          <line>798</line>
+          <properties />
+          <option name="timeStamp" value="188" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
+          <line>525</line>
+          <properties />
+          <option name="timeStamp" value="191" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
+          <line>522</line>
+          <properties />
+          <option name="timeStamp" value="193" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
+          <line>784</line>
+          <properties />
+          <option name="timeStamp" value="203" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
+          <line>546</line>
+          <properties />
+          <option name="timeStamp" value="204" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
+          <line>549</line>
+          <properties />
+          <option name="timeStamp" value="205" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
+          <line>548</line>
+          <properties />
+          <option name="timeStamp" value="206" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
+          <line>545</line>
+          <properties />
+          <option name="timeStamp" value="207" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
+          <line>537</line>
+          <properties />
+          <option name="timeStamp" value="208" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
+          <line>536</line>
+          <properties />
+          <option name="timeStamp" value="212" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java</url>
+          <line>540</line>
+          <properties />
+          <option name="timeStamp" value="214" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="153" />
+      <option name="time" value="217" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="Remote">
@@ -1331,28 +1412,99 @@
     <entry file="file://$PROJECT_DIR$/SPARQLUnitTests.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
+          <caret line="44" column="45" selection-start-line="44" selection-start-column="45" selection-end-line="44" selection-end-column="45" />
+          <folding>
+            <marker date="1458392964000" expanded="true" signature="147:168" placeholder="select ename... emp" />
+            <marker date="1458392964000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
+            <marker date="1458392964000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
+            <marker date="1458392964000" expanded="true" signature="4654:4704" placeholder="select empno... emp" />
+            <marker date="1458392964000" expanded="true" signature="4869:4930" placeholder="select ename... emp" />
+            <marker date="1458392964000" expanded="true" signature="4908:4929" placeholder="select empno... emp" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1457473467000" expanded="true" signature="147:168" placeholder="select ename... emp" />
-            <marker date="1457473467000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
-            <marker date="1457473467000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
-            <marker date="1457473467000" expanded="true" signature="4654:4697" placeholder="select ename... emp" />
-            <marker date="1457473467000" expanded="true" signature="4878:4939" placeholder="select ename... emp" />
-            <marker date="1457473467000" expanded="true" signature="4912:4933" placeholder="select empno... emp" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#27588#27603#0" expanded="true" />
+            <element signature="e#39273#39274#0" expanded="true" />
+            <element signature="e#39310#39311#0" expanded="true" />
+            <element signature="e#45636#45666#1" expanded="true" />
+            <element signature="e#45703#45711#0" expanded="true" />
+            <element signature="e#46725#46726#0" expanded="true" />
+            <element signature="e#46788#46789#0" expanded="true" />
+            <element signature="e#48770#48778#0" expanded="true" />
+            <element signature="e#52081#52082#0" expanded="true" />
+            <element signature="e#52134#52135#0" expanded="true" />
+            <element signature="e#54602#54603#0" expanded="true" />
+            <element signature="e#54646#54647#0" expanded="true" />
+            <element signature="e#54714#54715#0" expanded="true" />
+            <element signature="e#54771#54772#0" expanded="true" />
+            <element signature="e#54825#54826#0" expanded="true" />
+            <element signature="e#54865#54866#0" expanded="true" />
+            <element signature="e#56187#56188#0" expanded="true" />
+            <element signature="e#56221#56222#0" expanded="true" />
+            <element signature="e#56721#56722#0" expanded="true" />
+            <element signature="e#56757#56758#0" expanded="true" />
+            <element signature="e#57582#57583#0" expanded="true" />
+            <element signature="e#57627#57628#0" expanded="true" />
+            <element signature="e#57692#57693#0" expanded="true" />
+            <element signature="e#57742#57743#0" expanded="true" />
+            <element signature="e#57797#57798#0" expanded="true" />
+            <element signature="e#57842#57843#0" expanded="true" />
+            <element signature="e#58770#58771#0" expanded="true" />
+            <element signature="e#58787#58788#0" expanded="true" />
+            <element signature="e#58846#58847#0" expanded="true" />
+            <element signature="e#58863#58864#0" expanded="true" />
+            <element signature="e#58924#58925#0" expanded="true" />
+            <element signature="e#58964#58965#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SPARQLUnitTests.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1458392964000" expanded="true" signature="147:168" placeholder="select ename... emp" />
+            <marker date="1458392964000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
+            <marker date="1458392964000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
+            <marker date="1458392964000" expanded="true" signature="4654:4704" placeholder="select empno... emp" />
+            <marker date="1458392964000" expanded="true" signature="4869:4930" placeholder="select ename... emp" />
+            <marker date="1458392964000" expanded="true" signature="4908:4929" placeholder="select empno... emp" />
           </folding>
         </state>
       </provider>
@@ -1362,26 +1514,26 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="45" column="38" selection-start-line="45" selection-start-column="38" selection-end-line="45" selection-end-column="38" />
           <folding>
-            <marker date="1457473467000" expanded="true" signature="147:168" placeholder="select ename... emp" />
-            <marker date="1457473467000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
-            <marker date="1457473467000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
-            <marker date="1457473467000" expanded="true" signature="4654:4697" placeholder="select ename... emp" />
-            <marker date="1457473467000" expanded="true" signature="4878:4939" placeholder="select ename... emp" />
-            <marker date="1457473467000" expanded="true" signature="4912:4933" placeholder="select empno... emp" />
+            <marker date="1458392964000" expanded="true" signature="147:168" placeholder="select ename... emp" />
+            <marker date="1458392964000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
+            <marker date="1458392964000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
+            <marker date="1458392964000" expanded="true" signature="4654:4704" placeholder="select empno... emp" />
+            <marker date="1458392964000" expanded="true" signature="4869:4930" placeholder="select ename... emp" />
+            <marker date="1458392964000" expanded="true" signature="4908:4929" placeholder="select empno... emp" />
           </folding>
         </state>
       </provider>
@@ -1392,6 +1544,38 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#27588#27603#0" expanded="true" />
+            <element signature="e#39273#39274#0" expanded="true" />
+            <element signature="e#39310#39311#0" expanded="true" />
+            <element signature="e#45636#45666#1" expanded="true" />
+            <element signature="e#45703#45711#0" expanded="true" />
+            <element signature="e#46725#46726#0" expanded="true" />
+            <element signature="e#46788#46789#0" expanded="true" />
+            <element signature="e#48770#48778#0" expanded="true" />
+            <element signature="e#52081#52082#0" expanded="true" />
+            <element signature="e#52134#52135#0" expanded="true" />
+            <element signature="e#54602#54603#0" expanded="true" />
+            <element signature="e#54646#54647#0" expanded="true" />
+            <element signature="e#54714#54715#0" expanded="true" />
+            <element signature="e#54771#54772#0" expanded="true" />
+            <element signature="e#54825#54826#0" expanded="true" />
+            <element signature="e#54865#54866#0" expanded="true" />
+            <element signature="e#56187#56188#0" expanded="true" />
+            <element signature="e#56221#56222#0" expanded="true" />
+            <element signature="e#56721#56722#0" expanded="true" />
+            <element signature="e#56757#56758#0" expanded="true" />
+            <element signature="e#57582#57583#0" expanded="true" />
+            <element signature="e#57627#57628#0" expanded="true" />
+            <element signature="e#57692#57693#0" expanded="true" />
+            <element signature="e#57742#57743#0" expanded="true" />
+            <element signature="e#57797#57798#0" expanded="true" />
+            <element signature="e#57842#57843#0" expanded="true" />
+            <element signature="e#58770#58771#0" expanded="true" />
+            <element signature="e#58787#58788#0" expanded="true" />
+            <element signature="e#58846#58847#0" expanded="true" />
+            <element signature="e#58863#58864#0" expanded="true" />
+            <element signature="e#58924#58925#0" expanded="true" />
+            <element signature="e#58964#58965#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1401,26 +1585,26 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1457473467000" expanded="true" signature="147:168" placeholder="select ename... emp" />
-            <marker date="1457473467000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
-            <marker date="1457473467000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
-            <marker date="1457473467000" expanded="true" signature="4654:4697" placeholder="select ename... emp" />
-            <marker date="1457473467000" expanded="true" signature="4878:4939" placeholder="select ename... emp" />
-            <marker date="1457473467000" expanded="true" signature="4912:4933" placeholder="select empno... emp" />
+            <marker date="1458392964000" expanded="true" signature="147:168" placeholder="select ename... emp" />
+            <marker date="1458392964000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
+            <marker date="1458392964000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
+            <marker date="1458392964000" expanded="true" signature="4654:4704" placeholder="select empno... emp" />
+            <marker date="1458392964000" expanded="true" signature="4869:4930" placeholder="select ename... emp" />
+            <marker date="1458392964000" expanded="true" signature="4908:4929" placeholder="select empno... emp" />
           </folding>
         </state>
       </provider>
@@ -1430,26 +1614,26 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="36" column="102" selection-start-line="36" selection-start-column="102" selection-end-line="36" selection-end-column="102" />
           <folding>
-            <marker date="1457473467000" expanded="true" signature="147:168" placeholder="select ename... emp" />
-            <marker date="1457473467000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
-            <marker date="1457473467000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
-            <marker date="1457473467000" expanded="true" signature="4654:4697" placeholder="select ename... emp" />
-            <marker date="1457473467000" expanded="true" signature="4878:4939" placeholder="select ename... emp" />
-            <marker date="1457473467000" expanded="true" signature="4912:4933" placeholder="select empno... emp" />
+            <marker date="1458392964000" expanded="true" signature="147:168" placeholder="select ename... emp" />
+            <marker date="1458392964000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
+            <marker date="1458392964000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
+            <marker date="1458392964000" expanded="true" signature="4654:4704" placeholder="select empno... emp" />
+            <marker date="1458392964000" expanded="true" signature="4869:4930" placeholder="select ename... emp" />
+            <marker date="1458392964000" expanded="true" signature="4908:4929" placeholder="select empno... emp" />
           </folding>
         </state>
       </provider>
@@ -1460,6 +1644,38 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#27588#27603#0" expanded="true" />
+            <element signature="e#39273#39274#0" expanded="true" />
+            <element signature="e#39310#39311#0" expanded="true" />
+            <element signature="e#45636#45666#1" expanded="true" />
+            <element signature="e#45703#45711#0" expanded="true" />
+            <element signature="e#46725#46726#0" expanded="true" />
+            <element signature="e#46788#46789#0" expanded="true" />
+            <element signature="e#48770#48778#0" expanded="true" />
+            <element signature="e#52081#52082#0" expanded="true" />
+            <element signature="e#52134#52135#0" expanded="true" />
+            <element signature="e#54602#54603#0" expanded="true" />
+            <element signature="e#54646#54647#0" expanded="true" />
+            <element signature="e#54714#54715#0" expanded="true" />
+            <element signature="e#54771#54772#0" expanded="true" />
+            <element signature="e#54825#54826#0" expanded="true" />
+            <element signature="e#54865#54866#0" expanded="true" />
+            <element signature="e#56187#56188#0" expanded="true" />
+            <element signature="e#56221#56222#0" expanded="true" />
+            <element signature="e#56721#56722#0" expanded="true" />
+            <element signature="e#56757#56758#0" expanded="true" />
+            <element signature="e#57582#57583#0" expanded="true" />
+            <element signature="e#57627#57628#0" expanded="true" />
+            <element signature="e#57692#57693#0" expanded="true" />
+            <element signature="e#57742#57743#0" expanded="true" />
+            <element signature="e#57797#57798#0" expanded="true" />
+            <element signature="e#57842#57843#0" expanded="true" />
+            <element signature="e#58770#58771#0" expanded="true" />
+            <element signature="e#58787#58788#0" expanded="true" />
+            <element signature="e#58846#58847#0" expanded="true" />
+            <element signature="e#58863#58864#0" expanded="true" />
+            <element signature="e#58924#58925#0" expanded="true" />
+            <element signature="e#58964#58965#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1469,26 +1685,26 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="42" column="0" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
           <folding>
-            <marker date="1457473467000" expanded="true" signature="147:168" placeholder="select ename... emp" />
-            <marker date="1457473467000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
-            <marker date="1457473467000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
-            <marker date="1457473467000" expanded="true" signature="4654:4697" placeholder="select ename... emp" />
-            <marker date="1457473467000" expanded="true" signature="4878:4939" placeholder="select ename... emp" />
-            <marker date="1457473467000" expanded="true" signature="4912:4933" placeholder="select empno... emp" />
+            <marker date="1458392964000" expanded="true" signature="147:168" placeholder="select ename... emp" />
+            <marker date="1458392964000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
+            <marker date="1458392964000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
+            <marker date="1458392964000" expanded="true" signature="4654:4704" placeholder="select empno... emp" />
+            <marker date="1458392964000" expanded="true" signature="4869:4930" placeholder="select ename... emp" />
+            <marker date="1458392964000" expanded="true" signature="4908:4929" placeholder="select empno... emp" />
           </folding>
         </state>
       </provider>
@@ -1499,6 +1715,38 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#27588#27603#0" expanded="true" />
+            <element signature="e#39273#39274#0" expanded="true" />
+            <element signature="e#39310#39311#0" expanded="true" />
+            <element signature="e#45636#45666#1" expanded="true" />
+            <element signature="e#45703#45711#0" expanded="true" />
+            <element signature="e#46725#46726#0" expanded="true" />
+            <element signature="e#46788#46789#0" expanded="true" />
+            <element signature="e#48770#48778#0" expanded="true" />
+            <element signature="e#52081#52082#0" expanded="true" />
+            <element signature="e#52134#52135#0" expanded="true" />
+            <element signature="e#54602#54603#0" expanded="true" />
+            <element signature="e#54646#54647#0" expanded="true" />
+            <element signature="e#54714#54715#0" expanded="true" />
+            <element signature="e#54771#54772#0" expanded="true" />
+            <element signature="e#54825#54826#0" expanded="true" />
+            <element signature="e#54865#54866#0" expanded="true" />
+            <element signature="e#56187#56188#0" expanded="true" />
+            <element signature="e#56221#56222#0" expanded="true" />
+            <element signature="e#56721#56722#0" expanded="true" />
+            <element signature="e#56757#56758#0" expanded="true" />
+            <element signature="e#57582#57583#0" expanded="true" />
+            <element signature="e#57627#57628#0" expanded="true" />
+            <element signature="e#57692#57693#0" expanded="true" />
+            <element signature="e#57742#57743#0" expanded="true" />
+            <element signature="e#57797#57798#0" expanded="true" />
+            <element signature="e#57842#57843#0" expanded="true" />
+            <element signature="e#58770#58771#0" expanded="true" />
+            <element signature="e#58787#58788#0" expanded="true" />
+            <element signature="e#58846#58847#0" expanded="true" />
+            <element signature="e#58863#58864#0" expanded="true" />
+            <element signature="e#58924#58925#0" expanded="true" />
+            <element signature="e#58964#58965#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1548,38 +1796,70 @@
     <entry file="file://$PROJECT_DIR$/SPARQLUnitTests.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="44" column="45" selection-start-line="44" selection-start-column="45" selection-end-line="44" selection-end-column="45" />
+          <caret line="45" column="78" selection-start-line="45" selection-start-column="78" selection-end-line="45" selection-end-column="78" />
           <folding>
-            <marker date="1457473467000" expanded="true" signature="147:168" placeholder="select ename... emp" />
-            <marker date="1457473467000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
-            <marker date="1457473467000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
-            <marker date="1457473467000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
-            <marker date="1457473467000" expanded="true" signature="4654:4697" placeholder="select ename... emp" />
-            <marker date="1457473467000" expanded="true" signature="4878:4939" placeholder="select ename... emp" />
-            <marker date="1457473467000" expanded="true" signature="4912:4933" placeholder="select empno... emp" />
+            <marker date="1458392964000" expanded="true" signature="147:168" placeholder="select ename... emp" />
+            <marker date="1458392964000" expanded="true" signature="296:463" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="497:664" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="698:865" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="899:1066" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1100:1267" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1301:1468" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1502:1669" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1703:1870" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="1904:2071" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2105:2272" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2306:2473" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2507:2674" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2708:2875" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="2909:3076" placeholder="INSERT INTO EMP... " />
+            <marker date="1458392964000" expanded="true" signature="4205:4262" placeholder="select sal, *" />
+            <marker date="1458392964000" expanded="true" signature="4229:4246" placeholder="select * fro... emp" />
+            <marker date="1458392964000" expanded="true" signature="4654:4704" placeholder="select empno... emp" />
+            <marker date="1458392964000" expanded="true" signature="4869:4930" placeholder="select ename... emp" />
+            <marker date="1458392964000" expanded="true" signature="4908:4929" placeholder="select empno... emp" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/org/python/ReL/SQLVisitor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5555556">
-          <caret line="119" column="0" selection-start-line="119" selection-start-column="0" selection-end-line="119" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.34653464">
+          <caret line="900" column="0" selection-start-line="900" selection-start-column="0" selection-end-line="900" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#27588#27603#0" expanded="true" />
+            <element signature="e#39273#39274#0" expanded="true" />
+            <element signature="e#39310#39311#0" expanded="true" />
+            <element signature="e#45636#45666#1" expanded="true" />
+            <element signature="e#45703#45711#0" expanded="true" />
+            <element signature="e#46725#46726#0" expanded="true" />
+            <element signature="e#46788#46789#0" expanded="true" />
+            <element signature="e#48770#48778#0" expanded="true" />
+            <element signature="e#52081#52082#0" expanded="true" />
+            <element signature="e#52134#52135#0" expanded="true" />
+            <element signature="e#54602#54603#0" expanded="true" />
+            <element signature="e#54646#54647#0" expanded="true" />
+            <element signature="e#54714#54715#0" expanded="true" />
+            <element signature="e#54771#54772#0" expanded="true" />
+            <element signature="e#54825#54826#0" expanded="true" />
+            <element signature="e#54865#54866#0" expanded="true" />
+            <element signature="e#56187#56188#0" expanded="true" />
+            <element signature="e#56221#56222#0" expanded="true" />
+            <element signature="e#56721#56722#0" expanded="true" />
+            <element signature="e#56757#56758#0" expanded="true" />
+            <element signature="e#57582#57583#0" expanded="true" />
+            <element signature="e#57627#57628#0" expanded="true" />
+            <element signature="e#57692#57693#0" expanded="true" />
+            <element signature="e#57742#57743#0" expanded="true" />
+            <element signature="e#57797#57798#0" expanded="true" />
+            <element signature="e#57842#57843#0" expanded="true" />
+            <element signature="e#58770#58771#0" expanded="true" />
+            <element signature="e#58787#58788#0" expanded="true" />
+            <element signature="e#58846#58847#0" expanded="true" />
+            <element signature="e#58863#58864#0" expanded="true" />
+            <element signature="e#58924#58925#0" expanded="true" />
+            <element signature="e#58964#58965#0" expanded="true" />
           </folding>
         </state>
       </provider>

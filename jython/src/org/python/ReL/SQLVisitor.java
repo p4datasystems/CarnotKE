@@ -93,6 +93,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 	private LinkedHashMap<String, String> aggrColumnsAs;
 	private List<String> joinColumns;
 	private static String temp;
+    private int n = 1;
 	private Boolean wasEquals;
     /* Store queries */
     private Stack<String> subq = new Stack<String>();
@@ -100,8 +101,10 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
     /* Boolean to indicate weather or not we are
      * currently at a subquery
      */
-    private boolean sq = false;
+    private boolean subFromBefore =  false;
+    private boolean subFromAfter = false;
 	private boolean subWhere = false;
+    private boolean subW = false;
 	private List<String> subtTables = new ArrayList<String>();
     private LinkedHashMap<String,String> subColumnsAs = new LinkedHashMap<String,String>();
 
@@ -109,7 +112,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 
 	ArrayList<String> allCols = new ArrayList<String>(); 
 	private static String[] aggregates = {"avg", "count", "max", "min", "sum"}; // Input as lower case.
-    private static String[] inequalities = {" = ", " > ", " < ", " >= ", " <= ", " != "};
+    private static String[] inequalities = {" = ", " > ", " < ", " >= ", " <= ", " != ", " in ", " IN "};
 
 	public String url = "";
 	public String uname = "";
@@ -254,7 +257,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
         LinkedHashMap<String, String> aggrColumnsAs,
         List<String> joinColumns)
 	{
-		if (sq) tables = subtTables;
+		if (subFromAfter) tables = subtTables;
 		// Visit the Select statement and build structures necessary to build the SPARQL statement.
 
 		// Get all table names from the RDF data.
@@ -278,7 +281,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
             }
         }
 
-	// Get table names and their aliases if any from the SQL statement.
+	    // Get table names and their aliases if any from the SQL statement.
 		FromItem fromItem = plainSelect.getFromItem(); //Accepting the visitor
 		fromItem.accept(this);
 
@@ -320,11 +323,11 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 				else System.out.println("Table name " + tableName + " does not exist in the RDS data.");
 			}
 		}
-	// End getting table names and their aliases if any.
+	    // End getting table names and their aliases if any.
 
-	// This map (tableSymbols) of table names to unique, short symbols will be used later in several places.
+	    // This map (tableSymbols) of table names to unique, short symbols will be used later in several places.
 		HashMap<String,String> tableSymbols = new HashMap<String,String>();
-	    int n = 1;
+	    if (!subWhere) n = 1;
 	    for (String s : tables) {
 	       tableSymbols.put(s, "s" + n);
            n++;
@@ -383,7 +386,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 			}
 		}
         boolean b = false;
-	// Get column names to project.
+	    // Get column names to project.
         if(plainSelect.getSelectItems() != null) {
 			//gets the columns that are asked of
 			for(Iterator i = plainSelect.getSelectItems().iterator(); i.hasNext();) {
@@ -442,7 +445,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
                         if (!allCols.contains(columnName)) allCols.add(columnName);
 					}
 				}
-                if (sq) {
+                if (subFromAfter) {
                     for (Map.Entry<String, String> entry: columnsAs.entrySet()) {
                         //System.out.println("The Key is: " + entry.getKey() + " " + entry.getValue());
                         if (columnsAs.containsValue("\"*\"")) {
@@ -491,9 +494,9 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 			}
 		}
 	
-	// End getting join column names.
+		// End getting join column names.
 
-	// Process WHERE statement if any.
+		// Process WHERE statement if any.
         if (plainSelect.getWhere() != null) { //ie, there's a where clause
 			String s = plainSelect.getWhere().toString().replace(" and ", " &&  and ");
 			s = s.replace(" AND ", " &&  and ");
@@ -501,7 +504,8 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 			s = s.replace(" OR ", " ||  and ");
 			String[] whereClauses = s.split(" and | AND | or | OR ");
 			String fColumns = "";
-			String filter = "\tFILTER(";
+			String filter = (subWhere ? "\t\t\t" : "\t");
+            filter += "FILTER(";
 			n = 1;
 			String innerSubquery = "";
 			for (String c : whereClauses) {
@@ -509,35 +513,39 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 					if (c.contains(ineq)) {
 						String left = "";
 						left = resolveColumnName(columnNames, c.split(ineq)[0]);
+                        if (subWhere) fColumns += "\n\t\t\t";
+                        else fColumns += "\n\t";
 						if(left.equals(""))
 							filter += c.split(ineq)[0];
 						else {
-							fColumns += "\n\t?" + tableSymbols.get(tablesAliases.get(left.split("\\.")[0])) + " :" + left.split("\\.")[1] + " ?f" + n + " .\n";
+							fColumns += "?" + tableSymbols.get(tablesAliases.get(left.split("\\.")[0])) + " " + NoSQLNameSpacePrefix + ":" + left.split("\\.")[1] + " ?f" + n + " .\n";
 							filter += "?f" + n;
 							n++;
 						}
 						filter += ineq;
 						String right = resolveColumnName(columnNames, c.split(ineq)[1]);
 						if(right.equals(""))
-							filter += ":" + c.split(ineq)[1];
+							filter += c.split(ineq)[1];
 						else {
-							fColumns += "\n\t?" + tableSymbols.get(tablesAliases.get(right.split("\\.")[0])) + " :" + left.split("\\.")[1] + " ?f" + n + " .\n";
-			                	    // So fColumns will be set = ?s1 :eventType ?f1 .
+							fColumns += "?" + tableSymbols.get(tablesAliases.get(right.split("\\.")[0])) + left.split("\\.")[1] + " ?f" + n + " .\n";
+                            // So fColumns will be set = ?s1 c:eventType ?f1 .
 							filter += "?f" + n;
 							n++;
 						}
 						String x = "select";
-						if (!sq) {
+						if (!subFromAfter) {
 							if ((c.indexOf(x) >= 0) || (c.indexOf(x.toUpperCase()) >= 0)) {
+                                subWhere = true;
 								try {
 									String subsq = c.substring(c.indexOf("(") + 1, c.indexOf(")"));
-									PlainSelect plainSelect2 = (PlainSelect) ((Select) parserManager.parse(new StringReader(subsq))).getSelectBody();
+                                    subsq += " WHERE " + subsq.split(" ")[1] + ineq + c.split(ineq)[0];
 
+									PlainSelect plainSelect2 = (PlainSelect) ((Select) parserManager.parse(new StringReader(subsq))).getSelectBody();
 									visit(plainSelect2);
 
 									innerSubquery = subq.pop();
-									innerSubquery= "\nFILTER " + "( "+innerSubquery+"\t )";
-									subWhere = true;
+                                    innerSubquery = "\n\t\t{" + innerSubquery + " }";
+                                    subW = true;
 								}catch(Exception e){
 									System.out.println("We exploded " + e.getMessage());
 								}
@@ -546,21 +554,21 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 					}
 				}
 			}
-			if (subWhere) {
+			if (subW) {
 				filters.add(innerSubquery);
 			} else {
 				filters.add(fColumns + filter.replace("'", "") + ") ");
 			}
 		}
 
-	// End processing WHERE statement.
+		// End processing WHERE statement.
 		
-	// Process Order By statement
+		// Process Order By statement
 	
 		if(plainSelect.getOrderByElements() != null) {
 			String orderByStmnt = plainSelect.getOrderByElements().toString().toLowerCase();
 			orderByStmnt = orderByStmnt.substring(1, orderByStmnt.length() - 1);
-			String s = "ORDER BY ";
+			String s = "   ORDER BY ";
             String orderbySparqlElem = "";
 
 			String[] orderbyElems = orderByStmnt.split(" |\\,");
@@ -590,10 +598,11 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 				else
 					s = s + orderbySparqlElem;
 			}
+            //s += "\n";
 			orderby.add(s);
 		}	
 
-// Process "having" statement
+		// Process "having" statement
 
 		if (plainSelect.getHaving() != null){
 			String s = plainSelect.getHaving().toString().replace(" and ", " &&  and ");
@@ -650,7 +659,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 					str += "?v" + pos + " ";
 				}
 			}
-			having.add(str + ")");
+			having.add(str + ")\n");
 		}
 
 		if (connection.getDebug() == "debug") {
@@ -672,11 +681,11 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 			System.out.println("\t - allCols: " + allCols);
 		}
 		
-	//Build SPARQL.
+		//Build SPARQL.
 	    
-        String SPARQL = "SELECT ";
+        String SPARQL = " SELECT ";
         String tmpSparql = "";
-        n = 0;
+        if (!subWhere) n = 0;
         // Add the columns to be projected to the SPARQL string. 
         boolean nonExistentColumns = false;
        
@@ -700,7 +709,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
                            ++k;
 			           }
 			        }
-                     if (sq) {
+                     if (subFromAfter) {
                          int p = 1;
                          for (Map.Entry<String, String> entry: columnsAs.entrySet()) {
                              tmpColumnsAs.put("?v" + p, entry.getValue());
@@ -720,6 +729,8 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 
         // Prepend all group by columns to optional selects
         for (int groupbyVar = 0; groupbyVar < groupby.size(); groupbyVar++) {
+            if (subWhere) tmpSparql += "\n\t\t\t";
+            else tmpSparql += "\n\t\t";
             /* 
              * There should be an if block for Oracle RDF and AG
              * Each if block should create the correct SPARQL version for the specified connectionType,
@@ -727,12 +738,12 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
         	 */
             String groupbyCol = allCols.get(groupbyVar);
 			if (tablesAliases.get(groupbyCol.split("\\.")[0]) == null) {
-				tmpSparql += "\n\tOPTIONAL { ?s1"  + " " + NoSQLNameSpacePrefix + ":" + groupbyCol.substring(groupbyCol.lastIndexOf(".") + 1) + " ?v" + (groupbyVar + 1) + " }\n";
+				tmpSparql += "OPTIONAL { ?s1"  + " " + NoSQLNameSpacePrefix + ":" + groupbyCol.substring(groupbyCol.lastIndexOf(".") + 1) + " ?v" + (groupbyVar + 1) + " }";
 				nonExistentColumns = true;
 			}
 			else {
-				tmpSparql += "\n\tOPTIONAL { ?" + tableSymbols.get(tablesAliases.get(groupbyCol.split("\\.")[0]))
-			              + " " + NoSQLNameSpacePrefix + ":" + groupbyCol.substring(groupbyCol.lastIndexOf(".") + 1) + " ?v" + (groupbyVar + 1) + " }\n";
+				tmpSparql += "OPTIONAL { ?" + tableSymbols.get(tablesAliases.get(groupbyCol.split("\\.")[0]))
+			              + " " + NoSQLNameSpacePrefix + ":" + groupbyCol.substring(groupbyCol.lastIndexOf(".") + 1) + " ?v" + (groupbyVar + 1) + " }";
 			}
         }
 
@@ -745,45 +756,48 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
                 if(!connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += "n" + aggrPos + " AS " + v;
                 else  SPARQL += "(?n" + aggrPos + " AS ?" + v.replaceAll("\"", "") + ")";
 			} else {
-				int n2 = n;
 				for (int j = 1; j < allCols.size(); j++) {
 					if (allCols.get(j - 1).equals(allCols.get(n-1))) {
-						n2 = j;
 						break;
 					}
 				}
-                //if (!subWhere) {
-                    if (!connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += col + " " + columnsAs.get(col);
-                    else SPARQL += "(" + col + " AS ?" + columnsAs.get(col).replaceAll("\"", "") + ")";
-                //}
+                if (!connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += col + " " + columnsAs.get(col);
+                else SPARQL += "(" + col + " AS ?" + columnsAs.get(col).replaceAll("\"", "") + ")";
 			}
+
 			if (n != allCols.size())
                 if(!connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += ", ";
                 else SPARQL += " ";
-			if (!sq) {
+			if (!subFromAfter) {
+                if (subWhere) tmpSparql += "\n\t\t\t";
+                else tmpSparql += "\n\t\t";
                 // Break the col into a key (if it is an aggregate, we must get rid of the function)
                 String key;
                 if (aggrColumnsAs.keySet().contains("?v" + n)) {
                     key = aggrColumnsAs.get(col);
                     key = key.substring(key.indexOf("(") + 1, key.indexOf(")"));
-                } else key = allCols.get(n - 1);
+                    if (subWhere) key = allCols.get(allCols.size() - 1);
+                } else {
+                    key = allCols.get(n - 1);
+                    if (subWhere) key = allCols.get(allCols.size() - 1);
+                }
 
                 if (tablesAliases.get(key.split("\\.")[0]) == null) {
                     if (!connection.getConnectionDB().equals("OracleNoSQL")) {
-                        tmpSparql += "\n\tOPTIONAL { ?s1" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
-                                + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " }\n";
+                        tmpSparql += "OPTIONAL { ?s1" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
+                                + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " " + col + " }";
                     } else {
-                        tmpSparql += "\n\tOPTIONAL { ?indiv" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
-                                + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " } ";
+                        tmpSparql += "OPTIONAL { ?indiv" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
+                                + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " " + col + " } ";
                     }
                     nonExistentColumns = true;
                 } else {
                     if (!connection.getConnectionDB().equals("OracleNoSQL")) {
-                        tmpSparql += "\n\tOPTIONAL { ?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
-                                + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " }\n";
+                        tmpSparql += "OPTIONAL { ?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
+                                + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " " + col + " }";
                     } else {
-                        tmpSparql += "\n\tOPTIONAL { GRAPH ?g" + n + " {?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
-                                + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " ?v" + n + " } } ";
+                        tmpSparql += "OPTIONAL { GRAPH ?g" + n + " {?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
+                                + " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " " + col + " } }";
                     }
                 }
             }
@@ -792,7 +806,9 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
         // unless as is specified, go with ?n1, ?n2, etc instead of ?v1, ?v2...
         if (aggrColumnsAs.keySet().size() == 0 && !nonExistentColumns) {
             if (connection.getConnectionDB().equals("OracleNoSQL")) {
-                if (!sq) SPARQL += "\n WHERE { ";
+                if (!subFromAfter)
+                    if (subWhere) SPARQL += "\n\t\tWHERE { ";
+                    else SPARQL += "\n\tWHERE { ";
             } else SPARQL += "\n FROM TABLE(SEM_MATCH('SELECT * WHERE { ";
         } else {
             if (connection.getConnectionDB().equals("OracleNoSQL")) SPARQL += " ";
@@ -817,7 +833,9 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
                 }
             }
             if (connection.getConnectionDB().equals("OracleNoSQL")) {
-                if (!sq) SPARQL += "\n WHERE { ";
+                if (!subFromAfter)
+                    if (subWhere) SPARQL += "\n\t\tWHERE { ";
+                    else SPARQL += "\n\tWHERE { ";
             }
         }
 
@@ -825,14 +843,14 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
             String key = entry.getKey();
             String value = entry.getValue();
             if (connection.getConnectionDB().equals("OracleNoSQL")) {
-                SPARQL += "GRAPH " + NoSQLNameSpacePrefix + ":" + key + "_SCHEMA" + " { ?" + value + " rdf:type " + NoSQLNameSpacePrefix + ":" + key + " } ";
+                SPARQL += "GRAPH " + NoSQLNameSpacePrefix + ":" + key + "_SCHEMA" + " { ?" + value + " rdf:type " + NoSQLNameSpacePrefix + ":" + key + " }";
             } else if (connectionType == "rdf_mode") {
-                SPARQL += "\tGRAPH <" + key + "_" + sparqlHelper.getSchemaString() + "> { ?" + value + " rdf:type :" + key + " }\n";
+                SPARQL += "\tGRAPH <" + key + "_" + sparqlHelper.getSchemaString() + "> { ?" + value + " rdf:type :" + key + " }";
             } else { //representing the default case
                 SPARQL += "\t?" + value + " rdf:type :" + key + " .\n";
             }
         }
-        if (sq) {
+        if (subFromAfter) {
             String subqStr = subq.pop();
             subqStr = subqStr.substring(subqStr.lastIndexOf(")") + 1, subqStr.length() - 1);
             tmpSparql += subqStr;
@@ -866,7 +884,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 
         SPARQL += "}";
         if (groupby.size() > 0) {
-        	SPARQL += "\n GROUPBY ";
+        	SPARQL += "\nGROUPBY ";
 	        for (String groupbyElem: groupby) {
 	        	if (n++ > 0) SPARQL += " ";
 	        	SPARQL += groupbyElem;
@@ -878,6 +896,8 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
         else SPARQL += "\n" + "' ,\nSEM_MODELS('" + connection.getModel() + "'), null,\nSEM_ALIASES( SEM_ALIAS('', '" + connection.getNamespace() + "')), null) )";
         subtTables = tables;
         temp = "";
+        if (!subFromBefore) SPARQL += "\n ";
+        subWhere = false;
         return SPARQL;
 	}
 	
@@ -907,9 +927,13 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 
 	@Override
 	public void visit(SubSelect subSelect) {
+        subFromAfter = false;
+        subFromBefore = true;
+
 		subSelect.getSelectBody().accept(this);
 
-        sq = true;
+        subFromAfter = true;
+        subFromBefore = false;
 		
 		//temp = temp.substring(0, temp.indexOf("IN") + 2);
 	}

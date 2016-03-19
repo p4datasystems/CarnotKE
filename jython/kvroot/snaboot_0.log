@@ -56,3 +56,11 @@
 2016-03-08 23:37:07.612 UTC INFO [snaService] Setting java.net.InetAddress cache ttl to: networkaddress.cache.ttl=-1 networkaddress.cache.negative.ttl=-1
 2016-03-08 23:37:07.629 UTC INFO [snaService] Registered startup, config file: ./kvroot/kvstore/sn1/config.xml
 2016-03-08 23:37:07.679 UTC INFO [snaService] Changing log files to directory: ./kvroot/kvstore/log
+2016-03-19 02:04:01.114 UTC INFO [snaService] Starting, configuration file: ./kvroot/config.xml
+2016-03-19 02:04:01.124 UTC INFO [snaService] Setting java.net.InetAddress cache ttl to: networkaddress.cache.ttl=-1 networkaddress.cache.negative.ttl=-1
+2016-03-19 02:04:01.132 UTC INFO [snaService] Registered startup, config file: ./kvroot/kvstore/sn1/config.xml
+2016-03-19 02:04:01.163 UTC INFO [snaService] Changing log files to directory: ./kvroot/kvstore/log
+2016-03-19 02:04:08.988 UTC INFO [snaService] Starting, configuration file: ./kvroot/config.xml
+2016-03-19 02:04:09.020 UTC INFO [snaService] Setting java.net.InetAddress cache ttl to: networkaddress.cache.ttl=-1 networkaddress.cache.negative.ttl=-1
+2016-03-19 02:04:09.034 UTC INFO [snaService] Registered startup, config file: ./kvroot/kvstore/sn1/config.xml
+2016-03-19 02:04:09.102 UTC INFO [snaService] Changing log files to directory: ./kvroot/kvstore/log

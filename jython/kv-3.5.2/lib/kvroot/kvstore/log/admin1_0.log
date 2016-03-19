@@ -268,3 +268,66 @@ store=kvstore  numPartitions=10 sequence=14
 2016-03-08 23:37:37.175 UTC INFO [admin1] Started SelectChannelConnector@0.0.0.0:5001 STARTING
 2016-03-08 23:37:37.177 UTC INFO [admin1] Started AdminService
 2016-03-08 23:37:52.981 UTC INFO [admin1] [rg1-rn1] Service status: RUNNING 2016-03-08 23:37:33 UTC
+2016-03-19 02:05:44.315 UTC INFO [admin1] JVM java.net.InetAddress properties: cache.ttl=-1 cache.negative.ttl=-1
+2016-03-19 02:05:44.339 UTC INFO [admin1] Starting AdminService
+2016-03-19 02:05:44.438 UTC INFO [admin1] Initializing PRIMARY Admin for store: kvstore
+2016-03-19 02:05:44.439 UTC INFO [admin1] JVM Runtime maxMemory (bytes): 1908932608
+2016-03-19 02:05:44.440 UTC INFO [admin1] Non-default JE properties for environment: {je.rep.vlsn.logCacheSize=128, je.rep.envUnknownStateTimeout=10 s, je.log.faultReadSize=4096, je.rep.vlsn.distance=1000000, je.rep.replicaTimeout=10 s, je.env.runEvictor=true, je.cleaner.minUtilization=40, je.rep.replicaAckTimeout=5 s, je.lock.nLockTables=97, je.cleaner.threads=2, je.rep.replayMaxOpenDbHandles=100, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.log.iteratorReadSize=1048576, je.log.numBuffers=16, je.rep.feederTimeout=10 s, je.nodeMaxEntries=128, je.lock.timeout=10 s, je.rep.bindInaddrAny=true, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.checkpointer.bytesInterval=500000000, je.txn.durability=write_no_sync,write_no_sync,simple_majority, je.cleaner.readSize=1048576, je.rep.ignoreSecondaryNodeId=true, je.rep.txnRollbackLimit=10, je.log.fileCacheSize=2000, je.log.fileMax=1073741824}
+2016-03-19 02:05:44.469 UTC INFO [admin1] DataChannelFactory: basic
+2016-03-19 02:05:44.472 UTC INFO [admin1] AdminStateTracker thread start: admin1
+2016-03-19 02:05:44.958 UTC INFO [admin1] JE recovery: FIND_END_OF_LOG
+2016-03-19 02:05:45.018 UTC INFO [admin1] JE recovery: FIND_LAST_CKPT
+2016-03-19 02:05:45.025 UTC INFO [admin1] JE recovery: READ_DBMAP_INFO
+2016-03-19 02:05:45.039 UTC INFO [admin1] JE recovery: REDO_DBMAP_INFO
+2016-03-19 02:05:45.040 UTC INFO [admin1] JE recovery: UNDO_DBMAP_RECORDS
+2016-03-19 02:05:45.043 UTC INFO [admin1] JE recovery: REDO_DBMAP_RECORDS
+2016-03-19 02:05:45.050 UTC INFO [admin1] JE recovery: READ_DATA_INFO
+2016-03-19 02:05:45.065 UTC INFO [admin1] JE recovery: REDO_DATA_INFO
+2016-03-19 02:05:45.068 UTC INFO [admin1] JE recovery: UNDO_DATA_RECORDS
+2016-03-19 02:05:45.069 UTC INFO [admin1] JE recovery: REDO_DATA_RECORDS
+2016-03-19 02:05:45.086 UTC INFO [admin1] JE recovery: POPULATE_UTILIZATION_PROFILE
+2016-03-19 02:05:45.101 UTC INFO [admin1] JE recovery: REMOVE_TEMP_DBS
+2016-03-19 02:05:45.133 UTC INFO [admin1] JE recovery: RECOVERY_FINISHED
+2016-03-19 02:05:45.208 UTC INFO [admin1] JE: Started ServiceDispatcher. HostPort=Nelmas-MacBook-Pro.local:5005
+2016-03-19 02:05:45.208 UTC INFO [admin1] JE: DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-03-19 02:05:45.286 UTC INFO [admin1] JE: Current group size: 1
+2016-03-19 02:05:45.286 UTC INFO [admin1] JE: Existing node 1 querying for a current master.
+2016-03-19 02:05:45.317 UTC INFO [admin1] JE recovery: BECOME_CONSISTENT
+2016-03-19 02:05:45.317 UTC INFO [admin1] JE: Node 1 started
+2016-03-19 02:05:45.318 UTC INFO [admin1] JE: Election initiated; election #1
+2016-03-19 02:05:45.318 UTC INFO [admin1] JE: Started election thread Fri Mar 18 21:05:45 CDT 2016
+2016-03-19 02:05:47.334 UTC INFO [admin1] JE: Winning proposal: Proposal(000001538c9f0db9:44e8207b7a4b3762bb63372e55214be0:00000001) Value: Value:Nelmas-MacBook-Pro.local$$$5005$$$1$$$1
+2016-03-19 02:05:47.334 UTC INFO [admin1] JE: Winning proposal: Proposal(000001538c9f0db9:44e8207b7a4b3762bb63372e55214be0:00000001) Value: Value:Nelmas-MacBook-Pro.local$$$5005$$$1$$$1
+2016-03-19 02:05:47.337 UTC INFO [admin1] JE: Master changed to 1
+2016-03-19 02:05:47.337 UTC INFO [admin1] JE: Election finished. Elapsed time: 2019ms
+2016-03-19 02:05:47.338 UTC INFO [admin1] JE: Feeder manager accepting requests.
+2016-03-19 02:05:47.338 UTC INFO [admin1] JE: Election thread exited. Group master: 1(1)
+2016-03-19 02:05:47.345 UTC INFO [admin1] JE: Joining group as master
+2016-03-19 02:05:47.347 UTC INFO [admin1] JE: Refreshed 0 monitors.
+2016-03-19 02:05:47.349 UTC INFO [admin1] State change event: Fri Mar 18 21:05:47 CDT 2016, State: MASTER, Type: PRIMARY, Master: 1
+2016-03-19 02:05:47.349 UTC INFO [admin1] AdminStateTracker queue added:MASTER
+2016-03-19 02:05:47.485 UTC INFO [admin1] Open Admin entity DB: AdminPlanDatabase
+2016-03-19 02:05:47.485 UTC INFO [admin1] Admin plan database initialized
+2016-03-19 02:05:47.486 UTC INFO [admin1] Initialized plan store to PlanDatabaseStore
+2016-03-19 02:05:47.487 UTC INFO [admin1] Shutting down monitor collector
+2016-03-19 02:05:47.524 UTC INFO [admin1] Using existing Admin database
+2016-03-19 02:05:47.534 UTC INFO [admin1] Monitor collector: adding sn1 to monitoring
+2016-03-19 02:05:47.536 UTC INFO [admin1] Monitor collector: adding rg1-rn1 to monitoring
+2016-03-19 02:05:47.618 UTC INFO [admin1] [sn1] Service status: RUNNING 2016-03-19 02:05:44 UTC
+2016-03-19 02:05:47.619 UTC INFO [admin1] [rg1-rn1] Service status: STARTING 2016-03-19 02:05:47 UTC
+2016-03-19 02:05:47.741 UTC INFO [admin1] Replicated environment handle established. Cache size: 1145359564, State: MASTER
+2016-03-19 02:05:47.742 UTC INFO [admin1] Starting commandService on rmi://Nelmas-MacBook-Pro.local:5000/commandService
+2016-03-19 02:05:47.799 UTC INFO [admin1] Successfully created a secure proxy for commandService
+2016-03-19 02:05:47.888 UTC INFO [admin1] Starting admin:CLIENT_ADMIN on rmi://Nelmas-MacBook-Pro.local:5000/admin:CLIENT_ADMIN
+2016-03-19 02:05:47.893 UTC INFO [admin1] Successfully created a secure proxy for admin:CLIENT_ADMIN
+2016-03-19 02:05:47.905 UTC INFO [admin1] Starting Web service on port 5001
+2016-03-19 02:05:48.159 UTC INFO [admin1] jetty-7.4.0.v20110414
+2016-03-19 02:05:48.238 UTC INFO [admin1] Extract jar:file:/Users/nelmiux/Drive/Work/GitHub/CarnotKE/jython/kv-3.5.2/lib/kvstore.jar!/war/KVAdminUI/ to /Users/nelmiux/Drive/Work/GitHub/CarnotKE/jython/kv-3.5.2/lib/kvroot/kvstore/sn1/admin1/webapp/webapp
+2016-03-19 02:05:49.575 UTC INFO [admin1] NO JSP Support for /, did not find org.apache.jasper.servlet.JspServlet
+2016-03-19 02:05:49.650 UTC INFO [admin1] started o.e.j.w.WebAppContext{/,file:/Users/nelmiux/Drive/Work/GitHub/CarnotKE/jython/kv-3.5.2/lib/kvroot/kvstore/sn1/admin1/webapp/webapp/},jar:file:/Users/nelmiux/Drive/Work/GitHub/CarnotKE/jython/kv-3.5.2/lib/kvstore.jar!/war/KVAdminUI
+2016-03-19 02:05:49.734 UTC INFO [admin1] Started SelectChannelConnector@0.0.0.0:5001 STARTING
+2016-03-19 02:05:49.736 UTC INFO [admin1] Started AdminService
+2016-03-19 02:06:07.597 UTC INFO [admin1] [rg1-rn1] Service status: RUNNING 2016-03-19 02:05:47 UTC
+2016-03-19 04:18:21.742 UTC INFO [admin1] Inactive socket Socket[addr=Nelmas-MacBook-Pro.local/192.168.2.2,port=53128,localport=59615] timed out and was forcibly closed, timeout: 5000 ms
+2016-03-19 04:23:41.755 UTC INFO [admin1] [admin1] sn1: Service status: UNREACHABLE 2016-03-19 04:23:41 UTC
+2016-03-19 05:17:00.466 UTC INFO [admin1] Inactive socket Socket[addr=Nelmas-MacBook-Pro.local/192.168.2.2,port=5000,localport=60270] timed out and was forcibly closed, timeout: 10000 ms
