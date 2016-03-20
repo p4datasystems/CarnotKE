@@ -13,3 +13,12 @@ make sure you have java 1.8 on your system
 unzip dist.zip
 dist/bin/jython -S
 you should see the following:
+
+| SELECT (?v1 AS ?ename) (?v2 AS ?sal) (?v3 AS ?deptno)
+	WHERE { GRAPH c:emp_SCHEMA { ?s1 rdf:type c:emp } GRAPH c:dept_SCHEMA { ?s2 rdf:type c:dept } 
+		OPTIONAL { GRAPH ?g1 {?s1 c:ename ?v1 } }
+		OPTIONAL { GRAPH ?g2 {?s1 c:sal ?v2 } }
+		OPTIONAL { GRAPH ?g3 {?s2 c:deptno ?v3 } }
+		GRAPH ?gj1 { ?s1 c:deptno ?j1 . } 
+		GRAPH ?gj2 { ?s2 c:deptno ?j1 .  } }
+ | END
