@@ -54,7 +54,7 @@ oracle.jar=C:/workspace/HEAD/for_development/bisdevsrv28/jboss/server/infra/lib/
 
 # - option for javac (build.compiler=modern is a global option to use standard jdk 1.7/1.8)
 #build.compiler=modern
-#jdk.target.version=1.7
+#jdk.target.version=1.8
 #debug=false
 #deprecation=off
 
@@ -254,7 +254,7 @@ oracle.jar=C:/workspace/HEAD/for_development/bisdevsrv28/jboss/server/infra/lib/
             <pathelement path="${extlibs.dir}/xml-apis.jar"/>
 
             <!-- TitanDB Support -->
-            <pathelement path="${extlibs.dir}/titan-1.0.0-hadoop1/lib/*.jar"/>
+            <pathelement path="${extlibs.dir}/titan-1.0.0-hadoop1/lib/*"/>
 
             <!-- Jars for Entrata -->
             <pathelement path="${extlibs.dir}/httpclient-4.3.3.jar"/>
@@ -550,8 +550,8 @@ The readme text for the next release will be like:
 
     <target name="compile" depends="init,antlr_gen,brand-version">
         <javac destdir="${compile.dir}"
-               target="${jdk.target.version}"
-               source="${jdk.source.version}"
+               target="1.8"
+               source="1.8"
                debug="${debug}"
                deprecation="${deprecation}"
                nowarn="${nowarn}"
