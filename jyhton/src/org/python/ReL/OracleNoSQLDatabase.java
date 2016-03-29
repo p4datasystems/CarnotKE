@@ -1,15 +1,15 @@
 package org.python.ReL;
 
-import oracle.kv.*;
+import oracle.kv.FaultException;
+import oracle.kv.KVStore;
+import oracle.kv.KVStoreConfig;
+import oracle.kv.KVStoreFactory;
 import oracle.kv.table.PrimaryKey;
 import oracle.kv.table.Row;
 import oracle.kv.table.Table;
 import oracle.kv.table.TableAPI;
 import org.apache.commons.lang3.SerializationUtils;
-import wdb.metadata.Adapter;
-import wdb.metadata.ClassDef;
-import wdb.metadata.IndexDef;
-import wdb.metadata.WDBObject;
+import wdb.metadata.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -43,19 +43,17 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
     private static File storageDir;
 
 
-
-
-
     /**
      * Connects to a KVStore on port 5000 if one exists, otherwise
      * creates a new KVStore.
      */
-    public OracleNoSQLDatabase() {
+    public OracleNoSQLDatabase()
+    {
         validateInstallationRoot();
         baseCommands = new String[]{"java", "-jar", INSTALLATION_ROOT.getAbsolutePath() + "/extlibs/kvstore.jar"};
 
         this.adapter = new OracleNoSQLAdapter(this);
-        if (! reconnectToExistingStore()) {
+        if (!reconnectToExistingStore()) {
             setupSNDirectories();
             setupEnvironmentAndCreateNodes();
             connectToStore();
@@ -68,12 +66,12 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
     }
 
 
-
     /*******************************************************
-     ************* STORE CONNECTION METHODS ***************************
+     * ************ STORE CONNECTION METHODS ***************************
      *******************************************************/
 
-    public boolean setupEnvironmentAndCreateNodes() {
+    public boolean setupEnvironmentAndCreateNodes()
+    {
         // Initialize Storage Node
         kvStoreCommand("makebootconfig",
                 "-root", storeRoot.getAbsolutePath(),
@@ -103,7 +101,8 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
         return true;
     }
 
-    public void kvStoreCommand(String... commandWithArgs) {
+    public void kvStoreCommand(String... commandWithArgs)
+    {
         final String command = commandWithArgs[0];
         ArrayList<String> arguments = new ArrayList<>(Arrays.asList(baseCommands));
         arguments.addAll(Arrays.asList(commandWithArgs));
@@ -132,13 +131,13 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
                     ultimateCleanUp("Process exited abnormally.");
                 }
             }
-        }
-        catch (Exception e) {
-            ultimateCleanUp(String.format("%s",e.getMessage()));
+        } catch (Exception e) {
+            ultimateCleanUp(String.format("%s", e.getMessage()));
         }
     }
 
-    public void validateInstallationRoot() {
+    public void validateInstallationRoot()
+    {
         final String serverRoot = System.getenv("INSTALLATION_ROOT");
         if (serverRoot == null)
             ultimateCleanUp("Server not started. Please set INSTALLATION_ROOT environment variable.");
@@ -151,10 +150,10 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
         }
     }
 
-    public void setupSNDirectories() {
+    public void setupSNDirectories()
+    {
         storageDir = new File(INSTALLATION_ROOT, "db/store");
-        if(!storageDir.exists())
-        {
+        if (!storageDir.exists()) {
             if (storageDir.mkdirs())
                 System.out.println(String.format(
                         "Creating storage directory at '%s'", storageDir.getAbsolutePath()));
@@ -168,15 +167,17 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
 
 
     /*******************************************************
-     ************* TABLE METHODS ***************************
+     * ************ TABLE METHODS ***************************
      *******************************************************/
-    public void createTables() {
+    public void createTables()
+    {
         createTable(classTable, CLASSDEF_TABLE_NAME);
         createTable(objectTable, WDBOBJECT_TABLE_NAME);
     }
 
 
-    private void createTable(Table table, String tableName) {
+    private void createTable(Table table, String tableName)
+    {
 //        if (!storeProcess.isAlive())
 //            throw new IllegalThreadStateException("No connection to database!");
         tableH = store.getTableAPI();
@@ -219,13 +220,16 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
     }
 
 
-    public void clearDatabase() {
+    public void clearDatabase()
+    {
         dropTable(classTable);
         dropTable(objectTable);
         createTables();
 
     }
-    private void dropTable(Table table) {
+
+    private void dropTable(Table table)
+    {
         if (table == null)
             return;
         String statement =
@@ -233,15 +237,13 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
                         table.getFullName();
 
         try {
-            System.out.println(String.format("Dropping table %s ...",table.getFullName()));
+            System.out.println(String.format("Dropping table %s ...", table.getFullName()));
             store.executeSync(statement);
             System.out.println("Success!");
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             System.out.println("Invalid statement:\n" + e.getMessage());
             System.out.println("Well crap.");
-        }
-        catch (FaultException e) {
+        } catch (FaultException e) {
             System.out.println
                     ("Statement couldn't be executed, please retry: " + e);
             System.out.println("Well crap.");
@@ -249,14 +251,14 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
     }
 
 
-    private void connectToStore() {
+    private void connectToStore()
+    {
         // Obtain handles to the running Storage Node
         try {
             System.out.println("Trying to connect to the store ...");
             store = KVStoreFactory.getStore
                     (new KVStoreConfig(STORE_NAME, HOST + ":" + PORT));
-        }
-        catch (FaultException e) {
+        } catch (FaultException e) {
             ultimateCleanUp("Connection failed! Cleaning up...");
             if (DBG)
                 System.out.println(String.
@@ -265,14 +267,14 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
         System.out.println("Connection successful!");
     }
 
-    private boolean reconnectToExistingStore() {
+    private boolean reconnectToExistingStore()
+    {
         // Obtain handles to the running Storage Node
         try {
             System.out.println("Trying to connect to an already running store ...");
             store = KVStoreFactory.getStore
                     (new KVStoreConfig(STORE_NAME, HOST + ":" + PORT));
-        }
-        catch (FaultException e) {
+        } catch (FaultException e) {
             System.out.println("No existing connection found. Creating new one.");
             return false;
         }
@@ -282,7 +284,8 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
         return true;
     }
 
-    private void disconnectFromStore() {
+    private void disconnectFromStore()
+    {
         if (store != null)
             store.close();
     }
@@ -293,7 +296,8 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
      * can get a fresh start next try. Close connections to KVStores
      * and terminate background server processes.
      */
-    public void ultimateCleanUp(String reason) {
+    public void ultimateCleanUp(String reason)
+    {
         disconnectFromStore();
         // Explicitly run stop if server is running
         if (storeRoot != null)
@@ -302,23 +306,27 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
         // Below may not be needed if above works quickly
         if (storeProcess != null)
             storeProcess.destroy();
-        System.out.println("========="+reason+"=========");
+        System.out.println("=========" + reason + "=========");
         System.exit(-1);
     }
 
-    public String getStorageDirPath() {
+    public String getStorageDirPath()
+    {
         return storageDir.getAbsolutePath();
     }
 
-    public TableAPI getTableHandle() {
+    public TableAPI getTableHandle()
+    {
         return tableH;
     }
 
-    public Table getClassTable() {
+    public Table getClassTable()
+    {
         return classTable;
     }
 
-    public Table getObjectTable() {
+    public Table getObjectTable()
+    {
         return objectTable;
     }
 
@@ -326,6 +334,7 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
     /**
      * OracleNoSQLAdapter implements the Adapter interface to ensure it has all the
      * required methods implemented to be processed in ProcessLanguages.
+     *
      * @author Joshua Hurt
      */
     private class OracleNoSQLAdapter implements Adapter {
@@ -333,7 +342,8 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
         private static final String classKeyPrefix = "class";
         private static final String objectKeyPrefix = "object";
 
-        private OracleNoSQLAdapter(OracleNoSQLDatabase db) {
+        private OracleNoSQLAdapter(OracleNoSQLDatabase db)
+        {
             this.db = db;
         }
 
@@ -342,7 +352,8 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
          * value: ClassDef classDef
          */
         @Override
-        public void putClass(ClassDef classDef) {
+        public void putClass(ClassDef classDef)
+        {
             final String keyString = makeClassKey(classDef.name);
             final byte[] data = SerializationUtils.serialize(classDef);
 
@@ -353,12 +364,20 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
             db.getTableHandle().put(row, null, null);
         }
 
+        @Override
+        public ClassDef getClass(Query query) throws ClassNotFoundException
+        {
+            return getClass(query.queryName);
+        }
+
         /**
          * key: String class:(classDef.name)
+         *
          * @return ClassDef or null if not found
          */
         @Override
-        public ClassDef getClass(String className) throws ClassNotFoundException {
+        public ClassDef getClass(String className) throws ClassNotFoundException
+        {
             PrimaryKey key = db.getClassTable().createPrimaryKey();
             final String keyString = makeClassKey(className);
             key.put("key", keyString);
@@ -382,10 +401,12 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
         /**
          * key: String object:(Uid.toString())
          * value: WDBObject object
+         *
          * @param wdbObject to serialize and store as value
          */
         @Override
-        public void putObject(WDBObject wdbObject) {
+        public void putObject(WDBObject wdbObject)
+        {
             final String keyString = makeObjectKey(wdbObject.getUid());
             final byte[] data = SerializationUtils.serialize(wdbObject);
 
@@ -399,12 +420,14 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
         /**
          * key: String object:(Uid.toString())
          * value: WDBObject object
+         *
          * @param className only used for MissingResourceException
-         * @param Uid is the key to retrieve the WDBObject
+         * @param Uid       is the key to retrieve the WDBObject
          * @return WDBObject or throws MissingResourceException
          */
         @Override
-        public WDBObject getObject(String className, Integer Uid) {
+        public WDBObject getObject(String className, Integer Uid)
+        {
             final String keyString = makeObjectKey(Uid);
             PrimaryKey key = db.getObjectTable().createPrimaryKey();
             key.put("key", keyString);
@@ -423,26 +446,31 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
         }
 
         @Override
-        public ArrayList<WDBObject> getObjects(IndexDef indexDef, String key) {
+        public ArrayList<WDBObject> getObjects(IndexDef indexDef, String key)
+        {
             System.out.println("getObjects called in OracleNoSQLAdapter");
             return null;
         }
 
-        private String makeClassKey(String className) {
+        private String makeClassKey(String className)
+        {
             return classKeyPrefix + ":" + className;
         }
 
-        private String makeObjectKey(Integer Uid) {
+        private String makeObjectKey(Integer Uid)
+        {
             return objectKeyPrefix + ":" + Uid.toString();
         }
 
         @Override
-        public void abort() {
+        public void abort()
+        {
 
         }
 
         @Override
-        public void commit() {
+        public void commit()
+        {
 
         }
     }
