@@ -23,7 +23,8 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
     public static TitanTransaction titanTransaction = null;
     public static Object rootID = null;
 
-    public TitanNoSQLDatabase() {
+    public TitanNoSQLDatabase()
+    {
 
         this.adapter = new TitanNoSQLAdapter(this);
 
@@ -36,8 +37,11 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         boolean initGraph = mg.getGraphIndex("byClassDef") == null;
 
         if (initGraph) {
-            VertexLabel classLabel = mg.containsVertexLabel("classDef") ? mg.getVertexLabel("classDef") : mg.makeVertexLabel("classDef").make();
-            PropertyKey name = mg.containsPropertyKey("name") ? mg.getPropertyKey("name") : mg.makePropertyKey("name").dataType(String.class).make();
+            VertexLabel classLabel = mg.containsVertexLabel("classDef") ? mg.getVertexLabel("classDef") : mg.makeVertexLabel("classDef")
+                    .make();
+            PropertyKey name = mg.containsPropertyKey("name") ? mg.getPropertyKey("name") : mg.makePropertyKey("name")
+                    .dataType(String.class)
+                    .make();
             mg.buildIndex("byClassDef", Vertex.class).addKey(name).indexOnly(classLabel).buildCompositeIndex();
         }
         mg.commit();
@@ -49,7 +53,8 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
             titanTransaction.commit();  // Regular classDefs can't have spaces
             rootID = root.id();
-        } else {
+        }
+        else {
             GraphTraversalSource g = titanGraph.traversal();
             g.V().hasLabel("classDef").forEachRemaining(n -> {
                 if (n.property("name").value().equals("Root")) {
@@ -59,12 +64,14 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         }
     }
 
-    private static Vertex lookupClass(GraphTraversalSource g, String name) {
+    private static Vertex lookupClass(GraphTraversalSource g, String name)
+    {
         return getSubclass(g, rootID, name);
     }
 
     // returns the number of edges inserted
-    private static int[] doInsert(InsertQuery iq, GraphTraversalSource g, Vertex classDef, Vertex entity) {
+    private static int[] doInsert(InsertQuery iq, GraphTraversalSource g, Vertex classDef, Vertex entity)
+    {
         setDefaultDVAs(g, classDef, entity);
         int[] counts = doAssignments(g, entity, classDef, iq);
         checkRequiredInserts(iq, g, classDef, entity);
@@ -72,7 +79,8 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         return counts;
     }
 
-    private static void setDefaultDVAs(GraphTraversalSource g, Vertex classDef, Vertex entity) {
+    private static void setDefaultDVAs(GraphTraversalSource g, Vertex classDef, Vertex entity)
+    {
         GraphTraversal<Vertex, Vertex> dvas = g.V(classDef.id()).outE("has").has("isDVA").inV().has("default_value");
         while (dvas.hasNext()) {
             Vertex dvaVertex = dvas.next();
@@ -84,7 +92,8 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         }
     }
 
-    private static void checkRequiredInserts(InsertQuery iq, GraphTraversalSource g, Vertex classDef, Vertex entity) {
+    private static void checkRequiredInserts(InsertQuery iq, GraphTraversalSource g, Vertex classDef, Vertex entity)
+    {
         GraphTraversal<Vertex, Edge> requiredAttrs = g.V(classDef.id()).outE("has").has("required");
         while (requiredAttrs.hasNext()) {
             Edge attr = requiredAttrs.next();
@@ -96,7 +105,8 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
                     throwException("Did not insert required value %s into an instance of class %s!",
                             name, iq.className);
                 }
-            } else {
+            }
+            else {
                 // didn't insert a required EVA
                 if (!g.V(entity.id()).outE(name).hasNext()) {
                     throwException("Did not insert required EVA %s into an instance of class %s!",
@@ -107,7 +117,8 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
     }
 
     // check if the insertion respects max number of references defined and distinctness restriction
-    private static void checkEVARestrictions(InsertQuery iq, GraphTraversalSource g, Vertex classDef, Vertex entity) {
+    private static void checkEVARestrictions(InsertQuery iq, GraphTraversalSource g, Vertex classDef, Vertex entity)
+    {
         GraphTraversal<Vertex, Vertex> evaAttrs = g.V(classDef.id()).outE("has").hasNot("isDVA").inV();
         while (evaAttrs.hasNext()) {
             Vertex evaVertex = evaAttrs.next();
@@ -156,7 +167,8 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
     }
 
     // int[] data; data[0] = num edges replaced, data[1] = num edges inserted, data[2] = num edges removed
-    private static int[] doAssignments(GraphTraversalSource g, Vertex entity, Vertex classDef, UpdateQuery query) {
+    private static int[] doAssignments(GraphTraversalSource g, Vertex entity, Vertex classDef, UpdateQuery query)
+    {
         int[] counts = new int[3];
         for (Assignment assignment : query.assignmentList) {
             if (assignment instanceof DvaAssignment) {
@@ -167,7 +179,8 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
                 DvaAssignment dvaAssignment = (DvaAssignment) assignment;
                 checkAssignmentType(query, assignment.AttributeName, dvaVertex, dvaAssignment);
                 entity.property(assignment.AttributeName, dvaAssignment.Value);
-            } else if (assignment instanceof EvaAssignment) {
+            }
+            else if (assignment instanceof EvaAssignment) {
                 Vertex evaVertex = getAttribute(g, classDef, false, assignment.AttributeName);
                 if (evaVertex == null) {
                     throwException("Class %s does not have an eva %s!", query.className, assignment.AttributeName);
@@ -240,7 +253,8 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         return counts;
     }
 
-    private static void scheduleDisconnect(GraphTraversalSource g, Vertex start, Vertex end, List<Edge> toRemove) {
+    private static void scheduleDisconnect(GraphTraversalSource g, Vertex start, Vertex end, List<Edge> toRemove)
+    {
         GraphTraversal<Vertex, Edge> forwards = g.V(start.id()).outE("eva");
         while (forwards.hasNext()) {
             Edge e = forwards.next();
@@ -250,7 +264,8 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         }
     }
 
-    private static Set<Vertex> getInstances(GraphTraversalSource g, Vertex classDef, SimpleNode expression) {
+    private static Set<Vertex> getInstances(GraphTraversalSource g, Vertex classDef, SimpleNode expression)
+    {
         Set<Vertex> res = new HashSet<>();
         GraphTraversal<Vertex, Vertex> instances = g.V(classDef.id()).out("instance");
         while (instances.hasNext()) {
@@ -267,7 +282,8 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         return res;
     }
 
-    private static boolean matches(GraphTraversalSource g, Vertex classDef, Node expression, Vertex instance) {
+    private static boolean matches(GraphTraversalSource g, Vertex classDef, Node expression, Vertex instance)
+    {
         if (expression instanceof Root) {
             return matches(g, classDef, expression.jjtGetChild(0), instance);
         }
@@ -342,11 +358,13 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         throw new IllegalStateException("Unknown type of Node! " + expression);
     }
 
-    private static void throwException(String format, Object... args) {
+    private static void throwException(String format, Object... args)
+    {
         throw new RuntimeException(String.format(format, args));
     }
 
-    private static void checkAttributeIsInteger(String attributeName, Vertex attrVertex, String quantifier) {
+    private static void checkAttributeIsInteger(String attributeName, Vertex attrVertex, String quantifier)
+    {
         String data_type = (String) attrVertex.property("data_type").value();
         if (!data_type.equals("integer")) {
             throwException("Cannot compare attribute %s of type %s with quantifer '%s'",
@@ -354,7 +372,8 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         }
     }
 
-    private static Vertex getSubclass(GraphTraversalSource g, Object classID, String targetClassName) {
+    private static Vertex getSubclass(GraphTraversalSource g, Object classID, String targetClassName)
+    {
         GraphTraversal<Vertex, Vertex> subclasses = g.V(classID).out("superclasses");
         while (subclasses.hasNext()) {
             Vertex subclass = subclasses.next();
@@ -362,18 +381,21 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
             Vertex temp;
             if (subclassName.equals(targetClassName)) {
                 return subclass;
-            } else if ((temp = getSubclass(g, subclass, targetClassName)) != null) {
+            }
+            else if ((temp = getSubclass(g, subclass, targetClassName)) != null) {
                 return temp;
             }
         }
         return null;
     }
 
-    private static boolean isSubclass(GraphTraversalSource g, Vertex classDef, String targetClassName) {
+    private static boolean isSubclass(GraphTraversalSource g, Vertex classDef, String targetClassName)
+    {
         return getSubclass(g, classDef.id(), targetClassName) != null;
     }
 
-    private static void printUpdateQueryResults(int newVertexCount, int[] edgeCounts) {
+    private static void printUpdateQueryResults(int newVertexCount, int[] edgeCounts)
+    {
         // edgeCounts[0] = num replaced, edgeCounts[1] = num inserted, edgeCounts[2] = num removed
         if (newVertexCount != 0) {
             System.out.printf("%d vertices inserted.\n", newVertexCount);
@@ -389,7 +411,8 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         }
     }
 
-    private static void checkAssignmentType(UpdateQuery query, String name, Vertex attrVertex, DvaAssignment dvaAssignment) {
+    private static void checkAssignmentType(UpdateQuery query, String name, Vertex attrVertex, DvaAssignment dvaAssignment)
+    {
         String type = (String) attrVertex.property("data_type").value();
         switch (type) {
             case "boolean": {
@@ -416,11 +439,13 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         }
     }
 
-    private static Vertex getAttribute(GraphTraversalSource g, Vertex classDef, boolean isDVA, String attributeName) {
+    private static Vertex getAttribute(GraphTraversalSource g, Vertex classDef, boolean isDVA, String attributeName)
+    {
         GraphTraversal<Vertex, Vertex> attrs;
         if (isDVA) {
             attrs = g.V(classDef.id()).outE("has").has("isDVA").inV().has("name");
-        } else {
+        }
+        else {
             attrs = g.V(classDef.id()).outE("has").hasNot("isDVA").inV().has("name");
         }
         while (attrs.hasNext()) {
@@ -436,12 +461,14 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
         private TitanNoSQLDatabase db;
 
-        private TitanNoSQLAdapter(TitanNoSQLDatabase db) {
+        private TitanNoSQLAdapter(TitanNoSQLDatabase db)
+        {
             this.db = db;
         }
 
         @Override
-        public void putClass(ClassDef classDef) {
+        public void putClass(ClassDef classDef)
+        {
             GraphTraversalSource g = titanGraph.traversal();
             try {
                 classDef.name = classDef.name.toLowerCase();
@@ -473,7 +500,8 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
                         if (dva.initialValue != null) {
                             attrVertex.property("default_value", dva.initialValue);
                         }
-                    } else if (attr instanceof EVA) {
+                    }
+                    else if (attr instanceof EVA) {
                         EVA eva = (EVA) attr;
                         eva.baseClassName = eva.baseClassName.toLowerCase();
                         eva.inverseEVA = eva.inverseEVA.toLowerCase();
@@ -500,7 +528,8 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
                         if (eva.max != null) {
                             attrVertex.property("max", eva.max);
                         }
-                    } else {
+                    }
+                    else {
                         throwException("Attribute %s is not a DVA or an EVA!", attr);
                     }
                 }
@@ -529,12 +558,14 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
                                     e.property("required", true);
                                 }
                             }
-                        } else {
+                        }
+                        else {
                             throwException("Class %s subclasses the non-existent %s class!",
                                     classDef.name, superClassName);
                         }
                     }
-                } else {
+                }
+                else {
                     GraphTraversal<Vertex, Vertex> traversal = g.V().hasLabel("classDef").has("name", "root node");
                     Vertex root = traversal.next();
                     newClass.addEdge("subclasses", root);
@@ -552,11 +583,18 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         }
 
         @Override
-        public ClassDef getClass(String s) throws ClassNotFoundException {
+        public ClassDef getClass(Query query) throws ClassNotFoundException
+        {
+            return getClass(query.queryName);
+        }
+
+        @Override
+        public ClassDef getClass(String s) throws ClassNotFoundException
+        {
             GraphTraversalSource g = titanGraph.traversal();
             Vertex currentVertex = lookupClass(g, s);
             if (currentVertex == null)
-                return null;
+                throw new ClassNotFoundException();
             ClassDef currentClassDef = new ClassDef();
             currentClassDef.name = currentVertex.value("name").toString();
             currentClassDef.comment = currentVertex.value("comment").toString();
@@ -574,72 +612,57 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
         /* InsertQuery */
         @Override
-        public void putObject(WDBObject wdbObject) {
-            InsertQuery iq = (InsertQuery) query;
-            GraphTraversalSource g = titanGraph.traversal();
-            try {
-                int newVertexCount = 0, edgeCounts[];
-                Vertex classDef = lookupClass(g, iq.className);
-                if (classDef == null) {
-                    throwException("Cannot insert into class %s because it does not exist!", iq.fromClassName);
-                }
-                if (iq.fromClassName == null) {
-                    // just inserting a new entity
-                    Vertex entity = titanTransaction.addVertex(T.label, "entity", "class", iq.className);
-                    newVertexCount++;
-                    // make the entity an instance of the class
-                    classDef.addEdge("instance", entity);
-
-                    edgeCounts = doInsert(iq, g, classDef, entity);
-                } else {
-                    // inserting a subclass into an existing superclass
-                    Vertex superclassDef = lookupClass(g, iq.fromClassName);
-                    if (superclassDef == null) {
-                        throwException("Cannot extend into class %s because it does not exist!", iq.fromClassName);
-                    }
-                    if (!isSubclass(g, superclassDef, iq.className)) {
-                        throwException("Cannot extend class %s to class %s because %2$s is not a subclass of %1$s!",
-                                iq.fromClassName, iq.className);
-                    }
-                    edgeCounts = new int[3];
-                    for (Vertex instance : getInstances(g, superclassDef, iq.expression)) {
-                        g.V(instance.id()).inE("instance").next().remove();
-                        classDef.addEdge("instance", instance);
-                        int[] counts = doInsert(iq, g, classDef, instance);
-                        for (int i = 0; i < 3; i++) {
-                            edgeCounts[i] += counts[i];
-                        }
-                    }
-                }
-
-                printUpdateQueryResults(newVertexCount, edgeCounts);
-                titanTransaction.commit();
-                System.out.println("Insert complete");
-            } catch(RuntimeException e) {
-                System.err.println("Insert failed! Rolling back changes.");
-                titanTransaction.rollback();
-                throw e;
-            }
+        public void putObject(WDBObject wdbObject)
+        {
+//            GraphTraversalSource g = titanGraph.traversal();
+//            try {
+//                int newVertexCount = 0, edgeCounts[];
+//                Vertex classDef = lookupClass(g, wdbObject.getClassName());
+//                if (classDef == null) {
+//                    throwException("Cannot insert into class %s because it does not exist!", wdbObject.getClassName());
+//                }
+//                // inserting a subclass into an existing superclass
+//                edgeCounts = new int[3];
+//                for (Vertex instance : getInstances(g, superclassDef, iq.expression)) {
+//                    g.V(instance.id()).inE("instance").next().remove();
+//                    classDef.addEdge("instance", instance);
+//                    int[] counts = doInsert(iq, g, classDef, instance);
+//                    for (int i = 0; i < 3; i++) {
+//                        edgeCounts[i] += counts[i];
+//                    }
+//                }
+//                printUpdateQueryResults(newVertexCount, edgeCounts);
+//                titanTransaction.commit();
+//                System.out.println("Insert complete");
+//            } catch(RuntimeException e) {
+//                System.err.println("Insert failed! Rolling back changes.");
+//                titanTransaction.rollback();
+//                throw e;
+//            }
         }
 
         /* RetrieveQuery */
         @Override
-        public WDBObject getObject(String s, Integer integer) {
+        public WDBObject getObject(String s, Integer integer)
+        {
             return null;
         }
 
         @Override
-        public ArrayList<WDBObject> getObjects(IndexDef indexDef, String s) {
+        public ArrayList<WDBObject> getObjects(IndexDef indexDef, String s)
+        {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public void commit() {
+        public void commit()
+        {
 
         }
 
         @Override
-        public void abort() {
+        public void abort()
+        {
 
         }
 
