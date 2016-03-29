@@ -1,5 +1,23 @@
+# General
 .idea
 .hg
 ./.hg
 STORE
 db
+dist
+
+# vim stuff
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+
+# jython stuff
+*.jar
+*.class
+*.pyc
+hs_err_pid* # jvm crash logs
+
+

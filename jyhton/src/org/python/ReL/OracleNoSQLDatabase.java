@@ -191,7 +191,7 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
              * Add a table to the database.
              * Execute this statement asynchronously.
              */
-
+                // works
                 // lol just naming them 'key' and 'value'
                 statement =
                         "CREATE TABLE " + tableName + " (" +

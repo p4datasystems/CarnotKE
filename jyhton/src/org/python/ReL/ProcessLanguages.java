@@ -76,7 +76,7 @@ public class ProcessLanguages {
 						// This isn't implemented yet because currently EVAs are constructed in the SIM MODIFY statement.
 					} else if(iq.getAssignment(i)instanceof DvaAssignment) {
 			            connDatabase.OracleNoSQLAddQuad(schemaString, iq.className, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://www.w3.org/2000/01/rdf-schema#Class", true);
-			            connDatabase.OracleNoSQLAddQuad(iq.className + "_" + schemaString, dvaAssignment.AttributeName, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://www.w3.org/2002/07/owl#DatatypeProperty", true);
+						connDatabase.OracleNoSQLAddQuad(iq.className + "_" + schemaString, dvaAssignment.AttributeName, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://www.w3.org/2002/07/owl#DatatypeProperty", true);
 			            connDatabase.OracleNoSQLAddQuad(iq.className + "_" + schemaString, dvaAssignment.AttributeName, "http://www.w3.org/2000/01/rdf-schema#domain", iq.className, true);
 			            connDatabase.OracleNoSQLAddQuad(iq.className + "_" + schemaString, dvaAssignment.AttributeName, "http://www.w3.org/2000/01/rdf-schema#range", "http://www.w3.org/2001/XMLSchema#string", true);
 			            connDatabase.OracleNoSQLAddQuad(iq.className + "_" + schemaString, instanceID, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", iq.className, true);
