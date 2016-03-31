@@ -250,7 +250,6 @@ public class CarnotHelper extends SelectDeParser implements SelectVisitor, FromI
         return parts2;
     }
 
-
     /*
      * Insert an instance of a particular class into the database.
      * This is a triple <instance, rdf:type, class>
@@ -424,6 +423,7 @@ public class CarnotHelper extends SelectDeParser implements SelectVisitor, FromI
     /**
      * Build the SPARQL for a SELECT statement.
      */
+    /* SQLVisitor method */
     public String visitSelect_buildSPARQL(PlainSelect plainSelect) {
         List<String> filters = new ArrayList<String>();
         List<String> tables = new ArrayList<String>();
