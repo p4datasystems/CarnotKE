@@ -1,5 +1,6 @@
 import unittest
 
+connOracleRDFNoSQL = connectTo 'OracleNoSQL' 'kvstore' 'localhost:5000' 'rdf_mode' 'A0'
 connOracleRDFNoSQL = connectTo 'OracleNoSQL' 'kvstore' 'localhost:5000' 'rdf_mode' 'A0' nodebug
 
 results = SQL on connOracleRDFNoSQL "select ename from emp"
