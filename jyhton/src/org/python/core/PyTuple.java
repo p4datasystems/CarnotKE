@@ -151,6 +151,12 @@ public class PyTuple extends PySequenceList implements List {
         ReLstmt = reconstructQuery(ReLstmt, elements, strings, size);
         debugMsg(DBG, "ReLstmt is: "+ReLstmt);
 
+        if (ReLmode == "RDF") {
+            System.out.println("Saw an RDF: " + ReLstmt);
+            String[] s = ReLstmt.split(" ");
+            conn.OracleNoSQLAddQuad(s[0], s[1], s[2], s[3], false);
+        }
+
         if (ReLmode == "JAPI") {
             String jsonRequest = "{" +
                     "    \"auth\": {" +

@@ -1830,6 +1830,8 @@ atom
      ->neo4j_stmt
      | sparql_stmt
      ->sparql_stmt
+     | rdf_stmt
+     ->rdf_stmt
      | japi_stmt
      ->japi_stmt
      | conn_stmt
@@ -1965,6 +1967,28 @@ japi_stmt
 //============================================================================
 
 //============================================================================  
+//rdf_stmt: RDF conn "g s p o "
+rdf_stmt
+@init {
+    ArrayList<String> strings = new ArrayList<String>();
+    ArrayList<expr> exprs   = new ArrayList<expr>();
+    Name conn_name = null;
+}
+    : 
+        RDF name=NAME
+        {
+            conn_name = actions.makeNameNode($name);
+        } (s += STRING (e = expr[expr_contextType.Load])?
+               { strings.add(actions.extractStrings($s, encoding, unicodeLiterals).toString().replaceAll(";", "")); $s = null;
+                 if(e != null) exprs.add(actions.castExpr($e.tree)); e = null;
+               }
+          )+
+        -> ^(RDF<Tuple>[$rdf_stmt.start, exprs, $expr::ctype, strings, "RDF", conn_name])
+    ;
+
+//============================================================================
+
+//============================================================================  
 //sparql_stmt: SPARQL conn "PREFIX c: <carnot:> SELECT ?g ?s ?p ?o WHERE { GRAPH ?g { ?s ?p ?o } } ;"
 sparql_stmt
 @init {
@@ -1985,6 +2009,7 @@ sparql_stmt
     ;
 
 //============================================================================
+
 
 //conn_stmt: 'connectTo' url uname pword conntype
 conn_stmt
@@ -2500,8 +2525,9 @@ PERSISTIT   : 'persist' (' ')+ 'on' (' ')+ ;
 SQL     : 'SQL' (' ')+ 'on' (' ')+ ;
 SIM     : 'SIM' (' ')+ 'on' (' ')+ ;
 Neo4j   : 'Neo4j' (' ')+ 'on' (' ')+ ;
-JAPI   : 'JAPI' (' ')+ 'on' (' ')+ ;
-SPARQL   : 'SPARQL' (' ')+ 'on' (' ')+ ;
+JAPI    : 'JAPI' (' ')+ 'on' (' ')+ ;
+RDF     : 'RDF' (' ')+ 'on' (' ')+ ;
+SPARQL  : 'SPARQL' (' ')+ 'on' (' ')+ ;
 OORELINSERT: 'relInsert' (' ')+ 'on' (' ')+ ;
 OORELCOMMIT: 'relCommit' (' ')+ 'on' (' ')+ ;
 CONNECTTO:  'connectTo';
