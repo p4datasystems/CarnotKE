@@ -1,6 +1,6 @@
 import unittest
 
-connOracleRDFNoSQL = connectTo 'OracleNoSQL' 'C##cs329e_UTEid' 'orcl_UTEid' 'rdf_mode' 'A0' nodebug
+connOracleRDFNoSQL = connectTo 'OracleNoSQL' 'kvstore' 'localhost:5000' 'rdf_mode' 'A0' nodebug
 
 results = SQL on connOracleRDFNoSQL "select ename from emp"
 
