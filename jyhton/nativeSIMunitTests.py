@@ -1,6 +1,7 @@
 import unittest
 
-connOracleNoSQL = connectTo 'OracleNoSQL' 'C##cs329e_UTEid' 'orcl_UTEid' 'native_mode' 'A0' nodebug
+connOracleNoSQL = connectTo 'OracleNoSQL' 'WDB' 'localhost:5010' 'native_mode' 'A0' 
+connOracleNoSQL = connectTo 'OracleNoSQL' 'WDB' 'localhost:5010' 'native_mode' 'A0' nodebug
 
 print "Connections are opened, start loading Databases"
 
