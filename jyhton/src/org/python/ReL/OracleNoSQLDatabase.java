@@ -56,7 +56,7 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
                                String conn_type, String debug)
     {
         validateInstallationRoot();
-        baseCommands = new String[]{"java", "-jar", INSTALLATION_ROOT.getAbsolutePath() + "/extlibs/kvstore.jar"};
+        baseCommands = new String[]{"java", "-jar", INSTALLATION_ROOT.getAbsolutePath() + "/dist/javalib/kvstore.jar"};
         validateConfigParameters(uname, passw);
 
         this.adapter = new OracleNoSQLAdapter(this);
