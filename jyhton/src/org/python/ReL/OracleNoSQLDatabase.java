@@ -12,6 +12,9 @@ import org.apache.commons.lang3.SerializationUtils;
 import wdb.metadata.*;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.DatagramSocket;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -19,19 +22,21 @@ import java.util.Arrays;
  * @author Joshua Hurt
  */
 public class OracleNoSQLDatabase extends DatabaseInterface {
-    public static final boolean DBG = true;
+    public static boolean DBG;
     private File INSTALLATION_ROOT;
+    private static final int MIN_PORT_NUMBER = 2000;
+    private static final int MAX_PORT_NUMBER = 8000;
 
     /* Table Info */
     private static final String CLASSDEF_TABLE_NAME = "ClassDef";
     private static final String WDBOBJECT_TABLE_NAME = "WDBObject";
 
     /* Storage Node */
-    private static final String STORE_NAME = "WDB";
-    private static final String HOST = "localhost";
-    private static final String PORT = "5000";
-    private static final String ADMIN_PORT = "5001";
-    private static final String HARANGE = "5010,5020";
+    private static String STORE_NAME;
+    private static String HOST;
+    private static String PORT;
+    private static String ADMIN_PORT;
+    private static String HARANGE;
     private String[] baseCommands;
 
     public static KVStore store;
@@ -47,10 +52,12 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
      * Connects to a KVStore on port 5000 if one exists, otherwise
      * creates a new KVStore.
      */
-    public OracleNoSQLDatabase()
+    public OracleNoSQLDatabase(String url, String uname, String passw,
+                               String conn_type, String debug)
     {
         validateInstallationRoot();
         baseCommands = new String[]{"java", "-jar", INSTALLATION_ROOT.getAbsolutePath() + "/extlibs/kvstore.jar"};
+        validateConfigParameters(uname, passw);
 
         this.adapter = new OracleNoSQLAdapter(this);
         if (!reconnectToExistingStore()) {
@@ -80,15 +87,16 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
                 "-host", HOST,
                 "-harange", HARANGE,
                 "-capacity", "1",
-                "-num_cpus", "0",
-                "-memory_mb", "0",
+                "-num_cpus", "1",
+                "-memory_mb", "512",
                 "-store-security", "none",
                 "-storagedir", storageDir.getAbsolutePath());
 
 
         kvStoreCommand("start", "-root", storeRoot.getAbsolutePath());
 
-        final File wdbStoreSetupScript = new File(INSTALLATION_ROOT, "setup_WDB_store.txt");
+        final File wdbStoreSetupScript = new File(INSTALLATION_ROOT,
+                "setup_"+STORE_NAME+"_store.txt");
         if (!wdbStoreSetupScript.exists())
             ultimateCleanUp("Cannot find setup script for storage node.");
 
@@ -140,7 +148,8 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
     {
         final String serverRoot = System.getenv("INSTALLATION_ROOT");
         if (serverRoot == null)
-            ultimateCleanUp("Server not started. Please set INSTALLATION_ROOT environment variable.");
+            ultimateCleanUp("Server not started. Please set INSTALLATION_ROOT environment " +
+                    "variable to the directory that contains your setup_<name>_store.txt file");
 
         INSTALLATION_ROOT = new File(serverRoot);
         if (!INSTALLATION_ROOT.isDirectory()) {
@@ -150,16 +159,37 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
         }
     }
 
+    public void validateConfigParameters(String uname, String passw)
+    {
+        String host = passw.split(":")[0];
+        String port = passw.split(":")[1];
+//        if (!is_port_available(Integer.parseInt(port))) {
+//            ultimateCleanUp("Port "+port+" is already in use. Please choose another. " +
+//                    "(Note: Don't forget to change the port in your " +
+//                    "setup_<name>_store.txt)");
+//        }
+
+        STORE_NAME = uname;
+        HOST = host;
+        PORT = port;
+        ADMIN_PORT = Integer.parseInt(PORT) + 1 + "";
+        String harange_1 = Integer.parseInt(PORT) + 3 + "";
+        String harange_2 = Integer.parseInt(PORT) + 6 + "";
+        HARANGE = harange_1 + "," + harange_2;
+        DBG = true;
+    }
+
+
     public void setupSNDirectories()
     {
-        storageDir = new File(INSTALLATION_ROOT, "db/store");
+        storageDir = new File(INSTALLATION_ROOT, STORE_NAME+"_db/store");
         if (!storageDir.exists()) {
             if (storageDir.mkdirs())
                 System.out.println(String.format(
                         "Creating storage directory at '%s'", storageDir.getAbsolutePath()));
         }
 
-        storeRoot = new File(INSTALLATION_ROOT, "/STORE");
+        storeRoot = new File(INSTALLATION_ROOT, STORE_NAME+"_STORE");
         if (storeRoot.mkdirs())
             System.out.println(String.format(
                     "Creating Storage Node directory at '%s'", storeRoot.getAbsolutePath()));
@@ -288,6 +318,42 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
     {
         if (store != null)
             store.close();
+    }
+
+    /**
+     * Checks to see if a specific port is available.
+     *
+     * @param port the port to check for availability
+     */
+    public boolean is_port_available(int port) {
+        if (port < MIN_PORT_NUMBER || port > MAX_PORT_NUMBER) {
+            throw new IllegalArgumentException("Invalid start port: " + port);
+        }
+
+        ServerSocket ss = null;
+        DatagramSocket ds = null;
+        try {
+            ss = new ServerSocket(port);
+            ss.setReuseAddress(true);
+            ds = new DatagramSocket(port);
+            ds.setReuseAddress(true);
+            return true;
+        } catch (IOException e) {
+        } finally {
+            if (ds != null) {
+                ds.close();
+            }
+
+            if (ss != null) {
+                try {
+                    ss.close();
+                } catch (IOException e) {
+                /* should not be thrown */
+                }
+            }
+        }
+
+        return false;
     }
 
 

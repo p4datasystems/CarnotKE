@@ -289,7 +289,13 @@ public class PyTuple extends PySequenceList implements List {
             if (conn.getConnectionType() == "native_mode") {
                 try {
                     processLanguage = new ProcessLanguages(conn);
-                    processLanguage.processNativeSIM(ReLstmt);
+                    ArrayList<PyObject> rowResults = processLanguage.processNativeSIM(ReLstmt);
+                    if (rowResults != null) {
+                        PyObject[] results = rowResults.toArray(new PyObject[rowResults.size()]);
+                        array = new PyObject[results.length];
+                        System.arraycopy(results, 0, array, 0, results.length);
+                    }
+
                 } catch (Exception e) {
                     // Should shut down the connection
                     System.out.println(e);
