@@ -175,7 +175,6 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
         createTable(objectTable, WDBOBJECT_TABLE_NAME);
     }
 
-
     private void createTable(Table table, String tableName)
     {
 //        if (!storeProcess.isAlive())
@@ -219,7 +218,6 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
             objectTable = table;
     }
 
-
     public void clearDatabase()
     {
         dropTable(classTable);
@@ -249,7 +247,6 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
             System.out.println("Well crap.");
         }
     }
-
 
     private void connectToStore()
     {
