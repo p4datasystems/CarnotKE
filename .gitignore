@@ -17,7 +17,6 @@ Session.vim
 *~
 
 # jython stuff
-*.jar
 *.class
 *.pyc
 hs_err_pid* # jvm crash logs

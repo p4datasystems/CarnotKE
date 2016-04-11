@@ -24,33 +24,32 @@ public class WDB {
 	private static SleepyCatDataBase db;
 	private static BufferedReader in;
 	
-	public static void main(String[] args)
-	{
-    String installRoot = System.getenv("INSTANCE_ROOT");
-    if(installRoot == null)
-    {
-      System.out.println("Please set INSTANCE_ROOT variable");
-    }
-    File installRootDir = new File(installRoot);
-    if(!installRootDir.exists() || !installRootDir.isDirectory())
-    {
-      System.out.println("INSTANCE_ROOT vairable is not a valid directory");
-    }
-    File dbDir = new File(installRootDir, "db");
-    if(!dbDir.exists())
-    {
-      dbDir.mkdir();
-    }
+	public static void main(String[] args) {
+        String installRoot = System.getenv("INSTANCE_ROOT");
+        if (installRoot == null)
+        {
+    	    System.out.println("Please set INSTANCE_ROOT variable");
+    	}
+        File installRootDir = new File(installRoot);
+        if(!installRootDir.exists() || !installRootDir.isDirectory())
+        {
+            System.out.println("INSTANCE_ROOT vairable is not a valid directory");
+        }
+        File dbDir = new File(installRootDir, "db");
+        if(!dbDir.exists())
+        {
+        dbDir.mkdir();
+        }
     
     try
 		{
 			db = new SleepyCatDataBase(dbDir.toString());
 			db.openDb("test");
 			
-			System.out.println("WDB Simantic Database Project");
+			System.out.println("WDB Semantic Database Project");
 			System.out.println("Copyright 2006 University of Texas at Austin");
 			System.out.println("DB Name: " + db.dbName + " DB Path: " + db.fileName);
-			
+
 			WDB.in = new BufferedReader(new InputStreamReader(System.in));
 			WDB.parser = new QueryParser(WDB.in);
 			Query q;
@@ -79,7 +78,6 @@ public class WDB {
 				{
 					System.out.println("SYNTAX ERROR: " + pe.getMessage());
 					QueryParser.ReInit(System.in);
-					
 				}
 				catch(TokenMgrError tme)
 				{
@@ -123,7 +121,7 @@ public class WDB {
 			
 			try
 			{
-				QueryParser.ReInit(new FileReader(sq.filename));
+				QueryParser.ReInit(new FileReader(sq.getFilename()));
 				Query fq;
 				while(true)
 				{
