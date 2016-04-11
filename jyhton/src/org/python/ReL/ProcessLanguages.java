@@ -10,8 +10,7 @@ import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.update.Update;
 import org.cyphersim.CypherSimTranslator;
-import org.python.core.PyObject;
-import org.python.core.PyType;
+import org.python.core.*;
 import wdb.metadata.*;
 import wdb.parser.Node;
 import wdb.parser.QueryParser;
@@ -208,7 +207,7 @@ public class ProcessLanguages {
     }
 
 
-    public synchronized void processNativeSIM(String ReLstmt) throws Exception
+    public synchronized ArrayList<PyObject> processNativeSIM(String ReLstmt) throws Exception
     {
         final boolean DBG = true;
         ReLstmt = ReLstmt.replaceAll("\\_\\^\\_", ";");
@@ -216,12 +215,12 @@ public class ProcessLanguages {
             if (ReLstmt.equalsIgnoreCase("clear database")) {
                 OracleNoSQLDatabase db = (OracleNoSQLDatabase) connDatabase;
                 db.clearDatabase();
-                return;
+                return null;
             }
             if (ReLstmt.equalsIgnoreCase("stop database")) {
                 OracleNoSQLDatabase db = (OracleNoSQLDatabase) connDatabase;
                 db.ultimateCleanUp("Cleaning up from test.");
-                return;
+                return null;
             }
         }
         InputStream is = new ByteArrayInputStream(ReLstmt.getBytes());
@@ -268,7 +267,7 @@ public class ProcessLanguages {
             } catch (Exception e) {
                 System.out.println("This class already exists: " + cd.name);
                 adapter.abort();
-                return;
+                return null;
             }
         }
 
@@ -361,6 +360,7 @@ public class ProcessLanguages {
                 int i, j;
                 String[][] table;
                 String[][] newtable;
+                final ArrayList<PyObject> rows = new ArrayList<>();
 
                 PrintNode node = new PrintNode(0, 0);
                 for (j = 0; j < rq.numAttributePaths(); j++)
@@ -388,20 +388,38 @@ public class ProcessLanguages {
                 }
 
                 for (i = 0; i < table.length; i++) {
+                    ArrayList<PyObject> columns = new ArrayList<>();
                     for (j = 0; j < table[0].length; j++) {
-                        if (j >= table[i].length || table[i][j] == null)
-                            System.out.format("| %" + columnWidths[j].toString() + "s ", "");
-                        else
-                            System.out.format("| %" + columnWidths[j].toString() + "s ", table[i][j]);
+                        String colElement = table[i][j];
+                        try {
+                            Double.parseDouble(colElement);
+                            try {
+                                Integer.parseInt(colElement);
+                                columns.add(new PyInteger(Integer.parseInt(colElement)));
+                            } catch (NumberFormatException e) {
+                                columns.add(new PyFloat(Float.parseFloat(colElement)));
+                            }
+                        } catch (NumberFormatException e) {
+                            columns.add(new PyString(colElement));
+                        }
+
+//                        if (j >= table[i].length || table[i][j] == null)
+//                            System.out.format("| %" + columnWidths[j].toString() + "s ", "");
+//                        else
+//                            System.out.format("| %" + columnWidths[j].toString() + "s ", table[i][j]);
                     }
-                    System.out.format("|%n");
+                    rows.add(new PyTuple(columns.toArray(new PyObject[columns.size()])));
+//                    System.out.format("|%n");
                 }
+                return rows;
+            // Return here? Table is a 2D array
             } catch (Exception e) {
                 System.out.println(e.toString());
                 adapter.abort();
             }
         }
         /******************* END WDB CODE DUMP *****************/
+        return null;
     }
 
 

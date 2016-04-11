@@ -151,6 +151,12 @@ public class PyTuple extends PySequenceList implements List {
         ReLstmt = reconstructQuery(ReLstmt, elements, strings, size);
         debugMsg(DBG, "ReLstmt is: "+ReLstmt);
 
+        if (ReLmode == "RDF") {
+            System.out.println("Saw an RDF: " + ReLstmt);
+            String[] s = ReLstmt.split(" ");
+            conn.OracleNoSQLAddQuad(s[0], s[1], s[2], s[3], false);
+        }
+
         if (ReLmode == "JAPI") {
             String jsonRequest = "{" +
                     "    \"auth\": {" +
@@ -283,7 +289,13 @@ public class PyTuple extends PySequenceList implements List {
             if (conn.getConnectionType() == "native_mode") {
                 try {
                     processLanguage = new ProcessLanguages(conn);
-                    processLanguage.processNativeSIM(ReLstmt);
+                    ArrayList<PyObject> rowResults = processLanguage.processNativeSIM(ReLstmt);
+                    if (rowResults != null) {
+                        PyObject[] results = rowResults.toArray(new PyObject[rowResults.size()]);
+                        array = new PyObject[results.length];
+                        System.arraycopy(results, 0, array, 0, results.length);
+                    }
+
                 } catch (Exception e) {
                     // Should shut down the connection
                     System.out.println(e);
