@@ -11,6 +11,8 @@ import wdb.parser.*;
 
 import com.thinkaurelius.titan.core.*;
 
+import com.thinkaurelius.titan.core.schema.TitanSchemaType;
+
 
 /**
  * @author Alvin Deng
@@ -20,7 +22,6 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
     public static QueryParser queryParser = null;
     public static TitanGraph titanGraph = null;
-    public static TitanTransaction titanTransaction = null;
     public static Object rootID = null;
 
     public TitanNoSQLDatabase()
@@ -47,11 +48,11 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         mg.commit();
 
 
-        titanTransaction = titanGraph.newTransaction();
+        TitanTransaction currentTransaction = titanGraph.newTransaction();
         if (initGraph) {
-            Vertex root = titanTransaction.addVertex(T.label, "classDef", "name", "Root");
+            Vertex root = currentTransaction.addVertex(T.label, "classDef", "name", "Root");
 
-            titanTransaction.commit();  // Regular classDefs can't have spaces
+            currentTransaction.commit();  // Regular classDefs can't have spaces
             rootID = root.id();
         }
         else {
@@ -470,19 +471,21 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         public void putClass(ClassDef classDef)
         {
             GraphTraversalSource g = titanGraph.traversal();
+            TitanTransaction currentTransaction = titanGraph.newTransaction();
+
             try {
                 classDef.name = classDef.name.toLowerCase();
                 if (lookupClass(g, classDef.name) != null) {
                     throwException("Class %s already exists!\n", classDef.name);
                 }
-                TitanVertex newClass = titanTransaction.addVertex(T.label, "classDef", "name", classDef.name);
+                TitanVertex newClass = currentTransaction.addVertex(T.label, "classDef", "name", classDef.name);
                 if (classDef.comment != null) {
                     newClass.property("comment", classDef.comment);
                 }
                 for (int i = 0; i < classDef.numberOfAttributes(); i++) {
                     Attribute attr = classDef.getAttribute(i);
                     attr.name = attr.name.toLowerCase();
-                    TitanVertex attrVertex = titanTransaction.addVertex(T.label, "attribute", "name", attr.name);
+                    TitanVertex attrVertex = currentTransaction.addVertex(T.label, "attribute", "name", attr.name);
                     if (attr.comment != null) {
                         attrVertex.property("comment", attr.comment);
                     }
@@ -511,7 +514,7 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
                                     classDef.name, eva.baseClassName);
                         }
                         attrVertex.property("class", eva.baseClassName, "isSV", eva.cardinality.equals(EVA.SINGLEVALUED));
-                        TitanVertex inverseVertex = titanTransaction.addVertex(T.label, "attribute",
+                        TitanVertex inverseVertex = currentTransaction.addVertex(T.label, "attribute",
                                 "name", eva.inverseEVA, "class", classDef.name, "isSV", true);
                         if (attr.comment != null) {
                             inverseVertex.property("comment", attr.comment);
@@ -572,12 +575,12 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
                     root.addEdge("superclasses", newClass);
                 }
 
-                titanTransaction.commit();
+                currentTransaction.commit();
                 System.out.printf("Class %s defined\n", classDef.name);
 
                 System.out.println(lookupClass(titanGraph.traversal(), classDef.name));
             } catch (RuntimeException e) {
-                titanTransaction.rollback();
+                currentTransaction.rollback();
                 throw e;
             }
         }
