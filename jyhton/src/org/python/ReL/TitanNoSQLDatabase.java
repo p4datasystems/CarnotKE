@@ -2,17 +2,16 @@ package org.python.ReL;
 
 import java.util.*;
 
-import com.thinkaurelius.titan.core.schema.TitanManagement;
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
-import org.apache.tinkerpop.gremlin.structure.*;
 import wdb.metadata.*;
 import wdb.parser.*;
 
 import com.thinkaurelius.titan.core.*;
+import com.thinkaurelius.titan.core.schema.TitanManagement;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.*;
 
-import com.thinkaurelius.titan.core.schema.TitanSchemaType;
-
+import com.google.common.base.Stopwatch;
 
 /**
  * @author Alvin Deng
@@ -30,8 +29,11 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         this.adapter = new TitanNoSQLAdapter(this);
 
         TitanFactory.Builder config = TitanFactory.build();
-        config.set("storage.backend", "cassandra");
-        config.set("storage.directory", "127.0.0.1");
+        config.set("storage.backend", "inmemory");
+//        config.set("storage.backend", "cassandra");
+//        config.set("storage.directory", "127.0.0.1");
+//        config.set("storage.cassandra.thrift.frame-size", 2048);
+//        config.set("storage.port", 7050);
         titanGraph = config.open();
 
         TitanManagement mg = titanGraph.openManagement();
