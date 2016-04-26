@@ -1,6 +1,6 @@
 import unittest
 
-connOracleNoSQL = connectTo 'OracleNoSQL' 'C##cs329e_UTEid' 'orcl_UTEid' 'native_mode' 'A0' nodebug
+connOracleNoSQL = connectTo 'TitanNoSQL' 'C##cs329e_UTEid' 'orcl_UTEid' 'native_mode' 'A0' nodebug
 
 print "Connections are opened, start loading Databases"
 
@@ -74,8 +74,8 @@ SIM on connOracleNoSQL 'from sim_dept retrieve *, name OF employees, name OF pro
 
 
 
-SIM on connOracleNoSQL "CLEAR DATABASE"
-SIM on connOracleNoSQL "STOP DATABASE"
+# SIM on connOracleNoSQL "CLEAR DATABASE"
+# SIM on connOracleNoSQL "STOP DATABASE"
 
 
 

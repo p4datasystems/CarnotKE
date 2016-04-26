@@ -11,8 +11,6 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 
-import com.google.common.base.Stopwatch;
-
 /**
  * @author Alvin Deng
  * @date 02/16/2016
@@ -617,31 +615,50 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
         /* InsertQuery */
         @Override
-        public void putObject(WDBObject wdbObject)
-        {
+        public void putObject(WDBObject wdbObject) {
 //            GraphTraversalSource g = titanGraph.traversal();
+//            TitanTransaction currentTransaction = titanGraph.newTransaction();
 //            try {
 //                int newVertexCount = 0, edgeCounts[];
 //                Vertex classDef = lookupClass(g, wdbObject.getClassName());
 //                if (classDef == null) {
 //                    throwException("Cannot insert into class %s because it does not exist!", wdbObject.getClassName());
 //                }
-//                // inserting a subclass into an existing superclass
-//                edgeCounts = new int[3];
-//                for (Vertex instance : getInstances(g, superclassDef, iq.expression)) {
-//                    g.V(instance.id()).inE("instance").next().remove();
-//                    classDef.addEdge("instance", instance);
-//                    int[] counts = doInsert(iq, g, classDef, instance);
-//                    for (int i = 0; i < 3; i++) {
-//                        edgeCounts[i] += counts[i];
+//                if (wdbObject.getClassName()== null) {
+//                    // just inserting a new entity
+//                    Vertex entity = currentTransaction.addVertex(T.label, "entity", "class", wdbObject.getClassName());
+//                    newVertexCount++;
+//                    // make the entity an instance of the class
+//                    classDef.addEdge("instance", entity);
+//
+//                    edgeCounts = doInsert(iq, g, classDef, entity);
+//                } else {
+//                    // inserting a subclass into an existing superclass
+//                    Vertex superclassDef = lookupClass(g, iq.fromClassName);
+//                    if (superclassDef == null) {
+//                        throwException("Cannot extend into class %s because it does not exist!", iq.fromClassName);
+//                    }
+//                    if (!isSubclass(g, superclassDef, wdbObject.getClassName())) {
+//                        throwException("Cannot extend class %s to class %s because %2$s is not a subclass of %1$s!",
+//                                iq.fromClassName, wdbObject.getClassName());
+//                    }
+//                    edgeCounts = new int[3];
+//                    for (Vertex instance : getInstances(g, superclassDef, iq.expression)) {
+//                        g.V(instance.id()).inE("instance").next().remove();
+//                        classDef.addEdge("instance", instance);
+//                        int[] counts = doInsert(iq, g, classDef, instance);
+//                        for (int i = 0; i < 3; i++) {
+//                            edgeCounts[i] += counts[i];
+//                        }
 //                    }
 //                }
+//
 //                printUpdateQueryResults(newVertexCount, edgeCounts);
-//                titanTransaction.commit();
+//                currentTransaction.commit();
 //                System.out.println("Insert complete");
-//            } catch(RuntimeException e) {
+//            } catch (RuntimeException e) {
 //                System.err.println("Insert failed! Rolling back changes.");
-//                titanTransaction.rollback();
+//                currentTransaction.rollback();
 //                throw e;
 //            }
         }
