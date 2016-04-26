@@ -170,6 +170,7 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
   static final public Query Insert() throws ParseException {
         InsertQuery iq = new InsertQuery();
         ClassDef ci = new ClassDef();
+        DoubleDef sless;
     if (jj_2_1(2)) {
       jj_consume_token(INSERT);
       jj_consume_token(NEW);
@@ -212,7 +213,8 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
         ci.comment = "Schemaless Insert";
         iq.className = ci.name;
         ci.sl = true;
-        {if (true) return ci;}
+        sless = new DoubleDef(ci, iq);
+        {if (true) return sless;}
     } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case INSERT:
@@ -1458,11 +1460,6 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
     finally { jj_save(8, xla); }
   }
 
-  static final private boolean jj_3R_39() {
-    if (jj_3R_46()) return true;
-    return false;
-  }
-
   static final private boolean jj_3R_45() {
     if (jj_scan_token(EXCLUDE)) return true;
     return false;
@@ -1505,14 +1502,14 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
     return false;
   }
 
-  static final private boolean jj_3_1() {
-    if (jj_scan_token(INSERT)) return true;
-    if (jj_scan_token(NEW)) return true;
+  static final private boolean jj_3R_59() {
+    if (jj_scan_token(MV)) return true;
     return false;
   }
 
-  static final private boolean jj_3R_59() {
-    if (jj_scan_token(MV)) return true;
+  static final private boolean jj_3_1() {
+    if (jj_scan_token(INSERT)) return true;
+    if (jj_scan_token(NEW)) return true;
     return false;
   }
 
@@ -1843,6 +1840,11 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
 
   static final private boolean jj_3R_41() {
     if (jj_scan_token(INTEGER)) return true;
+    return false;
+  }
+
+  static final private boolean jj_3R_39() {
+    if (jj_3R_46()) return true;
     return false;
   }
 

@@ -153,9 +153,19 @@ public class WDB {
 			}
 		}
 		
-		if(q.getClass() == ClassDef.class || q.getClass() == SubclassDef.class)
+		if(q.getClass() == DoubleDef.class || q.getClass() == ClassDef.class || q.getClass() == SubclassDef.class)
 		{
-			ClassDef cd = (ClassDef)q;
+			ClassDef cd;
+			InsertQuery ciq;
+			if (q.getClass() == DoubleDef.class)
+			{
+				cd = q.getC();
+				ciq = q.getI();
+			}
+			else
+			{
+				cd = (ClassDef)q;
+			}
 			try
 			{
 				SleepyCatDataAdapter da = db.newTransaction();
@@ -173,11 +183,12 @@ public class WDB {
 						if (cd.sl)
 						{
 							try {
-							//	InsertQuery ciq = (InsertQuery)cd.schemaless;
 								da.putClass(cd);
 								da.commit();
 
-							/*	SleepyCatDataAdapter dc = db.newTransaction();
+								System.out.println("good till here");
+
+								SleepyCatDataAdapter dc = db.newTransaction();
 
 								ClassDef targetClass = dc.getClass(ciq.className);
 								WDBObject newObject = null;
@@ -191,7 +202,7 @@ public class WDB {
 									newObject.commit(dc);
 								}
 								dc.commit();
-							*/}
+							}
 							catch (Exception foo)
 							{
 								System.out.println("Schemaless insert failed due to the following: \n" + foo);
