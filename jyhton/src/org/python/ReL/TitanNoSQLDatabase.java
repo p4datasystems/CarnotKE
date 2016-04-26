@@ -2,8 +2,10 @@ package org.python.ReL;
 
 import java.util.*;
 
-import wdb.metadata.*;
-import wdb.parser.*;
+import org.python.ReL.WDB.database.wdb.metadata.*;
+import org.python.ReL.WDB.parser.generated.wdb.parser.Node;
+import org.python.ReL.WDB.parser.generated.wdb.parser.SimpleNode;
+import org.python.ReL.WDB.parser.javacc.QueryParser;
 
 import com.thinkaurelius.titan.core.*;
 import com.thinkaurelius.titan.core.schema.TitanManagement;
@@ -588,7 +590,7 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         @Override
         public ClassDef getClass(Query query) throws ClassNotFoundException
         {
-            return getClass(query.queryName);
+//            return getClass(query.queryName);
         }
 
         @Override
