@@ -173,11 +173,11 @@ public class WDB {
 						if (cd.sl)
 						{
 							try {
-								InsertQuery ciq = (InsertQuery)cd.schemaless;
+							//	InsertQuery ciq = (InsertQuery)cd.schemaless;
 								da.putClass(cd);
 								da.commit();
 
-								SleepyCatDataAdapter dc = db.newTransaction();
+							/*	SleepyCatDataAdapter dc = db.newTransaction();
 
 								ClassDef targetClass = dc.getClass(ciq.className);
 								WDBObject newObject = null;
@@ -191,7 +191,7 @@ public class WDB {
 									newObject.commit(dc);
 								}
 								dc.commit();
-							}
+							*/}
 							catch (Exception foo)
 							{
 								System.out.println("Schemaless insert failed due to the following: \n" + foo);
@@ -224,13 +224,13 @@ public class WDB {
 				}
 				catch(Exception e)
 				{
-					System.out.println("First" + e.toString() + ": " + e.getMessage());
+					System.out.println(e.toString() + ": " + e.getMessage());
 					da.abort();
 				}
 			}
 			catch(Exception e)
 			{
-				System.out.println("Second" + e.toString() + ": " + e.getMessage());
+				System.out.println(e.toString() + ": " + e.getMessage());
 			}
 		}
 		

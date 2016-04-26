@@ -18,7 +18,7 @@ public class ClassDef extends Query implements Serializable {
 	public String name;
 	public String comment;
 	public boolean sl;
-	public InsertQuery schemaless;
+//	public InsertQuery schemaless;
 	protected ArrayList<Attribute> attributes;
 	protected ArrayList<Integer> instances;
 	protected ArrayList<IndexDef> indexes;

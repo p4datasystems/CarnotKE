@@ -211,7 +211,6 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
       jj_consume_token(SC);
         ci.comment = "Schemaless Insert";
         iq.className = ci.name;
-        ci.schemaless = iq;
         ci.sl = true;
         {if (true) return ci;}
     } else {
@@ -1506,14 +1505,14 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
     return false;
   }
 
-  static final private boolean jj_3R_59() {
-    if (jj_scan_token(MV)) return true;
-    return false;
-  }
-
   static final private boolean jj_3_1() {
     if (jj_scan_token(INSERT)) return true;
     if (jj_scan_token(NEW)) return true;
+    return false;
+  }
+
+  static final private boolean jj_3R_59() {
+    if (jj_scan_token(MV)) return true;
     return false;
   }
 

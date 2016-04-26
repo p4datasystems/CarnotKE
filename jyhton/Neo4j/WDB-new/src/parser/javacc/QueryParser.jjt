@@ -183,7 +183,6 @@ Query Insert() :
     {
         ci.comment = "Schemaless Insert";
         iq.className = ci.name;
-        ci.schemaless = iq;
         ci.sl = true;
         return ci;
     }
