@@ -8,8 +8,9 @@ SQL on connOracleEE_native "DROP SEQUENCE A0_C##CS329E_UTEID_SQNC;"
 SQL on connOracleEE_native "DROP SEQUENCE A0_C##CS329E_UTEID_GUID_SQNC;"
 
 connOracleEE = connectTo 'jdbc:oracle:thin:@sayonara.microlab.cs.utexas.edu:1521:orcl' 'C##cs329e_UTEid' 'orcl_UTEid' 'rdf_mode' 'A0' nodebug
-connOracleRDFNoSQL = connectTo 'OracleNoSQL' 'C##cs329e_UTEid' 'orcl_UTEid' 'rdf_mode' 'A0' nodebug
 conn_native = connectTo 'jdbc:oracle:thin:@sayonara.microlab.cs.utexas.edu:1521:orcl' 'C##cs329e_UTEid' 'orcl_UTEid' 'native_mode' 'A0' nodebug
+connOracleRDFNoSQL = connectTo 'OracleNoSQL' 'kvstore' 'localhost:5000' 'rdf_mode' 'A0' 
+connOracleRDFNoSQL = connectTo 'OracleNoSQL' 'kvstore' 'localhost:5000' 'rdf_mode' 'A0' nodebug
 global_conn = connectTo 'jdbc:oracle:thin:@sayonara.microlab.cs.utexas.edu:1521:orcl' 'C##cs329e_UTEid' 'orcl_UTEid' 'rdf_mode' 'A1' nodebug
 
 print "Connections are opened, start loading Databases"

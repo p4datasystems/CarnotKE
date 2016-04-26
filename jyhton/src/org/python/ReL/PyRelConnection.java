@@ -93,7 +93,7 @@ public class PyRelConnection extends PyObject {
         }
         else if (url.contains("OracleNoSQL")) {
             if (conn_type.equalsIgnoreCase("native_mode")) {
-                database = new OracleNoSQLDatabase();
+                database = new OracleNoSQLDatabase(url, uname, pword, conn_type, debug);
                 connection_DB = "Native_OracleNoSQL";
             }
             else {
