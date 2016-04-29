@@ -1,1 +1,2 @@
-INSERT NEW animals( species := "dog", name := "Bob" );
+INSERT animals( species := "dog", name := "Bob" );
+INSERT animals( species := "Jiraffe", name := "Jimmy" );

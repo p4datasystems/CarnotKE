@@ -1,6 +1,7 @@
 #!/bin/sh
 
 # Change to the location of this build script.
+rm -rf build
 cd `dirname $0`
 
 ANT_HOME=`pwd`/ext/apache-ant-1.7.0

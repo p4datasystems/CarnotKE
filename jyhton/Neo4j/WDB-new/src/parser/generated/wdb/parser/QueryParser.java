@@ -214,7 +214,7 @@ public class QueryParser/*@bgen(jjtree)*/implements QueryParserTreeConstants, Qu
         iq.className = ci.name;
         ci.sl = true;
         sless = new DoubleDef(ci, iq);
-        {if (true) return sless;}
+        {if (true) return ci;}
     } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case INSERT:

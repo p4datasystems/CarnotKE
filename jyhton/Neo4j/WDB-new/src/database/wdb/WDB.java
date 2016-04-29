@@ -157,15 +157,15 @@ public class WDB {
 		{
 			ClassDef cd;
 			InsertQuery ciq;
-			if (q.getClass() == DoubleDef.class)
+	/*		if (q.getClass() == DoubleDef.class)
 			{
 				cd = q.getC();
 				ciq = q.getI();
 			}
 			else
 			{
-				cd = (ClassDef)q;
-			}
+		*/		cd = (ClassDef)q;
+		//	}
 			try
 			{
 				SleepyCatDataAdapter da = db.newTransaction();
@@ -186,8 +186,8 @@ public class WDB {
 								da.putClass(cd);
 								da.commit();
 
-								System.out.println("good till here");
-
+						//		System.out.println("good till here");
+						/*
 								SleepyCatDataAdapter dc = db.newTransaction();
 
 								ClassDef targetClass = dc.getClass(ciq.className);
@@ -202,7 +202,7 @@ public class WDB {
 									newObject.commit(dc);
 								}
 								dc.commit();
-							}
+						*/	}
 							catch (Exception foo)
 							{
 								System.out.println("Schemaless insert failed due to the following: \n" + foo);
@@ -334,15 +334,66 @@ public class WDB {
 					}
 					da.commit();
 				}
-				catch (Exception e)
+				catch (Exception e) // HERE
 				{
-					System.out.println("Class '" + iq.className + "' does not exist. Please use 'INSERT NEW' if you wish to make a schemaless insert...");
-					da.abort();
+					try
+					{
+						System.out.println("Class '" + iq.className + "' does not exist. Attempting schemaless insert...");
+
+						// Creating Class
+						ClassDef foo = new ClassDef(iq.className, "Schemaless Insert");
+						for (int x = 0; x < iq.assignmentList.size(); x++)
+						{
+							DVA dva = new DVA();
+							DvaAssignment _dva = (DvaAssignment)iq.getAssignment(x);
+							dva.required = true;
+							dva.comment = "";
+							dva.name = _dva.AttributeName;
+
+							// Find value type
+							Object temp1 = _dva.Value;
+							String temp = temp1.toString();
+							if (temp.equalsIgnoreCase("false") || temp.equalsIgnoreCase("true"))
+								dva.type = "Boolean";
+							else if (temp.length() > 0 && temp.matches("[0-9]+"))
+								dva.type = "Integer";
+							else if (temp.length() == 1) // necessary?
+								dva.type = "Char";
+							else
+								dva.type = "String";
+
+							foo.addAttribute(dva);
+						}
+
+						da.putClass(foo);
+						da.commit();
+
+						// Inserting into our new class
+						da = db.newTransaction();
+						ClassDef targetClass = da.getClass(iq.className);
+						WDBObject newObject = null;
+
+						newObject = targetClass.newInstance(null, da);
+						setDefaultValues(targetClass, newObject, da);
+						setValues(iq.assignmentList, newObject, da);
+						checkRequiredValues(targetClass, newObject, da);
+
+						if (newObject != null)
+							newObject.commit(da);
+
+						da.commit();
+						System.out.println("Schemaless insert succeeded!");
+					}
+					catch(Exception foo)
+					{
+						System.out.println("Schemaless insert failed due to the following:\n" + foo);
+						da.abort();
+					}
 				}
 			}
 			catch (Exception e)
 			{
-				System.out.println("Adapter pooped" + e.toString());
+				System.out.println("The Adapter pooped: " + e.toString());
 			}
 		}
 		if(q.getClass() == IndexDef.class)

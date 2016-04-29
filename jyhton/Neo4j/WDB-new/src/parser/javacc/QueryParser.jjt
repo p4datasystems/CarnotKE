@@ -186,7 +186,7 @@ Query Insert() :
         iq.className = ci.name;
         ci.sl = true;
         sless = new DoubleDef(ci, iq);
-        return sless;
+        return ci;
     }
 |	<INSERT>
 	( iq.className = getIdentifier() | iq.className = getLString() )
