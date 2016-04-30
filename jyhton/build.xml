@@ -276,6 +276,7 @@ oracle.jar=C:/workspace/HEAD/for_development/bisdevsrv28/jboss/server/infra/lib/
             <pathelement path="${extlibs.dir}/metrics-graphite-3.0.1.jar"/>
             <pathelement path="${extlibs.dir}/metrics-json-3.0.0.jar"/>
             <pathelement path="${extlibs.dir}/metrics-jvm-3.0.0.jar"/>
+            <pathelement path="${extlibs.dir}/titan-berkeleyje-1.0.0.jar"/>
 
             <!-- <pathelement path="${extlibs.dir}/TEMPLATE.jar"/> -->
 
