@@ -103,7 +103,7 @@ TOKEN:
 TOKEN: 
 {
     < IDENTIFIER: [ "A"-"Z", "a"-"z" ]
-  				( [ "A"-"Z", "a"-"z", "0"-"9", "_", "-" ] )*
+  				( [ "A"-"Z", "a"-"z", "0"-"9", "_", "-", "." ] )*
   				[ "A"-"Z", "a"-"z", "0"-"9" ] >
 }
 
@@ -191,7 +191,7 @@ Query Insert() :
 |	<INSERT>
 	( iq.className = getIdentifier() | iq.className = getLString() )
 	(
-		<FROM> iq.fromClassName = getIdentifier() <WHERE> iq.expression = getExpression()
+		(<FROM> iq.fromClassName = getIdentifier())? <WHERE> iq.expression = getExpression()
 	)?
 	<LP> ( Assignments(iq) ( <COMMA> Assignments(iq) )* )? <RP> <SC>
 	{

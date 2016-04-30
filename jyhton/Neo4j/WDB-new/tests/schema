@@ -24,8 +24,6 @@ INSERT person ( person-id := 4, first-name :=  "Alice" , last-name  := "Dawer" ,
 INSERT person ( person-id := 5 , first-name :=  "George" , last-name := "Layton" ,  home_address:= "347 Nueces St", zipcode := 78705, home-phone := 8798798 ,  us-citizen :=  TRUE  );
 INSERT person ( person-id := 9 , first-name :=  "Mike" , last-name := "Dawer" ,  home_address:= "432 Hill Rd", zipcode := 78705, home-phone := 7891903 ,  us-citizen :=  TRUE  );
 
-// test for auto-generating parent class
-//INSERT Stranger ( first-name := "Noel", last-name := "Negusse", po_box := "1234 nowhere ln", zipcode := 00000 );
 
 //Finally person-id 1 to 9 People
 ////////////////////////////////////////////////////////////////////// Employee //////////////////////////////////////////////////////////////////////////////////////////// 
@@ -168,7 +166,7 @@ SUBCLASS Previous-Project "Completed Projects" 	OF Project
                end-date-month "Date project completed month"	: INTEGER;
                end-date-day   "Date project completed day"	: INTEGER;
                end-date-year  "Date project completed year"	: INTEGER;
-               est-person-hours "Estimated hours to complete"  : INTEGER;
+               est-person-hours "Estimated hours to complete"   : INTEGER;
 	);
 	
 INSERT Previous-Project FROM Project WHERE project-title = "Code Red"( est-person-hours := 2000,end-date-month := 1, end-date-day := 6 , end-date-year := 1999);

@@ -334,55 +334,127 @@ public class WDB {
 					}
 					da.commit();
 				}
-				catch (Exception e) // HERE
+				catch (Exception e)
 				{
-					try
-					{
-						System.out.println("Class '" + iq.className + "' does not exist. Attempting schemaless insert...");
+					try {
+						if (iq.className.contains(".")) { // SCHEMALESS SUBCLASS
+							System.out.println("SubClass '" + iq.className + "' does not exist. Attempting schemaless insert...");
+							if (iq.expression == null) {
+								throw new IllegalStateException("The WHERE clause is required for schemaless inserts of a subclass");
+							}
+							String child = iq.className.substring(iq.className.indexOf(".") + 1, iq.className.length());
+							String parent = iq.className.substring(0, iq.className.indexOf("."));
+							iq.className = child;
+							iq.fromClassName = parent;
 
-						// Creating Class
-						ClassDef foo = new ClassDef(iq.className, "Schemaless Insert");
-						for (int x = 0; x < iq.assignmentList.size(); x++)
-						{
-							DVA dva = new DVA();
-							DvaAssignment _dva = (DvaAssignment)iq.getAssignment(x);
-							dva.required = true;
-							dva.comment = "";
-							dva.name = _dva.AttributeName;
+							// Creating SubClass
+							SubclassDef foo = new SubclassDef(child, "(SubClass) Schemaless Insert");
+							foo.addSuperClass(parent);
+							for (int x = 0; x < iq.assignmentList.size(); x++) {
+								DVA dva = new DVA();
+								DvaAssignment _dva = (DvaAssignment) iq.getAssignment(x);
+								dva.required = true;
+								dva.comment = "";
+								dva.name = _dva.AttributeName;
 
-							// Find value type
-							Object temp1 = _dva.Value;
-							String temp = temp1.toString();
-							if (temp.equalsIgnoreCase("false") || temp.equalsIgnoreCase("true"))
-								dva.type = "Boolean";
-							else if (temp.length() > 0 && temp.matches("[0-9]+"))
-								dva.type = "Integer";
-							else if (temp.length() == 1) // necessary?
-								dva.type = "Char";
-							else
-								dva.type = "String";
+								// Find value type
+								Object temp1 = _dva.Value;
+								String temp = temp1.toString();
+								if (temp.equalsIgnoreCase("false") || temp.equalsIgnoreCase("true"))
+									dva.type = "Boolean";
+								else if (temp.length() > 0 && temp.matches("[0-9]+"))
+									dva.type = "Integer";
+								else if (temp.length() == 1) // necessary?
+									dva.type = "Char";
+								else
+									dva.type = "String";
 
-							foo.addAttribute(dva);
+								foo.addAttribute(dva);
+							}
+
+							ClassDef baseClass = null;
+							for (int i = 0; i < ((SubclassDef) foo).numberOfSuperClasses(); i++) {
+								ClassDef superClass = da.getClass(((SubclassDef) foo).getSuperClass(i));
+								if (baseClass == null)
+									baseClass = superClass.getBaseClass(da);
+								else if (!baseClass.name.equals(superClass.getBaseClass(da).name))
+									throw new Exception("Super classes of class \"" + foo.name + "\" does not share the same base class");
+							}
+
+							da.putClass(foo);
+							da.commit();
+
+							// Insert into our new SubClass
+							da = db.newTransaction();
+							ClassDef targetClass = da.getClass(iq.className);
+							WDBObject newObject = null;
+
+							SubclassDef targetSubClass = (SubclassDef) targetClass;
+							ClassDef fromClass = da.getClass(iq.fromClassName);
+							if (targetSubClass.isSubclassOf(fromClass.name, da)) {
+								WDBObject[] fromObjects = fromClass.search(iq.expression, da);
+								if (fromObjects.length <= 0) {
+									throw new IllegalStateException("Can't find any entities from class \"" + fromClass.name + "\" to extend");
+								}
+								for (int i = 0; i < fromObjects.length; i++) {
+									newObject = targetSubClass.newInstance(fromObjects[i].getBaseObject(da), da);
+									setValues(iq.assignmentList, newObject, da);
+								}
+							} else {
+								throw new IllegalStateException("Inserted class \"" + targetClass.name + "\" is not a subclass of the from class \"" + iq.fromClassName);
+							}
+
+							if (newObject != null) {
+								newObject.commit(da);
+							}
+
+							da.commit();
+							System.out.println("Schemaless insert succeeded!");
+						} else { // SCHEMALESS CLASS
+							System.out.println("Class '" + iq.className + "' does not exist. Attempting schemaless insert...");
+							// Creating Class
+							ClassDef foo = new ClassDef(iq.className, "Schemaless Insert");
+							for (int x = 0; x < iq.assignmentList.size(); x++) {
+								DVA dva = new DVA();
+								DvaAssignment _dva = (DvaAssignment) iq.getAssignment(x);
+								dva.required = true;
+								dva.comment = "";
+								dva.name = _dva.AttributeName;
+
+								// Find value type
+								Object temp1 = _dva.Value;
+								String temp = temp1.toString();
+								if (temp.equalsIgnoreCase("false") || temp.equalsIgnoreCase("true"))
+									dva.type = "Boolean";
+								else if (temp.length() > 0 && temp.matches("[0-9]+"))
+									dva.type = "Integer";
+								else if (temp.length() == 1) // necessary?
+									dva.type = "Char";
+								else
+									dva.type = "String";
+
+								foo.addAttribute(dva);
+							}
+
+							da.putClass(foo);
+							da.commit();
+
+							// Inserting into our new Class
+							da = db.newTransaction();
+							ClassDef targetClass = da.getClass(iq.className);
+							WDBObject newObject = null;
+
+							newObject = targetClass.newInstance(null, da);
+							setDefaultValues(targetClass, newObject, da);
+							setValues(iq.assignmentList, newObject, da);
+							checkRequiredValues(targetClass, newObject, da);
+
+							if (newObject != null)
+								newObject.commit(da);
+
+							da.commit();
+							System.out.println("Schemaless insert succeeded!");
 						}
-
-						da.putClass(foo);
-						da.commit();
-
-						// Inserting into our new class
-						da = db.newTransaction();
-						ClassDef targetClass = da.getClass(iq.className);
-						WDBObject newObject = null;
-
-						newObject = targetClass.newInstance(null, da);
-						setDefaultValues(targetClass, newObject, da);
-						setValues(iq.assignmentList, newObject, da);
-						checkRequiredValues(targetClass, newObject, da);
-
-						if (newObject != null)
-							newObject.commit(da);
-
-						da.commit();
-						System.out.println("Schemaless insert succeeded!");
 					}
 					catch(Exception foo)
 					{
@@ -393,7 +465,7 @@ public class WDB {
 			}
 			catch (Exception e)
 			{
-				System.out.println("The Adapter pooped: " + e.toString());
+				System.out.println("The Adapter Pooped: " + e.toString());
 			}
 		}
 		if(q.getClass() == IndexDef.class)

@@ -1,2 +1,3 @@
 INSERT animals( species := "dog", name := "Bob" );
 INSERT animals( species := "Jiraffe", name := "Jimmy" );
+INSERT animals.zoo FROM animals WHERE species="dog" ( building-name:="Dallas zoo" );

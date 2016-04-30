@@ -37,6 +37,7 @@ public class ClassDef extends Query implements Serializable {
 		sl = false;
 		attributes = new ArrayList<Attribute>();
 		instances = new ArrayList<Integer>();
+		indexes = new ArrayList<IndexDef>();
 		name = _name;
 		comment = _comment;
 	}
@@ -47,6 +48,7 @@ public class ClassDef extends Query implements Serializable {
 		sl = false;
 		attributes = new ArrayList<Attribute>();
 		instances = new ArrayList<Integer>();
+		indexes = new ArrayList<IndexDef>();
 		name = _name;
 		comment = _comment;
 		
@@ -158,7 +160,7 @@ public class ClassDef extends Query implements Serializable {
 	public WDBObject[] search(SimpleNode expression, SleepyCatDataAdapter scda) throws Exception
 	{
         boolean hasWhereClause = (expression != null);
-		WDBObject[] matchesArray = new WDBObject[0];
+ 		WDBObject[] matchesArray = new WDBObject[0];
 		ArrayList<WDBObject> matchesList = new ArrayList<WDBObject>();
 		WDBObject[] indexFilteredArray;
         if (hasWhereClause) {
