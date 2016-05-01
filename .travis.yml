@@ -1,7 +1,7 @@
 language: java
 
 jdk:
-    - oraclejdk8
+    - openjdk7
 
 sudo: false
 
@@ -14,7 +14,9 @@ before_script:
 script:
     - pwd
     - ant
-    - ant
+
+after_success:
+    - jdk_switcher use oraclejdk8
 
 after_script:
     - dist/bin/jython nativeSIMunitTests.py
