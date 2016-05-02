@@ -54,6 +54,7 @@ TOKEN [IGNORE_CASE]:
   | <OF: "OF">
   | <INVERSE: "INVERSE IS">
   | <INSERT: "INSERT">
+  | <NEW: "NEW">
   | <INCLUDE: "INCLUDE">
   | <EXCLUDE: "EXCLUDE">
   | <WITH: "WITH">
@@ -102,7 +103,7 @@ TOKEN:
 TOKEN: 
 {
     < IDENTIFIER: [ "A"-"Z", "a"-"z" ]
-  				( [ "A"-"Z", "a"-"z", "0"-"9", "_", "-" ] )*
+  				( [ "A"-"Z", "a"-"z", "0"-"9", "_", "-", "." ] )*
   				[ "A"-"Z", "a"-"z", "0"-"9" ] >
 }
 
@@ -151,7 +152,7 @@ Query Class() :
 }
 {
     <CLASS> 
-    ( cq.name = getIdentifier() | cq.name = getLString() ) ( cq.comment= getQString() )* <LP> ( Attrs(cq) )* <RP> <SC>
+    ( cq.name = getIdentifier() | cq.name = getLString() ) ( cq.comment = getQString() )* <LP> ( Attrs(cq) )* <RP> <SC>
     {
     	return cq;
     }
@@ -175,9 +176,9 @@ Query Insert() :
 }
 {
 	<INSERT>
-	( iq.className = getIdentifier() | iq.className = getLString() ) 
+	( iq.className = getIdentifier() | iq.className = getLString() )
 	(
-		<FROM> iq.fromClassName = getIdentifier() <WHERE> iq.expression = getExpression()
+		(<FROM> iq.fromClassName = getIdentifier())? <WHERE> iq.expression = getExpression()
 	)?
 	<LP> ( Assignments(iq) ( <COMMA> Assignments(iq) )* )? <RP> <SC>
 	{
@@ -289,7 +290,7 @@ void AttributePath(RetrieveQuery rq) :
 			attributePath.addIndirection(eva);
 		}
 		(
-			LOOKAHEAD(5) <OF> eva = getIdentifier()
+			LOOKAHEAD(5) <COMMA> <OF> eva = getIdentifier()
 			{
 				attributePath.addIndirection(eva);
 			}
@@ -343,7 +344,7 @@ void EvaAssign(UpdateQuery uq) :
 {
 	evaAssign.AttributeName = getIdentifier() 
 	<ASSN>
-	( 
+	(
 		<INCLUDE>
 		{
 			evaAssign.mode = EvaAssignment.INCLUDE_MODE;
@@ -385,8 +386,56 @@ void Parents(SubclassDef sq) :
       	{
       		sq.addSuperClass(parent);
       	}
-      )* 
+      )*
+}
 
+void AttrAss(ClassDef ci, UpdateQuery iq) :
+{ }
+{
+      LOOKAHEAD(5) _Dva(ci, iq)
+    | LOOKAHEAD(5) EvaAssign(iq)
+      { }
+}
+
+void _Dva(ClassDef ci, UpdateQuery iq) :
+{
+    DVA dva = new DVA();
+    DvaAssignment dvaAssign = new DvaAssignment();
+}
+{
+    dva.name = getIdentifier()
+	(
+		<LB> dvaAssign.Index = getInteger() <RB>
+	)?
+		<ASSN>
+    	(
+    		dvaAssign.Value = getBoolean()
+    		{
+    		    dvaAssign.AttributeName = dva.name;
+    			iq.addAssignment(dvaAssign);
+    			dva.type = "Boolean";
+    			dva.required = true;
+    		}
+    		|
+    		dvaAssign.Value = getQString()
+    		{
+    		    dvaAssign.AttributeName = dva.name;
+    			iq.addAssignment(dvaAssign);
+    			dva.type = "String";
+    			dva.required = true;
+    		}
+    		|
+    		dvaAssign.Value = getInteger()
+    		{
+    		    dvaAssign.AttributeName = dva.name;
+    			iq.addAssignment(dvaAssign);
+    			dva.type = "Integer";
+    			dva.required = true;
+    		}
+    	)
+	{
+		ci.addAttribute(dva);
+    }
 }
 
 void Attrs(ClassDef cq) :
@@ -405,7 +454,7 @@ void Dva(ClassDef cq) :
 	dva.name = getIdentifier() 
 	( 
 		dva.comment = getQString() 
-	)? 
+	)?
 	<COLON> dva.type = getType() 
 	( <LB> dva.size = getInteger() <RB> )?
 	( <COMMA> DvaOptions(dva) )*
@@ -447,7 +496,7 @@ void DvaOptions(DVA dva) :
   {
     if(dva.required != null)
     {
-      throw new ParseException("REQUIRED option alreadly specified");
+      throw new ParseException("REQUIRED option already specified");
     }
     else
     {
@@ -650,7 +699,7 @@ AttributePath getAbsoluteAttributePath() :
 			attributePath.addIndirection(eva);
 		}
 		(
-			LOOKAHEAD(5) <OF> eva = getIdentifier()
+			LOOKAHEAD(5) <COMMA> <OF> eva = getIdentifier()
 			{
 				attributePath.addIndirection(eva);
 			}
@@ -804,11 +853,11 @@ Integer getInteger() :
 
 Boolean getBoolean() : 
 {
-	Token t;	
+	Token t;
 	String s = new String("");
 }
 {
-	t = <TRUE> 
+	t = <TRUE>
 	{
 		return Boolean.TRUE;
 	}
