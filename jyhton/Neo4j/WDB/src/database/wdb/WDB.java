@@ -153,19 +153,11 @@ public class WDB {
 			}
 		}
 		
-		if(q.getClass() == DoubleDef.class || q.getClass() == ClassDef.class || q.getClass() == SubclassDef.class)
+		if(q.getClass() == ClassDef.class || q.getClass() == SubclassDef.class)
 		{
 			ClassDef cd;
 			InsertQuery ciq;
-	/*		if (q.getClass() == DoubleDef.class)
-			{
-				cd = q.getC();
-				ciq = q.getI();
-			}
-			else
-			{
-		*/		cd = (ClassDef)q;
-		//	}
+			cd = (ClassDef)q;
 			try
 			{
 				SleepyCatDataAdapter da = db.newTransaction();
@@ -180,57 +172,25 @@ public class WDB {
 					}
 					catch(ClassNotFoundException cnfe)
 					{
-						if (cd.sl)
+						if (cd.getClass() == SubclassDef.class)
 						{
-							try {
-								da.putClass(cd);
-								da.commit();
-
-						//		System.out.println("good till here");
-						/*
-								SleepyCatDataAdapter dc = db.newTransaction();
-
-								ClassDef targetClass = dc.getClass(ciq.className);
-								WDBObject newObject = null;
-								newObject = targetClass.newInstance(null, dc);
-								setDefaultValues(targetClass, newObject, dc);
-								setValues(ciq.assignmentList, newObject, dc);
-								checkRequiredValues(targetClass, newObject, dc);
-
-								dc.putClass(cd);
-								if (newObject != null) {
-									newObject.commit(dc);
-								}
-								dc.commit();
-						*/	}
-							catch (Exception foo)
+							ClassDef baseClass = null;
+							for (int i = 0; i < ((SubclassDef) cd).numberOfSuperClasses(); i++)
 							{
-								System.out.println("Schemaless insert failed due to the following: \n" + foo);
-								da.abort();
-							}
-						}
-						else
-						{
-							if (cd.getClass() == SubclassDef.class)
-							{
-								ClassDef baseClass = null;
-								for (int i = 0; i < ((SubclassDef) cd).numberOfSuperClasses(); i++)
+								//Cycles are implicitly checked since getClass will fail for the current defining class
+								ClassDef superClass = da.getClass(((SubclassDef) cd).getSuperClass(i));
+								if (baseClass == null)
 								{
-									//Cycles are implicitly checked since getClass will fail for the current defining class
-									ClassDef superClass = da.getClass(((SubclassDef) cd).getSuperClass(i));
-									if (baseClass == null)
-									{
-										baseClass = superClass.getBaseClass(da);
-									}
-									else if (!baseClass.name.equals(superClass.getBaseClass(da).name))
-									{
-										throw new Exception("Super classes of class \"" + cd.name + "\" does not share the same base class");
-									}
+									baseClass = superClass.getBaseClass(da);
+								}
+								else if (!baseClass.name.equals(superClass.getBaseClass(da).name))
+								{
+									throw new Exception("Super classes of class \"" + cd.name + "\" does not share the same base class");
 								}
 							}
-							da.putClass(cd);
-							da.commit();
 						}
+						da.putClass(cd);
+						da.commit();
 					}
 				}
 				catch(Exception e)
