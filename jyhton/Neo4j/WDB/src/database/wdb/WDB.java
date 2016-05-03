@@ -161,7 +161,6 @@ public class WDB {
 			try
 			{
 				SleepyCatDataAdapter da = db.newTransaction();
-
 				try
 				{
 					try
