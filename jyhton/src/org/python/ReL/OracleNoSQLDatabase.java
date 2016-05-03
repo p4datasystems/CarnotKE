@@ -9,10 +9,7 @@ import oracle.kv.table.Row;
 import oracle.kv.table.Table;
 import oracle.kv.table.TableAPI;
 import org.apache.commons.lang3.SerializationUtils;
-import org.python.ReL.WDB.database.wdb.metadata.ClassDef;
-import org.python.ReL.WDB.database.wdb.metadata.IndexDef;
-import org.python.ReL.WDB.database.wdb.metadata.Query;
-import org.python.ReL.WDB.database.wdb.metadata.WDBObject;
+import org.python.ReL.WDB.database.wdb.metadata.*;
 
 import java.io.File;
 import java.io.IOException;

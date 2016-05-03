@@ -1,0 +1,224 @@
+2016-05-03 21:34:06.649 UTC INFO [rg1-rn1] Starting service process: rg1-rn1, Java command line arguments: [-Dje.rep.skipHelperHostResolution=true, -XX:+UseConcMarkSweepGC, -XX:+UseParNewGC, -XX:+DisableExplicitGC, -XX:NewRatio=18, -XX:SurvivorRatio=4, -XX:MaxTenuringThreshold=10, -XX:CMSInitiatingOccupancyFraction=80, -XX:+PrintGCDetails, -XX:+PrintGCDateStamps, -XX:+PrintGCApplicationStoppedTime, -XX:+UseGCLogFileRotation, -XX:NumberOfGCLogFiles=10, -XX:GCLogFileSize=1048576, -Xloggc:/Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/./WDB_STORE/WDB/log/rg1-rn1.gc, -Xms435M, -Xmx435M, -XX:ParallelGCThreads=1]
+2016-05-03 21:34:06.724 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_RepNodeStateUpdateThread,5,main] started
+2016-05-03 21:34:06.754 UTC INFO [rg1-rn1] NoSQL version:12cR1.3.4.7 2015-10-01 04:48:39 UTC  Build id: 44f8b0e7d93a JE version:6.4.15 Java version:1.8.0_51
+2016-05-03 21:34:06.755 UTC INFO [rg1-rn1] JVM Runtime maxMemory:453,181,440 bytes JE cache size:0 Max Offheap cache size:0 bytes
+2016-05-03 21:34:06.756 UTC INFO [rg1-rn1] Non-default JE properties for environment: {je.rep.vlsn.logCacheSize=128, je.rep.envUnknownStateTimeout=10 s, je.log.faultReadSize=4096, je.rep.vlsn.distance=1000000, je.rep.replicaTimeout=10 s, je.env.runEvictor=true, je.cleaner.minUtilization=40, je.rep.replicaAckTimeout=5 s, je.lock.nLockTables=97, je.cleaner.threads=2, je.rep.replayMaxOpenDbHandles=100, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.log.iteratorReadSize=1048576, je.log.numBuffers=16, je.rep.feederTimeout=10 s, je.nodeMaxEntries=128, je.lock.timeout=10 s, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.checkpointer.bytesInterval=500000000, je.txn.durability=write_no_sync,write_no_sync,simple_majority, je.cleaner.readSize=1048576, je.rep.ignoreSecondaryNodeId=true, je.rep.txnRollbackLimit=10, je.log.fileCacheSize=2000, je.log.fileMax=1073741824}
+2016-05-03 21:34:06.756 UTC INFO [rg1-rn1] DataChannelFactory: basic
+2016-05-03 21:34:06.758 UTC INFO [rg1-rn1] Created new environment dir: /Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/./WDB_db/store/rg1-rn1/env
+2016-05-03 21:34:06.767 UTC INFO [rg1-rn1] Table manager created
+2016-05-03 21:34:06.775 UTC INFO [rg1-rn1] Partition database cache mode: EVICT_LN
+2016-05-03 21:34:06.787 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_MetadataUpdateThread,5,main] started
+2016-05-03 21:34:06.797 UTC INFO [rg1-rn1] Starting RepNodeService
+2016-05-03 21:34:06.799 UTC INFO [rg1-rn1] Starting RN MonitorAgent.  Server socket factory:<ClearServerSocketFactory name=monitor backlog=0 port range=0,0> Client socket connect factory: <ClientSocketFactory name=WDB|rn|monitor id=1313490765 connectMs=10000 readMs=10000>
+2016-05-03 21:34:06.900 UTC INFO [rg1-rn1] Starting MonitorAgent
+2016-05-03 21:34:06.918 UTC INFO [rg1-rn1] Successfully created secure proxy for the repnode admin
+2016-05-03 21:34:06.934 UTC INFO [rg1-rn1] RepNodeAdmin registered
+2016-05-03 21:34:07.129 UTC INFO [rg1-rn1] JE recovery: POPULATE_UTILIZATION_PROFILE
+2016-05-03 21:34:07.144 UTC INFO [rg1-rn1] JE recovery: REMOVE_TEMP_DBS
+2016-05-03 21:34:07.154 UTC INFO [rg1-rn1] JE recovery: CKPT
+2016-05-03 21:34:07.165 UTC INFO [rg1-rn1] JE recovery: RECOVERY_FINISHED
+2016-05-03 21:34:07.185 UTC INFO [rg1-rn1] JE: Started ServiceDispatcher. HostPort=localhost:5014
+2016-05-03 21:34:07.185 UTC INFO [rg1-rn1] JE: DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-05-03 21:34:07.222 UTC INFO [rg1-rn1] JE: Current group size: 0
+2016-05-03 21:34:07.222 UTC INFO [rg1-rn1] JE: New node rg1-rn1(-1) unknown to rep group
+2016-05-03 21:34:07.223 UTC INFO [rg1-rn1] JE: Master changed to rg1-rn1
+2016-05-03 21:34:07.223 UTC INFO [rg1-rn1] JE: Nascent group. rg1-rn1 is master by virtue of being the first node.
+2016-05-03 21:34:07.232 UTC INFO [rg1-rn1] JE: Successfully added node:rg1-rn1(1) HostPort = localhost: 5014 [ELECTABLE]
+2016-05-03 21:34:07.233 UTC INFO [rg1-rn1] JE: Refreshed 0 monitors.
+2016-05-03 21:34:07.236 UTC INFO [rg1-rn1] JE recovery: BECOME_CONSISTENT
+2016-05-03 21:34:07.236 UTC INFO [rg1-rn1] JE: Node rg1-rn1 started
+2016-05-03 21:34:07.237 UTC INFO [rg1-rn1] JE: Feeder manager accepting requests.
+2016-05-03 21:34:07.238 UTC INFO [rg1-rn1] JE: Joining group as master
+2016-05-03 21:34:07.238 UTC INFO [rg1-rn1] JE: Refreshed 0 monitors.
+2016-05-03 21:34:07.238 UTC INFO [rg1-rn1] Opened JE environment: 6.4.15 JVM max heap: 453,181,440 JE properties: allowCreate=true
+cacheSize=319438192
+txnNoSync=false
+txnWriteNoSync=false
+{je.lock.timeout=10 s, je.cleaner.readSize=1048576, je.log.faultReadSize=4096, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.log.fileMax=1073741824, je.rep.feederTimeout=10 s, je.rep.nodeName=rg1-rn1, je.nodeMaxEntries=128, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.rep.electableGroupSizeOverride=0, je.env.runEvictor=true, je.log.iteratorReadSize=1048576, je.txn.durability=WRITE_NO_SYNC,WRITE_NO_SYNC,SIMPLE_MAJORITY, je.maxOffHeapMemory=0, je.checkpointer.bytesInterval=500000000, je.log.numBuffers=16, je.rep.nodeHostPort=localhost:5014, je.rep.vlsn.distance=1000000, je.rep.txnRollbackLimit=10, je.rep.replayMaxOpenDbHandles=100, je.rep.ignoreSecondaryNodeId=true, je.maxMemory=319438192, je.cleaner.minUtilization=40, je.env.isTransactional=true, je.log.fileCacheSize=2000, je.rep.helperHosts=localhost:5014, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.vlsn.logCacheSize=128, je.rep.replicaTimeout=10 s, je.lock.nLockTables=97, je.rep.nodeType=ELECTABLE, je.rep.envUnknownStateTimeout=10 s, je.rep.preserveRecordVersion=true, je.rep.groupName=rg1, je.rep.replicaAckTimeout=5 s, je.cleaner.threads=2}
+
+2016-05-03 21:34:07.259 UTC INFO [rg1-rn1] Local Environment version updated to: 12cR1.3.4.7 2015-10-01 04:48:39 UTC  Build id: 44f8b0e7d93a Previous version:  none
+2016-05-03 21:34:07.261 UTC INFO [rg1-rn1] State change event: Tue May 03 16:34:07 CDT 2016, State: MASTER, Type: ELECTABLE, Master: rg1-rn1
+2016-05-03 21:34:07.261 UTC INFO [rg1-rn1] MigrationStateTracker queue added:MASTER
+2016-05-03 21:34:07.261 UTC INFO [rg1-rn1] TableManagerStateTracker queue added:MASTER
+2016-05-03 21:34:07.261 UTC INFO [rg1-rn1] MasterBalanceStateTracker queue added:MASTER
+2016-05-03 21:34:07.261 UTC INFO [rg1-rn1] Replicated environment handle established. Cache size: 319438192, State: MASTER
+2016-05-03 21:34:07.262 UTC INFO [rg1-rn1] Environment does not contain topology store.
+2016-05-03 21:34:07.262 UTC INFO [rg1-rn1] MasterBalanceStateTracker thread start: rg1-rn1
+2016-05-03 21:34:07.262 UTC INFO [rg1-rn1] Topology needs to be pushed to this node.
+2016-05-03 21:34:07.262 UTC INFO [rg1-rn1] MigrationStateTracker thread start: null
+2016-05-03 21:34:07.262 UTC INFO [rg1-rn1] TableManagerStateTracker thread start: rg1-rn1
+2016-05-03 21:34:07.262 UTC INFO [rg1-rn1] Migration manager change state to MASTER.
+2016-05-03 21:34:07.262 UTC INFO [rg1-rn1] Table manager change state to MASTER
+2016-05-03 21:34:07.266 UTC INFO [rg1-rn1] Migration service accepting requests.
+2016-05-03 21:34:07.271 UTC INFO [rg1-rn1] No RN Login configured. 
+2016-05-03 21:34:07.271 UTC INFO [rg1-rn1] Service status changed from STARTING to RUNNING
+2016-05-03 21:34:07.271 UTC INFO [rg1-rn1] Started RepNodeService
+2016-05-03 21:34:07.523 UTC INFO [rg1-rn1] Topology updated from seq#: 0 to 4
+2016-05-03 21:34:07.527 UTC INFO [rg1-rn1] Environment changed, ignoring trigger for SecurityMetadata
+2016-05-03 21:34:07.527 UTC INFO [rg1-rn1] Open SecurityMetadata DB
+2016-05-03 21:34:07.528 UTC INFO [rg1-rn1] Established 0 partition database handles, topology seq#: 4
+2016-05-03 21:34:07.528 UTC INFO [rg1-rn1] Environment changed, ignoring trigger for TableMetadata
+2016-05-03 21:34:07.528 UTC INFO [rg1-rn1] Open TableMetadata DB
+2016-05-03 21:34:07.532 UTC INFO [rg1-rn1] Found 0 indexes and 0 tables marked for deletion in TableMetadata[0, 0, 0]
+2016-05-03 21:34:07.533 UTC INFO [rg1-rn1] Established 0 secondary database handles
+2016-05-03 21:34:07.632 UTC INFO [rg1-rn1] Topology stored seq#: 4
+2016-05-03 21:34:07.668 UTC INFO [rg1-rn1] newParameters are identical to old parameters
+2016-05-03 21:34:07.693 UTC INFO [rg1-rn1] Topology incrementally updated from seq#: 4 to 6
+2016-05-03 21:34:07.696 UTC INFO [rg1-rn1] Found 0 indexes and 0 tables marked for deletion in TableMetadata[0, 0, 0]
+2016-05-03 21:34:07.696 UTC INFO [rg1-rn1] Established 0 secondary database handles
+2016-05-03 21:34:07.698 UTC INFO [rg1-rn1] Established 2 partition database handles, topology seq#: 6
+2016-05-03 21:34:07.711 UTC INFO [rg1-rn1] Topology stored seq#: 6
+2016-05-03 21:34:08.285 UTC INFO [rg1-rn1] Updating table metadata with TableMetadata[1, 1, 1]
+2016-05-03 21:34:08.289 UTC INFO [rg1-rn1] Environment changed, ignoring trigger for TableMetadata
+2016-05-03 21:34:08.289 UTC INFO [rg1-rn1] Metadata stored type: TABLE, seq#: 1
+2016-05-03 21:34:08.295 UTC INFO [rg1-rn1] Found 0 indexes and 0 tables marked for deletion in TableMetadata[1, 1, 1]
+2016-05-03 21:34:08.295 UTC INFO [rg1-rn1] Established 0 secondary database handles
+2016-05-03 21:34:10.283 UTC INFO [rg1-rn1] Updating table metadata with TableChangeList[2, 1]
+2016-05-03 21:34:10.285 UTC INFO [rg1-rn1] Environment changed, ignoring trigger for TableMetadata
+2016-05-03 21:34:10.285 UTC INFO [rg1-rn1] Metadata stored type: TABLE, seq#: 2
+2016-05-03 21:34:10.285 UTC INFO [rg1-rn1] Found 0 indexes and 0 tables marked for deletion in TableMetadata[2, 2, 2]
+2016-05-03 21:34:10.286 UTC INFO [rg1-rn1] Established 0 secondary database handles
+2016-05-03 21:34:13.462 UTC INFO [rg1-rn1] RepNodeAdmin shutdown(false)
+2016-05-03 21:34:13.462 UTC INFO [rg1-rn1] Service status changed from RUNNING to STOPPING
+2016-05-03 21:34:13.464 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_RepNodeStateUpdateThread,5,main] shutdown
+2016-05-03 21:34:13.464 UTC INFO [rg1-rn1] Dispatcher shutdown
+2016-05-03 21:34:13.476 UTC INFO [rg1-rn1] RepNodeAdmin stopping
+2016-05-03 21:34:13.476 UTC INFO [rg1-rn1] Thread[KV_rg1-rn1_MetadataUpdateThread,5,main] shutdown
+2016-05-03 21:34:13.476 UTC INFO [rg1-rn1] Shutting down RepNode
+2016-05-03 21:34:13.477 UTC INFO [rg1-rn1] Shutting down migration manager.
+2016-05-03 21:34:13.478 UTC INFO [rg1-rn1] MigrationStateTracker soft shutdown initiated.
+2016-05-03 21:34:13.478 UTC INFO [rg1-rn1] MigrationStateTracker queue added:DETACHED
+2016-05-03 21:34:13.478 UTC INFO [rg1-rn1] MigrationStateTracker thread exited: null
+2016-05-03 21:34:13.478 UTC INFO [rg1-rn1] TableManagerStateTracker soft shutdown initiated.
+2016-05-03 21:34:13.478 UTC INFO [rg1-rn1] TableManagerStateTracker queue added:DETACHED
+2016-05-03 21:34:13.478 UTC INFO [rg1-rn1] Table manager change state to DETACHED
+2016-05-03 21:34:13.479 UTC INFO [rg1-rn1] TableManagerStateTracker thread exited: rg1-rn1
+2016-05-03 21:34:13.479 UTC INFO [rg1-rn1] Closing secondary database handles
+2016-05-03 21:34:13.479 UTC INFO [rg1-rn1] Closing TableMetadata db
+2016-05-03 21:34:13.479 UTC INFO [rg1-rn1] Closing partition database handles
+2016-05-03 21:34:13.479 UTC INFO [rg1-rn1] Closing SecurityMetadata db
+2016-05-03 21:34:13.480 UTC INFO [rg1-rn1] JE: Shutting down node rg1-rn1(1)
+2016-05-03 21:34:13.480 UTC INFO [rg1-rn1] JE: Refreshed 0 monitors.
+2016-05-03 21:34:13.480 UTC INFO [rg1-rn1] JE: Elections shutdown initiated
+2016-05-03 21:34:13.481 UTC INFO [rg1-rn1] JE: Acceptor Thread rg1-rn1 soft shutdown initiated.
+2016-05-03 21:34:13.481 UTC INFO [rg1-rn1] JE: Learner Thread rg1-rn1 soft shutdown initiated.
+2016-05-03 21:34:13.481 UTC INFO [rg1-rn1] JE: Elections shutdown completed
+2016-05-03 21:34:13.481 UTC INFO [rg1-rn1] JE: Feeder manager soft shutdown.
+2016-05-03 21:34:13.482 UTC INFO [rg1-rn1] JE: MASTER rg1-rn1(1) soft shutdown initiated.
+2016-05-03 21:34:13.482 UTC INFO [rg1-rn1] JE: Feeder manager exited. CurrentTxnEnd VLSN: 865
+2016-05-03 21:34:13.482 UTC INFO [rg1-rn1] State change event: Tue May 03 16:34:13 CDT 2016, State: UNKNOWN, Type: ELECTABLE, Master: none
+2016-05-03 21:34:13.482 UTC INFO [rg1-rn1] JE: RepNode main thread shutting down.
+2016-05-03 21:34:13.483 UTC INFO [rg1-rn1] State change event: Tue May 03 16:34:13 CDT 2016, State: DETACHED, Type: ELECTABLE, Master: none
+2016-05-03 21:34:13.484 UTC INFO [rg1-rn1] JE: RepNode main thread: DETACHED rg1-rn1(1) exited.
+2016-05-03 21:34:13.484 UTC INFO [rg1-rn1] JE: Feeder Manager node: rg1-rn1 soft shutdown initiated.
+2016-05-03 21:34:13.485 UTC INFO [rg1-rn1] JE: ServiceDispatcher shutdown starting. HostPort=localhost:5014 Registered services: [PartitionMigration]
+2016-05-03 21:34:13.485 UTC INFO [rg1-rn1] JE: ServiceDispatcher-localhost:5014 soft shutdown initiated.
+2016-05-03 21:34:13.486 UTC INFO [rg1-rn1] JE: ServiceDispatcher shutdown completed. HostPort=localhost:5014
+2016-05-03 21:34:13.486 UTC INFO [rg1-rn1] JE: rg1-rn1(1) shutdown completed.
+2016-05-03 21:34:13.496 UTC INFO [rg1-rn1] MasterBalanceStateTracker soft shutdown initiated.
+2016-05-03 21:34:13.496 UTC INFO [rg1-rn1] MasterBalanceStateTracker queue added:DETACHED
+2016-05-03 21:34:13.497 UTC INFO [rg1-rn1] MasterBalanceStateTracker thread exited: rg1-rn1
+2016-05-03 21:34:13.497 UTC INFO [rg1-rn1] Service status changed from STOPPING to STOPPED
+2016-05-03 21:34:13.497 UTC INFO [rg1-rn1] MonitorAgent stopping, 60 items remain.
+2016-05-03 21:34:13.498 UTC INFO [rg1-rn1] Saving untransmitted monitor info at shutdown.
+2016-05-03 21:34:13.498 UTC INFO [rg1-rn1] newParameters are identical to old parameters
+2016-05-03 21:34:13.498 UTC INFO [rg1-rn1] Topology incrementally updated from seq#: {0} to {1}
+2016-05-03 21:34:13.498 UTC INFO [rg1-rn1] Found {0} indexes and {1} tables marked for deletion in {2}
+2016-05-03 21:34:13.498 UTC INFO [rg1-rn1] Established {0} secondary database handles
+2016-05-03 21:34:13.498 UTC INFO [rg1-rn1] Established {0} partition database handles, topology seq#: {1}
+2016-05-03 21:34:13.499 UTC INFO [rg1-rn1] Topology stored seq#: 6
+2016-05-03 21:34:13.499 UTC INFO [rg1-rn1] Updating table metadata with {0}
+2016-05-03 21:34:13.499 UTC INFO [rg1-rn1] Environment changed, ignoring trigger for {0}
+2016-05-03 21:34:13.499 UTC INFO [rg1-rn1] Metadata stored type: {0}, seq#: {1}
+2016-05-03 21:34:13.499 UTC INFO [rg1-rn1] Found {0} indexes and {1} tables marked for deletion in {2}
+2016-05-03 21:34:13.499 UTC INFO [rg1-rn1] Established {0} secondary database handles
+2016-05-03 21:34:13.499 UTC INFO [rg1-rn1] Updating table metadata with {0}
+2016-05-03 21:34:13.499 UTC INFO [rg1-rn1] Environment changed, ignoring trigger for {0}
+2016-05-03 21:34:13.499 UTC INFO [rg1-rn1] Metadata stored type: {0}, seq#: {1}
+2016-05-03 21:34:13.500 UTC INFO [rg1-rn1] Found {0} indexes and {1} tables marked for deletion in {2}
+2016-05-03 21:34:13.500 UTC INFO [rg1-rn1] Established {0} secondary database handles
+2016-05-03 21:34:13.500 UTC INFO [rg1-rn1] RepNodeAdmin shutdown({0})
+2016-05-03 21:34:13.500 UTC INFO [rg1-rn1] Service status changed from RUNNING to STOPPING
+2016-05-03 21:34:13.500 UTC INFO [rg1-rn1] Service status: STOPPING 2016-05-03 21:34:13 UTC
+2016-05-03 21:34:13.500 UTC INFO [rg1-rn1] {0} shutdown
+2016-05-03 21:34:13.500 UTC INFO [rg1-rn1] Dispatcher shutdown
+2016-05-03 21:34:13.505 UTC INFO [rg1-rn1] PutsCumulativeLatency (21:34:13.465 UTC) perSec=62 totalOps=420 totalReq=420 min=0 max=1 avg=0.2656275 95th=0 99th=1
+PutIfAbsentCumulativeLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+PutIfPresentCumulativeLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+NOPsIntervalLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+PutIfVersionCumulativeLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+GetsIntervalLatency (21:34:13.465 UTC) perSec=205 totalOps=1372 totalReq=1372 min=0 max=2 avg=0.10023601 95th=0 99th=0
+MultiGetsCumulativeLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+GetsCumulativeLatency (21:34:13.465 UTC) perSec=205 totalOps=1372 totalReq=1372 min=0 max=2 avg=0.10023601 95th=0 99th=0
+MultiGetKeysCumulativeLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+MultiGetIteratorCumulativeLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+MultiGetKeysIteratorCumulativeLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+MultiDeletesCumulativeLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+DeletesIntervalLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+DeleteIfVersionIntervalLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+NOPsCumulativeLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+StoreIteratorIntervalLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+StoreKeysIteratorIntervalLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+ExecutesIntervalLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+AllSingleKeyOperationsIntervalLatency (21:34:13.465 UTC) perSec=268 totalOps=1792 totalReq=1792 min=0 max=2 avg=0.14079785 95th=0 99th=1
+DeletesCumulativeLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+AllSingleKeyOperationsCumulativeLatency (21:34:13.465 UTC) perSec=268 totalOps=1792 totalReq=1792 min=0 max=2 avg=0.14079785 95th=0 99th=1
+DeleteIfVersionCumulativeLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+IndexIteratorIntervalLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+IndexKeysIteratorIntervalLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+StoreIteratorCumulativeLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+StoreKeysIteratorCumulativeLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+PutsIntervalLatency (21:34:13.465 UTC) perSec=62 totalOps=420 totalReq=420 min=0 max=1 avg=0.2656275 95th=0 99th=1
+PutIfAbsentIntervalLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+PutIfPresentIntervalLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+PutIfVersionIntervalLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+MultiGetsIntervalLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+ExecutesCumulativeLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+MultiGetKeysIntervalLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+MultiGetIteratorIntervalLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+MultiGetKeysIteratorIntervalLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+AllMultiKeyOperationsIntervalLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+AllMultiKeyOperationsCumulativeLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+MultiDeletesIntervalLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+IndexIteratorCumulativeLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+IndexKeysIteratorCumulativeLatency (21:34:13.465 UTC) perSec=0 totalOps=0 totalReq=0 min=0 max=0 avg=0.0 95th=0 99th=0
+
+2016-05-03 21:34:13.506 UTC INFO [rg1-rn1] RepNodeAdmin stopping
+2016-05-03 21:34:13.506 UTC INFO [rg1-rn1] {0} shutdown
+2016-05-03 21:34:13.506 UTC INFO [rg1-rn1] Shutting down RepNode
+2016-05-03 21:34:13.506 UTC INFO [rg1-rn1] Shutting down migration manager.
+2016-05-03 21:34:13.506 UTC INFO [rg1-rn1] MigrationStateTracker soft shutdown initiated.
+2016-05-03 21:34:13.506 UTC INFO [rg1-rn1] {0} queue added:{1}
+2016-05-03 21:34:13.506 UTC INFO [rg1-rn1] {0} thread exited: {1}{2}
+2016-05-03 21:34:13.506 UTC INFO [rg1-rn1] TableManagerStateTracker soft shutdown initiated.
+2016-05-03 21:34:13.506 UTC INFO [rg1-rn1] {0} queue added:{1}
+2016-05-03 21:34:13.506 UTC INFO [rg1-rn1] Table manager change state to {0}
+2016-05-03 21:34:13.506 UTC INFO [rg1-rn1] {0} thread exited: {1}{2}
+2016-05-03 21:34:13.507 UTC INFO [rg1-rn1] Closing secondary database handles
+2016-05-03 21:34:13.507 UTC INFO [rg1-rn1] Closing {0} db
+2016-05-03 21:34:13.507 UTC INFO [rg1-rn1] Closing partition database handles
+2016-05-03 21:34:13.507 UTC INFO [rg1-rn1] Closing {0} db
+2016-05-03 21:34:13.507 UTC INFO [rg1-rn1] JE: Shutting down node rg1-rn1(1)
+2016-05-03 21:34:13.507 UTC INFO [rg1-rn1] JE: Refreshed 0 monitors.
+2016-05-03 21:34:13.507 UTC INFO [rg1-rn1] JE: Elections shutdown initiated
+2016-05-03 21:34:13.507 UTC INFO [rg1-rn1] JE: Acceptor Thread rg1-rn1 soft shutdown initiated.
+2016-05-03 21:34:13.507 UTC INFO [rg1-rn1] JE: Learner Thread rg1-rn1 soft shutdown initiated.
+2016-05-03 21:34:13.507 UTC INFO [rg1-rn1] JE: Elections shutdown completed
+2016-05-03 21:34:13.508 UTC INFO [rg1-rn1] JE: Feeder manager soft shutdown.
+2016-05-03 21:34:13.508 UTC INFO [rg1-rn1] JE: MASTER rg1-rn1(1) soft shutdown initiated.
+2016-05-03 21:34:13.508 UTC INFO [rg1-rn1] JE: Feeder manager exited. CurrentTxnEnd VLSN: 865
+2016-05-03 21:34:13.508 UTC INFO [rg1-rn1] State change event: Tue May 03 16:34:13 CDT 2016, State: UNKNOWN, Type: ELECTABLE, Master: none
+2016-05-03 21:34:13.508 UTC INFO [rg1-rn1] JE: RepNode main thread shutting down.
+2016-05-03 21:34:13.508 UTC INFO [rg1-rn1] State change event: Tue May 03 16:34:13 CDT 2016, State: DETACHED, Type: ELECTABLE, Master: none
+2016-05-03 21:34:13.509 UTC INFO [rg1-rn1] JE: RepNode main thread: DETACHED rg1-rn1(1) exited.
+2016-05-03 21:34:13.509 UTC INFO [rg1-rn1] JE: Feeder Manager node: rg1-rn1 soft shutdown initiated.
+2016-05-03 21:34:13.509 UTC INFO [rg1-rn1] JE: ServiceDispatcher shutdown starting. HostPort=localhost:5014 Registered services: [PartitionMigration]
+2016-05-03 21:34:13.509 UTC INFO [rg1-rn1] JE: ServiceDispatcher-localhost:5014 soft shutdown initiated.
+2016-05-03 21:34:13.510 UTC INFO [rg1-rn1] JE: ServiceDispatcher shutdown completed. HostPort=localhost:5014
+2016-05-03 21:34:13.510 UTC INFO [rg1-rn1] JE: rg1-rn1(1) shutdown completed.
+2016-05-03 21:34:13.510 UTC INFO [rg1-rn1] MasterBalanceStateTracker soft shutdown initiated.
+2016-05-03 21:34:13.510 UTC INFO [rg1-rn1] {0} queue added:{1}
+2016-05-03 21:34:13.510 UTC INFO [rg1-rn1] {0} thread exited: {1}{2}
+2016-05-03 21:34:13.510 UTC INFO [rg1-rn1] Service status changed from STOPPING to STOPPED
+2016-05-03 21:34:13.511 UTC INFO [rg1-rn1] Service status: STOPPED 2016-05-03 21:34:13 UTC
+2016-05-03 21:34:13.511 UTC INFO [rg1-rn1] MonitorAgent stopping, 60 items remain.

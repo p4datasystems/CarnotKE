@@ -7,8 +7,6 @@
 package org.python.ReL.WDB.database.wdb.metadata;
 
 
-import org.python.ReL.WDB.database.wdb.*;
-
 import java.rmi.server.UID;
 import java.util.*;
 
@@ -39,7 +37,7 @@ public final class SubclassDef extends ClassDef {
 		super(_name, _comment, _attributes);
 		superClasses = new ArrayList();
 	}
-	public ClassDef getBaseClass(SleepyCatDataAdapter scda) throws Exception
+	public ClassDef getBaseClass(Adapter scda) throws Exception
 	{
 		//Assume all of our superclasses go back to the same base class alreadly
 		ClassDef superClass;
@@ -66,7 +64,7 @@ public final class SubclassDef extends ClassDef {
 	{
 		return superClasses.size();
 	}
-	public boolean isSubclassOf(String superClassName, SleepyCatDataAdapter scda) throws Exception
+	public boolean isSubclassOf(String superClassName, Adapter scda) throws Exception
 	{
 		//See if its one of my immediate superclasses.
 		if(superClasses.contains(superClassName))
@@ -87,7 +85,7 @@ public final class SubclassDef extends ClassDef {
 		return false;
 	}
 	
-	public WDBObject newInstance(WDBObject baseParent, SleepyCatDataAdapter scda) throws Exception
+	public WDBObject newInstance(WDBObject baseParent, Adapter scda) throws Exception
 	{
 		Integer newUid = new Integer(Math.abs((new UID()).hashCode()));
 		WDBObject newObject = new WDBObject(new Hashtable<String, Integer>(), new Hashtable<String, Integer>(), new Hashtable<String, Object>(), new Hashtable<String, Object>(), this.name, newUid);
@@ -133,7 +131,7 @@ public final class SubclassDef extends ClassDef {
 		
 		return newObject;
 	}
-	public void printAttributeName(PrintNode row, AttributePath attributePath, SleepyCatDataAdapter scda) throws Exception
+	public void printAttributeName(PrintNode row, AttributePath attributePath, Adapter scda) throws Exception
 	{
 		for(int j = 0; j < attributes.size(); j++)
 		{	

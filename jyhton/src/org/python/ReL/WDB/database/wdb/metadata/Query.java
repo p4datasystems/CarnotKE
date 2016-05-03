@@ -13,5 +13,12 @@ package org.python.ReL.WDB.database.wdb.metadata;
  * Window - Preferences - Java - Code Style - Code Templates
  */
 public class Query {
+    public String queryName;
+
+    public Query(){}
+
+    public Query(String queryName) {
+        this.queryName = queryName;
+    }
 
 }

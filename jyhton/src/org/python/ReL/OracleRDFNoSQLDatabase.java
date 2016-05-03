@@ -1,5 +1,6 @@
 package org.python.ReL;
 
+
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.*;
 import com.hp.hpl.jena.query.Query;
@@ -7,9 +8,10 @@ import com.hp.hpl.jena.sparql.core.DatasetImpl;
 import oracle.rdf.kv.client.jena.DatasetGraphNoSql;
 import oracle.rdf.kv.client.jena.OracleGraphNoSql;
 import oracle.rdf.kv.client.jena.OracleNoSqlConnection;
+import org.python.ReL.WDB.database.wdb.metadata.*;
 import org.python.core.*;
-import wdb.metadata.*;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -240,6 +242,8 @@ public class OracleRDFNoSQLDatabase extends DatabaseInterface {
             this.db = db;
         }
 
+
+
         @Override
         public void putClass(ClassDef classDef)
         {
@@ -247,7 +251,7 @@ public class OracleRDFNoSQLDatabase extends DatabaseInterface {
         }
 
         @Override
-        public ClassDef getClass(wdb.metadata.Query query) throws ClassNotFoundException
+        public ClassDef getClass(org.python.ReL.WDB.database.wdb.metadata.Query query) throws ClassNotFoundException
         {
             throw new ClassNotFoundException();
         }

@@ -4,10 +4,9 @@ package org.python.ReL.WDB.parser.generated.wdb.parser;
 
 import java.util.ArrayList;
 
-import org.python.ReL.WDB.database.wdb.SleepyCatDataAdapter;
+import org.python.ReL.WDB.database.wdb.metadata.Adapter;
 import org.python.ReL.WDB.database.wdb.metadata.IndexSelectResult;
 import org.python.ReL.WDB.database.wdb.metadata.WDBObject;
-import org.python.ReL.WDB.parser.javacc.QueryParser;
 
 public class Or extends SimpleNode {
   public Or(int id) {
@@ -17,7 +16,7 @@ public class Or extends SimpleNode {
   public Or(QueryParser p, int id) {
     super(p, id);
   }
-  public IndexSelectResult filterObjectsWithIndexes(SleepyCatDataAdapter da, ArrayList indexes) throws Exception
+  public IndexSelectResult filterObjectsWithIndexes(Adapter da, ArrayList indexes) throws Exception
   {
 	  SimpleNode n1 = (SimpleNode)children[0];
 	  SimpleNode n2 = (SimpleNode)children[1];
@@ -27,7 +26,7 @@ public class Or extends SimpleNode {
 	  rightResult.doDelayedAnd(da, indexes);
 	  return leftResult.or(leftResult);
   }
-  public boolean eval(SleepyCatDataAdapter da, WDBObject wdbO) throws Exception
+  public boolean eval(Adapter da, WDBObject wdbO) throws Exception
   {
   	SimpleNode n1 = (SimpleNode)children[0];
   	SimpleNode n2 = (SimpleNode)children[1];

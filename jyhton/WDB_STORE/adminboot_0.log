@@ -1,0 +1,7 @@
+2016-05-03 21:33:59.741 UTC INFO [BootstrapAdmin] Starting in bootstrap mode
+2016-05-03 21:33:59.744 UTC INFO [BootstrapAdmin] Starting commandService on rmi://localhost:5010/commandService
+2016-05-03 21:33:59.842 UTC INFO [BootstrapAdmin] Successfully created a secure proxy for commandService
+2016-05-03 21:33:59.967 UTC INFO [BootstrapAdmin] Starting admin:CLIENT_ADMIN on rmi://localhost:5010/admin:CLIENT_ADMIN
+2016-05-03 21:33:59.971 UTC INFO [BootstrapAdmin] Successfully created a secure proxy for admin:CLIENT_ADMIN
+2016-05-03 21:33:59.977 UTC INFO [BootstrapAdmin] Started AdminService
+2016-05-03 21:34:05.609 UTC INFO [BootstrapAdmin] Changing log files to log directory for store WDB

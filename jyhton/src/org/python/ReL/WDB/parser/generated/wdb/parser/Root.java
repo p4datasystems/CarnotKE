@@ -2,10 +2,9 @@
 
 package org.python.ReL.WDB.parser.generated.wdb.parser;
 
-import org.python.ReL.WDB.database.wdb.SleepyCatDataAdapter;
+import org.python.ReL.WDB.database.wdb.metadata.Adapter;
 import org.python.ReL.WDB.database.wdb.metadata.IndexSelectResult;
 import org.python.ReL.WDB.database.wdb.metadata.WDBObject;
-import org.python.ReL.WDB.parser.javacc.QueryParser;
 
 import java.util.ArrayList;
 
@@ -17,12 +16,12 @@ public class Root extends SimpleNode {
   public Root(QueryParser p, int id) {
     super(p, id);
   }
-  public IndexSelectResult filterObjectsWithIndexes(SleepyCatDataAdapter da, ArrayList indexes) throws Exception
+  public IndexSelectResult filterObjectsWithIndexes(Adapter da, ArrayList indexes) throws Exception
   {
 	  SimpleNode n = (SimpleNode)children[0];
 	  return n.filterObjectsWithIndexes(da, indexes);
   }
-  public boolean eval(SleepyCatDataAdapter da, WDBObject wdbO) throws Exception
+  public boolean eval(Adapter da, WDBObject wdbO) throws Exception
   {
   	SimpleNode n = (SimpleNode)children[0];
   	return n.eval(da, wdbO);

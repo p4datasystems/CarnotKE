@@ -4,9 +4,9 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+
 package org.python.ReL.WDB.database.wdb.metadata;
 
-import org.python.ReL.WDB.database.wdb.*;
 import org.python.ReL.WDB.parser.generated.wdb.parser.SimpleNode;
 
 import java.io.Serializable;
@@ -21,13 +21,13 @@ import java.util.*;
 public class WDBObject implements Serializable {
 	private String classDefName;
 	private Integer Uid;
-	
+
 	private Hashtable<String, Integer> parents;
 	private Hashtable<String, Integer> children;
-	
+
 	private Hashtable<String, Object> evaObjects;
 	private Hashtable<String, Object> dvaValues;
-	
+
 	public WDBObject(Hashtable<String, Integer> parents, Hashtable<String, Integer> children, Hashtable<String, Object> evaObjects, Hashtable<String, Object> dvaValues, String classDefName, Integer Uid)
 	{
 		this.parents = parents;
@@ -37,17 +37,17 @@ public class WDBObject implements Serializable {
 		this.classDefName = classDefName;
 		this.Uid = Uid;
 	}
-	
+
 	public boolean equals(Object o)
 	{
 		if(o.getClass() == this.getClass() && ((WDBObject)o).Uid.equals(this.Uid))
 		{
 			return true;
 		}
-		
+
 		return false;
 	}
-	public WDBObject getBaseObject(SleepyCatDataAdapter scda) throws Exception
+	public WDBObject getBaseObject(Adapter scda) throws Exception
 	{
 		ClassDef myClass = this.getClassDef(scda);
 		//See if its parent of this class
@@ -78,8 +78,8 @@ public class WDBObject implements Serializable {
 			return null;
 		}
 	}
-	public WDBObject getParentObject(String superClassName, SleepyCatDataAdapter scda) throws Exception
-	{	
+	public WDBObject getParentObject(String superClassName, Adapter scda) throws Exception
+	{
 		ClassDef myClass = this.getClassDef(scda);
 		//See if its parent of this class
 		if(myClass.getClass() == SubclassDef.class)
@@ -110,22 +110,22 @@ public class WDBObject implements Serializable {
 			return null;
 		}
 	}
-	
+
 	public void addParentObject(WDBObject parent) throws Exception
 	{
 		this.parents.put(parent.getClassName(), parent.getUid());
 	}
-	
+
 	public void removeParentObject(WDBObject parent) throws Exception
 	{
 		this.parents.remove(parent.getClassName());
 	}
-	
+
 	public void removeParentObject(String superclassName) throws Exception
 	{
 		this.parents.remove(superclassName);
 	}
-	
+
 	public void addChildObject(WDBObject child) throws Exception
 	{
 		if(!children.containsKey(child.getClassName()))
@@ -137,8 +137,8 @@ public class WDBObject implements Serializable {
 			throw new ClassCastException("This entity of class \"" + this.classDefName + "\" has alreadly been extended to class \"" + child.getClassName() + "\"");
 		}
 	}
-	
-	public WDBObject getChildObject(String subClassName, SleepyCatDataAdapter scda) throws Exception
+
+	public WDBObject getChildObject(String subClassName, Adapter scda) throws Exception
 	{
 		//See if its one of my immediate subclasses.
 		if(children.containsKey(subClassName))
@@ -150,38 +150,38 @@ public class WDBObject implements Serializable {
 			return null;
 		}
 	}
-	
+
 	public boolean hasChildObjectOfClass(String className)
 	{
 		return children.containsKey(className);
 	}
-	
+
 	public void removeChildObject(WDBObject child) throws Exception
 	{
 		this.children.remove(child.getClassName());
 	}
-	
+
 	public void removeChildObject(String subclassName) throws Exception
 	{
 		this.children.remove(subclassName);
 	}
-	public void commit(SleepyCatDataAdapter scda) throws Exception
+	public void commit(Adapter scda) throws Exception
 	{
 		scda.putObject(this);
 	}
-	public ClassDef getClassDef(SleepyCatDataAdapter scda) throws Exception
+	public ClassDef getClassDef(Adapter scda) throws Exception
 	{
 		return scda.getClass(this.classDefName);
 	}
-	
+
 	public Object getImmDvaValue(String dvaName)
 	{
 		return this.dvaValues.get(dvaName);
 	}
-	public Object getDvaValue(String dvaName, SleepyCatDataAdapter scda) throws Exception
+	public Object getDvaValue(String dvaName, Adapter scda) throws Exception
 	{
 		Object value = null;
-		
+
 		//See if its immediate in this class
 		ClassDef myClass = this.getClassDef(scda);
 		Attribute myAttribute = myClass.getAttribute(dvaName);
@@ -200,7 +200,7 @@ public class WDBObject implements Serializable {
 					String parentClass = (String)e.nextElement();
 					Integer parentUid = (Integer)parents.get(parentClass);
 					WDBObject parent = scda.getObject(parentClass, parentUid);
-					
+
 					value = parent.getDvaValue(dvaName, scda);
 					//If we reached here, we got our value. Get out of here
 					break;
@@ -210,9 +210,9 @@ public class WDBObject implements Serializable {
 					//Can't find DVA going up that parent's heirarchy. Continue on to another parent
 					if(!e.hasMoreElements())
 					{
-						//No more parents to try. We are here if we exausted our parent's list and 
+						//No more parents to try. We are here if we exausted our parent's list and
 						//still can't find the DVA. Throw exception
-						throw nsfe; 
+						throw nsfe;
 					}
 				}
 			}
@@ -222,33 +222,54 @@ public class WDBObject implements Serializable {
 		{
 			throw new NoSuchFieldException("Attribute \"" + dvaName + "\" is not a valid DVA");
 		}
-		
+
 		return value;
 	}
-	
-	public void setDvaValue(String dvaName, Object value, SleepyCatDataAdapter scda) throws Exception
-	{	
+
+	public ArrayList<String> getDvaNames()
+	{
+		ArrayList<String> dvaNames = new ArrayList<String>();
+		for (String name : dvaValues.keySet())
+		{
+			dvaNames.add(name);
+		}
+		return dvaNames;
+
+	}
+
+	public ArrayList<String> getDvaValues()
+	{
+		ArrayList<String> dvaValsAsStrings = new ArrayList<String>();
+		for (Object dvaVal : dvaValues.values())
+		{
+			dvaValsAsStrings.add(dvaVal.toString());
+		}
+		return dvaValsAsStrings;
+	}
+
+	public void setDvaValue(String dvaName, Object value, Adapter scda) throws Exception
+	{
 		//See if its immediate in this class
 		ClassDef myClass = this.getClassDef(scda);
-    Attribute myAttribute = myClass.getAttribute(dvaName);
-    if(myAttribute != null && myAttribute.getClass() == DVA.class)
-    {
-      if(value instanceof String)
-      {
-        this.dvaValues.put(dvaName, value);
-      }
-      else if(value instanceof Integer)
-      {
-        this.dvaValues.put(dvaName, value);
-      }
-      else if(value instanceof Boolean)
-      {
-        this.dvaValues.put(dvaName, value);
-      }
-      else
-      {
-        throw new ClassCastException("Type verification failed: Attribute \"" + dvaName + "\" type: " + ((DVA)myAttribute).type.toString() + ", Value type: " + value.getClass().toString());
-      }
+		Attribute myAttribute = myClass.getAttribute(dvaName);
+		if(myAttribute != null && myAttribute.getClass() == DVA.class)
+		{
+			if(value instanceof String)
+			{
+				this.dvaValues.put(dvaName, value);
+			}
+			else if(value instanceof Integer)
+			{
+				this.dvaValues.put(dvaName, value);
+			}
+			else if(value instanceof Boolean)
+			{
+				this.dvaValues.put(dvaName, value);
+			}
+			else
+			{
+				throw new ClassCastException("Type verification failed: Attribute \"" + dvaName + "\" type: " + ((DVA)myAttribute).type.toString() + ", Value type: " + value.getClass().toString());
+			}
 		}
 		//Not immediate, go check parents if I'm an object of a subclass
 		else if(myClass.getClass() == SubclassDef.class)
@@ -261,7 +282,7 @@ public class WDBObject implements Serializable {
 					String parentClass = (String)e.nextElement();
 					Integer parentUid = (Integer)parents.get(parentClass);
 					WDBObject parent = scda.getObject(parentClass, parentUid);
-					
+
 					parent.setDvaValue(dvaName, value, scda);
 					//If we reached here, we set our value. Get out of here
 					break;
@@ -271,9 +292,9 @@ public class WDBObject implements Serializable {
 					//Can't find DVA going up that parent's heirarchy. Continue on to another parent
 					if(!e.hasMoreElements())
 					{
-						//No more parents to try. We are here if we exausted our parent's list and 
+						//No more parents to try. We are here if we exausted our parent's list and
 						//still can't find the DVA. Throw exception
-						throw nsfe; 
+						throw nsfe;
 					}
 				}
 			}
@@ -283,18 +304,18 @@ public class WDBObject implements Serializable {
 		{
 			throw new NoSuchFieldException("Attribute \"" + dvaName + "\" is not a valid DVA");
 		}
-		
+
 		this.commit(scda);
 	}
-	
-	public void addEvaObjects(String evaName, String targetClass, SimpleNode expression, SleepyCatDataAdapter scda) throws Exception
+
+	public void addEvaObjects(String evaName, String targetClass, SimpleNode expression, Adapter scda) throws Exception
 	{
 		ClassDef myClass = this.getClassDef(scda);
 		Attribute myAttribute = myClass.getAttribute(evaName);
 		if(myAttribute != null && myAttribute.getClass() == EVA.class)
 		{
 			ClassDef targetClassDef = scda.getClass(targetClass);
-			if(targetClassDef.name.equals(((EVA)myAttribute).baseClassName) || 
+			if(targetClassDef.name.equals(((EVA)myAttribute).baseClassName) ||
 					targetClassDef.isSubclassOf((((EVA)myAttribute).baseClassName), scda))
 			{
 				ClassDef baseClassDef = scda.getClass(((EVA)myAttribute).baseClassName);
@@ -327,7 +348,7 @@ public class WDBObject implements Serializable {
 					}
 					//Update the object
 					baseObject.commit(scda);
-					
+
 				}
 			}
 			else
@@ -346,7 +367,7 @@ public class WDBObject implements Serializable {
 					String parentClass = (String)e.nextElement();
 					Integer parentUid = (Integer)parents.get(parentClass);
 					WDBObject parent = scda.getObject(parentClass, parentUid);
-					
+
 					parent.addEvaObjects(evaName, targetClass, expression, scda);
 					//If we reached here, we set our value. Get out of here
 					break;
@@ -356,9 +377,9 @@ public class WDBObject implements Serializable {
 					//Can't find DVA going up that parent's heirarchy. Continue on to another parent
 					if(!e.hasMoreElements())
 					{
-						//No more parents to try. We are here if we exausted our parent's list and 
+						//No more parents to try. We are here if we exausted our parent's list and
 						//still can't find the DVA. Throw exception
-						throw nsfe; 
+						throw nsfe;
 					}
 				}
 			}
@@ -368,18 +389,18 @@ public class WDBObject implements Serializable {
 		{
 			throw new NoSuchFieldException("Attribute \"" + evaName + "\" is not a valid EVA");
 		}
-		
+
 		this.commit(scda);
 	}
-	
-	public void removeEvaObjects(String evaName, String targetClass, SimpleNode expression, SleepyCatDataAdapter scda) throws Exception
+
+	public void removeEvaObjects(String evaName, String targetClass, SimpleNode expression, Adapter scda) throws Exception
 	{
 		ClassDef targetClassDef = scda.getClass(targetClass);
 		WDBObject[] matchingObjs = targetClassDef.search(expression, scda);
 		removeEvaObjects(evaName, targetClass, matchingObjs, scda);
 	}
-	
-	public void removeEvaObjects(String evaName, String targetClass, WDBObject[] targetObjects, SleepyCatDataAdapter scda) throws Exception
+
+	public void removeEvaObjects(String evaName, String targetClass, WDBObject[] targetObjects, Adapter scda) throws Exception
 	{
 		//Don't do anything if the target objects to remove is null
 		if(targetObjects != null)
@@ -389,7 +410,7 @@ public class WDBObject implements Serializable {
 			if(myAttribute != null && myAttribute.getClass() == EVA.class)
 			{
 				ClassDef targetClassDef = scda.getClass(targetClass);
-				if(targetClassDef.name.equals(((EVA)myAttribute).baseClassName) || 
+				if(targetClassDef.name.equals(((EVA)myAttribute).baseClassName) ||
 						targetClassDef.isSubclassOf((((EVA)myAttribute).baseClassName), scda))
 				{
 					ClassDef baseClassDef = scda.getClass(((EVA)myAttribute).baseClassName);
@@ -436,7 +457,7 @@ public class WDBObject implements Serializable {
 						String parentClass = (String)e.nextElement();
 						Integer parentUid = (Integer)parents.get(parentClass);
 						WDBObject parent = scda.getObject(parentClass, parentUid);
-						
+
 						parent.removeEvaObjects(evaName, targetClass, targetObjects, scda);
 						//If we reached here, we set our value. Get out of here
 						break;
@@ -448,7 +469,7 @@ public class WDBObject implements Serializable {
 						{
 							//No more parents to try. We are here if we exausted our parent's list and 
 							//still can't find the DVA. Throw exception
-							throw nsfe; 
+							throw nsfe;
 						}
 					}
 				}
@@ -458,12 +479,12 @@ public class WDBObject implements Serializable {
 			{
 				throw new NoSuchFieldException("Attribute \"" + evaName + "\" is not a valid EVA");
 			}
-			
+
 			this.commit(scda);
 		}
 	}
-	
-	private void addEvaObject(EVA targetEva, WDBObject targetEvaObject, SleepyCatDataAdapter scda) throws Exception
+
+	private void addEvaObject(EVA targetEva, WDBObject targetEvaObject, Adapter scda) throws Exception
 	{
 		//TODO: Make sure we update the objects that we removed when replacing with new values
 		if(targetEva.cardinality.equals(EVA.MULTIVALUED))
@@ -486,8 +507,8 @@ public class WDBObject implements Serializable {
 			throw new NoSuchFieldException("Attribute \"" + targetEva.name + "\" uses a invalid cardinality");
 		}
 	}
-	
-	private Boolean removeEvaObject(EVA targetEva, WDBObject targetEvaObject, SleepyCatDataAdapter scda) throws Exception
+
+	private Boolean removeEvaObject(EVA targetEva, WDBObject targetEvaObject, Adapter scda) throws Exception
 	{
 		if(targetEva.cardinality.equals(EVA.MULTIVALUED))
 		{
@@ -511,65 +532,65 @@ public class WDBObject implements Serializable {
 			throw new NoSuchFieldException("Attribute \"" + targetEva + "\" uses a invalid cardinality");
 		}
 	}
-/*
-	private void addEvaInverse(EVA ownerEva, ClassDef ownerEvaClass, WDBObject ownerEvaObject, SleepyCatDataAdapter scda) throws Exception
-	{
-		//Try to see if other class's inverse EVA is declared on my side
-		ClassDef myClass = this.getClassDef(scda);
-		Attribute myAttribute = myClass.getAttribute(ownerEva.inverseEVA);
-		if(myAttribute != null && myAttribute.getClass() == EVA.class)
-		{
-			//Oh it is, good. Use the declared settings
-			if(((EVA)myAttribute).cardinality == EVA.MULTIVALUED)
-			{
-				ArrayList targetObjectList = ((ArrayList)this.evaObjects.get(myAttribute.name));
-				if(targetObjectList == null)
-				{
-					targetObjectList = new ArrayList();
-				}
-				targetObjectList.add(ownerEvaObject.getUid());
-				this.evaObjects.put(myAttribute.name, targetObjectList);
-			}
-			else if(((EVA)myAttribute).cardinality == EVA.SINGLEVALUED)
-			{
-				//For singlevalued EVAs, just put the UID as the value;
-				this.evaObjects.put(myAttribute.name, ownerEvaObject.getUid());
-			}
-			else
-			{
-				throw new NoSuchFieldException("Attribute \"" + myAttribute.name + "\" uses a invalid cardinality");
-			}
-		}
-		else
-		{
-			throw new Exception("Implication of target class inverse EVAs is not implemented");
+	/*
+        private void addEvaInverse(EVA ownerEva, ClassDef ownerEvaClass, WDBObject ownerEvaObject, Adapter scda) throws Exception
+        {
+            //Try to see if other class's inverse EVA is declared on my side
+            ClassDef myClass = this.getClassDef(scda);
+            Attribute myAttribute = myClass.getAttribute(ownerEva.inverseEVA);
+            if(myAttribute != null && myAttribute.getClass() == EVA.class)
+            {
+                //Oh it is, good. Use the declared settings
+                if(((EVA)myAttribute).cardinality == EVA.MULTIVALUED)
+                {
+                    ArrayList targetObjectList = ((ArrayList)this.evaObjects.get(myAttribute.name));
+                    if(targetObjectList == null)
+                    {
+                        targetObjectList = new ArrayList();
+                    }
+                    targetObjectList.add(ownerEvaObject.getUid());
+                    this.evaObjects.put(myAttribute.name, targetObjectList);
+                }
+                else if(((EVA)myAttribute).cardinality == EVA.SINGLEVALUED)
+                {
+                    //For singlevalued EVAs, just put the UID as the value;
+                    this.evaObjects.put(myAttribute.name, ownerEvaObject.getUid());
+                }
+                else
+                {
+                    throw new NoSuchFieldException("Attribute \"" + myAttribute.name + "\" uses a invalid cardinality");
+                }
+            }
+            else
+            {
+                throw new Exception("Implication of target class inverse EVAs is not implemented");
 
-			//The inverse EVA is not defined in this class or there is no inverse EVA specified
-			//We have to infer the cardinality of our inverse based on the cardinality EVA from the owner's class
-			if(ownerEva.cardinality == EVA.SINGLEVALUED)
-			{
-				//Imply MV UNIQUE
-				if(myAttribute != null)
-				{
-					ArrayList targetObjectList = ((ArrayList)this.evaObjects.get(myAttribute.name));
-					if(targetObjectList == null)
-					{
-						targetObjectList = new ArrayList();
-					}
-					targetObjectList.add(ownerEvaObject.getUid());
-				}
-			}
+                //The inverse EVA is not defined in this class or there is no inverse EVA specified
+                //We have to infer the cardinality of our inverse based on the cardinality EVA from the owner's class
+                if(ownerEva.cardinality == EVA.SINGLEVALUED)
+                {
+                    //Imply MV UNIQUE
+                    if(myAttribute != null)
+                    {
+                        ArrayList targetObjectList = ((ArrayList)this.evaObjects.get(myAttribute.name));
+                        if(targetObjectList == null)
+                        {
+                            targetObjectList = new ArrayList();
+                        }
+                        targetObjectList.add(ownerEvaObject.getUid());
+                    }
+                }
 
-		}
-		
-		this.commit(scda);
-	}
-	*/
-	public WDBObject[] getEvaObjects(String evaName, SleepyCatDataAdapter scda) throws Exception
+            }
+
+            this.commit(scda);
+        }
+        */
+	public WDBObject[] getEvaObjects(String evaName, Adapter scda) throws Exception
 	{
 		ClassDef myClass = this.getClassDef(scda);
 		Attribute myAttribute = myClass.getAttribute(evaName);
-		
+
 		WDBObject[] evaObjects = new WDBObject[0];
 		if(myAttribute != null && myAttribute.getClass() == EVA.class)
 		{
@@ -609,7 +630,7 @@ public class WDBObject implements Serializable {
 			{
 				throw new NoSuchFieldException("Attribute \"" + evaName + "\" uses a invalid cardinality");
 			}
-			
+
 		}
 		else if(myClass.getClass() == SubclassDef.class)
 		{
@@ -621,7 +642,7 @@ public class WDBObject implements Serializable {
 					String parentClass = (String)e.nextElement();
 					Integer parentUid = (Integer)parents.get(parentClass);
 					WDBObject parent = scda.getObject(parentClass, parentUid);
-					
+
 					return parent.getEvaObjects(evaName, scda);
 					//If we reached here, we get our value. Get out of here
 					//break;
@@ -633,7 +654,7 @@ public class WDBObject implements Serializable {
 					{
 						//No more parents to try. We are here if we exausted our parent's list and 
 						//still can't find the DVA. Throw exception
-						throw nsfe; 
+						throw nsfe;
 					}
 				}
 			}
@@ -643,7 +664,7 @@ public class WDBObject implements Serializable {
 		{
 			throw new NoSuchFieldException("Attribute \"" + evaName + "\" is not a valid EVA");
 		}
-		
+
 		return evaObjects;
 	}
 	
@@ -1029,11 +1050,11 @@ public class WDBObject implements Serializable {
 		return success;
 	}
 	*/
-	
-	public ArrayList<Object> getAttributeValue(AttributePath attributePath, SleepyCatDataAdapter scda) throws Exception
+
+	public ArrayList<Object> getAttributeValue(AttributePath attributePath, Adapter scda) throws Exception
 	{
 		ArrayList<Object> values = new ArrayList<Object>();
-		
+
 		if(attributePath.levelsOfIndirection() <= 0)
 		{
 			values.add(this.getDvaValue(attributePath.attribute, scda));
@@ -1043,7 +1064,7 @@ public class WDBObject implements Serializable {
 		{
 			String evaName = attributePath.getIndirection(attributePath.levelsOfIndirection() - 1);
 			WDBObject[] objects = this.getEvaObjects(evaName, scda);
-			
+
 			if(objects != null && objects.length > 0)
 			{
 				attributePath.removeIndirection(attributePath.levelsOfIndirection() - 1);
@@ -1056,16 +1077,16 @@ public class WDBObject implements Serializable {
 		}
 		return values;
 	}
-	
-	public void PrintAttribute(PrintNode row, AttributePath attributePath, SleepyCatDataAdapter scda) throws Exception
-	{	
+
+	public void PrintAttribute(PrintNode row, AttributePath attributePath, Adapter scda) throws Exception
+	{
 		ClassDef myClass = this.getClassDef(scda);
 		if(attributePath.levelsOfIndirection() <= 0)
 		{
 			if(attributePath.attribute.equals("*"))
 			{
 				for(int j = 0; j < myClass.attributes.size(); j++)
-				{	
+				{
 					Attribute currentAttribute = (Attribute)myClass.getAttribute(j);
 					if(currentAttribute.getClass() == DVA.class)
 					{
@@ -1100,7 +1121,7 @@ public class WDBObject implements Serializable {
 			String evaName = attributePath.getIndirection(attributePath.levelsOfIndirection() - 1);
 			WDBObject[] objects = this.getEvaObjects(evaName, scda);
 			ArrayList<PrintNode> branch = row.getBranch(evaName);
-			
+
 			if(objects != null && objects.length > 0)
 			{
 				if(branch == null)
@@ -1122,16 +1143,16 @@ public class WDBObject implements Serializable {
 					myClass.padAttribute(branch.get(0), attributePath, scda);
 				}
 			}
-			
+
 			row.updateBranchCols(evaName);
 		}
 	}
-	
+
 	public Integer getUid()
 	{
 		return this.Uid;
 	}
-	
+
 	public String getClassName()
 	{
 		return this.classDefName;

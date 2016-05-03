@@ -1,0 +1,144 @@
+<config version="1">
+  <component name="storageNodeParams" type="storageNodeParams" validate="true">
+    <property name="snMonitorSOBacklog" value="0" type="INT"/>
+    <property name="mgmtTrapPort" value="0" type="INT"/>
+    <property name="snMonitorSOConnectTimeout" value="10 SECONDS" type="DURATION"/>
+    <property name="mgmtPollPort" value="0" type="INT"/>
+    <property name="snRegistrySOBacklog" value="1024" type="INT"/>
+    <property name="useClientSocketFactories" value="true" type="BOOLEAN"/>
+    <property name="numCPUs" value="1" type="INT"/>
+    <property name="adminLoginSOBacklog" value="0" type="INT"/>
+    <property name="snLoginSOBacklog" value="0" type="INT"/>
+    <property name="snLoginSOReadTimeout" value="5 SECONDS" type="DURATION"/>
+    <property name="capacity" value="1" type="INT"/>
+    <property name="memoryMB" value="512" type="INT"/>
+    <property name="hostname" value="localhost" type="STRING"/>
+    <property name="processStartupPrefix" value="" type="STRING"/>
+    <property name="rnHeapMaxMB" value="0" type="LONG"/>
+    <property name="connectTimeout" value="10 SECONDS" type="DURATION"/>
+    <property name="snMonitorSOReadTimeout" value="5 SECONDS" type="DURATION"/>
+    <property name="registryPort" value="5010" type="INT"/>
+    <property name="adminListenerSOBacklog" value="100" type="INT"/>
+    <property name="serviceLogFileLimit" value="2000000" type="INT"/>
+    <property name="repnodeStartWait" value="120 SECONDS" type="DURATION"/>
+    <property name="systemPercent" value="100" type="INT"/>
+    <property name="storageNodeId" value="1" type="INT"/>
+    <property name="haPortRange" value="5013,5016" type="STRING"/>
+    <property name="snLoginSOConnectTimeout" value="5 SECONDS" type="DURATION"/>
+    <property name="gcThreadFloor" value="4" type="INT"/>
+    <property name="mgmtClass" value="oracle.kv.impl.mgmt.NoOpAgent" type="STRING"/>
+    <property name="rnHeapPercent" value="85" type="INT"/>
+    <property name="gcThreadThreshold" value="8" type="INT"/>
+    <property name="snAdminSOBacklog" value="0" type="INT"/>
+    <property name="adminCommandServiceSOBacklog" value="0" type="INT"/>
+    <property name="haHostname" value="localhost" type="STRING"/>
+    <property name="gcThreadPercent" value="62" type="INT"/>
+    <property name="rootDirPath" value="/Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/./WDB_STORE" type="STRING"/>
+    <property name="serviceLogFileCount" value="20" type="INT"/>
+    <property name="readTimeout" value="140 SECONDS" type="DURATION"/>
+    <property name="snRegistrySOConnectTimeout" value="3 SECONDS" type="DURATION"/>
+    <property name="masterBalance" value="true" type="BOOLEAN"/>
+    <property name="linkExecWait" value="200 SECONDS" type="DURATION"/>
+    <property name="serviceStopWait" value="120 SECONDS" type="DURATION"/>
+    <property name="maxLinkCount" value="500" type="INT"/>
+  </component>
+  <component name="mountPoints" type="bootstrapParams" validate="false">
+    <property name="/Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/./WDB_db/store" value="" type="STRING"/>
+  </component>
+  <component name="globalParams" type="globalParams" validate="true">
+    <property name="isLoopback" value="true" type="BOOLEAN"/>
+    <property name="storeName" value="WDB" type="STRING"/>
+  </component>
+  <component name="admin1" type="adminParams" validate="true">
+    <property name="broadcastTopoDelay" value="10 SECONDS" type="DURATION"/>
+    <property name="adminLogFileLimit" value="4000000" type="INT"/>
+    <property name="createCSV" value="false" type="BOOLEAN"/>
+    <property name="adminHttpPort" value="5011" type="INT"/>
+    <property name="useClientSocketFactories" value="true" type="BOOLEAN"/>
+    <property name="broadcastMetadataDelay" value="10 SECONDS" type="DURATION"/>
+    <property name="waitAdminFailover" value="1 MINUTES" type="DURATION"/>
+    <property name="waitTimeout" value="5 MINUTES" type="DURATION"/>
+    <property name="adminLoginSOBacklog" value="0" type="INT"/>
+    <property name="adminLogFileCount" value="20" type="INT"/>
+    <property name="checkAddIndex" value="10 SECONDS" type="DURATION"/>
+    <property name="GCLogFileSize" value="1048576" type="INT"/>
+    <property name="adminId" value="1" type="INT"/>
+    <property name="disabled" value="false" type="BOOLEAN"/>
+    <property name="broadcastTopoThreshold" value="20" type="INT"/>
+    <property name="broadcastMetadataThreshold" value="20" type="INT"/>
+    <property name="adminListenerSOBacklog" value="100" type="INT"/>
+    <property name="storageNodeId" value="1" type="INT"/>
+    <property name="adminType" value="PRIMARY" type="STRING"/>
+    <property name="loggingConfigProps" value="" type="STRING"/>
+    <property name="waitUnreachableService" value="3 SECONDS" type="DURATION"/>
+    <property name="hideUserData" value="true" type="BOOLEAN"/>
+    <property name="helperHosts" value="localhost:5013" type="STRING"/>
+    <property name="adminCommandServiceSOBacklog" value="0" type="INT"/>
+    <property name="numGCLogFiles" value="10" type="INT"/>
+    <property name="maxTopoChanges" value="1000" type="INT"/>
+    <property name="waitRNConsistency" value="60 MINUTES" type="DURATION"/>
+    <property name="nodeHostPort" value="localhost:5013" type="STRING"/>
+    <property name="checkPartitionMigration" value="10 SECONDS" type="DURATION"/>
+    <property name="waitRNFailover" value="1 MINUTES" type="DURATION"/>
+    <property name="collectorPollPeriod" value="20 SECONDS" type="DURATION"/>
+    <property name="eventExpiryAge" value="30 DAYS" type="DURATION"/>
+  </component>
+  <component name="rg1-rn1" type="repNodeParams" validate="true">
+    <property name="rnAdminSOBacklog" value="0" type="INT"/>
+    <property name="rnPMSOConnectTimeout" value="10 SECONDS" type="DURATION"/>
+    <property name="rnSessionLookupConsistencyLimit" value="30 SECONDS" type="DURATION"/>
+    <property name="throughputFloor" value="0" type="INT"/>
+    <property name="rnRHSOBacklog" value="1024" type="INT"/>
+    <property name="rnRequestThresholdPercent" value="90" type="INT"/>
+    <property name="rnLoginSOReadTimeout" value="10 SECONDS" type="DURATION"/>
+    <property name="rnNodeLimitPercent" value="85" type="INT"/>
+    <property name="maxTrackedLatency" value="1000 MILLISECONDS" type="DURATION"/>
+    <property name="rnMaxTopoChanges" value="1000" type="INT"/>
+    <property name="configProperties" value="" type="STRING"/>
+    <property name="rnRHSOConnectTimeout" value="3 SECONDS" type="DURATION"/>
+    <property name="threadDumpInterval" value="5 MINUTES" type="DURATION"/>
+    <property name="cacheSize" value="319438192" type="LONG"/>
+    <property name="latencyCeiling" value="0" type="INT"/>
+    <property name="rnPMWaitAfterError" value="30 SECONDS" type="DURATION"/>
+    <property name="threadDumpMax" value="10" type="INT"/>
+    <property name="rnMonitorSOConnectTimeout" value="10 SECONDS" type="DURATION"/>
+    <property name="rnMonitorSOReadTimeout" value="10 SECONDS" type="DURATION"/>
+    <property name="cacheMode" value="EVICT_LN" type="CACHEMODE"/>
+    <property name="javaMiscParams" value="-Xms435M -Xmx435M  -XX:ParallelGCThreads=1" type="STRING"/>
+    <property name="rnAdminSOReadTimeout" value="10 SECONDS" type="DURATION"/>
+    <property name="rnSessionRequestTimeout" value="5 SECONDS" type="DURATION"/>
+    <property name="rnCachePercent" value="70" type="INT"/>
+    <property name="rnSessionLookupRequestTimeout" value="5 SECONDS" type="DURATION"/>
+    <property name="rnMaxActiveRequests" value="100" type="INT"/>
+    <property name="rnPMSOReadWriteTimeout" value="10 SECONDS" type="DURATION"/>
+    <property name="useClientSocketFactories" value="true" type="BOOLEAN"/>
+    <property name="rnSessionLookupConsistencyTimeout" value="3 SECONDS" type="DURATION"/>
+    <property name="rnPMConcurrentSourceLimit" value="1" type="INT"/>
+    <property name="rnMonitorSOBacklog" value="0" type="INT"/>
+    <property name="repNodeId" value="rg1-rn1" type="STRING"/>
+    <property name="rnAdminSOConnectTimeout" value="10 SECONDS" type="DURATION"/>
+    <property name="rnGCLogFileSize" value="1048576" type="INT"/>
+    <property name="rnPMConcurrentTargetLimit" value="2" type="INT"/>
+    <property name="requestQuiesceTime" value="60 SECONDS" type="DURATION"/>
+    <property name="activeThreshold" value="2147483647" type="INT"/>
+    <property name="disabled" value="false" type="BOOLEAN"/>
+    <property name="rnSessionLogoutRequestTimeout" value="20 SECONDS" type="DURATION"/>
+    <property name="rnMountPoint" value="/Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/./WDB_db/store" type="STRING"/>
+    <property name="collectEnvStats" value="true" type="BOOLEAN"/>
+    <property name="rnNodeType" value="ELECTABLE" type="STRING"/>
+    <property name="storageNodeId" value="1" type="INT"/>
+    <property name="rnNRConfigRetainLogFiles" value="false" type="BOOLEAN"/>
+    <property name="statsInterval" value="60 SECONDS" type="DURATION"/>
+    <property name="commitLagThreshold" value="0" type="LONG"/>
+    <property name="loggingConfigProps" value="" type="STRING"/>
+    <property name="rnPMWaitAfterBusy" value="60 SECONDS" type="DURATION"/>
+    <property name="hideUserData" value="true" type="BOOLEAN"/>
+    <property name="helperHosts" value="localhost:5014" type="STRING"/>
+    <property name="rnRHSOReadTimeout" value="30 SECONDS" type="DURATION"/>
+    <property name="nodeHostPort" value="localhost:5014" type="STRING"/>
+    <property name="rnLoginSOConnectTimeout" value="10 SECONDS" type="DURATION"/>
+    <property name="masterBalance" value="true" type="BOOLEAN"/>
+    <property name="rnLoginSOBacklog" value="0" type="INT"/>
+    <property name="rnNumGCLogFiles" value="10" type="INT"/>
+  </component>
+</config>

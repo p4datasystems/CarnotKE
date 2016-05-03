@@ -1,0 +1,28 @@
+2016-05-03 21:34:05.410 UTC INFO [1] Started ServiceDispatcher. HostPort=localhost:5013
+2016-05-03 21:34:05.411 UTC INFO [1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-05-03 21:34:05.445 UTC INFO [1] Current group size: 0
+2016-05-03 21:34:05.446 UTC INFO [1] New node 1(-1) unknown to rep group
+2016-05-03 21:34:05.446 UTC INFO [1] Master changed to 1
+2016-05-03 21:34:05.447 UTC INFO [1] Nascent group. 1 is master by virtue of being the first node.
+2016-05-03 21:34:05.456 UTC INFO [1] Successfully added node:1(1) HostPort = localhost: 5013 [ELECTABLE]
+2016-05-03 21:34:05.458 UTC INFO [1] Refreshed 0 monitors.
+2016-05-03 21:34:05.461 UTC INFO [1] Node 1 started
+2016-05-03 21:34:05.462 UTC INFO [1] Feeder manager accepting requests.
+2016-05-03 21:34:05.463 UTC INFO [1] Joining group as master
+2016-05-03 21:34:05.464 UTC INFO [1] Refreshed 0 monitors.
+2016-05-03 21:34:13.967 UTC INFO [1] Shutting down node 1(1)
+2016-05-03 21:34:13.968 UTC INFO [1] Refreshed 0 monitors.
+2016-05-03 21:34:13.968 UTC INFO [1] Elections shutdown initiated
+2016-05-03 21:34:13.970 UTC INFO [1] Acceptor Thread 1 soft shutdown initiated.
+2016-05-03 21:34:13.970 UTC INFO [1] Learner Thread 1 soft shutdown initiated.
+2016-05-03 21:34:13.970 UTC INFO [1] Elections shutdown completed
+2016-05-03 21:34:13.970 UTC INFO [1] Feeder manager soft shutdown.
+2016-05-03 21:34:13.971 UTC INFO [1] MASTER 1(1) soft shutdown initiated.
+2016-05-03 21:34:13.971 UTC INFO [1] Feeder manager exited. CurrentTxnEnd VLSN: 210
+2016-05-03 21:34:13.971 UTC INFO [1] RepNode main thread shutting down.
+2016-05-03 21:34:13.972 UTC INFO [1] RepNode main thread: DETACHED 1(1) exited.
+2016-05-03 21:34:13.972 UTC INFO [1] Feeder Manager node: 1 soft shutdown initiated.
+2016-05-03 21:34:13.973 UTC INFO [1] ServiceDispatcher shutdown starting. HostPort=localhost:5013 Registered services: []
+2016-05-03 21:34:13.973 UTC INFO [1] ServiceDispatcher-localhost:5013 soft shutdown initiated.
+2016-05-03 21:34:13.973 UTC INFO [1] ServiceDispatcher shutdown completed. HostPort=localhost:5013
+2016-05-03 21:34:13.973 UTC INFO [1] 1(1) shutdown completed.

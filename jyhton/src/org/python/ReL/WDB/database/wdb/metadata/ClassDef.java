@@ -1,6 +1,5 @@
 package org.python.ReL.WDB.database.wdb.metadata;
 
-import org.python.ReL.WDB.database.wdb.SleepyCatDataAdapter;
 import org.python.ReL.WDB.parser.generated.wdb.parser.SimpleNode;
 
 import java.io.*;
@@ -58,7 +57,7 @@ public class ClassDef extends Query implements Serializable {
 		
 		return (IndexDef[])this.indexes.toArray(indexes);
 	}
-	public void addIndex(IndexDef index, SleepyCatDataAdapter scda) throws Exception
+	public void addIndex(IndexDef index, Adapter scda) throws Exception
 	{
 		indexes.add(index);
 		this.commit(scda);
@@ -73,7 +72,7 @@ public class ClassDef extends Query implements Serializable {
 		instances.remove(uid);
 	}
 	
-	public WDBObject getInstance(int index, SleepyCatDataAdapter da) throws Exception
+	public WDBObject getInstance(int index, Adapter da) throws Exception
 	{
 		return da.getObject(this.name, (Integer)instances.get(index));
 	}
@@ -125,15 +124,15 @@ public class ClassDef extends Query implements Serializable {
 		return attributes.size();
 	}
 	
-	public boolean isSubclassOf(String _parent, SleepyCatDataAdapter scda) throws Exception
+	public boolean isSubclassOf(String _parent, Adapter scda) throws Exception
 	{
 		return false;
 	}
-	public ClassDef getBaseClass(SleepyCatDataAdapter scda) throws Exception
+	public ClassDef getBaseClass(Adapter scda) throws Exception
 	{
 		return this;
 	}
-	public WDBObject newInstance(WDBObject parent, SleepyCatDataAdapter scda) throws Exception
+	public WDBObject newInstance(WDBObject parent, Adapter scda) throws Exception
 	{
 		if(parent != null)
 		{
@@ -147,11 +146,11 @@ public class ClassDef extends Query implements Serializable {
 		
 		return newObject;
 	}
-	public void commit(SleepyCatDataAdapter scda) throws Exception
+	public void commit(Adapter scda) throws Exception
 	{
 		scda.putClass(this);
 	}
-	public WDBObject[] search(SimpleNode expression, SleepyCatDataAdapter scda) throws Exception
+	public WDBObject[] search(SimpleNode expression, Adapter scda) throws Exception
 	{
         boolean hasWhereClause = (expression != null);
 		WDBObject[] matchesArray = new WDBObject[0];
@@ -192,7 +191,7 @@ public class ClassDef extends Query implements Serializable {
 
 		return (WDBObject[])matchesList.toArray(matchesArray);
 	}
-	public void padAttribute(PrintNode row, AttributePath attributePath, SleepyCatDataAdapter scda) throws Exception
+	public void padAttribute(PrintNode row, AttributePath attributePath, Adapter scda) throws Exception
 	{
 		for(int j = 0; j < attributes.size(); j++)
 		{	
@@ -248,7 +247,7 @@ public class ClassDef extends Query implements Serializable {
 			}
 		}
 	}
-	public void printAttributeName(PrintNode row, AttributePath attributePath, SleepyCatDataAdapter scda) throws Exception
+	public void printAttributeName(PrintNode row, AttributePath attributePath, Adapter scda) throws Exception
 	{
 		for(int j = 0; j < attributes.size(); j++)
 		{	
