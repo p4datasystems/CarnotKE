@@ -289,7 +289,7 @@ void AttributePath(RetrieveQuery rq) :
 			attributePath.addIndirection(eva);
 		}
 		(
-			LOOKAHEAD(5) <OF> eva = getIdentifier()
+			LOOKAHEAD(5) <COMMA> <OF> eva = getIdentifier()
 			{
 				attributePath.addIndirection(eva);
 			}
@@ -800,7 +800,7 @@ AttributePath getAbsoluteAttributePath() :
 			attributePath.addIndirection(eva);
 		}
 		(
-			LOOKAHEAD(5) <OF> eva = getIdentifier()
+			LOOKAHEAD(5) <COMMA> <OF> eva = getIdentifier()
 			{
 				attributePath.addIndirection(eva);
 			}
