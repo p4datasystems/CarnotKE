@@ -26,7 +26,6 @@ public class InsertQuery extends UpdateQuery {
 	{
 		super(className);
 	}
-
 	/**
 	 * @param className
 	 * @param assignmentList
@@ -35,8 +34,11 @@ public class InsertQuery extends UpdateQuery {
 	{
 		super(className, assignmentList);
 	}
-
-	public String getFromClassName() { return fromClassName; }
+	
+	public String getFromClassName()
+	{
+		return fromClassName;
+	}
 	
 	public void setFromClassName(String name)
 	{

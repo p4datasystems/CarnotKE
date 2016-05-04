@@ -15,8 +15,7 @@ package wdb.metadata;
 public class DvaAssignment extends Assignment {
 	public Integer Index;
 	public Object Value;
-
-
+	
 	public DvaAssignment() {
 		super();
 	}

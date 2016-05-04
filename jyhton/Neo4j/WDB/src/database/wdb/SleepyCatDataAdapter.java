@@ -48,12 +48,13 @@ public class SleepyCatDataAdapter {
 	{
 		EntryBinding keyBinding = new SerialBinding(this.scdb.getClassCatalog(), String.class);
 		EntryBinding dataBinding = new SerialBinding(this.scdb.getClassCatalog(), ClassDef.class);
-
+		
 		DatabaseEntry theKey = new DatabaseEntry();
 		keyBinding.objectToEntry(makeClassKey(classDef.name), theKey);
+		
 		DatabaseEntry theData = new DatabaseEntry();
 		dataBinding.objectToEntry(classDef, theData);
-
+		
 		this.scdb.getClassDb().put(this.txn, theKey, theData);
 	}
 	

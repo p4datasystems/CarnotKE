@@ -16,50 +16,49 @@ public interface QueryParserConstants {
   int OF = 15;
   int INVERSE = 16;
   int INSERT = 17;
-  int NEW = 18;
-  int INCLUDE = 19;
-  int EXCLUDE = 20;
-  int WITH = 21;
-  int ASSN = 22;
-  int SV = 23;
-  int MV = 24;
-  int REQUIRED = 25;
-  int RETRIEVE = 26;
-  int WHERE = 27;
-  int FROM = 28;
-  int AND = 29;
-  int OR = 30;
-  int NOT = 31;
-  int GT = 32;
-  int LT = 33;
-  int EQ = 34;
-  int GTE = 35;
-  int LTE = 36;
-  int NEQ = 37;
-  int TRUE = 38;
-  int FALSE = 39;
-  int INT = 40;
-  int REAL = 41;
-  int CHAR = 42;
-  int BOOLEAN = 43;
-  int STRING = 44;
-  int ASTERISK = 45;
-  int SOURCE = 46;
-  int INDEX = 47;
-  int ON = 48;
-  int UNIQUE = 49;
-  int DISTINCT = 50;
-  int MAX = 51;
-  int QUIT = 52;
-  int MODIFY = 53;
-  int LIMIT = 54;
-  int ALL = 55;
-  int INITIALVALUE = 56;
-  int INTEGER = 57;
-  int IDENTIFIER = 58;
-  int LSTRING = 59;
-  int QSTRING = 60;
-  int ERROR = 61;
+  int INCLUDE = 18;
+  int EXCLUDE = 19;
+  int WITH = 20;
+  int ASSN = 21;
+  int SV = 22;
+  int MV = 23;
+  int REQUIRED = 24;
+  int RETRIEVE = 25;
+  int WHERE = 26;
+  int FROM = 27;
+  int AND = 28;
+  int OR = 29;
+  int NOT = 30;
+  int GT = 31;
+  int LT = 32;
+  int EQ = 33;
+  int GTE = 34;
+  int LTE = 35;
+  int NEQ = 36;
+  int TRUE = 37;
+  int FALSE = 38;
+  int INT = 39;
+  int REAL = 40;
+  int CHAR = 41;
+  int BOOLEAN = 42;
+  int STRING = 43;
+  int ASTERISK = 44;
+  int SOURCE = 45;
+  int INDEX = 46;
+  int ON = 47;
+  int UNIQUE = 48;
+  int DISTINCT = 49;
+  int MAX = 50;
+  int QUIT = 51;
+  int MODIFY = 52;
+  int LIMIT = 53;
+  int ALL = 54;
+  int INITIALVALUE = 55;
+  int INTEGER = 56;
+  int IDENTIFIER = 57;
+  int LSTRING = 58;
+  int QSTRING = 59;
+  int ERROR = 60;
 
   int DEFAULT = 0;
 
@@ -82,7 +81,6 @@ public interface QueryParserConstants {
     "\"OF\"",
     "\"INVERSE IS\"",
     "\"INSERT\"",
-    "\"NEW\"",
     "\"INCLUDE\"",
     "\"EXCLUDE\"",
     "\"WITH\"",
