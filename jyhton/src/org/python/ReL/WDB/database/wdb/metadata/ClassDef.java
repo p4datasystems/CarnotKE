@@ -16,6 +16,7 @@ import java.rmi.server.*;
 public class ClassDef extends Query implements Serializable {
 	public String name;
 	public String comment;
+	public boolean sl;
 	protected ArrayList<Attribute> attributes;
 	protected ArrayList<Integer> instances;
 	protected ArrayList<IndexDef> indexes;
@@ -23,6 +24,7 @@ public class ClassDef extends Query implements Serializable {
 	public ClassDef()
 	{
 		super();
+		sl = false;
 		attributes = new ArrayList<Attribute>();
 		instances = new ArrayList<Integer>();
 		indexes = new ArrayList<IndexDef>();
@@ -31,8 +33,10 @@ public class ClassDef extends Query implements Serializable {
 	public ClassDef(String _name, String _comment)
 	{
 		super();
+		sl = false;
 		attributes = new ArrayList<Attribute>();
 		instances = new ArrayList<Integer>();
+		indexes = new ArrayList<IndexDef>();
 		name = _name;
 		comment = _comment;
 	}
@@ -40,8 +44,10 @@ public class ClassDef extends Query implements Serializable {
 	public ClassDef(String _name, String _comment, Attribute[] _attributes)
 	{
 		super();
+		sl = false;
 		attributes = new ArrayList<Attribute>();
 		instances = new ArrayList<Integer>();
+		indexes = new ArrayList<IndexDef>();
 		name = _name;
 		comment = _comment;
 		
