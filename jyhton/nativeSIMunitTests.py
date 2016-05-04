@@ -80,6 +80,7 @@ SIM on connOracleNoSQL 'from sim_dept retrieve *, name OF employees, name OF pro
 
 
 # SIM on connOracleNoSQL "CLEAR DATABASE"
+# SIM on connOracleNoSQL "STOP DATABASE"
 SIM on connOracleNoSQL "STOP DATABASE"
 
 

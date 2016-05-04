@@ -1,0 +1,22 @@
+2016-05-03 21:34:06.198 UTC INFO [sn1] Starting StorageNodeAgent for WDB
+2016-05-03 21:34:06.213 UTC INFO [sn1] Started MasterRebalanceThread
+2016-05-03 21:34:06.217 UTC INFO [sn1] Starting MonitorAgent.  Server socket factory:<ClearServerSocketFactory name=main backlog=0 port range=0,0> Client socket factory:<ClientSocketFactory name=WDB|sn|monitor id=-885847159 connectMs=10000 readMs=5000>
+2016-05-03 21:34:06.224 UTC INFO [sn1] Successfully created secure proxy for the storage node agent
+2016-05-03 21:34:06.229 UTC INFO [sn1] Rebound to registry port 5010 using name sn1 with SSF:<ClearServerSocketFactory name=main backlog=0 port range=0,0>
+2016-05-03 21:34:06.229 UTC INFO [sn1] Service status changed from STARTING to RUNNING
+2016-05-03 21:34:06.229 UTC INFO [sn1] Started StorageNodeAgent for WDB
+2016-05-03 21:34:06.314 UTC INFO [sn1] admin1: Creating AdminService
+2016-05-03 21:34:06.328 UTC INFO [sn1] admin1: Created AdminService
+2016-05-03 21:34:06.459 UTC INFO [sn1] rg1-rn1: Creating RepNode
+2016-05-03 21:34:06.471 UTC INFO [sn1] rg1-rn1: Starting RepNode
+2016-05-03 21:34:06.475 UTC INFO [sn1] Executing process with arguments: [/Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk/Contents/Home/jre/bin/java, -cp, /Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/./dist/javalib/kvstore.jar, -Dje.rep.skipHelperHostResolution=true, -XX:+UseConcMarkSweepGC, -XX:+UseParNewGC, -XX:+DisableExplicitGC, -XX:NewRatio=18, -XX:SurvivorRatio=4, -XX:MaxTenuringThreshold=10, -XX:CMSInitiatingOccupancyFraction=80, -XX:+PrintGCDetails, -XX:+PrintGCDateStamps, -XX:+PrintGCApplicationStoppedTime, -XX:+UseGCLogFileRotation, -XX:NumberOfGCLogFiles=10, -XX:GCLogFileSize=1048576, -Xloggc:/Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/./WDB_STORE/WDB/log/rg1-rn1.gc, -Xms435M, -Xmx435M, -XX:ParallelGCThreads=1, oracle.kv.impl.sna.ManagedService, -root, /Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/./WDB_STORE/WDB/sn1, -store, WDB, -class, RepNode, -service, rg1-rn1]
+2016-05-03 21:34:06.478 UTC INFO [sn1] rg1-rn1: ProcessMonitor: startProcess
+2016-05-03 21:34:06.479 UTC INFO [sn1] rg1-rn1: Started RepNode
+2016-05-03 21:34:06.479 UTC INFO [sn1] rg1-rn1: Configuring RepNode
+2016-05-03 21:34:07.272 UTC INFO [sn1] rg1-rn1: ProcessMonitor: ManagedServiceStarted: rg1-rn1
+2016-05-03 21:34:07.633 UTC INFO [sn1] rg1-rn1: Created RepNode
+2016-05-03 21:34:08.284 UTC INFO [sn1] noteState called
+2016-05-03 21:34:08.285 UTC INFO [sn1] added:State RN:rg1-rn1 state: MASTER top seq num: 6
+2016-05-03 21:34:08.285 UTC INFO [sn1] sn: sn1 state transition: State RN:rg1-rn1 state: MASTER top seq num: 6 active masters:[rg1-rn1] active replicas:0 replica leases:0
+2016-05-03 21:34:08.285 UTC INFO [sn1] Acquiring initial topology from RNs
+2016-05-03 21:34:08.300 UTC INFO [sn1] Topology acquired from RN: rg1-rn1 Topo seq#: 6

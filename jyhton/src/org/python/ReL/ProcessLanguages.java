@@ -10,10 +10,10 @@ import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.update.Update;
 import org.cyphersim.CypherSimTranslator;
+import org.python.ReL.WDB.database.wdb.metadata.*;
+import org.python.ReL.WDB.parser.generated.wdb.parser.Node;
+import org.python.ReL.WDB.parser.generated.wdb.parser.QueryParser;
 import org.python.core.*;
-import wdb.metadata.*;
-import wdb.parser.Node;
-import wdb.parser.QueryParser;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

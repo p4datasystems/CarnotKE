@@ -1,6 +1,7 @@
 package org.python.ReL;
 
-import wdb.metadata.*;
+
+import org.python.ReL.WDB.database.wdb.metadata.*;
 
 import java.sql.*;
 import java.util.ArrayList;

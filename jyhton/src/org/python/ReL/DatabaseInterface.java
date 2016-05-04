@@ -1,7 +1,7 @@
 package org.python.ReL;
 
+import org.python.ReL.WDB.database.wdb.metadata.Adapter;
 import org.python.core.PyObject;
-import wdb.metadata.Adapter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
