@@ -110,7 +110,6 @@ public class WDB {
 			}
 		}
 	}
-
 	
 	static private void processQuery(Query q) //
 	{
@@ -156,41 +155,37 @@ public class WDB {
 		if(q.getClass() == ClassDef.class || q.getClass() == SubclassDef.class)
 		{
 			ClassDef cd;
-			InsertQuery ciq;
 			cd = (ClassDef)q;
 			try
 			{
 				SleepyCatDataAdapter da = db.newTransaction();
 				try
 				{
-					try
+					da.getClass(cd.name);
+					//That class alreadly exists
+					throw new Exception("Class \"" + cd.name + "\" alreadly exists");
+				}
+				catch(ClassNotFoundException cnfe)
+				{
+					if (cd.getClass() == SubclassDef.class)
 					{
-						da.getClass(cd.name);
-						//That class alreadly exists
-						throw new Exception("Class \"" + cd.name + "\" alreadly exists");
-					}
-					catch(ClassNotFoundException cnfe)
-					{
-						if (cd.getClass() == SubclassDef.class)
+						ClassDef baseClass = null;
+						for (int i = 0; i < ((SubclassDef) cd).numberOfSuperClasses(); i++)
 						{
-							ClassDef baseClass = null;
-							for (int i = 0; i < ((SubclassDef) cd).numberOfSuperClasses(); i++)
+							//Cycles are implicitly checked since getClass will fail for the current defining class
+							ClassDef superClass = da.getClass(((SubclassDef) cd).getSuperClass(i));
+							if (baseClass == null)
 							{
-								//Cycles are implicitly checked since getClass will fail for the current defining class
-								ClassDef superClass = da.getClass(((SubclassDef) cd).getSuperClass(i));
-								if (baseClass == null)
-								{
-									baseClass = superClass.getBaseClass(da);
-								}
-								else if (!baseClass.name.equals(superClass.getBaseClass(da).name))
-								{
-									throw new Exception("Super classes of class \"" + cd.name + "\" does not share the same base class");
-								}
+								baseClass = superClass.getBaseClass(da);
+							}
+							else if (!baseClass.name.equals(superClass.getBaseClass(da).name))
+							{
+								throw new Exception("Super classes of class \"" + cd.name + "\" does not share the same base class");
 							}
 						}
-						da.putClass(cd);
-						da.commit();
 					}
+					da.putClass(cd);
+					da.commit();
 				}
 				catch(Exception e)
 				{
@@ -305,7 +300,7 @@ public class WDB {
 							String parent = iq.className.substring(0, iq.className.indexOf("."));
 							iq.className = child;
 							iq.fromClassName = parent;
-
+							
 							// Creating SubClass
 							SubclassDef foo = new SubclassDef(child, "(SubClass) Schemaless Insert");
 							foo.addSuperClass(parent);

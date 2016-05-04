@@ -14,6 +14,7 @@ import wdb.parser.SimpleNode;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
+
 public class ClassDef extends Query implements Serializable {
 	public String name;
 	public String comment;
