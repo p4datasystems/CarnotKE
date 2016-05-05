@@ -10,10 +10,10 @@ before_script:
     - export INSTALLATION_ROOT="."
     - uname -a
     - printenv
+    - ant
 
 script:
     - pwd
-    - ant
     - ant
 
 after_script:
