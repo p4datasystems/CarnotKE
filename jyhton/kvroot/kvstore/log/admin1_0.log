@@ -1,0 +1,186 @@
+2016-05-07 21:54:03.164 UTC INFO [admin1] Initializing PRIMARY Admin for store: kvstore
+2016-05-07 21:54:03.167 UTC INFO [admin1] Created new admin environment dir: ./kvroot/kvstore/sn1/admin1/env
+2016-05-07 21:54:03.167 UTC INFO [admin1] JVM Runtime maxMemory (bytes): 1908932608
+2016-05-07 21:54:03.208 UTC INFO [admin1] Non-default JE properties for environment: {je.rep.vlsn.logCacheSize=128, je.rep.envUnknownStateTimeout=10 s, je.log.faultReadSize=4096, je.rep.vlsn.distance=1000000, je.rep.replicaTimeout=10 s, je.env.runEvictor=true, je.cleaner.minUtilization=40, je.rep.replicaAckTimeout=5 s, je.lock.nLockTables=97, je.cleaner.threads=2, je.rep.replayMaxOpenDbHandles=100, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.log.iteratorReadSize=1048576, je.log.numBuffers=16, je.rep.feederTimeout=10 s, je.nodeMaxEntries=128, je.lock.timeout=10 s, je.rep.bindInaddrAny=true, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.checkpointer.bytesInterval=500000000, je.txn.durability=write_no_sync,write_no_sync,simple_majority, je.cleaner.readSize=1048576, je.rep.ignoreSecondaryNodeId=true, je.rep.txnRollbackLimit=10, je.log.fileCacheSize=2000, je.log.fileMax=1073741824}
+2016-05-07 21:54:03.221 UTC INFO [admin1] DataChannelFactory: basic
+2016-05-07 21:54:03.225 UTC INFO [admin1] AdminStateTracker thread start: admin1
+2016-05-07 21:54:03.660 UTC INFO [admin1] JE recovery: POPULATE_UTILIZATION_PROFILE
+2016-05-07 21:54:03.684 UTC INFO [admin1] JE recovery: REMOVE_TEMP_DBS
+2016-05-07 21:54:03.710 UTC INFO [admin1] JE recovery: CKPT
+2016-05-07 21:54:03.737 UTC INFO [admin1] JE recovery: RECOVERY_FINISHED
+2016-05-07 21:54:03.787 UTC INFO [admin1] JE: Started ServiceDispatcher. HostPort=Nelmas-MacBook-Pro.local:5005
+2016-05-07 21:54:03.787 UTC INFO [admin1] JE: DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-05-07 21:54:03.860 UTC INFO [admin1] JE: Current group size: 0
+2016-05-07 21:54:03.860 UTC INFO [admin1] JE: New node 1(-1) unknown to rep group
+2016-05-07 21:54:03.861 UTC INFO [admin1] JE: Master changed to 1
+2016-05-07 21:54:03.861 UTC INFO [admin1] JE: Nascent group. 1 is master by virtue of being the first node.
+2016-05-07 21:54:03.876 UTC INFO [admin1] JE: Successfully added node:1(1) HostPort = Nelmas-MacBook-Pro.local: 5005 [ELECTABLE]
+2016-05-07 21:54:03.879 UTC INFO [admin1] JE: Refreshed 0 monitors.
+2016-05-07 21:54:03.882 UTC INFO [admin1] JE recovery: BECOME_CONSISTENT
+2016-05-07 21:54:03.882 UTC INFO [admin1] JE: Node 1 started
+2016-05-07 21:54:03.883 UTC INFO [admin1] JE: Feeder manager accepting requests.
+2016-05-07 21:54:03.884 UTC INFO [admin1] JE: Joining group as master
+2016-05-07 21:54:03.885 UTC INFO [admin1] JE: Refreshed 0 monitors.
+2016-05-07 21:54:03.886 UTC INFO [admin1] State change event: Sat May 07 16:54:03 CDT 2016, State: MASTER, Type: PRIMARY, Master: 1
+2016-05-07 21:54:03.887 UTC INFO [admin1] AdminStateTracker queue added:MASTER
+2016-05-07 21:54:03.894 UTC INFO [admin1] Initializing Admin Schema to schema version 4/NoSQL DB 12cR1.3.5.2 2015-12-03 08:36:49 UTC  Build id: 0c693aa1a5a0
+2016-05-07 21:54:03.986 UTC INFO [admin1] Open Admin entity DB: AdminPlanDatabase
+2016-05-07 21:54:03.987 UTC INFO [admin1] Admin plan database initialized
+2016-05-07 21:54:03.987 UTC INFO [admin1] Initialized plan store to PlanDatabaseStore
+2016-05-07 21:54:03.988 UTC INFO [admin1] Shutting down monitor collector
+2016-05-07 21:54:04.073 UTC INFO [admin1] Initializing Admin database
+2016-05-07 21:54:04.172 UTC INFO [admin1] Admin database initialized
+2016-05-07 21:54:04.196 UTC INFO [admin1] Replicated environment handle established. Cache size: 1145359564, State: MASTER
+2016-05-07 21:54:04.197 UTC INFO [admin1] Configured Admin for store: kvstore
+2016-05-07 21:54:04.200 UTC INFO [admin1] Starting Web service on port 5001
+2016-05-07 21:54:04.302 UTC INFO [admin1] jetty-7.4.0.v20110414
+2016-05-07 21:54:04.368 UTC INFO [admin1] Extract jar:file:/Users/nelmiux/Documents/CarnotKE/jython/kv-3.5.2/lib/kvstore.jar!/war/KVAdminUI/ to /Users/nelmiux/Desktop/CarnotKE/jyhton/kvroot/kvstore/sn1/admin1/webapp/webapp
+2016-05-07 21:54:04.989 UTC INFO [admin1] NO JSP Support for /, did not find org.apache.jasper.servlet.JspServlet
+2016-05-07 21:54:05.032 UTC INFO [admin1] started o.e.j.w.WebAppContext{/,file:/Users/nelmiux/Desktop/CarnotKE/jyhton/kvroot/kvstore/sn1/admin1/webapp/webapp/},jar:file:/Users/nelmiux/Documents/CarnotKE/jython/kv-3.5.2/lib/kvstore.jar!/war/KVAdminUI
+2016-05-07 21:54:05.069 UTC INFO [admin1] Started SelectChannelConnector@0.0.0.0:5001 STARTING
+2016-05-07 21:54:05.187 UTC INFO [admin1] Plan 1[Deploy KVLite] approved
+2016-05-07 21:54:05.195 UTC INFO [admin1] Plan 1[Deploy KVLite]: started, 1 tasks
+2016-05-07 21:54:05.227 UTC INFO [admin1] Plan 1[Deploy KVLite]: task 1 [DeployDatacenter zone=KVLite] started
+2016-05-07 21:54:05.234 UTC INFO [admin1] Plan 1[Deploy KVLite]: task 1 [DeployDatacenter zone=KVLite] ended, state=SUCCEEDED
+2016-05-07 21:54:05.240 UTC INFO [admin1] Plan 1[Deploy KVLite]: ended, state=SUCCEEDED
+2016-05-07 21:54:05.240 UTC INFO [admin1] Waiting for Plan 1[Deploy KVLite] ended, state=SUCCEEDED
+2016-05-07 21:54:05.268 UTC INFO [admin1] Plan 2[Deploy Storage Node] approved
+2016-05-07 21:54:05.269 UTC INFO [admin1] Plan 2[Deploy Storage Node]: started, 1 tasks
+2016-05-07 21:54:05.272 UTC INFO [admin1] Plan 2[Deploy Storage Node]: task 1 [DeploySN sn1(Nelmas-MacBook-Pro.local:5000)] started
+2016-05-07 21:54:05.366 UTC INFO [admin1] Monitor collector: adding sn1 to monitoring
+2016-05-07 21:54:05.373 UTC INFO [admin1] Plan 2[Deploy Storage Node]: task 1 [DeploySN sn1(Nelmas-MacBook-Pro.local:5000)] ended, state=SUCCEEDED
+2016-05-07 21:54:05.376 UTC INFO [admin1] Plan 2[Deploy Storage Node]: ended, state=SUCCEEDED
+2016-05-07 21:54:05.377 UTC INFO [admin1] Waiting for Plan 2[Deploy Storage Node] ended, state=SUCCEEDED
+2016-05-07 21:54:05.379 UTC INFO [admin1] [sn1] Service status: RUNNING 2016-05-07 21:54:05 UTC
+2016-05-07 21:54:05.417 UTC INFO [admin1] Plan 3[Deploy Admin Service] approved
+2016-05-07 21:54:05.418 UTC INFO [admin1] Plan 3[Deploy Admin Service]: started, 2 tasks
+2016-05-07 21:54:05.425 UTC INFO [admin1] Plan 3[Deploy Admin Service]: task 1 [DeployAdmin AdminId[admin1] on SNId[sn1]] started
+2016-05-07 21:54:05.452 UTC INFO [admin1] newParameters called for Monitor
+2016-05-07 21:54:05.455 UTC INFO [admin1] Plan 3[Deploy Admin Service]: task 1 [DeployAdmin AdminId[admin1] on SNId[sn1]] ended, state=SUCCEEDED
+2016-05-07 21:54:05.455 UTC INFO [admin1] Plan 3[Deploy Admin Service]: task 2 [WaitForAdminState waits for Admin admin1 to reach RUNNING state] started
+2016-05-07 21:54:05.460 UTC INFO [admin1] Plan 3[Deploy Admin Service]: task 2 [WaitForAdminState waits for Admin admin1 to reach RUNNING state] ended, state=SUCCEEDED
+2016-05-07 21:54:05.463 UTC INFO [admin1] Plan 3[Deploy Admin Service]: ended, state=SUCCEEDED
+2016-05-07 21:54:05.464 UTC INFO [admin1] Waiting for Plan 3[Deploy Admin Service] ended, state=SUCCEEDED
+2016-05-07 21:54:05.469 UTC INFO [admin1] Created Storage Node Pool: KVLitePool
+2016-05-07 21:54:05.477 UTC INFO [admin1] Added Storage Node sn1 to pool: KVLitePool
+2016-05-07 21:54:05.492 UTC INFO [admin1] oracle.kv.impl.admin.topo.TopologyCandidate@4a0cdef4 has nothing to rebalance
+2016-05-07 21:54:05.605 UTC INFO [admin1] Plan 4[Deploy KVStore] approved
+2016-05-07 21:54:05.609 UTC INFO [admin1] Plan 4[Deploy KVStore] deploying topology candidate KVLite.
+2016-05-07 21:54:05.613 UTC INFO [admin1] Current topology: store=kvstore  numPartitions=0 sequence=2
+  zn: id=zn1 name=KVLite repFactor=1 type=PRIMARY
+
+  sn=[sn1] zn:[id=zn1 name=KVLite] Nelmas-MacBook-Pro.local:5000
+
+
+2016-05-07 21:54:05.614 UTC INFO [admin1] Preview of changes to be executed by Plan 4[Deploy KVStore]:
+Topology transformation from current deployed topology to KVLite:
+Create 1 shard 
+Create 1 RN 
+Create 10 partitions 
+
+shard rg1
+  1 new RN : rg1-rn1 
+  10 new partitions 
+
+2016-05-07 21:54:05.614 UTC INFO [admin1] Target topology candidate: KVLite
+store=kvstore  numPartitions=10 sequence=14
+  zn: id=zn1 name=KVLite repFactor=1 type=PRIMARY
+
+  sn=[sn1] zn:[id=zn1 name=KVLite] Nelmas-MacBook-Pro.local:5000
+    [rg1-rn1]
+
+  shard=[rg1] num partitions=10
+    [rg1-rn1] sn=sn1
+
+2016-05-07 21:54:05.616 UTC INFO [admin1] Plan 4[Deploy KVStore]: started, 8 tasks
+2016-05-07 21:54:05.618 UTC INFO [admin1] Plan 4[Deploy KVStore]: task 1 [UpdateDatacenterV2 zone=zn1] started
+2016-05-07 21:54:05.622 UTC INFO [admin1] Plan 4[Deploy KVStore]: task 1 [UpdateDatacenterV2 zone=zn1] ended, state=SUCCEEDED
+2016-05-07 21:54:05.622 UTC INFO [admin1] Plan 4[Deploy KVStore]: task 2 [DeployShard on [sn1] zn:[id=zn1 name=KVLite] Nelmas-MacBook-Pro.local:5000 ] started
+2016-05-07 21:54:05.633 UTC INFO [admin1] Plan 4[Deploy KVStore]: task 2 [DeployShard rg1 on [sn1] zn:[id=zn1 name=KVLite] Nelmas-MacBook-Pro.local:5000 ] ended, state=SUCCEEDED
+2016-05-07 21:54:05.634 UTC INFO [admin1] Plan 4[Deploy KVStore]: task 3 [DeployNewRN on sn1(Nelmas-MacBook-Pro.local:5000)] started
+2016-05-07 21:54:05.639 UTC INFO [admin1] Creating rg1-rn1 on sn1 haPort=Nelmas-MacBook-Pro.local:5,006 helpers=Nelmas-MacBook-Pro.local:5006 storage directory=null heapMB=unspecified cacheSize=unspecified -XX:ParallelGCThreads=4
+2016-05-07 21:54:06.778 UTC INFO [admin1] Monitor collector: adding rg1-rn1 to monitoring
+2016-05-07 21:54:06.781 UTC INFO [admin1] Plan 4[Deploy KVStore]: task 3 [DeployNewRN rg1-rn1 on sn1(Nelmas-MacBook-Pro.local:5000)] ended, state=SUCCEEDED
+2016-05-07 21:54:06.782 UTC INFO [admin1] Plan 4[Deploy KVStore]: task 4 [UpdateNthRNHelperHost] started
+2016-05-07 21:54:06.785 UTC INFO [admin1] Plan 4[Deploy KVStore]: task 4 [UpdateNthRNHelperHost] ended, state=SUCCEEDED
+2016-05-07 21:54:06.786 UTC INFO [admin1] Plan 4[Deploy KVStore]: task 5 [NewNthRNParameters] started
+2016-05-07 21:54:06.791 UTC INFO [admin1] [rg1-rn1] Service status: RUNNING 2016-05-07 21:54:05 UTC
+2016-05-07 21:54:06.797 UTC INFO [admin1] Plan 4[Deploy KVStore]: task 5 [NewNthRNParameters] ended, state=SUCCEEDED
+2016-05-07 21:54:06.797 UTC INFO [admin1] Plan 4[Deploy KVStore]: task 6 [BroadcastTopo] started
+2016-05-07 21:54:06.798 UTC INFO [admin1] Broadcasting topology seq# 4, changes for BroadcastTopo
+2016-05-07 21:54:06.804 UTC INFO [admin1] Plan 4[Deploy KVStore]: task 6 [BroadcastTopo] ended, state=SUCCEEDED
+2016-05-07 21:54:06.805 UTC INFO [admin1] Plan 4[Deploy KVStore]: task 7 [BroadcastMetadata] started
+2016-05-07 21:54:06.807 UTC INFO [admin1] Plan 4[Deploy KVStore]: task 7 [BroadcastMetadata] ended, state=SUCCEEDED
+2016-05-07 21:54:06.807 UTC INFO [admin1] Plan 4[Deploy KVStore]: task 8 [AddPartitions totalPartitions = 10] started
+2016-05-07 21:54:06.839 UTC INFO [admin1] Broadcasting topology seq# 14, changes for Initializing new partitions
+2016-05-07 21:54:06.889 UTC INFO [admin1] Plan 4[Deploy KVStore]: task 8 [AddPartitions totalPartitions = 10] ended, state=SUCCEEDED
+2016-05-07 21:54:06.891 UTC INFO [admin1] Plan 4[Deploy KVStore]: ended, state=SUCCEEDED
+2016-05-07 21:54:06.891 UTC INFO [admin1] Waiting for Plan 4[Deploy KVStore] ended, state=SUCCEEDED
+2016-05-07 21:57:36.207 UTC INFO [admin1] JVM java.net.InetAddress properties: cache.ttl=-1 cache.negative.ttl=-1
+2016-05-07 21:57:36.224 UTC INFO [admin1] Starting AdminService
+2016-05-07 21:57:36.324 UTC INFO [admin1] Initializing PRIMARY Admin for store: kvstore
+2016-05-07 21:57:36.327 UTC INFO [admin1] JVM Runtime maxMemory (bytes): 1908932608
+2016-05-07 21:57:36.327 UTC INFO [admin1] Non-default JE properties for environment: {je.rep.vlsn.logCacheSize=128, je.rep.envUnknownStateTimeout=10 s, je.log.faultReadSize=4096, je.rep.vlsn.distance=1000000, je.rep.replicaTimeout=10 s, je.env.runEvictor=true, je.cleaner.minUtilization=40, je.rep.replicaAckTimeout=5 s, je.lock.nLockTables=97, je.cleaner.threads=2, je.rep.replayMaxOpenDbHandles=100, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.log.iteratorReadSize=1048576, je.log.numBuffers=16, je.rep.feederTimeout=10 s, je.nodeMaxEntries=128, je.lock.timeout=10 s, je.rep.bindInaddrAny=true, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.checkpointer.bytesInterval=500000000, je.txn.durability=write_no_sync,write_no_sync,simple_majority, je.cleaner.readSize=1048576, je.rep.ignoreSecondaryNodeId=true, je.rep.txnRollbackLimit=10, je.log.fileCacheSize=2000, je.log.fileMax=1073741824}
+2016-05-07 21:57:36.354 UTC INFO [admin1] DataChannelFactory: basic
+2016-05-07 21:57:36.359 UTC INFO [admin1] AdminStateTracker thread start: admin1
+2016-05-07 21:57:36.821 UTC INFO [admin1] JE recovery: FIND_END_OF_LOG
+2016-05-07 21:57:36.859 UTC INFO [admin1] JE recovery: FIND_LAST_CKPT
+2016-05-07 21:57:36.866 UTC INFO [admin1] JE recovery: READ_DBMAP_INFO
+2016-05-07 21:57:36.898 UTC INFO [admin1] JE recovery: REDO_DBMAP_INFO
+2016-05-07 21:57:36.911 UTC INFO [admin1] JE recovery: UNDO_DBMAP_RECORDS
+2016-05-07 21:57:36.916 UTC INFO [admin1] JE recovery: REDO_DBMAP_RECORDS
+2016-05-07 21:57:36.921 UTC INFO [admin1] JE recovery: READ_DATA_INFO
+2016-05-07 21:57:36.943 UTC INFO [admin1] JE recovery: REDO_DATA_INFO
+2016-05-07 21:57:36.949 UTC INFO [admin1] JE recovery: UNDO_DATA_RECORDS
+2016-05-07 21:57:36.951 UTC INFO [admin1] JE recovery: REDO_DATA_RECORDS
+2016-05-07 21:57:36.976 UTC INFO [admin1] JE recovery: POPULATE_UTILIZATION_PROFILE
+2016-05-07 21:57:36.978 UTC INFO [admin1] JE recovery: REMOVE_TEMP_DBS
+2016-05-07 21:57:36.982 UTC INFO [admin1] JE recovery: CKPT
+2016-05-07 21:57:37.002 UTC INFO [admin1] JE recovery: RECOVERY_FINISHED
+2016-05-07 21:57:37.040 UTC INFO [admin1] JE: Started ServiceDispatcher. HostPort=Nelmas-MacBook-Pro.local:5005
+2016-05-07 21:57:37.041 UTC INFO [admin1] JE: DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-05-07 21:57:37.096 UTC INFO [admin1] JE: Current group size: 1
+2016-05-07 21:57:37.100 UTC INFO [admin1] JE: Current group size: 1
+2016-05-07 21:57:37.101 UTC INFO [admin1] JE: Existing node 1 querying for a current master.
+2016-05-07 21:57:37.101 UTC INFO [admin1] JE: Existing node 1 querying for a current master.
+2016-05-07 21:57:37.122 UTC INFO [admin1] JE: Node 1 started
+2016-05-07 21:57:37.122 UTC INFO [admin1] JE: Node 1 started
+2016-05-07 21:57:37.123 UTC INFO [admin1] JE: Election initiated; election #1
+2016-05-07 21:57:37.124 UTC INFO [admin1] JE recovery: BECOME_CONSISTENT
+2016-05-07 21:57:37.124 UTC INFO [admin1] JE: Started election thread Sat May 07 16:57:37 CDT 2016
+2016-05-07 21:57:39.139 UTC INFO [admin1] JE: Winning proposal: Proposal(000001548d39d8b7:e043ea438e720243394d70ee04c9367a:00000002) Value: Value:Nelmas-MacBook-Pro.local$$$5005$$$1$$$1
+2016-05-07 21:57:39.142 UTC INFO [admin1] JE: Master changed to 1
+2016-05-07 21:57:39.142 UTC INFO [admin1] JE: Master changed to 1
+2016-05-07 21:57:39.143 UTC INFO [admin1] JE: Election finished. Elapsed time: 2020ms
+2016-05-07 21:57:39.143 UTC INFO [admin1] JE: Election thread exited. Group master: 1(1)
+2016-05-07 21:57:39.143 UTC INFO [admin1] JE: Feeder manager accepting requests.
+2016-05-07 21:57:39.143 UTC INFO [admin1] JE: Feeder manager accepting requests.
+2016-05-07 21:57:39.149 UTC INFO [admin1] JE: Joining group as master
+2016-05-07 21:57:39.150 UTC INFO [admin1] JE: Joining group as master
+2016-05-07 21:57:39.151 UTC INFO [admin1] JE: Refreshed 0 monitors.
+2016-05-07 21:57:39.151 UTC INFO [admin1] JE: Refreshed 0 monitors.
+2016-05-07 21:57:39.153 UTC INFO [admin1] State change event: Sat May 07 16:57:39 CDT 2016, State: MASTER, Type: PRIMARY, Master: 1
+2016-05-07 21:57:39.153 UTC INFO [admin1] AdminStateTracker queue added:MASTER
+2016-05-07 21:57:39.315 UTC INFO [admin1] Open Admin entity DB: AdminPlanDatabase
+2016-05-07 21:57:39.315 UTC INFO [admin1] Admin plan database initialized
+2016-05-07 21:57:39.316 UTC INFO [admin1] Initialized plan store to PlanDatabaseStore
+2016-05-07 21:57:39.321 UTC INFO [admin1] Shutting down monitor collector
+2016-05-07 21:57:39.366 UTC INFO [admin1] Using existing Admin database
+2016-05-07 21:57:39.440 UTC INFO [admin1] Monitor collector: adding sn1 to monitoring
+2016-05-07 21:57:39.443 UTC INFO [admin1] Monitor collector: adding rg1-rn1 to monitoring
+2016-05-07 21:57:39.467 UTC INFO [admin1] [sn1] Service status: RUNNING 2016-05-07 21:57:36 UTC
+2016-05-07 21:57:39.477 UTC INFO [admin1] [rg1-rn1] Service status: STARTING 2016-05-07 21:57:39 UTC
+2016-05-07 21:57:39.579 UTC INFO [admin1] Replicated environment handle established. Cache size: 1145359564, State: MASTER
+2016-05-07 21:57:39.580 UTC INFO [admin1] Starting commandService on rmi://Nelmas-MacBook-Pro.local:5000/commandService
+2016-05-07 21:57:39.646 UTC INFO [admin1] Successfully created a secure proxy for commandService
+2016-05-07 21:57:39.696 UTC INFO [admin1] Starting admin:CLIENT_ADMIN on rmi://Nelmas-MacBook-Pro.local:5000/admin:CLIENT_ADMIN
+2016-05-07 21:57:39.701 UTC INFO [admin1] Successfully created a secure proxy for admin:CLIENT_ADMIN
+2016-05-07 21:57:39.708 UTC INFO [admin1] Starting Web service on port 5001
+2016-05-07 21:57:39.832 UTC INFO [admin1] jetty-7.4.0.v20110414
+2016-05-07 21:57:39.899 UTC INFO [admin1] Extract jar:file:/Users/nelmiux/Documents/CarnotKE/jython/kv-3.5.2/lib/kvstore.jar!/war/KVAdminUI/ to /Users/nelmiux/Desktop/CarnotKE/jyhton/kvroot/kvstore/sn1/admin1/webapp/webapp
+2016-05-07 21:57:40.625 UTC INFO [admin1] NO JSP Support for /, did not find org.apache.jasper.servlet.JspServlet
+2016-05-07 21:57:40.660 UTC INFO [admin1] started o.e.j.w.WebAppContext{/,file:/Users/nelmiux/Desktop/CarnotKE/jyhton/kvroot/kvstore/sn1/admin1/webapp/webapp/},jar:file:/Users/nelmiux/Documents/CarnotKE/jython/kv-3.5.2/lib/kvstore.jar!/war/KVAdminUI
+2016-05-07 21:57:40.693 UTC INFO [admin1] Started SelectChannelConnector@0.0.0.0:5001 STARTING
+2016-05-07 21:57:40.694 UTC INFO [admin1] Started AdminService
+2016-05-07 21:57:59.452 UTC INFO [admin1] [rg1-rn1] Service status: RUNNING 2016-05-07 21:57:39 UTC
+2016-05-08 07:50:31.308 UTC INFO [admin1] [admin1] sn1: Service status: UNREACHABLE 2016-05-08 07:50:31 UTC

@@ -1,0 +1,3 @@
+# Module kvadminui
+# RPC service class, partial path of RPC policy file
+oracle.kv.impl.admin.webapp.shared.AdminUIService, 0102AB0C6EB4439F38AD79F631E8ABA3.gwt.rpc

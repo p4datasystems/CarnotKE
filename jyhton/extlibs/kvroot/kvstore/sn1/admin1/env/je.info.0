@@ -1,0 +1,12 @@
+2016-05-08 20:06:56.072 UTC INFO [1] Started ServiceDispatcher. HostPort=nelmiux-PC:5005
+2016-05-08 20:06:56.074 UTC INFO [1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-05-08 20:06:56.173 UTC INFO [1] Current group size: 0
+2016-05-08 20:06:56.174 UTC INFO [1] New node 1(-1) unknown to rep group
+2016-05-08 20:06:56.176 UTC INFO [1] Master changed to 1
+2016-05-08 20:06:56.179 UTC INFO [1] Nascent group. 1 is master by virtue of being the first node.
+2016-05-08 20:06:56.203 UTC INFO [1] Successfully added node:1(1) HostPort = nelmiux-PC: 5005 [ELECTABLE]
+2016-05-08 20:06:56.226 UTC INFO [1] Refreshed 0 monitors.
+2016-05-08 20:06:56.235 UTC INFO [1] Node 1 started
+2016-05-08 20:06:56.237 UTC INFO [1] Feeder manager accepting requests.
+2016-05-08 20:06:56.239 UTC INFO [1] Joining group as master
+2016-05-08 20:06:56.240 UTC INFO [1] Refreshed 0 monitors.
