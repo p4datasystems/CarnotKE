@@ -1,6 +1,6 @@
 import unittest
 
-connOracleNoSQL = connectTo 'TitanNoSQL' 'WDB' 'localhost:5010' 'native_mode' 'A0'
+connOracleNoSQL = connectTo 'OracleNoSQL' 'WDB' 'localhost:5010' 'native_mode' 'A0'
 
 print "Connections are opened, start loading Databases"
 
@@ -24,8 +24,8 @@ SIM on connOracleNoSQL 'CLASS sim_dept ( DEPT_ID:INTEGER, REQUIRED ; NAME :STRIN
 SIM on connOracleNoSQL 'CLASS sim_project ( PROJECT_ID:INTEGER, REQUIRED ; NAME :STRING ; employees :sim_project_emp, MV(DISTINCT), INVERSE IS projects ; department :sim_dept, INVERSE IS projects ; );'
 
 # (Schemaless Inserts) Animal
-SIM on connOracleNoSQL 'INSERT Animal ( Species := "Tiger", Class := "Mammalia", MeatEater := True);'
-SIM on connOracleNoSQL 'INSERT Animal ( Species := "Jiraffe", Class := "Mammalia", MeatEater := False);'
+SIM on connOracleNoSQL 'INSERT Animal ( Species := "Tiger", type:= "Mammalia", MeatEater := True);'
+SIM on connOracleNoSQL 'INSERT Animal ( Species := "Jiraffe", type := "Mammalia", MeatEater := False);'
 SIM on connOracleNoSQL 'INSERT Animal.Pet WHERE Species = "Tiger" ( Name := "Greg", Age := 10, Address := "3843 Maplewood Dr.");'
 
 # 6 instances of sim_project_emp

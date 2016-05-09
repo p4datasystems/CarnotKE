@@ -329,7 +329,7 @@ public class ProcessLanguages {
                 if (newObject != null)
                     newObject.commit(adapter);
                 adapter.commit();
-            } catch (Exception e) {
+            } catch (ClassNotFoundException e) {
                 try {
                     if (iq.className.contains(".")) { // SCHEMALESS SUBCLASS
                         System.out.println("SubClass '" + iq.className + "' does not exist. Attempting schemaless insert...");
@@ -448,8 +448,7 @@ public class ProcessLanguages {
                         adapter.commit();
                         System.out.println("Schemaless insert succeeded!");
                     }
-                }
-                catch (Exception foo) {
+                } catch (Exception foo) {
                     System.out.println("Schemaless insert failed due to the following:\n" + foo);
                     adapter.abort();
                 }
