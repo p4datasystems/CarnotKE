@@ -17,9 +17,7 @@ before_script:
 script:
     - pwd
     - ant
-
-after_success:
-    - jdk_switcher use oraclejdk8
+    - ant
 
 after_script:
     - dist/bin/jython nativeSIMunitTests.py
