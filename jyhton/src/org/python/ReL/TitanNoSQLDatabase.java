@@ -1,7 +1,7 @@
 package org.python.ReL;
 
 import java.util.*;
-
+import java.io.*;
 import org.python.ReL.WDB.database.wdb.metadata.*;
 import com.thinkaurelius.titan.core.*;
 import com.thinkaurelius.titan.core.schema.TitanManagement;
@@ -31,12 +31,15 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
     private static TitanGraph graph = null;
     private static Object rootID = null;
+    private static File INSTALLATION_ROOT;
+    private static String PROPERTIES_PATH;
 
     /**
      * Initialize TitanDB with defined configurations and populate the database with root node.
      */
     private void initTitanDB() {
-        graph = TitanFactory.open("../../CarnotKE.properties");
+        validateInstallationRoot();
+        graph = TitanFactory.open(PROPERTIES_PATH);
 
         TitanManagement mg = graph.openManagement();
         boolean initGraph = mg.getGraphIndex("byClassDef") == null;
@@ -58,6 +61,21 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
                 }
             });
         }
+    }
+
+
+    public void validateInstallationRoot()
+    {
+        final String serverRoot = System.getenv("INSTALLATION_ROOT");
+        if (serverRoot == null) {
+            // maybe print?
+        }
+
+        INSTALLATION_ROOT = new File(serverRoot);
+        if (!INSTALLATION_ROOT.isDirectory()) {
+            // maybe print?
+        }
+        PROPERTIES_PATH = new File(serverRoot, "CarnotKE.properties").getAbsolutePath();
     }
 
     /**
@@ -851,6 +869,12 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
             HashMap<String, ClassDef> map = (HashMap<String, ClassDef>) currentVertex.property("classdefobject").value();
 
             return map.get("classdefobject");
+        }
+
+        @Override
+        public void putObject(InsertQuery query, WDBObject wdbObject)
+        {
+            db.processInsertQuery(query, wdbObject);
         }
 
         /**
