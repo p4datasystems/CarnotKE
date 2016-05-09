@@ -20,3 +20,4 @@ after_success:
 
 after_script:
     - dist/bin/jython nativeSIMunitTests.py
+    - dist/bin/jython SPARQLUnitTests.py
