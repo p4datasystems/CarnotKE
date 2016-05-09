@@ -252,7 +252,7 @@ oracle.jar=C:/workspace/HEAD/for_development/bisdevsrv28/jboss/server/infra/lib/
             <pathelement path="${extlibs.dir}/xercesImpl.jar"/>
             <pathelement path="${extlibs.dir}/xml-apis.jar"/>
 
-            <!-- TitanDB Support -->
+            <!-- TitanDB Pathelement Support -->
             <pathelement path="${extlibs.dir}/titan-1.0.0-hadoop1/lib/*"/>
             <pathelement path="${extlibs.dir}/titan-core-1.0.0.jar"/>
             <pathelement path="${extlibs.dir}/gremlin-core-3.0.1-incubating.jar"/>
@@ -277,6 +277,8 @@ oracle.jar=C:/workspace/HEAD/for_development/bisdevsrv28/jboss/server/infra/lib/
             <pathelement path="${extlibs.dir}/metrics-json-3.0.0.jar"/>
             <pathelement path="${extlibs.dir}/metrics-jvm-3.0.0.jar"/>
             <pathelement path="${extlibs.dir}/titan-berkeleyje-1.0.0.jar"/>
+            <pathelement path="${extlibs.dir}/attribute-serializer-0.1.jar"/>
+            <pathelement path="${extlibs.dir}/reflections-0.9.9-RC1.jar"/>
 
             <!-- <pathelement path="${extlibs.dir}/TEMPLATE.jar"/> -->
 
@@ -796,7 +798,7 @@ The readme text for the next release will be like:
             <zipfileset src="${extlibs.dir}/httpclient-4.3.3.jar"/>
             <zipfileset src="${extlibs.dir}/httpcore-4.3.jar"/>
 
-            <!-- TitanDB Support -->
+            <!-- TitanDB Zipfileset Support -->
             <zipfileset src="${extlibs.dir}/titan-core-1.0.0.jar"/>
             <zipfileset src="${extlibs.dir}/gremlin-core-3.0.1-incubating.jar"/>
             <zipfileset src="${extlibs.dir}/commons-configuration-1.10.jar"/>
@@ -813,6 +815,15 @@ The readme text for the next release will be like:
             <zipfileset src="${extlibs.dir}/cassandra-thrift-2.1.9.jar"/>
             <zipfileset src="${extlibs.dir}/hppc-0.7.1.jar"/>
             <zipfileset src="${extlibs.dir}/gmetric4j-1.0.3.jar"/>
+            <zipfileset src="${extlibs.dir}/metrics-core-2.1.2.jar"/>
+            <zipfileset src="${extlibs.dir}/metrics-core-3.0.1.jar"/>
+            <zipfileset src="${extlibs.dir}/metrics-ganglia-3.0.1.jar"/>
+            <zipfileset src="${extlibs.dir}/metrics-graphite-3.0.1.jar"/>
+            <zipfileset src="${extlibs.dir}/metrics-json-3.0.0.jar"/>
+            <zipfileset src="${extlibs.dir}/metrics-jvm-3.0.0.jar"/>
+            <zipfileset src="${extlibs.dir}/titan-berkeleyje-1.0.0.jar"/>
+            <zipfileset src="${extlibs.dir}/attribute-serializer-0.1.jar"/>
+
 
 
             <rule pattern="org.apache.xml.**" result="org.python.apache.xml.@1"/>

@@ -8,10 +8,23 @@ import com.thinkaurelius.titan.core.schema.TitanManagement;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
+import org.python.ReL.WDB.database.wdb.metadata.Attribute;
+import org.python.ReL.WDB.database.wdb.metadata.ClassDef;
+import org.python.ReL.WDB.database.wdb.metadata.DVA;
+import org.python.ReL.WDB.database.wdb.metadata.EVA;
+import org.python.ReL.WDB.database.wdb.metadata.IndexDef;
+import org.python.ReL.WDB.database.wdb.metadata.InsertQuery;
+import org.python.ReL.WDB.database.wdb.metadata.Query;
+import org.python.ReL.WDB.database.wdb.metadata.SubclassDef;
+import org.python.ReL.WDB.database.wdb.metadata.WDBObject;
+import org.python.ReL.WDB.parser.generated.wdb.parser.*;
 
 /**
  * @author Alvin Deng
+ * @author Raymond Chee
  * @date 05/03/2016
+ *
+ * TitanDB Adapter for CarnotKE
  */
 
 public class TitanNoSQLDatabase extends DatabaseInterface {
@@ -19,11 +32,12 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
     private static TitanGraph graph = null;
     private static Object rootID = null;
 
-    private static void initTitanDB() {
-        TitanFactory.Builder config = TitanFactory.build();
-        config.set("storage.backend", "berkeleyje");
-        config.set("storage.directory", "db/CarnotKE");
-        graph = config.open();
+    /**
+     * Initialize TitanDB with defined configurations and populate the database with root node.
+     */
+    private void initTitanDB() {
+        graph = TitanFactory.open("../../CarnotKE.properties");
+
         TitanManagement mg = graph.openManagement();
         boolean initGraph = mg.getGraphIndex("byClassDef") == null;
         if (initGraph) {
@@ -46,21 +60,41 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         }
     }
 
+    /**
+     * Default constructor to support TitanNoSQLAdapter.
+     */
     public TitanNoSQLDatabase()
     {
         this.adapter = new TitanNoSQLAdapter(this);
         initTitanDB();
     }
 
-    private static Vertex lookupClass(GraphTraversalSource g, String name) {
+    /**
+     * Iterate through the graph and find the proper ClassDef vertex.
+     * @param g Traversal source to iterate through the graph
+     * @param name Name of ClassDef
+     */
+    private Vertex lookupClass(GraphTraversalSource g, String name) {
         return getSubclass(g, rootID, name);
     }
 
-    private static void throwException(String format, Object... args) {
+    /**
+     * Throw exceptions.
+     * @param format Format of the error
+     * @param args
+     */
+    private void throwException(String format, Object... args) {
         throw new RuntimeException(String.format(format, args));
     }
 
-    private static Vertex getSubclass(GraphTraversalSource g, Object classID, String targetClassName) {
+    /**
+     * Obtain the vertex that is a subclass of superclass.
+     * @param g Traversal source to iterate through the graph
+     * @param classID Specific vertex ID of TitanDB
+     * @param targetClassName Name of the superclass
+     * @return Vertex of the subclass
+     */
+    private Vertex getSubclass(GraphTraversalSource g, Object classID, String targetClassName) {
         GraphTraversal<Vertex, Vertex> subclasses = g.V(classID).out("superclasses");
         while (subclasses.hasNext()) {
             Vertex subclass = subclasses.next();
@@ -75,6 +109,544 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         return null;
     }
 
+    /**
+     * Get the proper vertex with given attribute.
+     * @param g Traversal source to iterate through the graph
+     * @param classDef ClassDef of the instance
+     * @param isDVA Indicates if the attribute is DVA or not
+     * @param attributeName Name of the attribute
+     * @return Vertex with the given attribute
+     */
+    private Vertex getAttribute(GraphTraversalSource g, Vertex classDef, boolean isDVA, String attributeName) {
+        GraphTraversal<Vertex, Vertex> attrs;
+        if (isDVA) {
+            attrs = g.V(classDef.id()).outE("has").has("isDVA").inV().has("name");
+        } else {
+            attrs = g.V(classDef.id()).outE("has").hasNot("isDVA").inV().has("name");
+        }
+        while (attrs.hasNext()) {
+            Vertex v = attrs.next();
+            if (v.property("name").isPresent() && v.property("name").value().equals(attributeName)) {
+                return v;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Checking the assignment type and throw proper exception.
+     * @param query UpdateQuery query that contains the class name
+     * @param name Attribute name
+     * @param attrVertex Attribute Vertex
+     * @param dvaAssignment dvaAssignment Object to check the attribute value
+     */
+    private void checkAssignmentType(UpdateQuery query, String name, Vertex attrVertex, DvaAssignment dvaAssignment) {
+        String type = (String) attrVertex.property("data_type").value();
+        switch (type) {
+            case "boolean": {
+                if (!(dvaAssignment.Value instanceof Boolean)) {
+                    throwException("Attribute %s of class %s stores boolean values! Found %s",
+                            name, query.className, dvaAssignment.Value);
+                }
+                break;
+            }
+            case "integer": {
+                if (!(dvaAssignment.Value instanceof Integer)) {
+                    throwException("Attribute %s of class %s stores integer values! Found %s",
+                            name, query.className, dvaAssignment.Value);
+                }
+                break;
+            }
+            case "string": {
+                if (!(dvaAssignment.Value instanceof String)) {
+                    throwException("Attribute %s of class %s stores string values! Found %s",
+                            name, query.className, dvaAssignment.Value);
+                }
+                break;
+            }
+        }
+    }
+
+    /**
+     * Initialize default values for DVAs.
+     * @param g Traversal source to iterate through the graph
+     * @param classDef Vertex of the ClassDef
+     * @param entity Vertex of the instance
+     */
+    private void setDefaultDVAs(GraphTraversalSource g, Vertex classDef, Vertex entity) {
+        GraphTraversal<Vertex, Vertex> dvas = g.V(classDef.id()).outE("has").has("isDVA").inV().has("default_value");
+        while (dvas.hasNext()) {
+            Vertex dvaVertex = dvas.next();
+            Object initValue = dvaVertex.property("default_value").value();
+            String dvaName = (String) dvaVertex.property("name").value();
+            if (!entity.property(dvaName).isPresent()) {
+                entity.property(dvaName, initValue);
+            }
+        }
+    }
+
+    /**
+     * Traverse through the graph and obtain an instance vertex based on the requirements.
+     * @param classDef Vertex of a ClassDef
+     * @param UID Identifier number in the WDBObject for an instance
+     * @return An instance vertex of the ClassDef with a specific UID
+     */
+    private Vertex getInstanceVertex(Vertex classDef, Integer UID) {
+        GraphTraversalSource g = graph.traversal();
+        GraphTraversal<Vertex, Vertex> iter = g.V(classDef.id()).out("instance");
+        while(iter.hasNext()) {
+            Vertex currentInstance = iter.next();
+            HashMap<String, WDBObject> map = (HashMap<String, WDBObject>) currentInstance.property("wdbobject").value();
+            WDBObject wdbObject = map.get("wdbobject");
+            if(wdbObject != null && wdbObject.getUid().equals(UID)) {
+                return currentInstance;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Retrieve instances of a class.
+     * @param g Traversal source to iterate through the graph
+     * @param classDef Vertex of the ClassDef
+     * @param expression Expression so that can be checked through the parse tree
+     * @return A set of Vertices that are instances of classDef
+     */
+    private Set<Vertex> getInstances(GraphTraversalSource g, Vertex classDef, SimpleNode expression) {
+        Set<Vertex> res = new HashSet<>();
+        GraphTraversal<Vertex, Vertex> iter = g.V(classDef.id()).out("instance");
+        while (iter.hasNext()) {
+            Vertex currentInstance = iter.next();
+            if (matches(g, classDef, expression, currentInstance)) {
+                res.add(currentInstance);
+            }
+        }
+
+        GraphTraversal<Vertex, Vertex> subclasses = g.V(classDef.id()).out("superclasses");
+        while (subclasses.hasNext()) {
+            res.addAll(getInstances(g, subclasses.next(), expression));
+        }
+        return res;
+    }
+
+    /**
+     * Check current attribute is an integer.
+     * @param attributeName Name of the attribute
+     * @param attrVertex Vertex of the attribute
+     * @param quantifier Value of the attribute
+     */
+    private void checkAttributeIsInteger(String attributeName, Vertex attrVertex, String quantifier) {
+        String data_type = (String) attrVertex.property("data_type").value();
+        if (!data_type.equals("integer")) {
+            throwException("Cannot compare attribute %s of type %s with quantifier '%s'",
+                    attributeName, data_type, quantifier);
+        }
+    }
+
+    /**
+     * Check if this instsance of ClassDef satisfies the expression
+     * @param g Traversal source to iterate through the graph
+     * @param classDef Vertex of ClassDef
+     * @param expression Expression that will go through the parse tree
+     * @param instance Instance of the ClassDef
+     * @return True or False
+     */
+    private boolean matches(GraphTraversalSource g, Vertex classDef, Node expression, Vertex instance) {
+        if (expression instanceof Root) {
+            return matches(g, classDef, expression.jjtGetChild(0), instance);
+        }
+        if (expression instanceof Cond) {
+            String[] split = expression.toString().split(" ", 3);
+            String attributeName = split[0];
+            Vertex attrVertex = getAttribute(g, classDef, true, attributeName);
+            if (attrVertex == null) {
+                throwException("Class %s doesn't have attribute %s!", classDef.property("name"), attributeName);
+            }
+            Property<Object> property = instance.property(attributeName);
+            Object attribute = property.isPresent() ? property.value() : null;
+            String quantifier = split[1];
+            String value = split[2];
+            switch (quantifier) {
+                case "=": {
+                    return attribute == null && value.equals("NULL") ||
+                            attribute != null && attribute.toString().equals(value);
+                }
+                case "<>": {
+                    return attribute == null && !value.equals("NULL") ||
+                            attribute != null && !attribute.toString().equals(value);
+                }
+                case "<": {
+                    checkAttributeIsInteger(attributeName, attrVertex, quantifier);
+                    return attribute != null && ((Integer) attribute) < Integer.parseInt(value);
+                }
+                case ">": {
+                    checkAttributeIsInteger(attributeName, attrVertex, quantifier);
+                    return attribute != null && ((Integer) attribute) > Integer.parseInt(value);
+                }
+                case "<=": {
+                    checkAttributeIsInteger(attributeName, attrVertex, quantifier);
+                    return attribute != null && ((Integer) attribute) <= Integer.parseInt(value);
+                }
+                case ">=": {
+                    checkAttributeIsInteger(attributeName, attrVertex, quantifier);
+                    return attribute != null && ((Integer) attribute) >= Integer.parseInt(value);
+                }
+                default: {
+                    throwException("Invalid quantifier %s!", quantifier);
+                }
+            }
+        }
+        if (expression instanceof And) {
+            int numChildren = expression.jjtGetNumChildren();
+            for (int i = 0; i < numChildren; i++) {
+                if (!matches(g, classDef, expression.jjtGetChild(i), instance)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        if (expression instanceof Or) {
+            int numChildren = expression.jjtGetNumChildren();
+            for (int i = 0; i < numChildren; i++) {
+                if (matches(g, classDef, expression.jjtGetChild(i), instance)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        if (expression instanceof Not) {
+            return !matches(g, classDef, expression.jjtGetChild(0), instance);
+        }
+        if (expression instanceof False) {
+            return false;
+        }
+        if (expression instanceof True) {
+            return true;
+        }
+        throw new IllegalStateException("Unknown type of Node! " + expression);
+    }
+
+    /**
+     * Check if the current classDef is a subclass of targetClassName
+     * @param g Traversal source to iterate through the graph
+     * @param classDef Vertex of ClassDef
+     * @param targetClassName Name of the superclass
+     * @return True or False depends on if classDef is subclass of the targetClassName
+     */
+    private boolean isSubclass(GraphTraversalSource g, Vertex classDef, String targetClassName) {
+        return getSubclass(g, classDef.id(), targetClassName) != null;
+    }
+
+    /**
+     * Remove the list of edges between start vertex and end vertex
+     * @param g Traversal source to iterate through the graph
+     * @param start Start vertex
+     * @param end End vertex
+     * @param toRemove List of edges to remove
+     */
+    private void scheduleDisconnect(GraphTraversalSource g, Vertex start, Vertex end, List<Edge> toRemove) {
+        GraphTraversal<Vertex, Edge> forwards = g.V(start.id()).outE("eva");
+        while (forwards.hasNext()) {
+            Edge e = forwards.next();
+            if (e.inVertex().id().equals(end.id())) {
+                toRemove.add(e);
+            }
+        }
+    }
+
+    /**
+     * Calculate number of edges replaced, inserted, and deleted
+     * @param g Traversal source to iterate through the graph
+     * @param entity
+     * @param classDef Vertex of a classDef
+     * @param query UpdateQuery
+     * @return data[0] = num edges replaced, data[1] = num edges inserted, data[2] = num edges removed
+     */
+    private int[] doAssignments(GraphTraversalSource g, Vertex entity, Vertex classDef, UpdateQuery query) {
+        int[] counts = new int[3];
+        for (Assignment assignment : query.assignmentList) {
+            if (assignment instanceof DvaAssignment) {
+                Vertex dvaVertex = getAttribute(g, classDef, true, assignment.AttributeName);
+                if (dvaVertex == null) {
+                    throwException("Class %s does not have an dva %s!", query.className, assignment.AttributeName);
+                }
+                DvaAssignment dvaAssignment = (DvaAssignment) assignment;
+                checkAssignmentType(query, assignment.AttributeName, dvaVertex, dvaAssignment);
+                entity.property(assignment.AttributeName, dvaAssignment.Value);
+            } else if (assignment instanceof EvaAssignment) {
+                Vertex evaVertex = getAttribute(g, classDef, false, assignment.AttributeName);
+                if (evaVertex == null) {
+                    throwException("Class %s does not have an eva %s!", query.className, assignment.AttributeName);
+                }
+                EvaAssignment evaAssignment = (EvaAssignment) assignment;
+                String evaClass = (String) evaVertex.property("class").value();
+                if (!evaClass.equals(evaAssignment.targetClass) &&
+                        !isSubclass(g, lookupClass(g, evaClass), evaAssignment.targetClass)) {
+                    throwException("EVA %s cannot be assigned from class %s to class %s!",
+                            assignment.AttributeName, query.className, evaClass);
+                }
+                Vertex evaClassDef = lookupClass(g, evaClass);
+                if (evaClassDef == null) {
+                    throwException("Class %s is not defined!", evaClass);
+                }
+                Set<Vertex> instances = getInstances(g, evaClassDef, query.expression);
+                String evaInverseName = (String) g.V(evaClassDef.id()).out("inverse").next().property("name").value();
+                switch (evaAssignment.mode) {
+                    case 0: { // REPLACE_MODE
+                        // remove existing edges between entity and instances
+                        for (Vertex instance : instances) {
+                            // may want to remove at the end in case it messes up graph traversals
+                            List<Edge> toRemove = new ArrayList<>();
+                            scheduleDisconnect(g, entity, instance, toRemove);
+                            scheduleDisconnect(g, instance, entity, toRemove);
+                            for (Edge e : toRemove) {
+                                e.remove();
+                                counts[0]++;
+                            }
+                        }
+                        // continue on to insert
+                    }
+                    case 1: { // INSERT_MODE
+                        for (Vertex instance : instances) {
+                            entity.addEdge("eva", instance, "name", evaAssignment.AttributeName);
+                            instance.addEdge("eva", entity, "name", evaInverseName);
+                            counts[1]++;
+                        }
+                        break;
+                    }
+                    case 2: { // EXCLUDE_MODE
+                        for (Vertex instance : instances) {
+                            GraphTraversal<Vertex, Edge> evas =
+                                    g.V(instance.id()).outE("eva").has("name");
+                            while (evas.hasNext()) {
+                                Edge edge = evas.next();
+                                if (edge.property("name").value().equals(evaAssignment.AttributeName)) {
+                                    GraphTraversal<Edge, Edge> connected = g.E(edge.id()).inV().outE("eva").has("name");
+                                    List<Edge> toRemove = new ArrayList<>();
+                                    toRemove.add(edge);
+                                    while (connected.hasNext()) {
+                                        Edge next = connected.next();
+                                        if (next.property("name").value().equals(evaInverseName)) {
+                                            toRemove.add(next);
+                                        }
+                                    }
+                                    for (Edge e : toRemove) {
+                                        e.remove();
+                                        counts[2]++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return counts;
+    }
+
+    /**
+     * Check required conditions for inserts
+     * @param iq InsertQuery
+     * @param g Traversal source to iterate through the graph
+     * @param classDef Vertex of classDef
+     * @param entity Instance of the ClassDef
+     */
+    private void checkRequiredInserts(InsertQuery iq, GraphTraversalSource g, Vertex classDef, Vertex entity) {
+        GraphTraversal<Vertex, Edge> requiredAttrs = g.V(classDef.id()).outE("has").has("required");
+        while (requiredAttrs.hasNext()) {
+            Edge attr = requiredAttrs.next();
+            Vertex required = attr.inVertex();
+            String name = (String) required.property("name").value();
+            if (attr.property("isDVA").isPresent()) {
+                // didn't insert a required DVA
+                if (!entity.property(name).isPresent()) {
+                    throwException("Did not insert required value %s into an instance of class %s!",
+                            name, iq.className);
+                }
+            } else {
+                // didn't insert a required EVA
+                if (!g.V(entity.id()).outE(name).hasNext()) {
+                    throwException("Did not insert required EVA %s into an instance of class %s!",
+                            name, iq.className);
+                }
+            }
+        }
+    }
+
+    /**
+     * Print all UpdateQuery results
+     * @param newVertexCount Count of Vertices
+     * @param edgeCounts edgeCounts[0] = number edges of replaced,
+     *                   edgeCounts[1] = number edges of inserted,
+     *                   edgeCounts[2] = number of edges removed
+     */
+    private void printUpdateQueryResults(int newVertexCount, int[] edgeCounts) {
+        if (newVertexCount != 0) {
+            System.out.printf("%d vertices inserted.\n", newVertexCount);
+        }
+        if (edgeCounts[0] != 0) {
+            System.out.printf("%d edges replaced.\n", edgeCounts[0]);
+        }
+        if (edgeCounts[1] != 0) {
+            System.out.printf("%d edges inserted.\n", edgeCounts[1]);
+        }
+        if (edgeCounts[2] != 0) {
+            System.out.printf("%d edges removed.\n", edgeCounts[2]);
+        }
+    }
+
+    /**
+     * Perform insertion into the graph
+     * @param iq InsertQuery
+     * @param g Traversal source to iterate through the graph
+     * @param classDef Vertex of ClassDef
+     * @param entity Instance Vertex of ClassDef
+     * @return The number of edges inserted
+     */
+    private int[] doInsert(InsertQuery iq, GraphTraversalSource g, Vertex classDef, Vertex entity) {
+        setDefaultDVAs(g, classDef, entity);
+        int[] counts = doAssignments(g, entity, classDef, iq);
+        checkRequiredInserts(iq, g, classDef, entity);
+        return counts;
+    }
+
+    /**
+     * Recursively traverse through the parse tree and obtain vertices from the graph.
+     * @param classDef String of a classDef
+     * @param overall An overall vertex list to keep track of based on the query
+     */
+    private static void recurRetrieve(String classDef, ArrayList<Vertex> overall) {
+        Iterator<Vertex> vertices = graph.vertices();
+        HashSet<String> children = new HashSet<>();
+
+        while (vertices.hasNext()) {
+            Vertex nextV = vertices.next();
+            String currentLabel = nextV.label();
+            if (currentLabel.equals("classDef")) {
+                Iterator<Edge> iter = nextV.edges(Direction.OUT);
+                while (iter.hasNext()) {
+                    Edge currentE = iter.next();
+                    if (currentE.label().equals("subclasses")) {
+                        String inbound = currentE.inVertex().property("name").value().toString();
+                        if (inbound.equals(classDef)) {
+                            children.add(currentE.outVertex().property("name").value().toString());
+                        }
+                    }
+                }
+            }
+            if (currentLabel.equals("entity") && nextV.property("class").value().equals(classDef)) {
+                overall.add(nextV);
+            }
+        }
+
+        for (String x : children) {
+            recurRetrieve(x, overall);
+        }
+    }
+
+    /**
+     * Process RetrieveQuery and print out all of the information.
+     * @param rq RetrieveQuery
+     */
+    private void processRetrieveQuery(RetrieveQuery rq) {
+        ArrayList<Vertex> overall = new ArrayList<>();
+
+        recurRetrieve(rq.className, overall);
+
+        for (Vertex instance : overall) {
+            for (int j = 0; j < rq.numAttributePaths(); j++) {
+                AttributePath path = rq.getAttributePath(j);
+                HashMap<Vertex, String> neighborMap = new HashMap<>();
+
+                for (int i = 0; i < path.levelsOfIndirection(); i++) {
+                    Iterator<Edge> iter = instance.edges(Direction.OUT);
+                    while (iter.hasNext()) {
+                        Edge current = iter.next();
+                        if (current.label().equals(path.getIndirection(i))) {
+                            if (!neighborMap.containsKey(current.inVertex())) {
+                                neighborMap.put(current.inVertex(), path.getIndirection(i));
+                            }
+                        }
+                    }
+                }
+
+                if (path.attribute.equals("*")) {
+                    Iterator<VertexProperty<Object>> it = instance.properties();
+                    while (it.hasNext()) {
+                        VertexProperty<Object> property = it.next();
+                        if (!property.key().equals("property")) {
+                            System.out.print(property.key() + "->" + property.value() + (it.hasNext() ? " | " : "\n"));
+                        }
+                    }
+                } else {
+                    for (Vertex current : neighborMap.keySet()) {
+                        System.out.print(neighborMap.get(current) + "_" + path.attribute + "->" + current.property(path.attribute).value() + (j == rq.numAttributePaths() - 1 ? "\n" : " | "));
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Process InsertQuery and insert the instance into the graph.
+     * @param iq InsertQuery
+     */
+    private void processInsertQuery(InsertQuery iq, WDBObject wdbObject) {
+        GraphTraversalSource g = graph.traversal();
+        try {
+            int newVertexCount = 0, edgeCounts[];
+            Vertex classDef = lookupClass(g, iq.className);
+            if (classDef == null) {
+                throwException("Cannot insert into class %s because it does not exist!", iq.fromClassName);
+            }
+            if (iq.fromClassName == null) {
+                // just inserting a new entity
+                Vertex entity = graph.addVertex(T.label, "entity", "class", iq.className);
+
+                /* Serialization for WDBObject */
+                HashMap<String, WDBObject> map = new HashMap<>();
+                map.put("wdbobject", wdbObject);
+                entity.property("wdbobject", map);
+
+                newVertexCount++;
+                // make the entity an instance of the class
+                classDef.addEdge("instance", entity);
+                edgeCounts = doInsert(iq, g, classDef, entity);
+            } else {
+                // inserting a subclass into an existing superclass
+                Vertex superclassDef = lookupClass(g, iq.fromClassName);
+                if (superclassDef == null) {
+                    throwException("Cannot extend into class %s because it does not exist!", iq.fromClassName);
+                }
+                if (!isSubclass(g, superclassDef, iq.className)) {
+                    throwException("Cannot extend class %s to class %s because %2$s is not a subclass of %1$s!",
+                            iq.fromClassName, iq.className);
+                }
+                edgeCounts = new int[3];
+                for (Vertex instance : getInstances(g, superclassDef, iq.expression)) {
+                    g.V(instance.id()).inE("instance").next().remove();
+                    classDef.addEdge("instance", instance);
+                    int[] counts = doInsert(iq, g, classDef, instance);
+                    for (int i = 0; i < 3; i++) {
+                        edgeCounts[i] += counts[i];
+                    }
+                }
+            }
+
+            printUpdateQueryResults(newVertexCount, edgeCounts);
+            graph.tx().commit();
+        } catch (RuntimeException e) {
+            System.err.println("Insert failed! Rolling back changes.");
+            graph.tx().rollback();
+            throw e;
+        }
+    }
+
+    /**
+     * Process the ClassDef and insert it into the graph.
+     * @param cd ClassDef that needs to be inserted
+     */
     private void processClassDef(ClassDef cd) {
         GraphTraversalSource g = graph.traversal();
         try {
@@ -90,6 +662,11 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
                 currentVertex.property("ForwardInit", "No");
                 newClass = currentVertex;
             }
+
+            /* Serialization for ClassDef */
+            HashMap<String, ClassDef> map = new HashMap<>();
+            map.put("classdefobject", cd);
+            newClass.property("classdefobject", map);
 
             if (cd.comment != null) {
                 newClass.property("comment", cd.comment);
@@ -119,7 +696,7 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
                     EVA eva = (EVA) attr;
                     eva.baseClassName = eva.baseClassName.toLowerCase();
                     eva.inverseEVA = eva.inverseEVA.toLowerCase();
-                    Vertex targetClass = lookupClass(g, eva.baseClassName);
+                    Vertex targetClass = getClassDefVertex(eva.baseClassName);
 
                     if (targetClass == null) {
                         targetClass = graph.addVertex(T.label, "classDef", "name", eva.baseClassName);
@@ -129,8 +706,6 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
                         Vertex root = traversal.next();
                         targetClass.addEdge("subclasses", root);
                         root.addEdge("superclasses", targetClass);
-//                        throwException("Class %s cannot create a relationship with %s because %2$s does not exist!",
-//                                cd.name, eva.baseClassName);
                     }
 
                     attrVertex.property("class", eva.baseClassName, "isSV", eva.cardinality.equals(EVA.SINGLEVALUED));
@@ -168,7 +743,7 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
                     if (superClassName.equals(cd.name)) {
                         throwException("Class %s cannot subclass itself!", cd.name);
                     }
-                    Vertex superClass = lookupClass(g, superClassName);
+                    Vertex superClass = getClassDefVertex(superClassName);
                     if (superClass != null) {
                         superClass.addEdge("superclasses", newClass);
                         newClass.addEdge("subclasses", superClass);
@@ -218,7 +793,12 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         }
     }
 
-    private Vertex getVertex(String s) {
+    /**
+     * Get the vertex with given ClassDef name.
+     * @param s ClassDef name
+     * @return ClassDef Vertex with string name of s
+     */
+    private Vertex getClassDefVertex(String s) {
         GraphTraversalSource g = graph.traversal();
         return lookupClass(g, s);
     }
@@ -228,53 +808,80 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
         private TitanNoSQLDatabase db;
 
+        /**
+         * Constructor of TitanNoSQLDatabase.
+         * @param db TitanNoSQLDatabase Object
+         */
         private TitanNoSQLAdapter(TitanNoSQLDatabase db)
         {
             this.db = db;
         }
 
+        /**
+         * Inserting a new ClassDef into the graph.
+         * @param cd ClassDef that needs to be inserted
+         */
         @Override
         public void putClass(ClassDef cd) {
             db.processClassDef(cd);
         }
 
-
+        /**
+         * Searches for a ClassDef that matches the query in the graph.
+         * @param query Query that searches for the ClassDef
+         * @return ClassDef that the query searches for
+         * @throws ClassNotFoundException When the ClassDef does not exist in the graph
+         */
         @Override
         public ClassDef getClass(Query query) throws ClassNotFoundException
         {
             return getClass(query.queryName);
         }
 
+        /**
+         * Searches for a ClassDef that matches to the string name in the graph.
+         * @param s Name of the ClassDef
+         * @return ClassDef with the name of s
+         * @throws ClassNotFoundException
+         */
         @Override
         public ClassDef getClass(String s) throws ClassNotFoundException
         {
-            Vertex currentVertex = db.getVertex(s);
-            ClassDef currentClassDef = new ClassDef();
-            currentClassDef.name = currentVertex.property("name").value().toString();
-            currentClassDef.comment = currentVertex.property("comment").value().toString();
+            Vertex currentVertex = db.getClassDefVertex(s);
+            HashMap<String, ClassDef> map = (HashMap<String, ClassDef>) currentVertex.property("classdefobject").value();
 
-            Iterator<Edge> iter = currentVertex.edges(Direction.OUT, "has");
-            while (iter.hasNext()) {
-                Edge currentEdge = iter.next();
-                Vertex propertyVertex = currentEdge.outVertex();
-                Attribute newAttribute = new Attribute();
-                newAttribute.name = propertyVertex.property("name").value().toString();
-                currentClassDef.addAttribute(newAttribute);
-            }
-
-            return currentClassDef;
+            return map.get("classdefobject");
         }
 
-        /* InsertQuery */
+        /**
+         * This is also known as InsertQuery
+         * Insert an instance into the graph.
+         *
+         * @param wdbObject The instance in the format of WDBObject
+         */
         @Override
         public void putObject(WDBObject wdbObject) {
-
+            InsertQuery iq = null;
+            db.processInsertQuery(iq, wdbObject);
         }
 
-        /* RetrieveQuery */
+        /**
+         * This is also known as RetrieveQuery
+         * Retrieve an instance given the instance name and ID from the graph.
+         * @param s Name of the instance
+         * @param integer Instance ID
+         * @return WDBObject instance that matches to the requirements
+         */
         @Override
         public WDBObject getObject(String s, Integer integer)
         {
+            Vertex instance = db.getInstanceVertex(getClassDefVertex(s), integer);
+            if(instance != null) {
+                HashMap<String, WDBObject> map = (HashMap<String, WDBObject>) instance.property("wdbobject").value();
+                if(map.containsKey("wdbobject")) {
+                    return map.get("wdbobject");
+                }
+            }
             return null;
         }
 
