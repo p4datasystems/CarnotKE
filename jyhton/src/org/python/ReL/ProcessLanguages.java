@@ -239,7 +239,7 @@ public class ProcessLanguages {
         }
         debugMsg(DBG, "Statement executed: " + ReLstmt);
 
-        /************* BEGIN WDB CODE DUMP ************************/
+        /************************ BEGIN WDB CODE DUMP ************************/
         if (q instanceof ClassDef) {
             ClassDef cd = (ClassDef) q;
             try {
