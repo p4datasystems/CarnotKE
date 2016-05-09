@@ -1,6 +1,6 @@
 import unittest
 
-connOracleNoSQL = connectTo 'OracleNoSQL' 'WDB' 'localhost:5010' 'native_mode' 'A0'
+connOracleNoSQL = connectTo 'TitanNoSQL' 'WDB' 'localhost:5010' 'native_mode' 'A0'
 
 print "Connections are opened, start loading Databases"
 
