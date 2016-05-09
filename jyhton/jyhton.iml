@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="Python" name="Python">
+      <configuration sdkName="Python 2.7.10 (/usr/bin/python2.7)" />
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/bugtests" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="BACKUP" level="project" />
+    <orderEntry type="library" name="lib2" level="project" />
+    <orderEntry type="library" name="target" level="project" />
+    <orderEntry type="library" name="ant-bootstrap" level="project" />
+    <orderEntry type="library" name="lib3" level="project" />
+    <orderEntry type="library" name="extlibs" level="project" />
+    <orderEntry type="library" name="lib4" level="project" />
+    <orderEntry type="library" name="servlet1" level="project" />
+    <orderEntry type="library" name="ant-bootstrap1" level="project" />
+    <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="library" name="extlibs.orig" level="project" />
+    <orderEntry type="library" name="servlet" level="project" />
+    <orderEntry type="library" name="lib1" level="project" />
+    <orderEntry type="module" module-name="parser" />
+    <orderEntry type="module" module-name="WDB-new" />
+    <orderEntry type="module" module-name="test1" />
+    <orderEntry type="module" module-name="WDB" />
+    <orderEntry type="module" module-name="tests" />
+    <orderEntry type="module" module-name="modjy" />
+    <orderEntry type="module" module-name="main" />
+    <orderEntry type="module" module-name="parser1" />
+    <orderEntry type="library" name="Python 2.7.10 (/usr/bin/python2.7) interpreter library" level="application" />
+  </component>
+</module>

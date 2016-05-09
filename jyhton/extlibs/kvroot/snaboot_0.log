@@ -1,0 +1,22 @@
+2016-05-08 20:06:53.032 UTC INFO [snaService] Starting, configuration file: ./kvroot/config.xml
+2016-05-08 20:06:53.141 UTC INFO [snaService] Creating a Registry on port nelmiux-PC:5000 server socket factory:<ClearServerSocketFactory name=main backlog=100 port range=0,0>
+2016-05-08 20:06:53.353 UTC INFO [snaService] Successfully created secure proxy for the storage node agent
+2016-05-08 20:06:53.521 UTC INFO [snaService] Bound to registry port 5000 using name snaService with SSF:null
+2016-05-08 20:06:53.525 UTC INFO [snaService] Using mgmt class oracle.kv.impl.mgmt.NoOpAgent
+2016-05-08 20:06:53.961 UTC INFO [snaService] BootstrapAdmin: Starting AdminService
+2016-05-08 20:06:53.962 UTC INFO [snaService] BootstrapAdmin: Started AdminService
+2016-05-08 20:06:53.965 UTC INFO [snaService] Service status changed from STARTING to WAITING_FOR_DEPLOY
+2016-05-08 20:06:54.018 UTC INFO [snaService] Starting in bootstrap mode
+2016-05-08 20:06:54.018 UTC INFO [snaService] Starting commandService on rmi://nelmiux-PC:5000/commandService
+2016-05-08 20:06:54.211 UTC INFO [snaService] Successfully created a secure proxy for commandService
+2016-05-08 20:06:54.248 UTC INFO [snaService] Starting admin:CLIENT_ADMIN on rmi://nelmiux-PC:5000/admin:CLIENT_ADMIN
+2016-05-08 20:06:54.258 UTC INFO [snaService] Successfully created a secure proxy for admin:CLIENT_ADMIN
+2016-05-08 20:06:54.271 UTC INFO [snaService] Started AdminService
+2016-05-08 20:06:54.272 UTC INFO [snaService] Thread returning for service BootstrapAdmin.5000
+2016-05-08 20:06:56.722 UTC INFO [snaService] Changing log files to log directory for store kvstore
+2016-05-08 20:06:59.551 UTC INFO [snaService] Register: root: ./kvroot, store: kvstore, hostingAdmin: true
+2016-05-08 20:06:59.552 UTC INFO [snaService] System architecture is amd64
+2016-05-08 20:06:59.555 UTC INFO [snaService] Setting number of CPUs to 1
+2016-05-08 20:06:59.722 UTC INFO [snaService] Starting, configuration file: ./kvroot/config.xml
+2016-05-08 20:06:59.762 UTC INFO [snaService] Registered startup, config file: ./kvroot/kvstore/sn1/config.xml
+2016-05-08 20:06:59.836 UTC INFO [snaService] Changing log files to directory: ./kvroot/kvstore/log
