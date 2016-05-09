@@ -23,10 +23,10 @@ SIM on connOracleNoSQL 'CLASS sim_dept ( DEPT_ID:INTEGER, REQUIRED ; NAME :STRIN
 # sim_project
 SIM on connOracleNoSQL 'CLASS sim_project ( PROJECT_ID:INTEGER, REQUIRED ; NAME :STRING ; employees :sim_project_emp, MV(DISTINCT), INVERSE IS projects ; department :sim_dept, INVERSE IS projects ; );'
 
-# (Schemaless Insert) Animal
-# SIM on connOracleNoSQL 'INSERT Animal ( Species := "Tiger", Class := "Mammalia", MeatEater := True);'
-# SIM on connOracleNoSQL 'INSERT Animal ( Species := "Giraffe", Class := "Mammalia", MeatEater := False);'
-# SIM on connOracleNoSQL 'INSERT Animal.Pet WHERE Species = "Tiger" ( Name := "Greg", Age := 10, Address := "3843 Maplewood Dr.");'
+# (Schemaless Inserts) Animal
+SIM on connOracleNoSQL 'INSERT Animal ( Species := "Tiger", Class := "Mammalia", MeatEater := True);'
+SIM on connOracleNoSQL 'INSERT Animal ( Species := "Giraffe", Class := "Mammalia", MeatEater := False);'
+SIM on connOracleNoSQL 'INSERT Animal.Pet WHERE Species = "Tiger" ( Name := "Greg", Age := 10, Address := "3843 Maplewood Dr.");'
 
 # 6 instances of sim_project_emp
 SIM on connOracleNoSQL 'INSERT sim_project_emp (PERSON_ID := 13 , NAME := "AARON" , SSNUM := 100 , GENDER := "MALE" , BIRTH_DATE := "01/01/87" , ADDRESS := "123 NOTHING LN" , CITY := "NEW YORK" , STATE := "NEW YORK" , ZIP := 888 , EMP_ID := 100100 , HIRE_DATE := "01/01/07" , SALARY := 87000 , STATUS := "EMPLOYED" , TITLE := "MARKETER"  , RATING := "OKAY"); '
