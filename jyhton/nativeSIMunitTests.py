@@ -25,7 +25,7 @@ SIM on connOracleNoSQL 'CLASS sim_project ( PROJECT_ID:INTEGER, REQUIRED ; NAME 
 
 # (Schemaless Inserts) Animal
 SIM on connOracleNoSQL 'INSERT Animal ( Species := "Tiger", Class := "Mammalia", MeatEater := True);'
-SIM on connOracleNoSQL 'INSERT Animal ( Species := "Giraffe", Class := "Mammalia", MeatEater := False);'
+SIM on connOracleNoSQL 'INSERT Animal ( Species := "Jiraffe", Class := "Mammalia", MeatEater := False);'
 SIM on connOracleNoSQL 'INSERT Animal.Pet WHERE Species = "Tiger" ( Name := "Greg", Age := 10, Address := "3843 Maplewood Dr.");'
 
 # 6 instances of sim_project_emp
