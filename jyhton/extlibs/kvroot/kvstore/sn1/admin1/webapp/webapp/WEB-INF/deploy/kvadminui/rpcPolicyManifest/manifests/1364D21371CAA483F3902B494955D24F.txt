@@ -1,0 +1,2 @@
+serviceClass: oracle.kv.impl.admin.webapp.shared.AdminUIService
+path: 0102AB0C6EB4439F38AD79F631E8ABA3.gwt.rpc

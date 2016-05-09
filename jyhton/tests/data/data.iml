@@ -10,5 +10,7 @@
     <orderEntry type="library" name="dist" level="project" />
     <orderEntry type="module" module-name="CarnotKE" />
     <orderEntry type="module" module-name="tests" />
+    <orderEntry type="module" module-name="jyhton" />
+    <orderEntry type="module" module-name="tests" />
   </component>
 </module>
