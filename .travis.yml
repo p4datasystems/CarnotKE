@@ -1,7 +1,6 @@
 language: java
 
 jdk:
-    - openjdk7
     - oraclejdk8
 
 sudo: false
@@ -13,9 +12,11 @@ before_script:
     - printenv
 
 script:
-    - jdk_switcher use openjdk7
-    - echo "Building with Java 7"
+    # - jdk_switcher use openjdk7
+    # - echo "Building with Java 7"
     - pwd
+    - ant
+    - echo "Need to run ant again"
     - ant
 
 after_success:
