@@ -1,0 +1,18 @@
+<config version="2">
+  <component name="params" type="bootstrapParams" validate="true">
+    <property name="hostname" value="Nelmas-MacBook-Pro.local" type="STRING"/>
+    <property name="storageNodeId" value="1" type="INT"/>
+    <property name="haHostname" value="Nelmas-MacBook-Pro.local" type="STRING"/>
+    <property name="adminHttpPort" value="5001" type="INT"/>
+    <property name="numCPUs" value="4" type="INT"/>
+    <property name="hostingAdmin" value="true" type="BOOLEAN"/>
+    <property name="haPortRange" value="5005,5007" type="STRING"/>
+    <property name="rootDir" value="./kvroot" type="STRING"/>
+    <property name="storeName" value="kvstore" type="STRING"/>
+    <property name="registryPort" value="5000" type="INT"/>
+    <property name="softwareVersion" value="12.1.3.5.2" type="STRING"/>
+    <property name="capacity" value="1" type="INT"/>
+  </component>
+  <component name="mountPoints" type="bootstrapParams" validate="false">
+  </component>
+</config>

@@ -1,0 +1,32 @@
+2016-05-07 21:54:05.898 UTC INFO [rg1-rn1] Started ServiceDispatcher. HostPort=Nelmas-MacBook-Pro.local:5006
+2016-05-07 21:54:05.899 UTC INFO [rg1-rn1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-05-07 21:54:05.906 UTC INFO [rg1-rn1] Current group size: 0
+2016-05-07 21:54:05.909 UTC INFO [rg1-rn1] New node rg1-rn1(-1) unknown to rep group
+2016-05-07 21:54:05.910 UTC INFO [rg1-rn1] Master changed to rg1-rn1
+2016-05-07 21:54:05.910 UTC INFO [rg1-rn1] Nascent group. rg1-rn1 is master by virtue of being the first node.
+2016-05-07 21:54:05.920 UTC INFO [rg1-rn1] Successfully added node:rg1-rn1(1) HostPort = Nelmas-MacBook-Pro.local: 5006 [ELECTABLE]
+2016-05-07 21:54:05.920 UTC INFO [rg1-rn1] Refreshed 0 monitors.
+2016-05-07 21:54:05.923 UTC INFO [rg1-rn1] Node rg1-rn1 started
+2016-05-07 21:54:05.924 UTC INFO [rg1-rn1] Feeder manager accepting requests.
+2016-05-07 21:54:05.924 UTC INFO [rg1-rn1] Joining group as master
+2016-05-07 21:54:05.925 UTC INFO [rg1-rn1] Refreshed 0 monitors.
+2016-05-07 21:57:37.040 UTC INFO [rg1-rn1] Started ServiceDispatcher. HostPort=Nelmas-MacBook-Pro.local:5006
+2016-05-07 21:57:37.040 UTC INFO [rg1-rn1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-05-07 21:57:37.095 UTC INFO [rg1-rn1] Current group size: 1
+2016-05-07 21:57:37.095 UTC INFO [rg1-rn1] Current group size: 1
+2016-05-07 21:57:37.095 UTC INFO [rg1-rn1] Existing node rg1-rn1 querying for a current master.
+2016-05-07 21:57:37.095 UTC INFO [rg1-rn1] Existing node rg1-rn1 querying for a current master.
+2016-05-07 21:57:37.121 UTC INFO [rg1-rn1] Node rg1-rn1 started
+2016-05-07 21:57:37.121 UTC INFO [rg1-rn1] Node rg1-rn1 started
+2016-05-07 21:57:37.121 UTC INFO [rg1-rn1] Election initiated; election #1
+2016-05-07 21:57:37.124 UTC INFO [rg1-rn1] Started election thread Sat May 07 16:57:37 CDT 2016
+2016-05-07 21:57:39.140 UTC INFO [rg1-rn1] Winning proposal: Proposal(000001548d39d8b7:e043ea438e720243394d70ee04c9367a:00000001) Value: Value:Nelmas-MacBook-Pro.local$$$5006$$$rg1-rn1$$$1
+2016-05-07 21:57:39.142 UTC INFO [rg1-rn1] Master changed to rg1-rn1
+2016-05-07 21:57:39.142 UTC INFO [rg1-rn1] Election finished. Elapsed time: 2021ms
+2016-05-07 21:57:39.143 UTC INFO [rg1-rn1] Election thread exited. Group master: rg1-rn1(1)
+2016-05-07 21:57:39.143 UTC INFO [rg1-rn1] Feeder manager accepting requests.
+2016-05-07 21:57:39.143 UTC INFO [rg1-rn1] Feeder manager accepting requests.
+2016-05-07 21:57:39.149 UTC INFO [rg1-rn1] Joining group as master
+2016-05-07 21:57:39.149 UTC INFO [rg1-rn1] Joining group as master
+2016-05-07 21:57:39.151 UTC INFO [rg1-rn1] Refreshed 0 monitors.
+2016-05-07 21:57:39.151 UTC INFO [rg1-rn1] Refreshed 0 monitors.

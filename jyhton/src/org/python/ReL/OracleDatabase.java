@@ -110,6 +110,12 @@ public class OracleDatabase extends DatabaseInterface {
         }
 
         @Override
+        public void putObject(InsertQuery query, WDBObject wdbObject)
+        {
+            // Ignore for now. 5/9/16 - JoshuaHurt@utexas.edu
+        }
+
+        @Override
         public void putObject(WDBObject wdbObject)
         {
 //            final String graph = wdbObject.getClassName();
