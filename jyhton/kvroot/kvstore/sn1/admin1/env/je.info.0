@@ -1,0 +1,32 @@
+2016-05-07 21:54:03.787 UTC INFO [1] Started ServiceDispatcher. HostPort=Nelmas-MacBook-Pro.local:5005
+2016-05-07 21:54:03.787 UTC INFO [1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-05-07 21:54:03.860 UTC INFO [1] Current group size: 0
+2016-05-07 21:54:03.860 UTC INFO [1] New node 1(-1) unknown to rep group
+2016-05-07 21:54:03.861 UTC INFO [1] Master changed to 1
+2016-05-07 21:54:03.861 UTC INFO [1] Nascent group. 1 is master by virtue of being the first node.
+2016-05-07 21:54:03.876 UTC INFO [1] Successfully added node:1(1) HostPort = Nelmas-MacBook-Pro.local: 5005 [ELECTABLE]
+2016-05-07 21:54:03.879 UTC INFO [1] Refreshed 0 monitors.
+2016-05-07 21:54:03.882 UTC INFO [1] Node 1 started
+2016-05-07 21:54:03.883 UTC INFO [1] Feeder manager accepting requests.
+2016-05-07 21:54:03.884 UTC INFO [1] Joining group as master
+2016-05-07 21:54:03.885 UTC INFO [1] Refreshed 0 monitors.
+2016-05-07 21:57:37.040 UTC INFO [1] Started ServiceDispatcher. HostPort=Nelmas-MacBook-Pro.local:5005
+2016-05-07 21:57:37.041 UTC INFO [1] DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-05-07 21:57:37.095 UTC INFO [1] Current group size: 1
+2016-05-07 21:57:37.095 UTC INFO [1] Current group size: 1
+2016-05-07 21:57:37.100 UTC INFO [1] Existing node 1 querying for a current master.
+2016-05-07 21:57:37.100 UTC INFO [1] Existing node 1 querying for a current master.
+2016-05-07 21:57:37.122 UTC INFO [1] Node 1 started
+2016-05-07 21:57:37.122 UTC INFO [1] Node 1 started
+2016-05-07 21:57:37.123 UTC INFO [1] Election initiated; election #1
+2016-05-07 21:57:37.124 UTC INFO [1] Started election thread Sat May 07 16:57:37 CDT 2016
+2016-05-07 21:57:39.139 UTC INFO [1] Winning proposal: Proposal(000001548d39d8b7:e043ea438e720243394d70ee04c9367a:00000002) Value: Value:Nelmas-MacBook-Pro.local$$$5005$$$1$$$1
+2016-05-07 21:57:39.142 UTC INFO [1] Master changed to 1
+2016-05-07 21:57:39.143 UTC INFO [1] Election finished. Elapsed time: 2020ms
+2016-05-07 21:57:39.143 UTC INFO [1] Election thread exited. Group master: 1(1)
+2016-05-07 21:57:39.143 UTC INFO [1] Feeder manager accepting requests.
+2016-05-07 21:57:39.143 UTC INFO [1] Feeder manager accepting requests.
+2016-05-07 21:57:39.149 UTC INFO [1] Joining group as master
+2016-05-07 21:57:39.149 UTC INFO [1] Joining group as master
+2016-05-07 21:57:39.151 UTC INFO [1] Refreshed 0 monitors.
+2016-05-07 21:57:39.151 UTC INFO [1] Refreshed 0 monitors.
