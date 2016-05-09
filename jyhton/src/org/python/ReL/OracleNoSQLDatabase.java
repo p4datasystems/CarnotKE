@@ -461,6 +461,12 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
             return classDef;
         }
 
+        @Override
+        public void putObject(InsertQuery query, WDBObject wdbObject)
+        {
+            // Ignore for now.
+        }
+
         /**
          * key: String object:(Uid.toString())
          * value: WDBObject object

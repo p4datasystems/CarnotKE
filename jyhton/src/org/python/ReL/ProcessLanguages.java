@@ -317,9 +317,13 @@ public class ProcessLanguages {
                 } else {
                     //Just inserting a new entity
                     newObject = targetClass.newInstance(null, adapter);
-                    setDefaultValues(targetClass, newObject, adapter);
-                    setValues(iq.assignmentList, newObject, adapter);
-                    checkRequiredValues(targetClass, newObject, adapter);
+                    if (connDatabase instanceof TitanNoSQLDatabase) {
+                        adapter.putObject(iq, newObject);
+                    } else {
+                        setDefaultValues(targetClass, newObject, adapter);
+                        setValues(iq.assignmentList, newObject, adapter);
+                        checkRequiredValues(targetClass, newObject, adapter);
+                    }
                 }
 
                 if (newObject != null)

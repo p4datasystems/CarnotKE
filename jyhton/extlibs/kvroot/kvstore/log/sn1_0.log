@@ -1,0 +1,20 @@
+2016-05-08 20:06:59.838 UTC INFO [sn1] Starting StorageNodeAgent for kvstore
+2016-05-08 20:06:59.969 UTC INFO [sn1] Started MasterRebalanceThread
+2016-05-08 20:07:00.005 UTC INFO [sn1] Starting MonitorAgent.  Server socket factory:<ClearServerSocketFactory name=main backlog=0 port range=0,0> Client socket factory:<ClientSocketFactory name=kvstore|sn|monitor id=604945286 connectMs=10000 readMs=5000>
+2016-05-08 20:07:00.025 UTC INFO [sn1] Successfully created secure proxy for the storage node agent
+2016-05-08 20:07:00.045 UTC INFO [sn1] Rebound to registry port 5000 using name sn1 with SSF:<ClearServerSocketFactory name=main backlog=0 port range=0,0>
+2016-05-08 20:07:00.046 UTC INFO [sn1] Service status changed from STARTING to RUNNING
+2016-05-08 20:07:00.047 UTC INFO [sn1] Started StorageNodeAgent for kvstore
+2016-05-08 20:07:00.259 UTC INFO [sn1] admin1: Creating AdminService
+2016-05-08 20:07:00.348 UTC INFO [sn1] admin1: Created AdminService
+2016-05-08 20:07:00.836 UTC INFO [sn1] rg1-rn1: Creating RepNode
+2016-05-08 20:07:00.968 UTC INFO [sn1] rg1-rn1: Starting RepNode
+2016-05-08 20:07:00.970 UTC INFO [sn1] rg1-rn1: Started RepNode
+2016-05-08 20:07:00.970 UTC INFO [sn1] rg1-rn1: Configuring RepNode
+2016-05-08 20:07:01.556 UTC INFO [sn1] Thread returning for service rg1-rn1
+2016-05-08 20:07:02.200 UTC INFO [sn1] rg1-rn1: Created RepNode
+2016-05-08 20:07:02.594 UTC INFO [sn1] noteState called
+2016-05-08 20:07:02.596 UTC INFO [sn1] added:State RN:rg1-rn1 state: MASTER top seq num: 14
+2016-05-08 20:07:02.596 UTC INFO [sn1] sn: sn1 state transition: State RN:rg1-rn1 state: MASTER top seq num: 14 active masters:[rg1-rn1] active replicas:0 replica leases:0
+2016-05-08 20:07:02.597 UTC INFO [sn1] Acquiring initial topology from RNs
+2016-05-08 20:07:02.616 UTC INFO [sn1] Topology acquired from RN: rg1-rn1 Topo seq#: 14
