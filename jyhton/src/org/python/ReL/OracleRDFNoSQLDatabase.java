@@ -266,7 +266,7 @@ public class OracleRDFNoSQLDatabase extends DatabaseInterface {
         public void putObject(InsertQuery query) {
 
         }
-        
+
         @Override
         public void putObject(WDBObject wdbObject)
         {
