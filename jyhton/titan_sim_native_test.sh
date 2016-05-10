@@ -11,4 +11,5 @@ if [ -z "$1" ]
 
   else
     dist/bin/jython -J-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5100 TitanDBUnitTests.py
+export INSTALLATION_ROOT="."
 fi
