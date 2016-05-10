@@ -237,7 +237,6 @@ public class ProcessLanguages {
         }
         debugMsg(DBG, "Statement executed: " + ReLstmt);
 
-        /************************ BEGIN WDB CODE DUMP ************************/
         boolean isTitan = connDatabase instanceof TitanNoSQLDatabase;
         if (q instanceof ClassDef) {
             ClassDef cd = (ClassDef) q;
