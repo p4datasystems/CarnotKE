@@ -1,7 +1,7 @@
 language: java
 
 jdk:
-    - openjdk7
+    - oraclejdk8
 
 sudo: false
 
@@ -14,10 +14,9 @@ before_script:
 script:
     - pwd
     - ant
-
-after_success:
-    - jdk_switcher use oraclejdk8
+    - ant
 
 after_script:
+    - export INSTALLATION_ROOT="."
     - dist/bin/jython nativeSIMunitTests.py
     - dist/bin/jython SPARQLUnitTests.py

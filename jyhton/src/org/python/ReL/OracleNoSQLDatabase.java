@@ -9,7 +9,7 @@ import oracle.kv.table.Row;
 import oracle.kv.table.Table;
 import oracle.kv.table.TableAPI;
 import org.apache.commons.lang3.SerializationUtils;
-import wdb.metadata.*;
+import org.python.ReL.WDB.database.wdb.metadata.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -205,7 +205,6 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
         createTable(objectTable, WDBOBJECT_TABLE_NAME);
     }
 
-
     private void createTable(Table table, String tableName)
     {
 //        if (!storeProcess.isAlive())
@@ -222,7 +221,7 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
              * Add a table to the database.
              * Execute this statement asynchronously.
              */
-
+                // works
                 // lol just naming them 'key' and 'value'
                 statement =
                         "CREATE TABLE " + tableName + " (" +
@@ -248,7 +247,6 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
         else if (tableName.equalsIgnoreCase(WDBOBJECT_TABLE_NAME))
             objectTable = table;
     }
-
 
     public void clearDatabase()
     {
@@ -279,7 +277,6 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
             System.out.println("Well crap.");
         }
     }
-
 
     private void connectToStore()
     {
@@ -462,6 +459,12 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
             }
 
             return classDef;
+        }
+
+        @Override
+        public void putObject(InsertQuery query, WDBObject wdbObject)
+        {
+            // Ignore for now.
         }
 
         /**
