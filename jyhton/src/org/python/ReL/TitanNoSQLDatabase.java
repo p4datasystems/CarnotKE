@@ -958,7 +958,6 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
                         break;
                     }
                 }
-
                 if (!found) {
                     newClass.addEdge("subclasses", root);
                     root.addEdge("superclasses", newClass);
