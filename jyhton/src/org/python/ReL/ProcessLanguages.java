@@ -10,10 +10,10 @@ import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.update.Update;
 import org.cyphersim.CypherSimTranslator;
+import org.python.ReL.WDB.database.wdb.metadata.*;
+import org.python.ReL.WDB.parser.generated.wdb.parser.Node;
+import org.python.ReL.WDB.parser.generated.wdb.parser.QueryParser;
 import org.python.core.*;
-import wdb.metadata.*;
-import wdb.parser.Node;
-import wdb.parser.QueryParser;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -239,8 +239,7 @@ public class ProcessLanguages {
         }
         debugMsg(DBG, "Statement executed: " + ReLstmt);
 
-        /************* BEGIN WDB CODE DUMP ************************/
-//		if(q.getClass() == ClassDef.class || q.getClass() == SubclassDef.class)
+        /********************** BEGIN WDB CODE DUMP **********************/
         if (q instanceof ClassDef) {
             ClassDef cd = (ClassDef) q;
             try {
@@ -264,6 +263,7 @@ public class ProcessLanguages {
 
                 adapter.putClass(cd);
                 adapter.commit();
+
             } catch (Exception e) {
                 System.out.println("This class already exists: " + cd.name);
                 adapter.abort();
@@ -310,27 +310,148 @@ public class ProcessLanguages {
                                 newObject = targetSubClass.newInstance(fromObjects[i].getBaseObject(adapter), adapter);
                                 setValues(iq.assignmentList, newObject, adapter);
                             }
-                        }
-                        else
+                        } else
                             throw new IllegalStateException("Inserted class \"" + targetClass.name + "\" is not a subclass of the from class \"" + iq.fromClassName);
-                    }
-                    else
+                    } else
                         throw new IllegalStateException("Can't extend base class \"" + targetClass.name + "\" from class \"" + iq.fromClassName);
-                }
-                else {
+                } else {
                     //Just inserting a new entity
                     newObject = targetClass.newInstance(null, adapter);
-                    setDefaultValues(targetClass, newObject, adapter);
-                    setValues(iq.assignmentList, newObject, adapter);
-                    checkRequiredValues(targetClass, newObject, adapter);
+                    if (connDatabase instanceof TitanNoSQLDatabase) {
+                        adapter.putObject(iq, newObject);
+                    } else {
+                        setDefaultValues(targetClass, newObject, adapter);
+                        setValues(iq.assignmentList, newObject, adapter);
+                        checkRequiredValues(targetClass, newObject, adapter);
+                    }
                 }
 
                 if (newObject != null)
                     newObject.commit(adapter);
                 adapter.commit();
-            } catch (Exception e) {
-                System.out.println(e.toString());
-                adapter.abort();
+            } catch (ClassNotFoundException e) {
+                try {
+                    if (iq.className.contains(".")) { // SCHEMALESS SUBCLASS
+                        System.out.println("SubClass '" + iq.className + "' does not exist. Attempting schemaless insert...");
+                        if (iq.expression == null) {
+                            throw new IllegalStateException("The WHERE clause is required for schemaless inserts of a subclass");
+                        }
+                        String child = iq.className.substring(iq.className.indexOf(".") + 1, iq.className.length());
+                        String parent = iq.className.substring(0, iq.className.indexOf("."));
+                        iq.className = child;
+                        iq.fromClassName = parent;
+
+                        // Creating SubClass
+                        SubclassDef foo = new SubclassDef(child, "(SubClass) Schemaless Insert");
+                        foo.addSuperClass(parent);
+                        for (int x = 0; x < iq.assignmentList.size(); x++) {
+                            DVA dva = new DVA();
+                            DvaAssignment _dva = (DvaAssignment) iq.getAssignment(x);
+                            dva.required = true;
+                            dva.comment = "";
+                            dva.name = _dva.AttributeName;
+
+                            // Find value type
+                            Object temp1 = _dva.Value;
+                            String temp = temp1.toString();
+                            if (temp.equalsIgnoreCase("false") || temp.equalsIgnoreCase("true"))
+                                dva.type = "Boolean";
+                            else if (temp.length() > 0 && temp.matches("[0-9]+"))
+                                dva.type = "Integer";
+                            else if (temp.length() == 1) // necessary?
+                                dva.type = "Char";
+                            else
+                                dva.type = "String";
+
+                            foo.addAttribute(dva);
+                        }
+
+                        ClassDef baseClass = null;
+                        for (int i = 0; i < ((SubclassDef) foo).numberOfSuperClasses(); i++) {
+                            ClassDef superClass = adapter.getClass(((SubclassDef) foo).getSuperClass(i));
+                            if (baseClass == null)
+                                baseClass = superClass.getBaseClass(adapter);
+                            else if (!baseClass.name.equals(superClass.getBaseClass(adapter).name))
+                                throw new Exception("Super classes of class \"" + foo.name + "\" does not share the same base class");
+                        }
+
+                        adapter.putClass(foo);
+                        adapter.commit();
+
+                        // Insert into our new SubClass
+
+                        ClassDef targetClass = adapter.getClass(iq.className);
+                        WDBObject newObject = null;
+
+                        SubclassDef targetSubClass = (SubclassDef) targetClass;
+                        ClassDef fromClass = adapter.getClass(iq.fromClassName);
+                        if (targetSubClass.isSubclassOf(fromClass.name, adapter)) {
+                            WDBObject[] fromObjects = fromClass.search(iq.expression, adapter);
+                            if (fromObjects.length <= 0) {
+                                throw new IllegalStateException("Can't find any entities from class \"" + fromClass.name + "\" to extend");
+                            }
+                            for (int i = 0; i < fromObjects.length; i++) {
+                                newObject = targetSubClass.newInstance(fromObjects[i].getBaseObject(adapter), adapter);
+                                setValues(iq.assignmentList, newObject, adapter);
+                            }
+                        } else {
+                            throw new IllegalStateException("Inserted class \"" + targetClass.name + "\" is not a subclass of the from class \"" + iq.fromClassName);
+                        }
+
+                        if (newObject != null) {
+                            newObject.commit(adapter);
+                        }
+
+                        adapter.commit();
+                        System.out.println("Schemaless insert succeeded!");
+                    } else { // SCHEMALESS CLASS
+                        System.out.println("Class '" + iq.className + "' does not exist. Attempting schemaless insert...");
+                        // Creating Class
+                        ClassDef foo = new ClassDef(iq.className, "Schemaless Insert");
+                        for (int x = 0; x < iq.assignmentList.size(); x++) {
+                            DVA dva = new DVA();
+                            DvaAssignment _dva = (DvaAssignment) iq.getAssignment(x);
+                            dva.required = true;
+                            dva.comment = "";
+                            dva.name = _dva.AttributeName;
+
+                            // Find value type
+                            Object temp1 = _dva.Value;
+                            String temp = temp1.toString();
+                            if (temp.equalsIgnoreCase("false") || temp.equalsIgnoreCase("true"))
+                                dva.type = "Boolean";
+                            else if (temp.length() > 0 && temp.matches("[0-9]+"))
+                                dva.type = "Integer";
+                            else if (temp.length() == 1) // necessary?
+                                dva.type = "Char";
+                            else
+                                dva.type = "String";
+
+                            foo.addAttribute(dva);
+                        }
+
+                        adapter.putClass(foo);
+                        adapter.commit();
+
+                        // Inserting into our new Class
+                        ClassDef targetClass = adapter.getClass(iq.className);
+                        WDBObject newObject = null;
+
+                        newObject = targetClass.newInstance(null, adapter);
+                        setDefaultValues(targetClass, newObject, adapter);
+                        setValues(iq.assignmentList, newObject, adapter);
+                        checkRequiredValues(targetClass, newObject, adapter);
+
+                        if (newObject != null)
+                            newObject.commit(adapter);
+
+                        adapter.commit();
+                        System.out.println("Schemaless insert succeeded!");
+                    }
+                } catch (Exception foo) {
+                    System.out.println("Schemaless insert failed due to the following:\n" + foo);
+                    adapter.abort();
+                }
             }
         }
 
@@ -418,7 +539,7 @@ public class ProcessLanguages {
                 adapter.abort();
             }
         }
-        /******************* END WDB CODE DUMP *****************/
+        /********************** END WDB CODE DUMP **********************/
         return null;
     }
 
