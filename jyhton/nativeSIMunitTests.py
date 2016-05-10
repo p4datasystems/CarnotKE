@@ -1,6 +1,6 @@
 import unittest
 
-connOracleNoSQL = connectTo 'OracleNoSQL' 'WDB' 'localhost:5010' 'native_mode' 'A0'
+connOracleNoSQL = connectTo 'OracleNoSQL' 'WDB' 'localhost:5010' 'native_mode' 'A0' 
 
 print "Connections are opened, start loading Databases"
 
@@ -77,14 +77,10 @@ SIM on connOracleNoSQL 'from sim_project retrieve *, name OF employees, name OF 
 # 6. Show all instances of the SIM_dept class along with their respective project employee, project, and manager name(s).
 SIM on connOracleNoSQL 'from sim_dept retrieve *, name OF employees, name OF projects, name OF manager;'
 
-print "Testing schemaless inserts:"
-# 7. Show all instances of the SIM_person class
-SIM on connOracleNoSQL 'from animal retrieve *;'
-# 8. Show all instances of the SIM_emp class
-SIM on connOracleNoSQL 'from pet retrieve *;'
 
 
 # SIM on connOracleNoSQL "CLEAR DATABASE"
+# SIM on connOracleNoSQL "STOP DATABASE"
 # SIM on connOracleNoSQL "STOP DATABASE"
 
 

@@ -1,5 +1,6 @@
 #!/bin/bash
 echo "run this script with 'debug' as an argument to debug on port 5100"
+
 if [ -z "$1" ]
   then   
     # dist/bin/jython NoSQLRDFUnitTests.py
