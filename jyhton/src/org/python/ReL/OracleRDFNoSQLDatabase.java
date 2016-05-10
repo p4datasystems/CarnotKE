@@ -263,9 +263,8 @@ public class OracleRDFNoSQLDatabase extends DatabaseInterface {
         }
 
         @Override
-        public void putObject(InsertQuery query, WDBObject wdbObject)
-        {
-            // Ignore for now. 5/9/16 - JoshuaHurt@utexas.edu
+        public void putObject(InsertQuery query) {
+
         }
 
         @Override
@@ -286,6 +285,11 @@ public class OracleRDFNoSQLDatabase extends DatabaseInterface {
         }
 
         @Override
+        public void modifyObjects(ModifyQuery query) {
+
+        }
+
+        @Override
         public WDBObject getObject(String s, Integer integer)
         {
             return null;
@@ -294,6 +298,11 @@ public class OracleRDFNoSQLDatabase extends DatabaseInterface {
         @Override
         public ArrayList<WDBObject> getObjects(IndexDef indexDef, String s)
         {
+            return null;
+        }
+
+        @Override
+        public ArrayList<PyObject> getObjects(RetrieveQuery query) {
             return null;
         }
 

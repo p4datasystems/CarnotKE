@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="WEB_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="extlibs1" level="project" />
+    <orderEntry type="library" name="jar" level="project" />
+    <orderEntry type="library" name="servlet" level="project" />
+    <orderEntry type="library" name="BACKUP" level="project" />
+    <orderEntry type="library" name="cpptasks" level="project" />
+    <orderEntry type="library" name="extlibs" level="project" />
+    <orderEntry type="library" name="mockrunner-servlet" level="project" />
+  </component>
+</module>
