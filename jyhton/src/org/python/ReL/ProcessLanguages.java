@@ -238,9 +238,12 @@ public class ProcessLanguages {
         debugMsg(DBG, "Statement executed: " + ReLstmt);
 
         /************************ BEGIN WDB CODE DUMP ************************/
+        boolean isTitan = connDatabase instanceof TitanNoSQLDatabase;
         if (q instanceof ClassDef) {
             ClassDef cd = (ClassDef) q;
-            if (!(connDatabase instanceof TitanNoSQLDatabase)) {
+            if(isTitan) {
+                adapter.putClass(cd);
+            } else {
                 try {
                     if (cd.name != null)
                         q.queryName = cd.name;
@@ -268,14 +271,11 @@ public class ProcessLanguages {
                     adapter.abort();
                     return null;
                 }
-            } else {
-                adapter.putClass(cd);
             }
         }
 
         if (q.getClass() == ModifyQuery.class) {
             ModifyQuery mq = (ModifyQuery) q;
-            boolean isTitan = connDatabase instanceof TitanNoSQLDatabase;
             if (isTitan) {
                 adapter.modifyObjects(mq);
             } else {
@@ -298,7 +298,6 @@ public class ProcessLanguages {
 
         if (q instanceof InsertQuery) {
             InsertQuery iq = (InsertQuery) q;
-            boolean isTitan = connDatabase instanceof TitanNoSQLDatabase;
             if (isTitan) {
                 adapter.putObject(iq);
             } else {
@@ -485,7 +484,6 @@ public class ProcessLanguages {
         if (q instanceof RetrieveQuery) {
             //Ok, its a retrieve...
             RetrieveQuery rq = (RetrieveQuery) q;
-            boolean isTitan = connDatabase instanceof TitanNoSQLDatabase;
             if (isTitan) {
                 return adapter.getObjects(rq);
             } else {
