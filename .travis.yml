@@ -13,7 +13,9 @@ before_script:
 
 script:
     - pwd
-    - ant
+    - jdk_switcher use oraclejdk7
+    - ant antlr_gen
+    - jdk_switcher use oraclejdk8
     - ant
 
 after_script:
