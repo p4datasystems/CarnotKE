@@ -1,6 +1,6 @@
 import unittest
 
-connOracleNoSQL = connectTo 'TitanNoSQL' 'WDB' 'localhost:5010' 'native_mode' 'A0'
+connOracleNoSQL = connectTo 'OracleNoSQL' 'WDB' 'localhost:5010' 'native_mode' 'A0'
 
 print "Connections are opened, start loading Databases"
 
@@ -24,9 +24,9 @@ SIM on connOracleNoSQL 'CLASS sim_dept ( DEPT_ID:INTEGER, REQUIRED ; NAME :STRIN
 SIM on connOracleNoSQL 'CLASS sim_project ( PROJECT_ID:INTEGER, REQUIRED ; NAME :STRING ; employees :sim_project_emp, MV(DISTINCT), INVERSE IS projects ; department :sim_dept, INVERSE IS projects ; );'
 
 # (Schemaless Inserts) Animal
-SIM on connOracleNoSQL 'INSERT Animal ( Species := "Tiger", type:= "Mammalia", MeatEater := True);'
-SIM on connOracleNoSQL 'INSERT Animal ( Species := "Jiraffe", type := "Mammalia", MeatEater := False);'
-SIM on connOracleNoSQL 'INSERT Animal.Pet WHERE Species = "Tiger" ( Name := "Greg", Age := 10, Address := "3843 Maplewood Dr.");'
+SIM on connOracleNoSQL 'INSERT animal ( Species := "Tiger", type:= "Mammalia", MeatEater := True);'
+SIM on connOracleNoSQL 'INSERT animal ( Species := "Jiraffe", type := "Mammalia", MeatEater := False);'
+SIM on connOracleNoSQL 'INSERT animal.pet WHERE Species = "Tiger" ( Name := "Greg", Age := 10, Address := "3843 Maplewood Dr.");'
 
 # 6 instances of sim_project_emp
 SIM on connOracleNoSQL 'INSERT sim_project_emp (PERSON_ID := 13 , NAME := "AARON" , SSNUM := 100 , GENDER := "MALE" , BIRTH_DATE := "01/01/87" , ADDRESS := "123 NOTHING LN" , CITY := "NEW YORK" , STATE := "NEW YORK" , ZIP := 888 , EMP_ID := 100100 , HIRE_DATE := "01/01/07" , SALARY := 87000 , STATUS := "EMPLOYED" , TITLE := "MARKETER"  , RATING := "OKAY"); '
@@ -77,6 +77,11 @@ SIM on connOracleNoSQL 'from sim_project retrieve *, name OF employees, name OF 
 # 6. Show all instances of the SIM_dept class along with their respective project employee, project, and manager name(s).
 SIM on connOracleNoSQL 'from sim_dept retrieve *, name OF employees, name OF projects, name OF manager;'
 
+print "Testing schemaless inserts:"
+# 7. Show all instances of the SIM_person class
+SIM on connOracleNoSQL 'from animal retrieve *;'
+# 8. Show all instances of the SIM_emp class
+SIM on connOracleNoSQL 'from pet retrieve *;'
 
 
 # SIM on connOracleNoSQL "CLEAR DATABASE"
