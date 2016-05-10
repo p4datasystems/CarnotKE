@@ -17,6 +17,6 @@ script:
     - ant
 
 after_script:
-    
+    - export INSTALLATION_ROOT="."
     - dist/bin/jython nativeSIMunitTests.py
 
