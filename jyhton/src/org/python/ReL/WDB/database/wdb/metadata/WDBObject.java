@@ -250,7 +250,7 @@ public class WDBObject implements Serializable {
 	public void setDvaValue(String dvaName, Object value, Adapter scda) throws Exception
 	{
 		//See if its immediate in this class
-		ClassDef myClass = this.getClassDef(scda);
+        ClassDef myClass = this.getClassDef(scda);
 		Attribute myAttribute = myClass.getAttribute(dvaName);
 		if(myAttribute != null && myAttribute.getClass() == DVA.class)
 		{
@@ -277,12 +277,14 @@ public class WDBObject implements Serializable {
 			Enumeration e = parents.keys();
 			while(true)
 			{
+                if(parents.keySet().isEmpty()) {
+                    break;
+                }
 				try
 				{
 					String parentClass = (String)e.nextElement();
 					Integer parentUid = (Integer)parents.get(parentClass);
 					WDBObject parent = scda.getObject(parentClass, parentUid);
-
 					parent.setDvaValue(dvaName, value, scda);
 					//If we reached here, we set our value. Get out of here
 					break;
@@ -304,6 +306,7 @@ public class WDBObject implements Serializable {
 		{
 			throw new NoSuchFieldException("Attribute \"" + dvaName + "\" is not a valid DVA");
 		}
+
 
 		this.commit(scda);
 	}

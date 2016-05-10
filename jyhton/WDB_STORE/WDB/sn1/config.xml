@@ -49,40 +49,6 @@
     <property name="isLoopback" value="true" type="BOOLEAN"/>
     <property name="storeName" value="WDB" type="STRING"/>
   </component>
-  <component name="admin1" type="adminParams" validate="true">
-    <property name="broadcastTopoDelay" value="10 SECONDS" type="DURATION"/>
-    <property name="adminLogFileLimit" value="4000000" type="INT"/>
-    <property name="createCSV" value="false" type="BOOLEAN"/>
-    <property name="adminHttpPort" value="5011" type="INT"/>
-    <property name="useClientSocketFactories" value="true" type="BOOLEAN"/>
-    <property name="broadcastMetadataDelay" value="10 SECONDS" type="DURATION"/>
-    <property name="waitAdminFailover" value="1 MINUTES" type="DURATION"/>
-    <property name="waitTimeout" value="5 MINUTES" type="DURATION"/>
-    <property name="adminLoginSOBacklog" value="0" type="INT"/>
-    <property name="adminLogFileCount" value="20" type="INT"/>
-    <property name="checkAddIndex" value="10 SECONDS" type="DURATION"/>
-    <property name="GCLogFileSize" value="1048576" type="INT"/>
-    <property name="adminId" value="1" type="INT"/>
-    <property name="disabled" value="false" type="BOOLEAN"/>
-    <property name="broadcastTopoThreshold" value="20" type="INT"/>
-    <property name="broadcastMetadataThreshold" value="20" type="INT"/>
-    <property name="adminListenerSOBacklog" value="100" type="INT"/>
-    <property name="storageNodeId" value="1" type="INT"/>
-    <property name="adminType" value="PRIMARY" type="STRING"/>
-    <property name="loggingConfigProps" value="" type="STRING"/>
-    <property name="waitUnreachableService" value="3 SECONDS" type="DURATION"/>
-    <property name="hideUserData" value="true" type="BOOLEAN"/>
-    <property name="helperHosts" value="localhost:5013" type="STRING"/>
-    <property name="adminCommandServiceSOBacklog" value="0" type="INT"/>
-    <property name="numGCLogFiles" value="10" type="INT"/>
-    <property name="maxTopoChanges" value="1000" type="INT"/>
-    <property name="waitRNConsistency" value="60 MINUTES" type="DURATION"/>
-    <property name="nodeHostPort" value="localhost:5013" type="STRING"/>
-    <property name="checkPartitionMigration" value="10 SECONDS" type="DURATION"/>
-    <property name="waitRNFailover" value="1 MINUTES" type="DURATION"/>
-    <property name="collectorPollPeriod" value="20 SECONDS" type="DURATION"/>
-    <property name="eventExpiryAge" value="30 DAYS" type="DURATION"/>
-  </component>
   <component name="rg1-rn1" type="repNodeParams" validate="true">
     <property name="rnAdminSOBacklog" value="0" type="INT"/>
     <property name="rnPMSOConnectTimeout" value="10 SECONDS" type="DURATION"/>
@@ -140,5 +106,39 @@
     <property name="masterBalance" value="true" type="BOOLEAN"/>
     <property name="rnLoginSOBacklog" value="0" type="INT"/>
     <property name="rnNumGCLogFiles" value="10" type="INT"/>
+  </component>
+  <component name="admin1" type="adminParams" validate="true">
+    <property name="broadcastTopoDelay" value="10 SECONDS" type="DURATION"/>
+    <property name="adminLogFileLimit" value="4000000" type="INT"/>
+    <property name="createCSV" value="false" type="BOOLEAN"/>
+    <property name="adminHttpPort" value="5011" type="INT"/>
+    <property name="useClientSocketFactories" value="true" type="BOOLEAN"/>
+    <property name="broadcastMetadataDelay" value="10 SECONDS" type="DURATION"/>
+    <property name="waitAdminFailover" value="1 MINUTES" type="DURATION"/>
+    <property name="waitTimeout" value="5 MINUTES" type="DURATION"/>
+    <property name="adminLoginSOBacklog" value="0" type="INT"/>
+    <property name="adminLogFileCount" value="20" type="INT"/>
+    <property name="checkAddIndex" value="10 SECONDS" type="DURATION"/>
+    <property name="GCLogFileSize" value="1048576" type="INT"/>
+    <property name="adminId" value="1" type="INT"/>
+    <property name="disabled" value="false" type="BOOLEAN"/>
+    <property name="broadcastTopoThreshold" value="20" type="INT"/>
+    <property name="broadcastMetadataThreshold" value="20" type="INT"/>
+    <property name="adminListenerSOBacklog" value="100" type="INT"/>
+    <property name="storageNodeId" value="1" type="INT"/>
+    <property name="adminType" value="PRIMARY" type="STRING"/>
+    <property name="loggingConfigProps" value="" type="STRING"/>
+    <property name="waitUnreachableService" value="3 SECONDS" type="DURATION"/>
+    <property name="hideUserData" value="true" type="BOOLEAN"/>
+    <property name="helperHosts" value="localhost:5013" type="STRING"/>
+    <property name="adminCommandServiceSOBacklog" value="0" type="INT"/>
+    <property name="numGCLogFiles" value="10" type="INT"/>
+    <property name="maxTopoChanges" value="1000" type="INT"/>
+    <property name="waitRNConsistency" value="60 MINUTES" type="DURATION"/>
+    <property name="nodeHostPort" value="localhost:5013" type="STRING"/>
+    <property name="checkPartitionMigration" value="10 SECONDS" type="DURATION"/>
+    <property name="waitRNFailover" value="1 MINUTES" type="DURATION"/>
+    <property name="collectorPollPeriod" value="20 SECONDS" type="DURATION"/>
+    <property name="eventExpiryAge" value="30 DAYS" type="DURATION"/>
   </component>
 </config>

@@ -157,3 +157,212 @@ store=WDB  numPartitions=2 sequence=6
 2016-05-03 21:34:13.973 UTC INFO [admin1] JE: ServiceDispatcher-localhost:5013 soft shutdown initiated.
 2016-05-03 21:34:13.973 UTC INFO [admin1] JE: ServiceDispatcher shutdown completed. HostPort=localhost:5013
 2016-05-03 21:34:13.973 UTC INFO [admin1] JE: 1(1) shutdown completed.
+2016-05-10 01:58:28.325 UTC INFO [admin1] Starting service process: admin1, Java command line arguments: [-XX:+DisableExplicitGC, -Xms96M, -Xmx128M, -XX:+HeapDumpOnOutOfMemoryError, -Dje.rep.skipHelperHostResolution=true, -XX:+PrintGCDetails, -XX:+PrintGCDateStamps, -XX:+PrintGCApplicationStoppedTime, -XX:+UseGCLogFileRotation, -XX:NumberOfGCLogFiles=10, -XX:GCLogFileSize=1048576, -Xloggc:/Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/./WDB_STORE/WDB/log/admin1.gc]
+2016-05-10 01:58:28.380 UTC INFO [admin1] Starting AdminService
+2016-05-10 01:58:28.448 UTC INFO [admin1] Initializing PRIMARY Admin for store: WDB
+2016-05-10 01:58:28.449 UTC INFO [admin1] JVM Runtime maxMemory (bytes): 119537664
+2016-05-10 01:58:28.451 UTC INFO [admin1] Non-default JE properties for environment: {je.rep.vlsn.logCacheSize=128, je.rep.envUnknownStateTimeout=10 s, je.log.faultReadSize=4096, je.rep.vlsn.distance=1000000, je.rep.replicaTimeout=10 s, je.env.runEvictor=true, je.cleaner.minUtilization=40, je.rep.replicaAckTimeout=5 s, je.lock.nLockTables=97, je.cleaner.threads=2, je.rep.replayMaxOpenDbHandles=100, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.log.iteratorReadSize=1048576, je.log.numBuffers=16, je.rep.feederTimeout=10 s, je.nodeMaxEntries=128, je.lock.timeout=10 s, je.rep.bindInaddrAny=true, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.checkpointer.bytesInterval=500000000, je.txn.durability=write_no_sync,write_no_sync,simple_majority, je.cleaner.readSize=1048576, je.rep.ignoreSecondaryNodeId=true, je.rep.txnRollbackLimit=10, je.log.fileCacheSize=2000, je.log.fileMax=1073741824}
+2016-05-10 01:58:28.461 UTC INFO [admin1] DataChannelFactory: basic
+2016-05-10 01:58:28.463 UTC INFO [admin1] AdminStateTracker thread start: admin1
+2016-05-10 01:58:28.678 UTC INFO [admin1] JE recovery: FIND_END_OF_LOG
+2016-05-10 01:58:28.713 UTC INFO [admin1] JE recovery: FIND_LAST_CKPT
+2016-05-10 01:58:28.717 UTC INFO [admin1] JE recovery: READ_DBMAP_INFO
+2016-05-10 01:58:28.729 UTC INFO [admin1] JE recovery: REDO_DBMAP_INFO
+2016-05-10 01:58:28.732 UTC INFO [admin1] JE recovery: UNDO_DBMAP_RECORDS
+2016-05-10 01:58:28.734 UTC INFO [admin1] JE recovery: REDO_DBMAP_RECORDS
+2016-05-10 01:58:28.739 UTC INFO [admin1] JE recovery: READ_DATA_INFO
+2016-05-10 01:58:28.750 UTC INFO [admin1] JE recovery: REDO_DATA_INFO
+2016-05-10 01:58:28.753 UTC INFO [admin1] JE recovery: UNDO_DATA_RECORDS
+2016-05-10 01:58:28.754 UTC INFO [admin1] JE recovery: REDO_DATA_RECORDS
+2016-05-10 01:58:28.761 UTC INFO [admin1] JE recovery: POPULATE_UTILIZATION_PROFILE
+2016-05-10 01:58:28.766 UTC INFO [admin1] JE recovery: REMOVE_TEMP_DBS
+2016-05-10 01:58:28.783 UTC INFO [admin1] JE recovery: RECOVERY_FINISHED
+2016-05-10 01:58:28.803 UTC INFO [admin1] JE: Started ServiceDispatcher. HostPort=localhost:5013
+2016-05-10 01:58:28.803 UTC INFO [admin1] JE: DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-05-10 01:58:28.850 UTC INFO [admin1] JE: Current group size: 1
+2016-05-10 01:58:28.851 UTC INFO [admin1] JE: Existing node 1 querying for a current master.
+2016-05-10 01:58:28.904 UTC INFO [admin1] JE recovery: BECOME_CONSISTENT
+2016-05-10 01:58:28.904 UTC INFO [admin1] JE: Node 1 started
+2016-05-10 01:58:28.905 UTC INFO [admin1] JE: Election initiated; election #1
+2016-05-10 01:58:28.906 UTC INFO [admin1] JE: Started election thread Mon May 09 20:58:28 CDT 2016
+2016-05-10 01:58:30.913 UTC INFO [admin1] JE: Winning proposal: Proposal(00000154986314fd:7b8324e6518a11d2de386aee10be93d9:00000001) Value: Value:localhost$$$5013$$$1$$$1
+2016-05-10 01:58:30.914 UTC INFO [admin1] JE: Master changed to 1
+2016-05-10 01:58:30.914 UTC INFO [admin1] JE: Election finished. Elapsed time: 2009ms
+2016-05-10 01:58:30.915 UTC INFO [admin1] JE: Election thread exited. Group master: 1(1)
+2016-05-10 01:58:30.915 UTC INFO [admin1] JE: Feeder manager accepting requests.
+2016-05-10 01:58:30.921 UTC INFO [admin1] JE: Joining group as master
+2016-05-10 01:58:30.922 UTC INFO [admin1] JE: Refreshed 0 monitors.
+2016-05-10 01:58:30.924 UTC INFO [admin1] State change event: Mon May 09 20:58:30 CDT 2016, State: MASTER, Type: PRIMARY, Master: 1
+2016-05-10 01:58:30.925 UTC INFO [admin1] AdminStateTracker queue added:MASTER
+2016-05-10 01:58:31.044 UTC INFO [admin1] Open Admin entity DB: AdminPlanDatabase
+2016-05-10 01:58:31.044 UTC INFO [admin1] Admin plan database initialized
+2016-05-10 01:58:31.044 UTC INFO [admin1] Initialized plan store to PlanDatabaseStore
+2016-05-10 01:58:31.045 UTC INFO [admin1] Shutting down monitor collector
+2016-05-10 01:58:31.060 UTC INFO [admin1] Using existing Admin database
+2016-05-10 01:58:31.064 UTC INFO [admin1] Monitor collector: adding sn1 to monitoring
+2016-05-10 01:58:31.066 UTC INFO [admin1] Monitor collector: adding rg1-rn1 to monitoring
+2016-05-10 01:58:31.109 UTC INFO [admin1] [sn1] Service status: RUNNING 2016-05-10 01:58:28 UTC
+2016-05-10 01:58:31.113 UTC INFO [admin1] [rg1-rn1] Service status: STARTING 2016-05-10 01:58:31 UTC
+2016-05-10 01:58:31.167 UTC INFO [admin1] Replicated environment handle established. Cache size: 71722598, State: MASTER
+2016-05-10 01:58:31.167 UTC INFO [admin1] Starting commandService on rmi://localhost:5010/commandService
+2016-05-10 01:58:31.235 UTC INFO [admin1] Successfully created a secure proxy for commandService
+2016-05-10 01:58:31.285 UTC INFO [admin1] Starting admin:CLIENT_ADMIN on rmi://localhost:5010/admin:CLIENT_ADMIN
+2016-05-10 01:58:31.289 UTC INFO [admin1] Successfully created a secure proxy for admin:CLIENT_ADMIN
+2016-05-10 01:58:31.296 UTC INFO [admin1] Starting Web service on port 5011
+2016-05-10 01:58:31.365 UTC INFO [admin1] jetty-7.4.0.v20110414
+2016-05-10 01:58:31.404 UTC INFO [admin1] Extract jar:file:/Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/dist/javalib/kvstore.jar!/war/KVAdminUI/ to /Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/WDB_STORE/WDB/sn1/admin1/webapp/webapp
+2016-05-10 01:58:31.796 UTC INFO [admin1] NO JSP Support for /, did not find org.apache.jasper.servlet.JspServlet
+2016-05-10 01:58:31.816 UTC INFO [admin1] started o.e.j.w.WebAppContext{/,file:/Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/WDB_STORE/WDB/sn1/admin1/webapp/webapp/},jar:file:/Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/dist/javalib/kvstore.jar!/war/KVAdminUI
+2016-05-10 01:58:31.862 UTC INFO [admin1] Started SelectChannelConnector@0.0.0.0:5011 STARTING
+2016-05-10 01:58:31.862 UTC INFO [admin1] Started AdminService
+2016-05-10 01:58:33.506 UTC INFO [admin1] Plan 7[Deploy Zone (7)] approved
+2016-05-10 01:58:33.510 UTC INFO [admin1] Plan 7[Deploy Zone (7)]: started, 1 tasks
+2016-05-10 01:58:33.513 UTC INFO [admin1] Plan 7[Deploy Zone (7)]: task 1 [DeployDatacenter zone=WDB_zone] started
+2016-05-10 01:58:33.515 UTC INFO [admin1] Plan 7[Deploy Zone (7)]: task 1 [DeployDatacenter zone=WDB_zone] ended, state=SUCCEEDED
+2016-05-10 01:58:33.518 UTC INFO [admin1] Plan 7[Deploy Zone (7)]: ended, state=SUCCEEDED
+2016-05-10 01:58:33.518 UTC INFO [admin1] Waiting for Plan 7[Deploy Zone (7)] ended, state=SUCCEEDED
+2016-05-10 01:58:33.525 UTC INFO [admin1] Plan 8[Deploy Storage Node (8)] approved
+2016-05-10 01:58:33.526 UTC INFO [admin1] Plan 8[Deploy Storage Node (8)]: started, 1 tasks
+2016-05-10 01:58:33.527 UTC INFO [admin1] Plan 8[Deploy Storage Node (8)]: task 1 [DeploySN sn1(localhost:5010)] started
+2016-05-10 01:58:33.541 UTC INFO [admin1] DeploySN sn1(localhost:5010): SNA already deployed, had status of RUNNING
+2016-05-10 01:58:33.542 UTC INFO [admin1] Plan 8[Deploy Storage Node (8)]: task 1 [DeploySN sn1(localhost:5010)] ended, state=SUCCEEDED
+2016-05-10 01:58:33.544 UTC INFO [admin1] Plan 8[Deploy Storage Node (8)]: ended, state=SUCCEEDED
+2016-05-10 01:58:33.544 UTC INFO [admin1] Waiting for Plan 8[Deploy Storage Node (8)] ended, state=SUCCEEDED
+2016-05-10 01:58:33.554 UTC INFO [admin1] Plan 9[Deploy Admin Service (9)] approved
+2016-05-10 01:58:33.555 UTC INFO [admin1] Plan 9[Deploy Admin Service (9)]: started, 4 tasks
+2016-05-10 01:58:33.557 UTC INFO [admin1] Plan 9[Deploy Admin Service (9)]: task 1 [DeployAdmin AdminId[admin1] on SNId[sn1]] started
+2016-05-10 01:58:33.576 UTC INFO [admin1] Plan 9[Deploy Admin Service (9)]: task 1 [DeployAdmin AdminId[admin1] on SNId[sn1]] ended, state=SUCCEEDED
+2016-05-10 01:58:33.576 UTC INFO [admin1] Plan 9[Deploy Admin Service (9)]: task 2 [WaitForAdminState waits for Admin admin1 to reach RUNNING state] started
+2016-05-10 01:58:33.583 UTC INFO [admin1] Plan 9[Deploy Admin Service (9)]: task 2 [WaitForAdminState waits for Admin admin1 to reach RUNNING state] ended, state=SUCCEEDED
+2016-05-10 01:58:33.583 UTC INFO [admin1] Plan 9[Deploy Admin Service (9)]: task 3 [UpdateAdminHelperHost update helper hosts for admin1] started
+2016-05-10 01:58:33.588 UTC INFO [admin1] Changed helperHost for admin1 to localhost:5013
+2016-05-10 01:58:33.605 UTC INFO [admin1] Plan 9[Deploy Admin Service (9)]: task 3 [UpdateAdminHelperHost update helper hosts for admin1] ended, state=SUCCEEDED
+2016-05-10 01:58:33.606 UTC INFO [admin1] Plan 9[Deploy Admin Service (9)]: task 4 [NewAdminParameters cause Admin admin1 to refresh its parameter state without restarting] started
+2016-05-10 01:58:33.613 UTC INFO [admin1] Plan 9[Deploy Admin Service (9)]: task 4 [NewAdminParameters cause Admin admin1 to refresh its parameter state without restarting] ended, state=SUCCEEDED
+2016-05-10 01:58:33.614 UTC INFO [admin1] Plan 9[Deploy Admin Service (9)]: ended, state=SUCCEEDED
+2016-05-10 01:58:33.614 UTC INFO [admin1] Waiting for Plan 9[Deploy Admin Service (9)] ended, state=SUCCEEDED
+2016-05-10 01:58:33.636 UTC INFO [admin1] Added Storage Node sn1 to pool: WDBPool
+2016-05-10 01:58:33.647 UTC INFO [admin1] oracle.kv.impl.admin.topo.TopologyCandidate@69d4ce88 has nothing to rebalance
+2016-05-10 01:58:33.650 UTC INFO [admin1] Couldn't improve topology. Store can only support 1 shards.
+Shard calculation based on smallest zone: zn id=zn1 maximum shards= 1
+
+2016-05-10 01:58:33.666 UTC INFO [admin1] Plan 10[Deploy Topo (10)] approved
+2016-05-10 01:58:33.668 UTC INFO [admin1] Plan 10[Deploy Topo (10)] deploying topology candidate WDBTopology.
+2016-05-10 01:58:33.669 UTC INFO [admin1] Current topology: store=WDB  numPartitions=2 sequence=6
+  zn: id=zn1 name=WDB_zone repFactor=1 type=PRIMARY
+
+  sn=[sn1] zn:[id=zn1 name=WDB_zone] localhost:5010
+    [rg1-rn1]
+
+  shard=[rg1] num partitions=2
+    [rg1-rn1] sn=sn1
+
+2016-05-10 01:58:33.670 UTC INFO [admin1] Preview of changes to be executed by Plan 10[Deploy Topo (10)]:
+No differences in topologies.
+2016-05-10 01:58:33.670 UTC INFO [admin1] Target topology candidate: WDBTopology
+store=WDB  numPartitions=2 sequence=6
+  zn: id=zn1 name=WDB_zone repFactor=1 type=PRIMARY
+
+  sn=[sn1] zn:[id=zn1 name=WDB_zone] localhost:5010
+    [rg1-rn1]
+
+  shard=[rg1] num partitions=2
+    [rg1-rn1] sn=sn1
+
+2016-05-10 01:58:33.671 UTC INFO [admin1] Plan 10[Deploy Topo (10)]: started, 3 tasks
+2016-05-10 01:58:33.672 UTC INFO [admin1] Plan 10[Deploy Topo (10)]: task 1 [UpdateDatacenterV2 zone=zn1] started
+2016-05-10 01:58:33.673 UTC INFO [admin1] Plan 10[Deploy Topo (10)]: task 1 [UpdateDatacenterV2 zone=zn1] ended, state=SUCCEEDED
+2016-05-10 01:58:33.674 UTC INFO [admin1] Plan 10[Deploy Topo (10)]: task 2 [BroadcastTopo] started
+2016-05-10 01:58:33.674 UTC INFO [admin1] Broadcasting topology seq# 6, changes for BroadcastTopo
+2016-05-10 01:58:33.686 UTC INFO [admin1] Plan 10[Deploy Topo (10)]: task 2 [BroadcastTopo] ended, state=SUCCEEDED
+2016-05-10 01:58:33.686 UTC INFO [admin1] Plan 10[Deploy Topo (10)]: task 3 [BroadcastMetadata] started
+2016-05-10 01:58:33.688 UTC INFO [admin1] Plan 10[Deploy Topo (10)]: task 3 [BroadcastMetadata] ended, state=SUCCEEDED
+2016-05-10 01:58:33.689 UTC INFO [admin1] Plan 10[Deploy Topo (10)]: ended, state=SUCCEEDED
+2016-05-10 01:58:33.689 UTC INFO [admin1] Waiting for Plan 10[Deploy Topo (10)] ended, state=SUCCEEDED
+2016-05-10 01:58:51.073 UTC INFO [admin1] [rg1-rn1] Service status: RUNNING 2016-05-10 01:58:31 UTC
+2016-05-10 01:59:02.793 UTC INFO [admin1] Starting service process: admin1, Java command line arguments: [-XX:+DisableExplicitGC, -Xms96M, -Xmx128M, -XX:+HeapDumpOnOutOfMemoryError, -Dje.rep.skipHelperHostResolution=true, -XX:+PrintGCDetails, -XX:+PrintGCDateStamps, -XX:+PrintGCApplicationStoppedTime, -XX:+UseGCLogFileRotation, -XX:NumberOfGCLogFiles=10, -XX:GCLogFileSize=1048576, -Xloggc:/Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/./WDB_STORE/WDB/log/admin1.gc]
+2016-05-10 01:59:02.847 UTC INFO [admin1] Starting AdminService
+2016-05-10 01:59:02.906 UTC INFO [admin1] Initializing PRIMARY Admin for store: WDB
+2016-05-10 01:59:02.907 UTC INFO [admin1] JVM Runtime maxMemory (bytes): 119537664
+2016-05-10 01:59:02.908 UTC INFO [admin1] Non-default JE properties for environment: {je.rep.vlsn.logCacheSize=128, je.rep.envUnknownStateTimeout=10 s, je.log.faultReadSize=4096, je.rep.vlsn.distance=1000000, je.rep.replicaTimeout=10 s, je.env.runEvictor=true, je.cleaner.minUtilization=40, je.rep.replicaAckTimeout=5 s, je.lock.nLockTables=97, je.cleaner.threads=2, je.rep.replayMaxOpenDbHandles=100, je.log.writeQueueSize=2097152, je.evictor.criticalPercentage=20, je.log.iteratorReadSize=1048576, je.log.numBuffers=16, je.rep.feederTimeout=10 s, je.nodeMaxEntries=128, je.lock.timeout=10 s, je.rep.bindInaddrAny=true, je.rep.preHeartbeatTimeoutMs=5000000000, je.rep.consistencyPolicy=NoConsistencyRequiredPolicy, je.checkpointer.bytesInterval=500000000, je.txn.durability=write_no_sync,write_no_sync,simple_majority, je.cleaner.readSize=1048576, je.rep.ignoreSecondaryNodeId=true, je.rep.txnRollbackLimit=10, je.log.fileCacheSize=2000, je.log.fileMax=1073741824}
+2016-05-10 01:59:02.915 UTC INFO [admin1] DataChannelFactory: basic
+2016-05-10 01:59:02.918 UTC INFO [admin1] AdminStateTracker thread start: admin1
+2016-05-10 01:59:03.103 UTC INFO [admin1] JE recovery: FIND_END_OF_LOG
+2016-05-10 01:59:03.130 UTC INFO [admin1] JE recovery: FIND_LAST_CKPT
+2016-05-10 01:59:03.134 UTC INFO [admin1] JE recovery: READ_DBMAP_INFO
+2016-05-10 01:59:03.148 UTC INFO [admin1] JE recovery: REDO_DBMAP_INFO
+2016-05-10 01:59:03.151 UTC INFO [admin1] JE recovery: UNDO_DBMAP_RECORDS
+2016-05-10 01:59:03.153 UTC INFO [admin1] JE recovery: REDO_DBMAP_RECORDS
+2016-05-10 01:59:03.156 UTC INFO [admin1] JE recovery: READ_DATA_INFO
+2016-05-10 01:59:03.165 UTC INFO [admin1] JE recovery: REDO_DATA_INFO
+2016-05-10 01:59:03.168 UTC INFO [admin1] JE recovery: UNDO_DATA_RECORDS
+2016-05-10 01:59:03.169 UTC INFO [admin1] JE recovery: REDO_DATA_RECORDS
+2016-05-10 01:59:03.182 UTC INFO [admin1] JE recovery: POPULATE_UTILIZATION_PROFILE
+2016-05-10 01:59:03.188 UTC INFO [admin1] JE recovery: REMOVE_TEMP_DBS
+2016-05-10 01:59:03.203 UTC INFO [admin1] JE recovery: CKPT
+2016-05-10 01:59:03.213 UTC INFO [admin1] JE recovery: RECOVERY_FINISHED
+2016-05-10 01:59:03.227 UTC INFO [admin1] JE: Started ServiceDispatcher. HostPort=localhost:5013
+2016-05-10 01:59:03.227 UTC INFO [admin1] JE: DataChannel factory: com.sleepycat.je.rep.utilint.net.SimpleChannelFactory
+2016-05-10 01:59:03.261 UTC INFO [admin1] JE: Current group size: 1
+2016-05-10 01:59:03.261 UTC INFO [admin1] JE: Existing node 1 querying for a current master.
+2016-05-10 01:59:03.310 UTC INFO [admin1] JE recovery: BECOME_CONSISTENT
+2016-05-10 01:59:03.310 UTC INFO [admin1] JE: Node 1 started
+2016-05-10 01:59:03.310 UTC INFO [admin1] JE: Election initiated; election #1
+2016-05-10 01:59:03.312 UTC INFO [admin1] JE: Started election thread Mon May 09 20:59:03 CDT 2016
+2016-05-10 01:59:05.318 UTC INFO [admin1] JE: Winning proposal: Proposal(0000015498639b61:8f6330174fd23f21d959bc353df2117b:00000001) Value: Value:localhost$$$5013$$$1$$$1
+2016-05-10 01:59:05.320 UTC INFO [admin1] JE: Master changed to 1
+2016-05-10 01:59:05.320 UTC INFO [admin1] JE: Election finished. Elapsed time: 2010ms
+2016-05-10 01:59:05.320 UTC INFO [admin1] JE: Election thread exited. Group master: 1(1)
+2016-05-10 01:59:05.321 UTC INFO [admin1] JE: Feeder manager accepting requests.
+2016-05-10 01:59:05.325 UTC INFO [admin1] JE: Joining group as master
+2016-05-10 01:59:05.325 UTC INFO [admin1] JE: Refreshed 0 monitors.
+2016-05-10 01:59:05.326 UTC INFO [admin1] State change event: Mon May 09 20:59:05 CDT 2016, State: MASTER, Type: PRIMARY, Master: 1
+2016-05-10 01:59:05.327 UTC INFO [admin1] AdminStateTracker queue added:MASTER
+2016-05-10 01:59:05.424 UTC INFO [admin1] Open Admin entity DB: AdminPlanDatabase
+2016-05-10 01:59:05.424 UTC INFO [admin1] Admin plan database initialized
+2016-05-10 01:59:05.424 UTC INFO [admin1] Initialized plan store to PlanDatabaseStore
+2016-05-10 01:59:05.425 UTC INFO [admin1] Shutting down monitor collector
+2016-05-10 01:59:05.438 UTC INFO [admin1] Using existing Admin database
+2016-05-10 01:59:05.441 UTC INFO [admin1] Monitor collector: adding sn1 to monitoring
+2016-05-10 01:59:05.443 UTC INFO [admin1] Monitor collector: adding rg1-rn1 to monitoring
+2016-05-10 01:59:05.467 UTC INFO [admin1] [sn1] Service status: STOPPING 2016-05-10 01:59:02 UTC
+2016-05-10 01:59:05.467 UTC INFO [admin1] [sn1] rg1-rn1: Service status: ERROR_NO_RESTART 2016-05-10 01:59:02 UTC
+2016-05-10 01:59:05.467 UTC INFO [admin1] [sn1] admin1: Service status: ERROR_RESTARTING 2016-05-10 01:59:02 UTC
+2016-05-10 01:59:05.507 UTC INFO [admin1] Replicated environment handle established. Cache size: 71722598, State: MASTER
+2016-05-10 01:59:05.507 UTC INFO [admin1] Starting commandService on rmi://localhost:5010/commandService
+2016-05-10 01:59:05.559 UTC INFO [admin1] Successfully created a secure proxy for commandService
+2016-05-10 01:59:05.573 UTC INFO [admin1] Starting admin:CLIENT_ADMIN on rmi://localhost:5010/admin:CLIENT_ADMIN
+2016-05-10 01:59:05.575 UTC INFO [admin1] Successfully created a secure proxy for admin:CLIENT_ADMIN
+2016-05-10 01:59:05.586 UTC INFO [admin1] Starting Web service on port 5011
+2016-05-10 01:59:05.628 UTC INFO [admin1] jetty-7.4.0.v20110414
+2016-05-10 01:59:05.654 UTC INFO [admin1] Extract jar:file:/Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/dist/javalib/kvstore.jar!/war/KVAdminUI/ to /Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/WDB_STORE/WDB/sn1/admin1/webapp/webapp
+2016-05-10 01:59:05.999 UTC INFO [admin1] NO JSP Support for /, did not find org.apache.jasper.servlet.JspServlet
+2016-05-10 01:59:06.044 UTC INFO [admin1] started o.e.j.w.WebAppContext{/,file:/Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/WDB_STORE/WDB/sn1/admin1/webapp/webapp/},jar:file:/Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/dist/javalib/kvstore.jar!/war/KVAdminUI
+2016-05-10 01:59:06.059 UTC INFO [admin1] Started SelectChannelConnector@0.0.0.0:5011 STARTING
+2016-05-10 01:59:06.059 UTC INFO [admin1] Started AdminService
+2016-05-10 01:59:07.659 UTC INFO [admin1] Shutting down AdminService instance
+2016-05-10 01:59:07.659 UTC INFO [admin1] Unbinding CommandService
+2016-05-10 01:59:07.660 UTC INFO [admin1] Unbinding ClientAdminService
+2016-05-10 01:59:07.660 UTC INFO [admin1] Shutting down WebService
+2016-05-10 01:59:07.675 UTC INFO [admin1] stopped o.e.j.w.WebAppContext{/,file:/Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/WDB_STORE/WDB/sn1/admin1/webapp/webapp/},jar:file:/Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/dist/javalib/kvstore.jar!/war/KVAdminUI
+2016-05-10 01:59:07.727 UTC INFO [admin1] Stopped Jetty
+2016-05-10 01:59:07.728 UTC INFO [admin1] Shutting down Admin
+2016-05-10 01:59:07.728 UTC INFO [admin1] Shutting down monitor collector
+2016-05-10 01:59:07.729 UTC INFO [admin1] Closing admin entity DB: AdminPlanDatabase
+2016-05-10 01:59:07.731 UTC INFO [admin1] JE: Shutting down node 1(1)
+2016-05-10 01:59:07.732 UTC INFO [admin1] JE: Refreshed 0 monitors.
+2016-05-10 01:59:07.732 UTC INFO [admin1] JE: Elections shutdown initiated
+2016-05-10 01:59:07.733 UTC INFO [admin1] JE: Acceptor Thread 1 soft shutdown initiated.
+2016-05-10 01:59:07.734 UTC INFO [admin1] JE: Learner Thread 1 soft shutdown initiated.
+2016-05-10 01:59:07.734 UTC INFO [admin1] JE: ElectionThread_1(1):/Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/./WDB_STORE/WDB/sn1/admin1/env soft shutdown initiated.
+2016-05-10 01:59:07.734 UTC INFO [admin1] JE: Elections shutdown completed
+2016-05-10 01:59:07.734 UTC INFO [admin1] JE: Feeder manager soft shutdown.
+2016-05-10 01:59:07.734 UTC INFO [admin1] JE: MASTER 1(1) soft shutdown initiated.
+2016-05-10 01:59:07.735 UTC INFO [admin1] JE: Feeder manager exited. CurrentTxnEnd VLSN: 289
+2016-05-10 01:59:07.735 UTC INFO [admin1] JE: RepNode main thread shutting down.
+2016-05-10 01:59:07.736 UTC INFO [admin1] JE: RepNode main thread: DETACHED 1(1) exited.
+2016-05-10 01:59:07.736 UTC INFO [admin1] JE: Feeder Manager node: 1 soft shutdown initiated.
+2016-05-10 01:59:07.736 UTC INFO [admin1] JE: ServiceDispatcher shutdown starting. HostPort=localhost:5013 Registered services: []
+2016-05-10 01:59:07.736 UTC INFO [admin1] JE: ServiceDispatcher-localhost:5013 soft shutdown initiated.
+2016-05-10 01:59:07.737 UTC INFO [admin1] JE: ServiceDispatcher shutdown completed. HostPort=localhost:5013
+2016-05-10 01:59:07.737 UTC INFO [admin1] JE: 1(1) shutdown completed.

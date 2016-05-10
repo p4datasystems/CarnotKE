@@ -279,6 +279,8 @@ oracle.jar=C:/workspace/HEAD/for_development/bisdevsrv28/jboss/server/infra/lib/
             <pathelement path="${extlibs.dir}/titan-berkeleyje-1.0.0.jar"/>
             <pathelement path="${extlibs.dir}/attribute-serializer-0.1.jar"/>
             <pathelement path="${extlibs.dir}/reflections-0.9.9-RC1.jar"/>
+            <pathelement path="${extlibs.dir}/javassist.jar"/>
+            
 
             <!-- <pathelement path="${extlibs.dir}/TEMPLATE.jar"/> -->
 
@@ -823,6 +825,7 @@ The readme text for the next release will be like:
             <zipfileset src="${extlibs.dir}/metrics-jvm-3.0.0.jar"/>
             <zipfileset src="${extlibs.dir}/titan-berkeleyje-1.0.0.jar"/>
             <zipfileset src="${extlibs.dir}/attribute-serializer-0.1.jar"/>
+            <zipfileset src="${extlibs.dir}/javassist.jar"/>
 
 
 

@@ -18,6 +18,8 @@ import org.python.ReL.WDB.database.wdb.metadata.Query;
 import org.python.ReL.WDB.database.wdb.metadata.SubclassDef;
 import org.python.ReL.WDB.database.wdb.metadata.WDBObject;
 import org.python.ReL.WDB.parser.generated.wdb.parser.*;
+import org.python.core.*;
+
 
 /**
  * @author Alvin Deng
@@ -63,9 +65,10 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         }
     }
 
-
-    public void validateInstallationRoot()
-    {
+    /**
+     * Initialize the INSTALLATION_ROOT path
+     */
+    public void validateInstallationRoot() {
         final String serverRoot = System.getenv("INSTALLATION_ROOT");
         if (serverRoot == null) {
             // maybe print?
@@ -81,15 +84,15 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
     /**
      * Default constructor to support TitanNoSQLAdapter.
      */
-    public TitanNoSQLDatabase()
-    {
+    public TitanNoSQLDatabase() {
         this.adapter = new TitanNoSQLAdapter(this);
         initTitanDB();
     }
 
     /**
      * Iterate through the graph and find the proper ClassDef vertex.
-     * @param g Traversal source to iterate through the graph
+     *
+     * @param g    Traversal source to iterate through the graph
      * @param name Name of ClassDef
      */
     private Vertex lookupClass(GraphTraversalSource g, String name) {
@@ -98,6 +101,7 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
     /**
      * Throw exceptions.
+     *
      * @param format Format of the error
      * @param args
      */
@@ -107,8 +111,9 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
     /**
      * Obtain the vertex that is a subclass of superclass.
-     * @param g Traversal source to iterate through the graph
-     * @param classID Specific vertex ID of TitanDB
+     *
+     * @param g               Traversal source to iterate through the graph
+     * @param classID         Specific vertex ID of TitanDB
      * @param targetClassName Name of the superclass
      * @return Vertex of the subclass
      */
@@ -129,9 +134,10 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
     /**
      * Get the proper vertex with given attribute.
-     * @param g Traversal source to iterate through the graph
-     * @param classDef ClassDef of the instance
-     * @param isDVA Indicates if the attribute is DVA or not
+     *
+     * @param g             Traversal source to iterate through the graph
+     * @param classDef      ClassDef of the instance
+     * @param isDVA         Indicates if the attribute is DVA or not
      * @param attributeName Name of the attribute
      * @return Vertex with the given attribute
      */
@@ -153,9 +159,10 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
     /**
      * Checking the assignment type and throw proper exception.
-     * @param query UpdateQuery query that contains the class name
-     * @param name Attribute name
-     * @param attrVertex Attribute Vertex
+     *
+     * @param query         UpdateQuery query that contains the class name
+     * @param name          Attribute name
+     * @param attrVertex    Attribute Vertex
      * @param dvaAssignment dvaAssignment Object to check the attribute value
      */
     private void checkAssignmentType(UpdateQuery query, String name, Vertex attrVertex, DvaAssignment dvaAssignment) {
@@ -187,9 +194,10 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
     /**
      * Initialize default values for DVAs.
-     * @param g Traversal source to iterate through the graph
+     *
+     * @param g        Traversal source to iterate through the graph
      * @param classDef Vertex of the ClassDef
-     * @param entity Vertex of the instance
+     * @param entity   Vertex of the instance
      */
     private void setDefaultDVAs(GraphTraversalSource g, Vertex classDef, Vertex entity) {
         GraphTraversal<Vertex, Vertex> dvas = g.V(classDef.id()).outE("has").has("isDVA").inV().has("default_value");
@@ -205,18 +213,19 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
     /**
      * Traverse through the graph and obtain an instance vertex based on the requirements.
+     *
      * @param classDef Vertex of a ClassDef
-     * @param UID Identifier number in the WDBObject for an instance
+     * @param UID      Identifier number in the WDBObject for an instance
      * @return An instance vertex of the ClassDef with a specific UID
      */
     private Vertex getInstanceVertex(Vertex classDef, Integer UID) {
         GraphTraversalSource g = graph.traversal();
         GraphTraversal<Vertex, Vertex> iter = g.V(classDef.id()).out("instance");
-        while(iter.hasNext()) {
+        while (iter.hasNext()) {
             Vertex currentInstance = iter.next();
             HashMap<String, WDBObject> map = (HashMap<String, WDBObject>) currentInstance.property("wdbobject").value();
             WDBObject wdbObject = map.get("wdbobject");
-            if(wdbObject != null && wdbObject.getUid().equals(UID)) {
+            if (wdbObject != null && wdbObject.getUid().equals(UID)) {
                 return currentInstance;
             }
         }
@@ -225,8 +234,9 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
     /**
      * Retrieve instances of a class.
-     * @param g Traversal source to iterate through the graph
-     * @param classDef Vertex of the ClassDef
+     *
+     * @param g          Traversal source to iterate through the graph
+     * @param classDef   Vertex of the ClassDef
      * @param expression Expression so that can be checked through the parse tree
      * @return A set of Vertices that are instances of classDef
      */
@@ -249,9 +259,10 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
     /**
      * Check current attribute is an integer.
+     *
      * @param attributeName Name of the attribute
-     * @param attrVertex Vertex of the attribute
-     * @param quantifier Value of the attribute
+     * @param attrVertex    Vertex of the attribute
+     * @param quantifier    Value of the attribute
      */
     private void checkAttributeIsInteger(String attributeName, Vertex attrVertex, String quantifier) {
         String data_type = (String) attrVertex.property("data_type").value();
@@ -263,10 +274,11 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
     /**
      * Check if this instsance of ClassDef satisfies the expression
-     * @param g Traversal source to iterate through the graph
-     * @param classDef Vertex of ClassDef
+     *
+     * @param g          Traversal source to iterate through the graph
+     * @param classDef   Vertex of ClassDef
      * @param expression Expression that will go through the parse tree
-     * @param instance Instance of the ClassDef
+     * @param instance   Instance of the ClassDef
      * @return True or False
      */
     private boolean matches(GraphTraversalSource g, Vertex classDef, Node expression, Vertex instance) {
@@ -346,8 +358,9 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
     /**
      * Check if the current classDef is a subclass of targetClassName
-     * @param g Traversal source to iterate through the graph
-     * @param classDef Vertex of ClassDef
+     *
+     * @param g               Traversal source to iterate through the graph
+     * @param classDef        Vertex of ClassDef
      * @param targetClassName Name of the superclass
      * @return True or False depends on if classDef is subclass of the targetClassName
      */
@@ -357,9 +370,10 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
     /**
      * Remove the list of edges between start vertex and end vertex
-     * @param g Traversal source to iterate through the graph
-     * @param start Start vertex
-     * @param end End vertex
+     *
+     * @param g        Traversal source to iterate through the graph
+     * @param start    Start vertex
+     * @param end      End vertex
      * @param toRemove List of edges to remove
      */
     private void scheduleDisconnect(GraphTraversalSource g, Vertex start, Vertex end, List<Edge> toRemove) {
@@ -373,11 +387,108 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
     }
 
     /**
+     * Find the inverse relationship name of a ClassDef and an edge
+     *
+     * @param classDefName String of classDef
+     * @param edgeName String of an edge name
+     * @return String of inverse relationship
+     */
+    private String findInverseEdgeName(String classDefName, String edgeName) {
+        Iterator<Vertex> iter = graph.vertices();
+        while (iter.hasNext()) {
+            Vertex currentVertex = iter.next();
+            if (currentVertex.label().equals("attribute")) {
+                if (currentVertex.property("name").value().equals(edgeName)) {
+                    Iterator<Edge> edges = currentVertex.edges(Direction.OUT);
+                    while (edges.hasNext()) {
+                        Edge currentE = edges.next();
+                        String inverseEdgeName = currentE.inVertex().property("name").value().toString();
+                        if (currentE.inVertex().property("class").value().equals(classDefName)) {
+                            return inverseEdgeName;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Obtain an instance of a classDef with proper attribute and value
+     *
+     * @param classDef String of a ClassDef
+     * @param attribute String of an attribute key
+     * @param value String of an attribute value
+     * @return An instance with above requirements
+     */
+    private Vertex getVertex(String classDef, String attribute, String value) {
+        Iterator<Vertex> vertices = graph.vertices();
+
+        while (vertices.hasNext()) {
+            Vertex nextV = vertices.next();
+            String currentLabel = nextV.label();
+            if (currentLabel.equals("entity") && nextV.property("class").value().equals(classDef)) {
+                if (nextV.property(attribute).value().toString().equals(value)) {
+                    return nextV;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Process ModifyQuery to construct relationships between instances
+     *
+     * @param mq ModifyQuery
+     */
+    private void processModifyQuery(ModifyQuery mq) {
+        GraphTraversalSource g = graph.traversal();
+        ArrayList<Vertex> instanceList = new ArrayList<>();
+        Iterator<Vertex> vertices = graph.vertices();
+        ArrayList<Vertex> modifyingVertex = new ArrayList<>();
+
+        while (vertices.hasNext()) {
+            Vertex nextV = vertices.next();
+            String currentLabel = nextV.label();
+            if (currentLabel.equals("entity") && nextV.property("class").value().equals(mq.className)) {
+                instanceList.add(nextV);
+            }
+        }
+
+        Vertex classDef = lookupClass(g, mq.className);
+        for (Vertex instance : instanceList) {
+            if (matches(g, classDef, mq.expression, instance)) {
+                modifyingVertex.add(instance);
+            }
+        }
+
+        for (Vertex startVertex : modifyingVertex) {
+            for (Assignment y : mq.assignmentList) {
+                EvaAssignment current = (EvaAssignment) y;
+                String[] targetArray = current.expression.jjtGetChild(0).toString().split(" ");
+                String targetAttribute = targetArray[0];
+                String targetValue = targetArray[2];
+                Vertex targetVertex = getVertex(current.targetClass, targetAttribute, targetValue);
+                String edgeName = y.AttributeName;
+                startVertex.addEdge(edgeName, targetVertex);
+
+                String inverseEdgeName = findInverseEdgeName(mq.className, edgeName);
+                assert targetVertex != null;
+                targetVertex.addEdge(inverseEdgeName, startVertex);
+            }
+        }
+
+        System.out.println("ModifyQuery Complete");
+        graph.tx().commit();
+    }
+
+    /**
      * Calculate number of edges replaced, inserted, and deleted
-     * @param g Traversal source to iterate through the graph
+     *
+     * @param g        Traversal source to iterate through the graph
      * @param entity
      * @param classDef Vertex of a classDef
-     * @param query UpdateQuery
+     * @param query    UpdateQuery
      * @return data[0] = num edges replaced, data[1] = num edges inserted, data[2] = num edges removed
      */
     private int[] doAssignments(GraphTraversalSource g, Vertex entity, Vertex classDef, UpdateQuery query) {
@@ -465,10 +576,11 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
     /**
      * Check required conditions for inserts
-     * @param iq InsertQuery
-     * @param g Traversal source to iterate through the graph
+     *
+     * @param iq       InsertQuery
+     * @param g        Traversal source to iterate through the graph
      * @param classDef Vertex of classDef
-     * @param entity Instance of the ClassDef
+     * @param entity   Instance of the ClassDef
      */
     private void checkRequiredInserts(InsertQuery iq, GraphTraversalSource g, Vertex classDef, Vertex entity) {
         GraphTraversal<Vertex, Edge> requiredAttrs = g.V(classDef.id()).outE("has").has("required");
@@ -494,10 +606,11 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
     /**
      * Print all UpdateQuery results
+     *
      * @param newVertexCount Count of Vertices
-     * @param edgeCounts edgeCounts[0] = number edges of replaced,
-     *                   edgeCounts[1] = number edges of inserted,
-     *                   edgeCounts[2] = number of edges removed
+     * @param edgeCounts     edgeCounts[0] = number edges of replaced,
+     *                       edgeCounts[1] = number edges of inserted,
+     *                       edgeCounts[2] = number of edges removed
      */
     private void printUpdateQueryResults(int newVertexCount, int[] edgeCounts) {
         if (newVertexCount != 0) {
@@ -516,10 +629,11 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
     /**
      * Perform insertion into the graph
-     * @param iq InsertQuery
-     * @param g Traversal source to iterate through the graph
+     *
+     * @param iq       InsertQuery
+     * @param g        Traversal source to iterate through the graph
      * @param classDef Vertex of ClassDef
-     * @param entity Instance Vertex of ClassDef
+     * @param entity   Instance Vertex of ClassDef
      * @return The number of edges inserted
      */
     private int[] doInsert(InsertQuery iq, GraphTraversalSource g, Vertex classDef, Vertex entity) {
@@ -531,8 +645,9 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
     /**
      * Recursively traverse through the parse tree and obtain vertices from the graph.
+     *
      * @param classDef String of a classDef
-     * @param overall An overall vertex list to keep track of based on the query
+     * @param overall  An overall vertex list to keep track of based on the query
      */
     private static void recurRetrieve(String classDef, ArrayList<Vertex> overall) {
         Iterator<Vertex> vertices = graph.vertices();
@@ -564,15 +679,19 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
     }
 
     /**
-     * Process RetrieveQuery and print out all of the information.
+     * Process RetrieveQuery and return a list of PyObjects for printing
      * @param rq RetrieveQuery
+     * @return A list of PyObjects to be printed
      */
-    private void processRetrieveQuery(RetrieveQuery rq) {
+    private ArrayList<PyObject> processRetrieveQuery(RetrieveQuery rq) {
+
         ArrayList<Vertex> overall = new ArrayList<>();
+        ArrayList<PyObject> rows = new ArrayList<>();
+        boolean allToggle = false;
 
         recurRetrieve(rq.className, overall);
-
         for (Vertex instance : overall) {
+            ArrayList<PyObject> column = new ArrayList<PyObject>();
             for (int j = 0; j < rq.numAttributePaths(); j++) {
                 AttributePath path = rq.getAttributePath(j);
                 HashMap<Vertex, String> neighborMap = new HashMap<>();
@@ -594,23 +713,70 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
                     while (it.hasNext()) {
                         VertexProperty<Object> property = it.next();
                         if (!property.key().equals("property")) {
-                            System.out.print(property.key() + "->" + property.value() + (it.hasNext() ? " | " : "\n"));
+                            String colElement = property.value().toString();
+                            try {
+                                Double.parseDouble(colElement);
+                                try {
+                                    Integer.parseInt(colElement);
+                                    column.add(new PyInteger(Integer.parseInt(colElement)));
+                                } catch (NumberFormatException e) {
+                                    column.add(new PyFloat(Float.parseFloat(colElement)));
+                                }
+                            } catch (NumberFormatException e) {
+                                column.add(new PyString(colElement));
+                            }
                         }
                     }
+                    allToggle = true;
                 } else {
-                    for (Vertex current : neighborMap.keySet()) {
-                        System.out.print(neighborMap.get(current) + "_" + path.attribute + "->" + current.property(path.attribute).value() + (j == rq.numAttributePaths() - 1 ? "\n" : " | "));
+                    if(!allToggle) {
+                        Iterator<VertexProperty<Object>> it = instance.properties();
+                        while (it.hasNext()) {
+                            VertexProperty<Object> property = it.next();
+                            if (property.key().equals(path.attribute)) {
+                                String colElement = property.value().toString();
+                                try {
+                                    Double.parseDouble(colElement);
+                                    try {
+                                        Integer.parseInt(colElement);
+                                        column.add(new PyInteger(Integer.parseInt(colElement)));
+                                    } catch (NumberFormatException e) {
+                                        column.add(new PyFloat(Float.parseFloat(colElement)));
+                                    }
+                                } catch (NumberFormatException e) {
+                                    column.add(new PyString(colElement));
+                                }
+                            }
+                        }
+                    }
+                }
+
+                for (Vertex current : neighborMap.keySet()) {
+                    String colElement = current.property(path.attribute).value().toString();
+                    try {
+                        Double.parseDouble(colElement);
+                        try {
+                            Integer.parseInt(colElement);
+                            column.add(new PyInteger(Integer.parseInt(colElement)));
+                        } catch (NumberFormatException e) {
+                            column.add(new PyFloat(Float.parseFloat(colElement)));
+                        }
+                    } catch (NumberFormatException e) {
+                        column.add(new PyString(colElement));
                     }
                 }
             }
+            rows.add(new PyTuple(column.toArray(new PyObject[column.size()])));
         }
+        return rows;
     }
 
     /**
      * Process InsertQuery and insert the instance into the graph.
+     *
      * @param iq InsertQuery
      */
-    private void processInsertQuery(InsertQuery iq, WDBObject wdbObject) {
+    private void processInsertQuery(InsertQuery iq) {
         GraphTraversalSource g = graph.traversal();
         try {
             int newVertexCount = 0, edgeCounts[];
@@ -621,11 +787,6 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
             if (iq.fromClassName == null) {
                 // just inserting a new entity
                 Vertex entity = graph.addVertex(T.label, "entity", "class", iq.className);
-
-                /* Serialization for WDBObject */
-                HashMap<String, WDBObject> map = new HashMap<>();
-                map.put("wdbobject", wdbObject);
-                entity.property("wdbobject", map);
 
                 newVertexCount++;
                 // make the entity an instance of the class
@@ -663,6 +824,7 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
     /**
      * Process the ClassDef and insert it into the graph.
+     *
      * @param cd ClassDef that needs to be inserted
      */
     private void processClassDef(ClassDef cd) {
@@ -813,6 +975,7 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
     /**
      * Get the vertex with given ClassDef name.
+     *
      * @param s ClassDef name
      * @return ClassDef Vertex with string name of s
      */
@@ -828,15 +991,16 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
         /**
          * Constructor of TitanNoSQLDatabase.
+         *
          * @param db TitanNoSQLDatabase Object
          */
-        private TitanNoSQLAdapter(TitanNoSQLDatabase db)
-        {
+        private TitanNoSQLAdapter(TitanNoSQLDatabase db) {
             this.db = db;
         }
 
         /**
          * Inserting a new ClassDef into the graph.
+         *
          * @param cd ClassDef that needs to be inserted
          */
         @Override
@@ -846,84 +1010,84 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
         /**
          * Searches for a ClassDef that matches the query in the graph.
+         *
          * @param query Query that searches for the ClassDef
          * @return ClassDef that the query searches for
          * @throws ClassNotFoundException When the ClassDef does not exist in the graph
          */
         @Override
-        public ClassDef getClass(Query query) throws ClassNotFoundException
-        {
+        public ClassDef getClass(Query query) throws ClassNotFoundException {
             return getClass(query.queryName);
         }
 
         /**
          * Searches for a ClassDef that matches to the string name in the graph.
+         *
          * @param s Name of the ClassDef
          * @return ClassDef with the name of s
          * @throws ClassNotFoundException
          */
         @Override
-        public ClassDef getClass(String s) throws ClassNotFoundException
-        {
+        public ClassDef getClass(String s) throws ClassNotFoundException {
             Vertex currentVertex = db.getClassDefVertex(s);
             HashMap<String, ClassDef> map = (HashMap<String, ClassDef>) currentVertex.property("classdefobject").value();
 
             return map.get("classdefobject");
         }
 
-        @Override
-        public void putObject(InsertQuery query, WDBObject wdbObject)
-        {
-            db.processInsertQuery(query, wdbObject);
-        }
-
         /**
-         * This is also known as InsertQuery
          * Insert an instance into the graph.
          *
-         * @param wdbObject The instance in the format of WDBObject
+         * @param query InsertQuery
          */
         @Override
-        public void putObject(WDBObject wdbObject) {
-            InsertQuery iq = null;
-            db.processInsertQuery(iq, wdbObject);
+        public void putObject(InsertQuery query) {
+            db.processInsertQuery(query);
         }
 
         /**
-         * This is also known as RetrieveQuery
-         * Retrieve an instance given the instance name and ID from the graph.
-         * @param s Name of the instance
-         * @param integer Instance ID
-         * @return WDBObject instance that matches to the requirements
+         * Construct relationships between instances
+         *
+         * @param query ModifyQuery
          */
         @Override
-        public WDBObject getObject(String s, Integer integer)
-        {
-            Vertex instance = db.getInstanceVertex(getClassDefVertex(s), integer);
-            if(instance != null) {
-                HashMap<String, WDBObject> map = (HashMap<String, WDBObject>) instance.property("wdbobject").value();
-                if(map.containsKey("wdbobject")) {
-                    return map.get("wdbobject");
-                }
-            }
+        public void modifyObjects(ModifyQuery query) {
+            db.processModifyQuery(query);
+        }
+
+        /**
+         * Process the retrieve and return a list of instances to be printed
+         *
+         * @param query RetrieveQuery query
+         * @return A list of instances in terms of PyObjects to be printed
+         */
+        @Override
+        public ArrayList<PyObject> getObjects(RetrieveQuery query) {
+            return db.processRetrieveQuery(query);
+        }
+
+        @Override
+        public void putObject(WDBObject wdbObject) {
+        }
+
+        @Override
+        public WDBObject getObject(String s, Integer integer) {
             return null;
         }
 
         @Override
-        public ArrayList<WDBObject> getObjects(IndexDef indexDef, String s)
-        {
+        public ArrayList<WDBObject> getObjects(IndexDef indexDef, String s) {
             throw new UnsupportedOperationException();
         }
 
+
         @Override
-        public void commit()
-        {
+        public void commit() {
 
         }
 
         @Override
-        public void abort()
-        {
+        public void abort() {
 
         }
 

@@ -15,3 +15,6 @@
 2016-05-03 21:34:06.187 UTC INFO [snaService] Starting, configuration file: /Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/./WDB_STORE/config.xml
 2016-05-03 21:34:06.190 UTC INFO [snaService] Registered startup, config file: /Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/./WDB_STORE/WDB/sn1/config.xml
 2016-05-03 21:34:06.198 UTC INFO [snaService] Changing log files to directory: /Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/./WDB_STORE/WDB/log
+2016-05-10 01:58:27.273 UTC INFO [snaService] Starting, configuration file: /Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/WDB_STORE/config.xml
+2016-05-10 01:58:27.317 UTC INFO [snaService] Registered startup, config file: /Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/./WDB_STORE/WDB/sn1/config.xml
+2016-05-10 01:58:27.338 UTC INFO [snaService] Changing log files to directory: /Users/WiNDWAY/Personal/CS370/CarnotKE/jyhton/./WDB_STORE/WDB/log

@@ -1,6 +1,6 @@
 import unittest
 
-connOracleNoSQL = connectTo 'TitanNoSQL' 'WDB' 'localhost:5010' 'native_mode' 'A0'
+connOracleNoSQL = connectTo 'OracleNoSQL' 'WDB' 'localhost:5010' 'native_mode' 'A0' 
 
 print "Connections are opened, start loading Databases"
 
@@ -80,6 +80,7 @@ SIM on connOracleNoSQL 'from sim_dept retrieve *, name OF employees, name OF pro
 
 
 # SIM on connOracleNoSQL "CLEAR DATABASE"
+# SIM on connOracleNoSQL "STOP DATABASE"
 # SIM on connOracleNoSQL "STOP DATABASE"
 
 

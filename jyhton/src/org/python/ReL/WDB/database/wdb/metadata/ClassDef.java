@@ -146,12 +146,21 @@ public class ClassDef extends Query implements Serializable {
 		}
 		Integer newUid = new Integer(Math.abs((new UID()).hashCode()));
 		WDBObject newObject = new WDBObject(new Hashtable<String, Integer>(), new Hashtable<String, Integer>(), new Hashtable<String, Object>(), new Hashtable<String, Object>(), this.name, newUid);
-		
 		this.addInstance(newUid);
 		this.commit(scda);
-		
 		return newObject;
 	}
+
+	public WDBObject newInstance(WDBObject parent) throws Exception {
+		if (parent != null) {
+			throw new IllegalArgumentException("Failed to add parent object of class \"" + parent.getClassName() + "\" to base class " + this.name);
+		}
+		Integer newUid = new Integer(Math.abs((new UID()).hashCode()));
+		WDBObject newObject = new WDBObject(new Hashtable<String, Integer>(), new Hashtable<String, Integer>(), new Hashtable<String, Object>(), new Hashtable<String, Object>(), this.name, newUid);
+		this.addInstance(newUid);
+		return newObject;
+	}
+
 	public void commit(Adapter scda) throws Exception
 	{
 		scda.putClass(this);
