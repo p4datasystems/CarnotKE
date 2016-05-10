@@ -24,33 +24,32 @@ public class WDB {
 	private static SleepyCatDataBase db;
 	private static BufferedReader in;
 	
-	public static void main(String[] args)
-	{
-    String installRoot = System.getenv("INSTANCE_ROOT");
-    if(installRoot == null)
-    {
-      System.out.println("Please set INSTANCE_ROOT variable");
-    }
-    File installRootDir = new File(installRoot);
-    if(!installRootDir.exists() || !installRootDir.isDirectory())
-    {
-      System.out.println("INSTANCE_ROOT vairable is not a valid directory");
-    }
-    File dbDir = new File(installRootDir, "db");
-    if(!dbDir.exists())
-    {
-      dbDir.mkdir();
-    }
+	public static void main(String[] args) {
+        String installRoot = System.getenv("INSTANCE_ROOT");
+        if (installRoot == null)
+        {
+    	    System.out.println("Please set INSTANCE_ROOT variable");
+    	}
+        File installRootDir = new File(installRoot);
+        if(!installRootDir.exists() || !installRootDir.isDirectory())
+        {
+            System.out.println("INSTANCE_ROOT vairable is not a valid directory");
+        }
+        File dbDir = new File(installRootDir, "db");
+        if(!dbDir.exists())
+        {
+        	dbDir.mkdir();
+        }
     
     try
 		{
 			db = new SleepyCatDataBase(dbDir.toString());
-			db.openDb("test");
+			db.openDb("schemaless_test");
 			
-			System.out.println("WDB Simantic Database Project");
+			System.out.println("WDB Semantic Database Project");
 			System.out.println("Copyright 2006 University of Texas at Austin");
 			System.out.println("DB Name: " + db.dbName + " DB Path: " + db.fileName);
-			
+
 			WDB.in = new BufferedReader(new InputStreamReader(System.in));
 			WDB.parser = new QueryParser(WDB.in);
 			Query q;
@@ -63,13 +62,12 @@ public class WDB {
 					{
 						System.out.print("\nWDB>");
 					}
-					
+
 					q = parser.getNextQuery();
 					if(q == null)
 					{
 						break;
 					}
-				
 					else
 					{
 						processQuery(q);
@@ -79,7 +77,6 @@ public class WDB {
 				{
 					System.out.println("SYNTAX ERROR: " + pe.getMessage());
 					QueryParser.ReInit(System.in);
-					
 				}
 				catch(TokenMgrError tme)
 				{
@@ -113,9 +110,8 @@ public class WDB {
 			}
 		}
 	}
-
 	
-	static private void processQuery(Query q)
+	static private void processQuery(Query q) //
 	{
 		if(q.getClass() == SourceQuery.class)
 		{
@@ -123,7 +119,7 @@ public class WDB {
 			
 			try
 			{
-				QueryParser.ReInit(new FileReader(sq.filename));
+				QueryParser.ReInit(new FileReader(sq.getFilename()));
 				Query fq;
 				while(true)
 				{
@@ -158,43 +154,38 @@ public class WDB {
 		
 		if(q.getClass() == ClassDef.class || q.getClass() == SubclassDef.class)
 		{
-			ClassDef cd = (ClassDef)q;
-			
+			ClassDef cd;
+			cd = (ClassDef)q;
 			try
 			{
 				SleepyCatDataAdapter da = db.newTransaction();
-				
 				try
 				{
-					try
+					da.getClass(cd.name);
+					//That class alreadly exists
+					throw new Exception("Class \"" + cd.name + "\" alreadly exists");
+				}
+				catch(ClassNotFoundException cnfe)
+				{
+					if (cd.getClass() == SubclassDef.class)
 					{
-						da.getClass(cd.name);
-						//That class alreadly exists;
-						throw new Exception("Class \"" + cd.name + "\" alreadly exists");
-					}
-					catch(ClassNotFoundException cnfe)
-					{
-						if(cd.getClass() == SubclassDef.class)
+						ClassDef baseClass = null;
+						for (int i = 0; i < ((SubclassDef) cd).numberOfSuperClasses(); i++)
 						{
-							ClassDef baseClass = null;
-							for(int i = 0; i < ((SubclassDef)cd).numberOfSuperClasses(); i++)
+							//Cycles are implicitly checked since getClass will fail for the current defining class
+							ClassDef superClass = da.getClass(((SubclassDef) cd).getSuperClass(i));
+							if (baseClass == null)
 							{
-								//Cycles are implisitly checked since getClass will fail for the current defining class
-								ClassDef superClass = da.getClass(((SubclassDef)cd).getSuperClass(i));
-								if(baseClass == null)
-								{
-									baseClass = superClass.getBaseClass(da);
-								}
-								else if(!baseClass.name.equals(superClass.getBaseClass(da).name))
-								{
-									throw new Exception("Super classes of class \"" + cd.name + "\" does not share the same base class");
-								}
+								baseClass = superClass.getBaseClass(da);
+							}
+							else if (!baseClass.name.equals(superClass.getBaseClass(da).name))
+							{
+								throw new Exception("Super classes of class \"" + cd.name + "\" does not share the same base class");
 							}
 						}
-						
-						da.putClass(cd);
-						da.commit();
 					}
+					da.putClass(cd);
+					da.commit();
 				}
 				catch(Exception e)
 				{
@@ -242,33 +233,32 @@ public class WDB {
 		}
 		
 		if(q.getClass() == InsertQuery.class)
-		{	
-			InsertQuery iq = (InsertQuery)q;
-			
+		{
+			InsertQuery iq = (InsertQuery) q;
 			try
 			{
 				SleepyCatDataAdapter da = db.newTransaction();
-				
+
 				try
 				{
 					ClassDef targetClass = da.getClass(iq.className);
 					WDBObject newObject = null;
-					
-					if(iq.fromClassName != null)
+
+					if (iq.fromClassName != null)
 					{
 						//Inserting from an entity of a superclass...
-						if(targetClass.getClass() == SubclassDef.class)
+						if (targetClass.getClass() == SubclassDef.class)
 						{
-							SubclassDef targetSubClass = (SubclassDef)targetClass;
+							SubclassDef targetSubClass = (SubclassDef) targetClass;
 							ClassDef fromClass = da.getClass(iq.fromClassName);
-							if(targetSubClass.isSubclassOf(fromClass.name, da))
+							if (targetSubClass.isSubclassOf(fromClass.name, da))
 							{
 								WDBObject[] fromObjects = fromClass.search(iq.expression, da);
-								if(fromObjects.length <= 0)
+								if (fromObjects.length <= 0)
 								{
 									throw new IllegalStateException("Can't find any entities from class \"" + fromClass.name + "\" to extend");
 								}
-								for(int i = 0; i < fromObjects.length; i++)
+								for (int i = 0; i < fromObjects.length; i++)
 								{
 									newObject = targetSubClass.newInstance(fromObjects[i].getBaseObject(da), da);
 									setValues(iq.assignmentList, newObject, da);
@@ -283,8 +273,7 @@ public class WDB {
 						{
 							throw new IllegalStateException("Can't extend base class \"" + targetClass.name + "\" from class \"" + iq.fromClassName);
 						}
-					}
-					else
+					} else
 					{
 						//Just inserting a new entity
 						newObject = targetClass.newInstance(null, da);
@@ -292,22 +281,145 @@ public class WDB {
 						setValues(iq.assignmentList, newObject, da);
 						checkRequiredValues(targetClass, newObject, da);
 					}
-				
-					if(newObject != null)
+
+					if (newObject != null)
 					{
 						newObject.commit(da);
 					}
 					da.commit();
 				}
-				catch(Exception e)
+				catch (Exception e)
 				{
-					System.out.println(e.toString());
-					da.abort();
+					try {
+						if (iq.className.contains(".")) { // SCHEMALESS SUBCLASS
+							System.out.println("SubClass '" + iq.className + "' does not exist. Attempting schemaless insert...");
+							if (iq.expression == null) {
+								throw new IllegalStateException("The WHERE clause is required for schemaless inserts of a subclass");
+							}
+							String child = iq.className.substring(iq.className.indexOf(".") + 1, iq.className.length());
+							String parent = iq.className.substring(0, iq.className.indexOf("."));
+							iq.className = child;
+							iq.fromClassName = parent;
+							
+							// Creating SubClass
+							SubclassDef foo = new SubclassDef(child, "(SubClass) Schemaless Insert");
+							foo.addSuperClass(parent);
+							for (int x = 0; x < iq.assignmentList.size(); x++) {
+								DVA dva = new DVA();
+								DvaAssignment _dva = (DvaAssignment) iq.getAssignment(x);
+								dva.required = true;
+								dva.comment = "";
+								dva.name = _dva.AttributeName;
+
+								// Find value type
+								Object temp1 = _dva.Value;
+								String temp = temp1.toString();
+								if (temp.equalsIgnoreCase("false") || temp.equalsIgnoreCase("true"))
+									dva.type = "Boolean";
+								else if (temp.length() > 0 && temp.matches("[0-9]+"))
+									dva.type = "Integer";
+								else if (temp.length() == 1) // necessary?
+									dva.type = "Char";
+								else
+									dva.type = "String";
+
+								foo.addAttribute(dva);
+							}
+
+							ClassDef baseClass = null;
+							for (int i = 0; i < ((SubclassDef) foo).numberOfSuperClasses(); i++) {
+								ClassDef superClass = da.getClass(((SubclassDef) foo).getSuperClass(i));
+								if (baseClass == null)
+									baseClass = superClass.getBaseClass(da);
+								else if (!baseClass.name.equals(superClass.getBaseClass(da).name))
+									throw new Exception("Super classes of class \"" + foo.name + "\" does not share the same base class");
+							}
+
+							da.putClass(foo);
+							da.commit();
+
+							// Insert into our new SubClass
+							da = db.newTransaction();
+							ClassDef targetClass = da.getClass(iq.className);
+							WDBObject newObject = null;
+
+							SubclassDef targetSubClass = (SubclassDef) targetClass;
+							ClassDef fromClass = da.getClass(iq.fromClassName);
+							if (targetSubClass.isSubclassOf(fromClass.name, da)) {
+								WDBObject[] fromObjects = fromClass.search(iq.expression, da);
+								if (fromObjects.length <= 0) {
+									throw new IllegalStateException("Can't find any entities from class \"" + fromClass.name + "\" to extend");
+								}
+								for (int i = 0; i < fromObjects.length; i++) {
+									newObject = targetSubClass.newInstance(fromObjects[i].getBaseObject(da), da);
+									setValues(iq.assignmentList, newObject, da);
+								}
+							} else {
+								throw new IllegalStateException("Inserted class \"" + targetClass.name + "\" is not a subclass of the from class \"" + iq.fromClassName);
+							}
+
+							if (newObject != null) {
+								newObject.commit(da);
+							}
+
+							da.commit();
+							System.out.println("Schemaless insert succeeded!");
+						} else { // SCHEMALESS CLASS
+							System.out.println("Class '" + iq.className + "' does not exist. Attempting schemaless insert...");
+							// Creating Class
+							ClassDef foo = new ClassDef(iq.className, "Schemaless Insert");
+							for (int x = 0; x < iq.assignmentList.size(); x++) {
+								DVA dva = new DVA();
+								DvaAssignment _dva = (DvaAssignment) iq.getAssignment(x);
+								dva.required = true;
+								dva.comment = "";
+								dva.name = _dva.AttributeName;
+
+								// Find value type
+								Object temp1 = _dva.Value;
+								String temp = temp1.toString();
+								if (temp.equalsIgnoreCase("false") || temp.equalsIgnoreCase("true"))
+									dva.type = "Boolean";
+								else if (temp.length() > 0 && temp.matches("[0-9]+"))
+									dva.type = "Integer";
+								else if (temp.length() == 1) // necessary?
+									dva.type = "Char";
+								else
+									dva.type = "String";
+
+								foo.addAttribute(dva);
+							}
+
+							da.putClass(foo);
+							da.commit();
+
+							// Inserting into our new Class
+							da = db.newTransaction();
+							ClassDef targetClass = da.getClass(iq.className);
+							WDBObject newObject = null;
+
+							newObject = targetClass.newInstance(null, da);
+							setDefaultValues(targetClass, newObject, da);
+							setValues(iq.assignmentList, newObject, da);
+							checkRequiredValues(targetClass, newObject, da);
+
+							if (newObject != null)
+								newObject.commit(da);
+
+							da.commit();
+							System.out.println("Schemaless insert succeeded!");
+						}
+					}
+					catch(Exception foo)
+					{
+						System.out.println("Schemaless insert failed due to the following:\n" + foo);
+						da.abort();
+					}
 				}
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
-				System.out.println(e.toString());
+				System.out.println("The Adapter Pooped: " + e.toString());
 			}
 		}
 		if(q.getClass() == IndexDef.class)
@@ -344,8 +456,6 @@ public class WDB {
 			
 			try
 			{
-
-				
 				SleepyCatDataAdapter da = db.newTransaction();
 				try
 				{
