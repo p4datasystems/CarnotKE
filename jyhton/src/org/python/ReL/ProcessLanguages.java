@@ -207,8 +207,7 @@ public class ProcessLanguages {
     }
 
 
-    public synchronized ArrayList<PyObject> processNativeSIM(String ReLstmt) throws Exception
-    {
+    public synchronized ArrayList<PyObject> processNativeSIM(String ReLstmt) throws Exception {
         final boolean DBG = true;
         ReLstmt = ReLstmt.replaceAll("\\_\\^\\_", ";");
         if (DBG) {
@@ -228,8 +227,7 @@ public class ProcessLanguages {
         if (!parserInitialized) {
             parser = new QueryParser(is);
             parserInitialized = true;
-        }
-        else {
+        } else {
             parser.ReInit(is);
         }
         try {
@@ -239,10 +237,10 @@ public class ProcessLanguages {
         }
         debugMsg(DBG, "Statement executed: " + ReLstmt);
 
-        /************* BEGIN WDB CODE DUMP ************************/
+        /************************ BEGIN WDB CODE DUMP ************************/
         if (q instanceof ClassDef) {
             ClassDef cd = (ClassDef) q;
-            if(!(connDatabase instanceof TitanNoSQLDatabase)) {
+            if (!(connDatabase instanceof TitanNoSQLDatabase)) {
                 try {
                     if (cd.name != null)
                         q.queryName = cd.name;
@@ -278,7 +276,7 @@ public class ProcessLanguages {
         if (q.getClass() == ModifyQuery.class) {
             ModifyQuery mq = (ModifyQuery) q;
             boolean isTitan = connDatabase instanceof TitanNoSQLDatabase;
-            if(isTitan) {
+            if (isTitan) {
                 adapter.modifyObjects(mq);
             } else {
                 try {
@@ -341,7 +339,6 @@ public class ProcessLanguages {
                     if (newObject != null) {
                         newObject.commit(adapter);
                     }
-
                     adapter.commit();
                 } catch (Exception e) {
                     try {

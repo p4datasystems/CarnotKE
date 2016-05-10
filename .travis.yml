@@ -17,4 +17,6 @@ script:
     - ant
 
 after_script:
+    
     - dist/bin/jython nativeSIMunitTests.py
+
