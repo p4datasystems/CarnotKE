@@ -1,7 +1,5 @@
-// Organization Schema
+//////////////////////////////////////////////////////////////////////// Person ////////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////// Person //////////////////////////////////////////////////////////////////////////////////////////// 
-                                                     
 CLASS Person "Persons related to the company"	
 (		 
 	person-id    : INTEGER, REQUIRED;	
@@ -26,8 +24,12 @@ INSERT Person ( person-id := 4, first-name :=  "Alice" , last-name  := "Dawer" ,
 INSERT Person ( person-id := 5 , first-name :=  "George" , last-name := "Layton" ,  home_address:= "347 Nueces St", zipcode := 78705, home-phone := 8798798 ,  us-citizen :=  TRUE  );
 INSERT Person ( person-id := 9 , first-name :=  "Mike" , last-name := "Dawer" ,  home_address:= "432 Hill Rd", zipcode := 78705, home-phone := 7891903 ,  us-citizen :=  TRUE  );
 
+// test for auto-generating parent class
+//INSERT Stranger ( first-name := "Noel", last-name := "Negusse", po_box := "1234 nowhere ln", zipcode := 00000 );
+
 //Finally person-id 1 to 9 People
 ////////////////////////////////////////////////////////////////////// Employee //////////////////////////////////////////////////////////////////////////////////////////// 
+
 
 
 SUBCLASS Employee "Current employees of the company" OF Person
