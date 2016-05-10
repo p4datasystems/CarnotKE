@@ -1,6 +1,7 @@
 package org.python.ReL;
 
-import wdb.metadata.*;
+
+import org.python.ReL.WDB.database.wdb.metadata.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -106,6 +107,12 @@ public class OracleDatabase extends DatabaseInterface {
         {
             ClassDef classDef = new ClassDef(s, "Created on the fly via RDF");
             return classDef;
+        }
+
+        @Override
+        public void putObject(InsertQuery query, WDBObject wdbObject)
+        {
+            // Ignore for now. 5/9/16 - JoshuaHurt@utexas.edu
         }
 
         @Override

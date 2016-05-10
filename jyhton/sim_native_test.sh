@@ -6,6 +6,6 @@ if [ -z "$1" ]
     dist/bin/jython nativeSIMunitTests.py
 
   else
-    # dist/bin/jython -J-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5100 NoSQLRDFUnitTests.py
+#   dist/bin/jython -J-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5100 NoSQLRDFUnitTests.py
     dist/bin/jython -J-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5100 nativeSIMunitTests.py
 fi
