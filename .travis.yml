@@ -19,5 +19,6 @@ script:
 after_script:
     - export INSTALLATION_ROOT="."
     - dist/bin/jython nativeSIMunitTests.py
+    - dist/bin/jython ReLUnitTests.py
     - dist/bin/jython SPARQLUnitTests.py
 
