@@ -11,5 +11,5 @@ ext/apache-ant-1.7.0/bin/ant --noconfig ${*}
 
 cd build/classes 
 export INSTANCE_ROOT="."
-java -cp "../../lib/je.jar:." wdb.WDB
+# java -cp "../../lib/je.jar:." wdb.WDB
 
