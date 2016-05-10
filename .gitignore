@@ -1,4 +1,5 @@
 # General
+.idea/
 .idea
 jyhton/.hg
 jyhton/build
@@ -20,5 +21,4 @@ Session.vim
 *.class
 *.pyc
 hs_err_pid* # jvm crash logs
-
 

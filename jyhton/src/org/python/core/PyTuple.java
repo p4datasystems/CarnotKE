@@ -335,8 +335,7 @@ public class PyTuple extends PySequenceList implements List {
                             System.out.println(e);
                         }
                     }
-                }
-            }
+                }}
         }
         }
     

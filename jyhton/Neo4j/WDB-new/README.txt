@@ -6,7 +6,7 @@ cd build/classes
 $ export INSTANCE_ROOT="."
 $ java -cp "../../lib/je.jar:." wdb.WDB
 
-To run Windows on Unix, do the following:
-cd build/classes
+To run WDB on Windows, do the following:
+cd build\classes
 $ export INSTANCE_ROOT="."
 $ java -cp "..\..\lib\je.jar;." wdb.WDB
