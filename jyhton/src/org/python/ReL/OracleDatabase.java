@@ -2,7 +2,6 @@ package org.python.ReL;
 
 
 import org.python.ReL.WDB.database.wdb.metadata.*;
-import org.python.core.PyObject;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -111,11 +110,6 @@ public class OracleDatabase extends DatabaseInterface {
         }
 
         @Override
-        public void putObject(InsertQuery query) {
-
-        }
-
-        @Override
         public void putObject(WDBObject wdbObject)
         {
 //            final String graph = wdbObject.getClassName();
@@ -170,11 +164,6 @@ public class OracleDatabase extends DatabaseInterface {
         }
 
         @Override
-        public void modifyObjects(ModifyQuery query) {
-
-        }
-
-        @Override
         public WDBObject getObject(String s, Integer integer)
         {
             return null;
@@ -186,10 +175,6 @@ public class OracleDatabase extends DatabaseInterface {
             return null;
         }
 
-        @Override
-        public ArrayList<PyObject> getObjects(RetrieveQuery query) {
-            return null;
-        }
 
         @Override
         public void commit()

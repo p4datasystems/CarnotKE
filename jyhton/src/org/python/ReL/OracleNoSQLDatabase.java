@@ -10,7 +10,6 @@ import oracle.kv.table.Table;
 import oracle.kv.table.TableAPI;
 import org.apache.commons.lang3.SerializationUtils;
 import org.python.ReL.WDB.database.wdb.metadata.*;
-import org.python.core.PyObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -462,11 +461,6 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
             return classDef;
         }
 
-        @Override
-        public void putObject(InsertQuery query) {
-
-        }
-
         /**
          * key: String object:(Uid.toString())
          * value: WDBObject object
@@ -484,11 +478,6 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
             row.put("value", data);
 
             db.getTableHandle().put(row, null, null);
-        }
-
-        @Override
-        public void modifyObjects(ModifyQuery query) {
-
         }
 
         /**
@@ -523,11 +512,6 @@ public class OracleNoSQLDatabase extends DatabaseInterface {
         public ArrayList<WDBObject> getObjects(IndexDef indexDef, String key)
         {
             System.out.println("getObjects called in OracleNoSQLAdapter");
-            return null;
-        }
-
-        @Override
-        public ArrayList<PyObject> getObjects(RetrieveQuery query) {
             return null;
         }
 
