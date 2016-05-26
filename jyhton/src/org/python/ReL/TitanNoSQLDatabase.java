@@ -2,6 +2,8 @@ package org.python.ReL;
 
 import java.util.*;
 import java.io.*;
+
+import org.apache.commons.lang3.SerializationUtils;
 import org.python.ReL.WDB.database.wdb.metadata.*;
 import com.thinkaurelius.titan.core.*;
 import com.thinkaurelius.titan.core.schema.TitanManagement;
@@ -20,7 +22,6 @@ import org.python.ReL.WDB.database.wdb.metadata.WDBObject;
 import org.python.ReL.WDB.parser.generated.wdb.parser.*;
 import org.python.core.*;
 
-
 /**
  * @author Alvin Deng
  * @author Raymond Chee
@@ -33,6 +34,8 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
     private static TitanGraph graph = null;
     private static Object rootID = null;
+    private static final String classKeyPrefix = "class";
+    private static final String objectKeyPrefix = "object";
     private static File INSTALLATION_ROOT;
     private static String PROPERTIES_PATH;
 
@@ -52,14 +55,16 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         }
         mg.commit();
         if (initGraph) {
-            Vertex root = graph.addVertex(T.label, "classDef", "name", "root node");
+            Vertex root = graph.addVertex(T.label, "classDef", "name", "superNode");
             graph.tx().commit();
             rootID = root.id();
         } else {
             GraphTraversalSource g = graph.traversal();
             g.V().hasLabel("classDef").forEachRemaining(n -> {
-                if (n.property("name").value().equals("root node")) {
-                    rootID = n.id();
+                if(n.property("name").isPresent()) {
+                    if (n.property("name").value().equals("superNode")) {
+                        rootID = n.id();
+                    }
                 }
             });
         }
@@ -882,7 +887,7 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
                         targetClass = graph.addVertex(T.label, "classDef", "name", eva.baseClassName);
                         targetClass.property("ForwardInit", "Yes");
 
-                        GraphTraversal<Vertex, Vertex> traversal = g.V().hasLabel("classDef").has("name", "root node");
+                        GraphTraversal<Vertex, Vertex> traversal = g.V().hasLabel("classDef").has("name", "superNode");
                         Vertex root = traversal.next();
                         targetClass.addEdge("subclasses", root);
                         root.addEdge("superclasses", targetClass);
@@ -946,14 +951,14 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
                     }
                 }
             } else {
-                GraphTraversal<Vertex, Vertex> traversal = g.V().hasLabel("classDef").has("name", "root node");
+                GraphTraversal<Vertex, Vertex> traversal = g.V().hasLabel("classDef").has("name", "superNode");
                 Vertex root = traversal.next();
 
                 boolean found = false;
                 Iterator<Edge> iter = newClass.edges(Direction.IN);
                 while (iter.hasNext()) {
                     Edge x = iter.next();
-                    if (x.outVertex().property("name").value().equals("root node")) {
+                    if (x.outVertex().property("name").value().equals("superNode")) {
                         found = true;
                         break;
                     }
@@ -983,6 +988,66 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         return lookupClass(g, s);
     }
 
+    /* Bo's Implementation */
+    private String makeClassKey(String className)
+    {
+        return classKeyPrefix + ":" + className;
+    }
+
+    private String makeObjectKey(Integer Uid)
+    {
+        return objectKeyPrefix + ":" + Uid.toString();
+    }
+
+    private void putClassDef(ClassDef classDef) {
+        final String keyString = makeClassKey(classDef.name);
+
+        Vertex classDefVertex = graph.addVertex(T.label, "classDef", "keyString", keyString);
+        classDefVertex.property("valueData", classDef);
+        graph.tx().commit();
+        System.out.println("Inserting class complete");
+    }
+
+    private ClassDef getClassDef(String classDefName) {
+        final String keyString = makeClassKey(classDefName);
+        GraphTraversalSource g = graph.traversal();
+        GraphTraversal<Vertex, Vertex> graphTraversal = g.V();
+
+        while (graphTraversal.hasNext()) {
+            Vertex currentVertex = graphTraversal.next();
+            if(currentVertex.property("keyString").isPresent()) {
+                if (currentVertex.property("keyString").value().equals(keyString)) {
+                    return (ClassDef) currentVertex.property("valueData").value();
+                }
+            }
+        }
+        return null;
+    }
+
+    private void putWDBObject(WDBObject wdbObject) {
+        final String keyString = makeObjectKey(wdbObject.getUid());
+
+        Vertex WDBObjectVertex = graph.addVertex(T.label, "WDBObject", "keyString", keyString);
+        WDBObjectVertex.property("valueData", wdbObject);
+        graph.tx().commit();
+        System.out.println("Inserting object complete");
+    }
+
+    private WDBObject getWDBObject(String className, Integer Uid) {
+        final String keyString = makeObjectKey(Uid);
+
+        GraphTraversalSource g = graph.traversal();
+        GraphTraversal<Vertex, Vertex> graphTraversal = g.V();
+        while (graphTraversal.hasNext()) {
+            Vertex currentVertex = graphTraversal.next();
+            if(currentVertex.property("keyString").isPresent()) {
+                if (currentVertex.property("keyString").value().equals(keyString)) {
+                    return (WDBObject) currentVertex.property("valueData").value();
+                }
+            }
+        }
+        return null;
+    }
 
     private class TitanNoSQLAdapter implements Adapter {
 
@@ -1004,7 +1069,7 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
          */
         @Override
         public void putClass(ClassDef cd) {
-            db.processClassDef(cd);
+            db.putClassDef(cd);
         }
 
         /**
@@ -1028,50 +1093,23 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
          */
         @Override
         public ClassDef getClass(String s) throws ClassNotFoundException {
-            Vertex currentVertex = db.getClassDefVertex(s);
-            HashMap<String, ClassDef> map = (HashMap<String, ClassDef>) currentVertex.property("classdefobject").value();
-
-            return map.get("classdefobject");
+            System.out.println("Retrieving classes");
+            ClassDef classDef = db.getClassDef(s);
+            if (classDef == null) {
+                throw new ClassNotFoundException("Key is not present in table");
+            }
+            return classDef;
         }
 
-        /**
-         * Insert an instance into the graph.
-         *
-         * @param query InsertQuery
-         */
-        @Override
-        public void putObject(InsertQuery query) {
-            db.processInsertQuery(query);
-        }
-
-        /**
-         * Construct relationships between instances
-         *
-         * @param query ModifyQuery
-         */
-        @Override
-        public void modifyObjects(ModifyQuery query) {
-            db.processModifyQuery(query);
-        }
-
-        /**
-         * Process the retrieve and return a list of instances to be printed
-         *
-         * @param query RetrieveQuery query
-         * @return A list of instances in terms of PyObjects to be printed
-         */
-        @Override
-        public ArrayList<PyObject> getObjects(RetrieveQuery query) {
-            return db.processRetrieveQuery(query);
-        }
 
         @Override
         public void putObject(WDBObject wdbObject) {
+            db.putWDBObject(wdbObject);
         }
 
         @Override
-        public WDBObject getObject(String s, Integer integer) {
-            return null;
+        public WDBObject getObject(String className, Integer Uid) {
+            return db.getWDBObject(className, Uid);
         }
 
         @Override
@@ -1082,7 +1120,7 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
 
         @Override
         public void commit() {
-
+            graph.tx().commit();
         }
 
         @Override
