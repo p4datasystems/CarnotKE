@@ -5,6 +5,10 @@ jdk:
 
 sudo: false
 
+before_install:
+  - rm -rf /var/lib/cassandra/*
+  - wget http://apache.spinellicreations.com/cassandra/2.1.14/apache-cassandra-2.1.14-bin.tar.gz && tar -xvzf apache-cassandra-2.1.14-bin.tar.gz && sudo sh apache-cassandra-2.1.14/bin/cassandra
+
 before_script:
     - cd jyhton
     - export INSTALLATION_ROOT="."

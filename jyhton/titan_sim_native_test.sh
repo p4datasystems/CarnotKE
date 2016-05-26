@@ -2,9 +2,6 @@
 echo "Setting INSTALLATION_ROOT path"
 export INSTALLATION_ROOT="${PWD}"
 echo "run this script with 'debug' as an argument to debug on port 5100"
-echo "Deleting DB"
-rm -rf db/
-echo "Deletion Complete"
 if [ -z "$1" ]
   then
     dist/bin/jython TitanDBUnitTests.py
