@@ -257,10 +257,14 @@ public class ProcessLanguages {
                             throw new Exception("Super classes of class \"" + cd.name + "\" do not share the same base class");
                     }
                 }
-                System.out.println("Making a new Class");
+
                 adapter.putClass(cd);
                 adapter.commit();
 
+            } catch (Exception e) {
+                System.out.println("This class already exists: " + cd.name);
+                adapter.abort();
+                return null;
             }
         }
 
@@ -280,7 +284,6 @@ public class ProcessLanguages {
                 System.out.println(e.toString());
                 adapter.abort();
             }
-
         }
 
         if (q instanceof InsertQuery) {

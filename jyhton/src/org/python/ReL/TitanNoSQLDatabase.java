@@ -4,6 +4,9 @@ import java.util.*;
 import java.io.*;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.python.ReL.WDB.database.wdb.metadata.*;
 import com.thinkaurelius.titan.core.*;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
@@ -35,6 +38,11 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         validateInstallationRoot();
         graph = TitanFactory.open(PROPERTIES_PATH);
         graph.tx().commit();
+        List<Logger> loggers = Collections.<Logger>list(LogManager.getCurrentLoggers());
+        loggers.add(LogManager.getRootLogger());
+        for (Logger logger : loggers) {
+            logger.setLevel(Level.OFF);
+        }
     }
 
     /**
@@ -221,7 +229,6 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
          */
         @Override
         public ClassDef getClass(String s) throws ClassNotFoundException {
-            System.out.println("Retrieving classes");
             ClassDef classDef = db.getClassDef(s);
             if (classDef == null) {
                 throw new ClassNotFoundException("Key is not present in table");
