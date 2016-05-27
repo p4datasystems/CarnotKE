@@ -237,230 +237,214 @@ public class ProcessLanguages {
         }
         debugMsg(DBG, "Statement executed: " + ReLstmt);
 
-        boolean isTitan = connDatabase instanceof TitanNoSQLDatabase;
         if (q instanceof ClassDef) {
             ClassDef cd = (ClassDef) q;
-            if(isTitan) {
-                adapter.putClass(cd);
-            } else {
-                try {
-                    if (cd.name != null)
-                        q.queryName = cd.name;
-                    adapter.getClass(q);
-                    //That class already exists;
-                    throw new Exception("Class \"" + cd.name + "\" already exists");
-                } catch (ClassNotFoundException cnfe) {
-                    if (cd.getClass() == SubclassDef.class) {
-                        ClassDef baseClass = null;
-                        for (int i = 0; i < ((SubclassDef) cd).numberOfSuperClasses(); i++) {
-                            //Cycles are implicitly checked since getClass will fail for the current defining class
-                            ClassDef superClass = adapter.getClass(((SubclassDef) cd).getSuperClass(i));
-                            if (baseClass == null)
-                                baseClass = superClass.getBaseClass(adapter);
-                            else if (!baseClass.name.equals(superClass.getBaseClass(adapter).name))
-                                throw new Exception("Super classes of class \"" + cd.name + "\" do not share the same base class");
-                        }
+            try {
+                if (cd.name != null)
+                    q.queryName = cd.name;
+                adapter.getClass(q);
+                //That class already exists;
+                throw new Exception("Class \"" + cd.name + "\" already exists");
+            } catch (ClassNotFoundException cnfe) {
+                if (cd.getClass() == SubclassDef.class) {
+                    ClassDef baseClass = null;
+                    for (int i = 0; i < ((SubclassDef) cd).numberOfSuperClasses(); i++) {
+                        //Cycles are implicitly checked since getClass will fail for the current defining class
+                        ClassDef superClass = adapter.getClass(((SubclassDef) cd).getSuperClass(i));
+                        if (baseClass == null)
+                            baseClass = superClass.getBaseClass(adapter);
+                        else if (!baseClass.name.equals(superClass.getBaseClass(adapter).name))
+                            throw new Exception("Super classes of class \"" + cd.name + "\" do not share the same base class");
                     }
-
-                    adapter.putClass(cd);
-                    adapter.commit();
-
-                } catch (Exception e) {
-                    System.out.println("This class already exists: " + cd.name);
-                    adapter.abort();
-                    return null;
                 }
+                System.out.println("Making a new Class");
+                adapter.putClass(cd);
+                adapter.commit();
+
             }
         }
 
         if (q.getClass() == ModifyQuery.class) {
             ModifyQuery mq = (ModifyQuery) q;
-            if (isTitan) {
-                adapter.modifyObjects(mq);
-            } else {
-                try {
-                    if (mq.className != null)
-                        q.queryName = mq.className;
-                    ClassDef targetClass = adapter.getClass(q);
-                    WDBObject[] targetClassObjs = targetClass.search(mq.expression, adapter);
-                    if (mq.limit > -1 && targetClassObjs.length > mq.limit)
-                        throw new Exception("Matching entities exceeds limit of " + mq.limit.toString());
-                    for (int i = 0; i < targetClassObjs.length; i++)
-                        setValues(mq.assignmentList, targetClassObjs[i], adapter);
-                    adapter.commit();
-                } catch (Exception e) {
-                    System.out.println(e.toString());
-                    adapter.abort();
-                }
+            try {
+                if (mq.className != null)
+                    q.queryName = mq.className;
+                ClassDef targetClass = adapter.getClass(q);
+                WDBObject[] targetClassObjs = targetClass.search(mq.expression, adapter);
+                if (mq.limit > -1 && targetClassObjs.length > mq.limit)
+                    throw new Exception("Matching entities exceeds limit of " + mq.limit.toString());
+                for (int i = 0; i < targetClassObjs.length; i++)
+                    setValues(mq.assignmentList, targetClassObjs[i], adapter);
+                adapter.commit();
+            } catch (Exception e) {
+                System.out.println(e.toString());
+                adapter.abort();
             }
+
         }
 
         if (q instanceof InsertQuery) {
             InsertQuery iq = (InsertQuery) q;
-            if (isTitan) {
-                adapter.putObject(iq);
-            } else {
-                try {
-                    if (iq.className != null)
-                        q.queryName = iq.className;
+            try {
+                if (iq.className != null)
+                    q.queryName = iq.className;
 
-                    ClassDef targetClass = adapter.getClass(q);
-                    WDBObject newObject = null;
+                ClassDef targetClass = adapter.getClass(q);
+                WDBObject newObject = null;
 
-                    if (iq.fromClassName != null) {
-                        //Inserting from an entity of a superclass...
-                        if (targetClass.getClass() == SubclassDef.class) {
-                            SubclassDef targetSubClass = (SubclassDef) targetClass;
-                            ClassDef fromClass = adapter.getClass(iq.fromClassName);
-                            if (targetSubClass.isSubclassOf(fromClass.name, adapter)) {
-                                WDBObject[] fromObjects = fromClass.search(iq.expression, adapter);
-                                if (fromObjects.length <= 0) {
-                                    throw new IllegalStateException("Can't find any entities from class \"" + fromClass.name + "\" to extend");
-                                }
-                                for (int i = 0; i < fromObjects.length; i++) {
-                                    newObject = targetSubClass.newInstance(fromObjects[i].getBaseObject(adapter), adapter);
-                                    setValues(iq.assignmentList, newObject, adapter);
-                                }
-                            } else {
-                                throw new IllegalStateException("Inserted class \"" + targetClass.name + "\" is not a subclass of the from class \"" + iq.fromClassName);
+                if (iq.fromClassName != null) {
+                    //Inserting from an entity of a superclass...
+                    if (targetClass.getClass() == SubclassDef.class) {
+                        SubclassDef targetSubClass = (SubclassDef) targetClass;
+                        ClassDef fromClass = adapter.getClass(iq.fromClassName);
+                        if (targetSubClass.isSubclassOf(fromClass.name, adapter)) {
+                            WDBObject[] fromObjects = fromClass.search(iq.expression, adapter);
+                            if (fromObjects.length <= 0) {
+                                throw new IllegalStateException("Can't find any entities from class \"" + fromClass.name + "\" to extend");
+                            }
+                            for (int i = 0; i < fromObjects.length; i++) {
+                                newObject = targetSubClass.newInstance(fromObjects[i].getBaseObject(adapter), adapter);
+                                setValues(iq.assignmentList, newObject, adapter);
                             }
                         } else {
-                            throw new IllegalStateException("Can't extend base class \"" + targetClass.name + "\" from class \"" + iq.fromClassName);
+                            throw new IllegalStateException("Inserted class \"" + targetClass.name + "\" is not a subclass of the from class \"" + iq.fromClassName);
                         }
                     } else {
+                        throw new IllegalStateException("Can't extend base class \"" + targetClass.name + "\" from class \"" + iq.fromClassName);
+                    }
+                } else {
+                    newObject = targetClass.newInstance(null, adapter);
+                    setDefaultValues(targetClass, newObject, adapter);
+                    setValues(iq.assignmentList, newObject, adapter);
+                    checkRequiredValues(targetClass, newObject, adapter);
+                }
+
+                if (newObject != null) {
+                    newObject.commit(adapter);
+                }
+                adapter.commit();
+            } catch (Exception e) {
+                try {
+                    if (iq.className.contains(".")) { // SCHEMALESS SUBCLASS
+                        System.out.println("SubClass '" + iq.className + "' does not exist. Attempting schemaless insert...");
+                        if (iq.expression == null) {
+                            throw new IllegalStateException("The WHERE clause is required for schemaless inserts of a subclass");
+                        }
+                        String child = iq.className.substring(iq.className.indexOf(".") + 1, iq.className.length());
+                        String parent = iq.className.substring(0, iq.className.indexOf("."));
+                        iq.className = child;
+                        iq.fromClassName = parent;
+
+                        // Creating SubClass
+                        SubclassDef foo = new SubclassDef(child, "(SubClass) Schemaless Insert");
+                        foo.addSuperClass(parent);
+                        for (int x = 0; x < iq.assignmentList.size(); x++) {
+                            DVA dva = new DVA();
+                            DvaAssignment _dva = (DvaAssignment) iq.getAssignment(x);
+                            dva.required = true;
+                            dva.comment = "";
+                            dva.name = _dva.AttributeName;
+
+                            // Find value type
+                            Object temp1 = _dva.Value;
+                            String temp = temp1.toString();
+                            if (temp.equalsIgnoreCase("false") || temp.equalsIgnoreCase("true"))
+                                dva.type = "Boolean";
+                            else if (temp.length() > 0 && temp.matches("[0-9]+"))
+                                dva.type = "Integer";
+                            else if (temp.length() == 1) // necessary?
+                                dva.type = "Char";
+                            else
+                                dva.type = "String";
+
+                            foo.addAttribute(dva);
+                        }
+
+                        ClassDef baseClass = null;
+                        for (int i = 0; i < ((SubclassDef) foo).numberOfSuperClasses(); i++) {
+                            ClassDef superClass = adapter.getClass(((SubclassDef) foo).getSuperClass(i));
+                            if (baseClass == null)
+                                baseClass = superClass.getBaseClass(adapter);
+                            else if (!baseClass.name.equals(superClass.getBaseClass(adapter).name))
+                                throw new Exception("Super classes of class \"" + foo.name + "\" does not share the same base class");
+                        }
+
+                        adapter.putClass(foo);
+                        adapter.commit();
+
+                        // Insert into our new SubClass
+
+                        ClassDef targetClass = adapter.getClass(iq.className);
+                        WDBObject newObject = null;
+
+                        SubclassDef targetSubClass = (SubclassDef) targetClass;
+                        ClassDef fromClass = adapter.getClass(iq.fromClassName);
+                        if (targetSubClass.isSubclassOf(fromClass.name, adapter)) {
+                            WDBObject[] fromObjects = fromClass.search(iq.expression, adapter);
+                            if (fromObjects.length <= 0) {
+                                throw new IllegalStateException("Can't find any entities from class \"" + fromClass.name + "\" to extend");
+                            }
+                            for (int i = 0; i < fromObjects.length; i++) {
+                                newObject = targetSubClass.newInstance(fromObjects[i].getBaseObject(adapter), adapter);
+                                setValues(iq.assignmentList, newObject, adapter);
+                            }
+                        } else {
+                            throw new IllegalStateException("Inserted class \"" + targetClass.name + "\" is not a subclass of the from class \"" + iq.fromClassName);
+                        }
+
+                        if (newObject != null) {
+                            newObject.commit(adapter);
+                        }
+
+                        adapter.commit();
+                        System.out.println("Schemaless insert succeeded!");
+                    } else { // SCHEMALESS CLASS
+                        System.out.println("Class '" + iq.className + "' does not exist. Attempting schemaless insert...");
+                        // Creating Class
+                        ClassDef foo = new ClassDef(iq.className, "Schemaless Insert");
+                        for (int x = 0; x < iq.assignmentList.size(); x++) {
+                            DVA dva = new DVA();
+                            DvaAssignment _dva = (DvaAssignment) iq.getAssignment(x);
+                            dva.required = true;
+                            dva.comment = "";
+                            dva.name = _dva.AttributeName;
+
+                            // Find value type
+                            Object temp1 = _dva.Value;
+                            String temp = temp1.toString();
+                            if (temp.equalsIgnoreCase("false") || temp.equalsIgnoreCase("true"))
+                                dva.type = "Boolean";
+                            else if (temp.length() > 0 && temp.matches("[0-9]+"))
+                                dva.type = "Integer";
+                            else if (temp.length() == 1) // necessary?
+                                dva.type = "Char";
+                            else
+                                dva.type = "String";
+
+                            foo.addAttribute(dva);
+                        }
+
+                        adapter.putClass(foo);
+                        adapter.commit();
+
+                        // Inserting into our new Class
+                        ClassDef targetClass = adapter.getClass(iq.className);
+                        WDBObject newObject = null;
+
                         newObject = targetClass.newInstance(null, adapter);
                         setDefaultValues(targetClass, newObject, adapter);
                         setValues(iq.assignmentList, newObject, adapter);
                         checkRequiredValues(targetClass, newObject, adapter);
+
+                        if (newObject != null)
+                            newObject.commit(adapter);
+
+                        adapter.commit();
+                        System.out.println("Schemaless insert succeeded!");
                     }
-
-                    if (newObject != null) {
-                        newObject.commit(adapter);
-                    }
-                    adapter.commit();
-                } catch (Exception e) {
-                    try {
-                        if (iq.className.contains(".")) { // SCHEMALESS SUBCLASS
-                            System.out.println("SubClass '" + iq.className + "' does not exist. Attempting schemaless insert...");
-                            if (iq.expression == null) {
-                                throw new IllegalStateException("The WHERE clause is required for schemaless inserts of a subclass");
-                            }
-                            String child = iq.className.substring(iq.className.indexOf(".") + 1, iq.className.length());
-                            String parent = iq.className.substring(0, iq.className.indexOf("."));
-                            iq.className = child;
-                            iq.fromClassName = parent;
-
-                            // Creating SubClass
-                            SubclassDef foo = new SubclassDef(child, "(SubClass) Schemaless Insert");
-                            foo.addSuperClass(parent);
-                            for (int x = 0; x < iq.assignmentList.size(); x++) {
-                                DVA dva = new DVA();
-                                DvaAssignment _dva = (DvaAssignment) iq.getAssignment(x);
-                                dva.required = true;
-                                dva.comment = "";
-                                dva.name = _dva.AttributeName;
-
-                                // Find value type
-                                Object temp1 = _dva.Value;
-                                String temp = temp1.toString();
-                                if (temp.equalsIgnoreCase("false") || temp.equalsIgnoreCase("true"))
-                                    dva.type = "Boolean";
-                                else if (temp.length() > 0 && temp.matches("[0-9]+"))
-                                    dva.type = "Integer";
-                                else if (temp.length() == 1) // necessary?
-                                    dva.type = "Char";
-                                else
-                                    dva.type = "String";
-
-                                foo.addAttribute(dva);
-                            }
-
-                            ClassDef baseClass = null;
-                            for (int i = 0; i < ((SubclassDef) foo).numberOfSuperClasses(); i++) {
-                                ClassDef superClass = adapter.getClass(((SubclassDef) foo).getSuperClass(i));
-                                if (baseClass == null)
-                                    baseClass = superClass.getBaseClass(adapter);
-                                else if (!baseClass.name.equals(superClass.getBaseClass(adapter).name))
-                                    throw new Exception("Super classes of class \"" + foo.name + "\" does not share the same base class");
-                            }
-
-                            adapter.putClass(foo);
-                            adapter.commit();
-
-                            // Insert into our new SubClass
-
-                            ClassDef targetClass = adapter.getClass(iq.className);
-                            WDBObject newObject = null;
-
-                            SubclassDef targetSubClass = (SubclassDef) targetClass;
-                            ClassDef fromClass = adapter.getClass(iq.fromClassName);
-                            if (targetSubClass.isSubclassOf(fromClass.name, adapter)) {
-                                WDBObject[] fromObjects = fromClass.search(iq.expression, adapter);
-                                if (fromObjects.length <= 0) {
-                                    throw new IllegalStateException("Can't find any entities from class \"" + fromClass.name + "\" to extend");
-                                }
-                                for (int i = 0; i < fromObjects.length; i++) {
-                                    newObject = targetSubClass.newInstance(fromObjects[i].getBaseObject(adapter), adapter);
-                                    setValues(iq.assignmentList, newObject, adapter);
-                                }
-                            } else {
-                                throw new IllegalStateException("Inserted class \"" + targetClass.name + "\" is not a subclass of the from class \"" + iq.fromClassName);
-                            }
-
-                            if (newObject != null) {
-                                newObject.commit(adapter);
-                            }
-
-                            adapter.commit();
-                            System.out.println("Schemaless insert succeeded!");
-                        } else { // SCHEMALESS CLASS
-                            System.out.println("Class '" + iq.className + "' does not exist. Attempting schemaless insert...");
-                            // Creating Class
-                            ClassDef foo = new ClassDef(iq.className, "Schemaless Insert");
-                            for (int x = 0; x < iq.assignmentList.size(); x++) {
-                                DVA dva = new DVA();
-                                DvaAssignment _dva = (DvaAssignment) iq.getAssignment(x);
-                                dva.required = true;
-                                dva.comment = "";
-                                dva.name = _dva.AttributeName;
-
-                                // Find value type
-                                Object temp1 = _dva.Value;
-                                String temp = temp1.toString();
-                                if (temp.equalsIgnoreCase("false") || temp.equalsIgnoreCase("true"))
-                                    dva.type = "Boolean";
-                                else if (temp.length() > 0 && temp.matches("[0-9]+"))
-                                    dva.type = "Integer";
-                                else if (temp.length() == 1) // necessary?
-                                    dva.type = "Char";
-                                else
-                                    dva.type = "String";
-
-                                foo.addAttribute(dva);
-                            }
-
-                            adapter.putClass(foo);
-                            adapter.commit();
-
-                            // Inserting into our new Class
-                            ClassDef targetClass = adapter.getClass(iq.className);
-                            WDBObject newObject = null;
-
-                            newObject = targetClass.newInstance(null, adapter);
-                            setDefaultValues(targetClass, newObject, adapter);
-                            setValues(iq.assignmentList, newObject, adapter);
-                            checkRequiredValues(targetClass, newObject, adapter);
-
-                            if (newObject != null)
-                                newObject.commit(adapter);
-
-                            adapter.commit();
-                            System.out.println("Schemaless insert succeeded!");
-                        }
-                    } catch (Exception foo) {
-                        System.out.println("Schemaless insert failed due to the following:\n" + foo);
-                        adapter.abort();
-                    }
+                } catch (Exception foo) {
+                    System.out.println("Schemaless insert failed due to the following:\n" + foo);
+                    adapter.abort();
                 }
             }
         }
@@ -483,74 +467,70 @@ public class ProcessLanguages {
         if (q instanceof RetrieveQuery) {
             //Ok, its a retrieve...
             RetrieveQuery rq = (RetrieveQuery) q;
-            if (isTitan) {
-                return adapter.getObjects(rq);
-            } else {
-                try {
-                    if (rq.className != null)
-                        q.queryName = rq.className;
-                    ClassDef targetClass = adapter.getClass(q);
-                    WDBObject[] targetClassObjs = targetClass.search(rq.expression, adapter);
-                    int i, j;
-                    String[][] table;
-                    String[][] newtable;
-                    final ArrayList<PyObject> rows = new ArrayList<>();
+            try {
+                if (rq.className != null)
+                    q.queryName = rq.className;
+                ClassDef targetClass = adapter.getClass(q);
+                WDBObject[] targetClassObjs = targetClass.search(rq.expression, adapter);
+                int i, j;
+                String[][] table;
+                String[][] newtable;
+                final ArrayList<PyObject> rows = new ArrayList<>();
 
-                    PrintNode node = new PrintNode(0, 0);
+                PrintNode node = new PrintNode(0, 0);
+                for (j = 0; j < rq.numAttributePaths(); j++)
+                    targetClass.printAttributeName(node, rq.getAttributePath(j), adapter);
+
+                table = node.printRow();
+                for (i = 0; i < targetClassObjs.length; i++) {
+                    node = new PrintNode(0, 0);
                     for (j = 0; j < rq.numAttributePaths(); j++)
-                        targetClass.printAttributeName(node, rq.getAttributePath(j), adapter);
+                        targetClassObjs[i].PrintAttribute(node, rq.getAttributePath(j), adapter);
+                    newtable = joinRows(table, node.printRow());
+                    table = newtable;
+                }
 
-                    table = node.printRow();
-                    for (i = 0; i < targetClassObjs.length; i++) {
-                        node = new PrintNode(0, 0);
-                        for (j = 0; j < rq.numAttributePaths(); j++)
-                            targetClassObjs[i].PrintAttribute(node, rq.getAttributePath(j), adapter);
-                        newtable = joinRows(table, node.printRow());
-                        table = newtable;
+                adapter.commit();
+
+                Integer[] columnWidths = new Integer[table[0].length];
+
+                for (i = 0; i < columnWidths.length; i++) {
+                    columnWidths[i] = 0;
+                    for (j = 0; j < table.length; j++) {
+                        if (i < table[j].length && table[j][i] != null && table[j][i].length() > columnWidths[i])
+                            columnWidths[i] = table[j][i].length();
                     }
+                }
 
-                    adapter.commit();
-
-                    Integer[] columnWidths = new Integer[table[0].length];
-
-                    for (i = 0; i < columnWidths.length; i++) {
-                        columnWidths[i] = 0;
-                        for (j = 0; j < table.length; j++) {
-                            if (i < table[j].length && table[j][i] != null && table[j][i].length() > columnWidths[i])
-                                columnWidths[i] = table[j][i].length();
-                        }
-                    }
-
-                    for (i = 0; i < table.length; i++) {
-                        ArrayList<PyObject> columns = new ArrayList<>();
-                        for (j = 0; j < table[0].length; j++) {
-                            String colElement = table[i][j];
+                for (i = 0; i < table.length; i++) {
+                    ArrayList<PyObject> columns = new ArrayList<>();
+                    for (j = 0; j < table[0].length; j++) {
+                        String colElement = table[i][j];
+                        try {
+                            Double.parseDouble(colElement);
                             try {
-                                Double.parseDouble(colElement);
-                                try {
-                                    Integer.parseInt(colElement);
-                                    columns.add(new PyInteger(Integer.parseInt(colElement)));
-                                } catch (NumberFormatException e) {
-                                    columns.add(new PyFloat(Float.parseFloat(colElement)));
-                                }
+                                Integer.parseInt(colElement);
+                                columns.add(new PyInteger(Integer.parseInt(colElement)));
                             } catch (NumberFormatException e) {
-                                columns.add(new PyString(colElement));
+                                columns.add(new PyFloat(Float.parseFloat(colElement)));
                             }
+                        } catch (NumberFormatException e) {
+                            columns.add(new PyString(colElement));
+                        }
 
 //                        if (j >= table[i].length || table[i][j] == null)
 //                            System.out.format("| %" + columnWidths[j].toString() + "s ", "");
 //                        else
 //                            System.out.format("| %" + columnWidths[j].toString() + "s ", table[i][j]);
-                        }
-                        rows.add(new PyTuple(columns.toArray(new PyObject[columns.size()])));
-//                    System.out.format("|%n");
                     }
-                    return rows;
-                    // Return here? Table is a 2D array
-                } catch (Exception e) {
-                    System.out.println(e.toString());
-                    adapter.abort();
+                    rows.add(new PyTuple(columns.toArray(new PyObject[columns.size()])));
+//                    System.out.format("|%n");
                 }
+                return rows;
+                // Return here? Table is a 2D array
+            } catch (Exception e) {
+                System.out.println(e.toString());
+                adapter.abort();
             }
         }
 
