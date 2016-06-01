@@ -72,10 +72,10 @@ SIM on connTitanNoSQL 'from sim_project_emp retrieve *;'
 SIM on connTitanNoSQL 'from sim_project_emp retrieve *, name OF department, name OF projects;'
 # 4. Show all instances of the SIM_manager class along with their respective department names
 SIM on connTitanNoSQL 'from sim_manager retrieve *, name OF department;'
-# 5. Show all instances of the SIM_project class along with their respective project employee and department name(s).
-SIM on connTitanNoSQL 'from sim_project retrieve *, name OF employees, name OF department;'
-# 6. Show all instances of the SIM_dept class along with their respective project employee, project, and manager name(s).
-SIM on connTitanNoSQL 'from sim_dept retrieve *, name OF employees, name OF projects, name OF manager;'
+# 5. Show all instances of the SIM_project class along with their respective department name(s).
+SIM on connTitanNoSQL 'from sim_project retrieve *, name OF department;'
+# 6. Show all instances of the SIM_dept class along with their respective manager name(s).
+SIM on connTitanNoSQL 'from sim_dept retrieve *, name OF manager;'
 
 if __name__ == "__main__":
     unittest.main()
