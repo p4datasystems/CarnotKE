@@ -207,8 +207,7 @@ public class ProcessLanguages {
     }
 
 
-    public synchronized ArrayList<PyObject> processNativeSIM(String ReLstmt) throws Exception
-    {
+    public synchronized ArrayList<PyObject> processNativeSIM(String ReLstmt) throws Exception {
         final boolean DBG = true;
         ReLstmt = ReLstmt.replaceAll("\\_\\^\\_", ";");
         if (DBG) {
@@ -228,8 +227,7 @@ public class ProcessLanguages {
         if (!parserInitialized) {
             parser = new QueryParser(is);
             parserInitialized = true;
-        }
-        else {
+        } else {
             parser.ReInit(is);
         }
         try {
@@ -239,7 +237,6 @@ public class ProcessLanguages {
         }
         debugMsg(DBG, "Statement executed: " + ReLstmt);
 
-        /********************** BEGIN WDB CODE DUMP **********************/
         if (q instanceof ClassDef) {
             ClassDef cd = (ClassDef) q;
             try {
@@ -294,6 +291,7 @@ public class ProcessLanguages {
             try {
                 if (iq.className != null)
                     q.queryName = iq.className;
+
                 ClassDef targetClass = adapter.getClass(q);
                 WDBObject newObject = null;
 
@@ -304,32 +302,31 @@ public class ProcessLanguages {
                         ClassDef fromClass = adapter.getClass(iq.fromClassName);
                         if (targetSubClass.isSubclassOf(fromClass.name, adapter)) {
                             WDBObject[] fromObjects = fromClass.search(iq.expression, adapter);
-                            if (fromObjects.length <= 0)
+                            if (fromObjects.length <= 0) {
                                 throw new IllegalStateException("Can't find any entities from class \"" + fromClass.name + "\" to extend");
+                            }
                             for (int i = 0; i < fromObjects.length; i++) {
                                 newObject = targetSubClass.newInstance(fromObjects[i].getBaseObject(adapter), adapter);
                                 setValues(iq.assignmentList, newObject, adapter);
                             }
-                        } else
+                        } else {
                             throw new IllegalStateException("Inserted class \"" + targetClass.name + "\" is not a subclass of the from class \"" + iq.fromClassName);
-                    } else
-                        throw new IllegalStateException("Can't extend base class \"" + targetClass.name + "\" from class \"" + iq.fromClassName);
-                } else {
-                    //Just inserting a new entity
-                    newObject = targetClass.newInstance(null, adapter);
-                    if (connDatabase instanceof TitanNoSQLDatabase) {
-                        adapter.putObject(iq, newObject);
+                        }
                     } else {
-                        setDefaultValues(targetClass, newObject, adapter);
-                        setValues(iq.assignmentList, newObject, adapter);
-                        checkRequiredValues(targetClass, newObject, adapter);
+                        throw new IllegalStateException("Can't extend base class \"" + targetClass.name + "\" from class \"" + iq.fromClassName);
                     }
+                } else {
+                    newObject = targetClass.newInstance(null, adapter);
+                    setDefaultValues(targetClass, newObject, adapter);
+                    setValues(iq.assignmentList, newObject, adapter);
+                    checkRequiredValues(targetClass, newObject, adapter);
                 }
 
-                if (newObject != null)
+                if (newObject != null) {
                     newObject.commit(adapter);
+                }
                 adapter.commit();
-            } catch (ClassNotFoundException e) {
+            } catch (Exception e) {
                 try {
                     if (iq.className.contains(".")) { // SCHEMALESS SUBCLASS
                         System.out.println("SubClass '" + iq.className + "' does not exist. Attempting schemaless insert...");
@@ -533,13 +530,14 @@ public class ProcessLanguages {
 //                    System.out.format("|%n");
                 }
                 return rows;
-            // Return here? Table is a 2D array
+                // Return here? Table is a 2D array
             } catch (Exception e) {
                 System.out.println(e.toString());
                 adapter.abort();
             }
         }
-        /********************** END WDB CODE DUMP **********************/
+
+        /******************* END WDB CODE DUMP *****************/
         return null;
     }
 
@@ -719,9 +717,7 @@ public class ProcessLanguages {
             if (assignmentList.get(j) instanceof DvaAssignment) {
                 DvaAssignment dvaAssignment = (DvaAssignment) assignmentList.get(j);
                 targetObject.setDvaValue(dvaAssignment.AttributeName, dvaAssignment.Value, adapter);
-            }
-
-            else if (assignmentList.get(j) instanceof EvaAssignment) {
+            } else if (assignmentList.get(j) instanceof EvaAssignment) {
                 EvaAssignment evaAssignment = (EvaAssignment) assignmentList.get(j);
                 if (evaAssignment.mode == EvaAssignment.REPLACE_MODE) {
                     WDBObject[] currentObjects = targetObject.getEvaObjects(evaAssignment.AttributeName, adapter);
@@ -732,8 +728,9 @@ public class ProcessLanguages {
                     targetObject.removeEvaObjects(evaAssignment.AttributeName, evaAssignment.targetClass, evaAssignment.expression, adapter);
                 else if (evaAssignment.mode == EvaAssignment.INCLUDE_MODE)
                     targetObject.addEvaObjects(evaAssignment.AttributeName, evaAssignment.targetClass, evaAssignment.expression, adapter);
-                else
+                else {
                     throw new Exception("Unsupported multivalue EVA insert/modify mode");
+                }
             }
         }
     }

@@ -52,7 +52,8 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 	private LinkedHashMap<String,String> subColumnsAs;
 	private LinkedHashMap<String, String> subAggrColumnsAs;
 	private HashMap<String,String> subTableSymbols;
-	private List<String> subColumns = null;
+	private List<String> subColumnNames = new ArrayList<String>();
+	private List<String> subColumns = new ArrayList<String>();
 
 	private static int joinInc = 1; // for each join this will be incremented and used in a variable name.
 
@@ -201,8 +202,6 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 
 	public void visit(PlainSelect plainSelect) {
 
-		List<String> joinColumns = new ArrayList<String>();
-
 		tempSub = visitSelect_buildSPARQL(plainSelect);
 
 		subq.add(tempSub);
@@ -246,7 +245,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 			}
 		}
 
-		if (subFromAfter) {
+		if (subFromAfter || subJoinAfter) {
 			getSubStructures(tables, tablesAliases, tables2alias, columnsAs, aggrColumnsAs, tableSymbols);
 		}
 
@@ -294,20 +293,26 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 		}
 		// End getting table names and their aliases if any.
 
-		// This map (tableSymbols) of table names to unique, short symbols will be used later in several places.
 		if (!subWhereBefore) n = 1;
-		for (String s : tables) {
-			tableSymbols.put(s, "s" + n);
-			n++;
+
+		if (subJoinAfter) {
+			tables.addAll(subTables);
+			tables2alias.putAll(subTables2alias);
+			tablesAliases.putAll(subTablesAliases);
+		} else {
+			if (subColumnNames != null) columnNames = subColumnNames;
+		}
+
+		// This map (tableSymbols) of table names to unique, short symbols will be used later in several places.
+		for (String table : tables) {
+			tableSymbols.put(table, "s" + n);
+			++n;
 		}
 
 		// Get all column names from tables.
 		for (String table : tables) {
 			try {		// Get all of the column names for each of the tables.
-				if (subColumns != null) {
-					columns = subColumns;
-					columns.addAll(getSubjects(connection, table + "_" + connection.getSchemaString(), "rdfs:domain", NoSQLNameSpacePrefix + ":" + table));
-				} else columns = getSubjects(connection, table + "_" + connection.getSchemaString(), "rdfs:domain", NoSQLNameSpacePrefix + ":" + table);
+				columns = getSubjects(connection, table + "_" + connection.getSchemaString(), "rdfs:domain", NoSQLNameSpacePrefix + ":" + table);
 				for (String column : columns) {
 					columnNames.add(tables2alias.get(table) + "." + column);
 				}
@@ -322,7 +327,6 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 		if (plainSelect.getGroupByColumnReferences() != null){
 			String groupbyStmnt = plainSelect.getGroupByColumnReferences().toString();
 			String[] groupbyElems = groupbyStmnt.substring(1, groupbyStmnt.length() - 1).replace(" ", "").split(",");
-			String withTableName = "";
 
 			for (String gr: groupbyElems)
 				gr.replace(",", "");
@@ -417,7 +421,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 						if (!allCols.contains(columnName)) allCols.add(columnName);
 					}
 				}
-				if (subFromAfter) {
+				if (subFromAfter || subJoinAfter) {
 					for (Map.Entry<String, String> entry: columnsAs.entrySet()) {
 						//System.out.println("The Key is: " + entry.getKey() + " " + entry.getValue());
 						if (columnsAs.containsValue("*")) {
@@ -432,12 +436,14 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 					for (Map.Entry<String, String> entry: subColumnsAs.entrySet()) {
 						if (columnsAs.containsValue(entry.getValue())) {
 							ta.put(entry.getKey(), entry.getValue());
+						} else {
+							if (subJoinAfter) ta.put(entry.getKey(), entry.getValue());
 						}
 					}
 					if (!b) {
 						if (ta.size() > 0) {
 							columnsAs.clear();
-							columnsAs = ta;
+							columnsAs.putAll(ta);
 						} else {
 							System.out.println("The columns are not part of the subquery");
 							columnsAs.clear();
@@ -446,12 +452,22 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 				}
 			}
 		}
-		if (subJoinAfter) allCols.addAll(subAllCols);
+		if (subJoinAfter) {
+			allCols.addAll(subAllCols);
+			columnsAs.clear();
+			int i = 1;
+			for (String col: allCols) {
+				if (columnsAs == null || !columnsAs.containsValue(col.split("\\.")[1])) {
+					columnsAs.put("?v" + i, col.split("\\.")[1]);
+					++i;
+				}
+			}
+		}
+
 		// End getting column names to project.
 
 		// Get join column names.
 		if (plainSelect.getJoins() != null) {
-			String x = "select";
 			for (Iterator joinsIt = plainSelect.getJoins().iterator(); joinsIt.hasNext();) {
 				Join join = (Join) joinsIt.next();
 				if(join.getOnExpression() != null) {
@@ -463,7 +479,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 					String col2 = resolveColumnName(columnNames, split[1]);
 					if (joinStr.contains("SELECT")) {
 
-						getSubStructures(tables, tablesAliases, tables2alias, columnsAs, aggrColumnsAs, tableSymbols);
+						//getSubStructures(tables, tablesAliases, tables2alias, columnsAs, aggrColumnsAs, tableSymbols);
 
 						String subsq = joinStr.substring(joinStr.split("ON")[0].indexOf("(") + 1, joinStr.split("ON")[0].indexOf(")"));
 						if (col1.equals("")) col1 = col2;
@@ -757,6 +773,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 			}
 		}
 
+		List<String> keys = new ArrayList<String>();
 		n += groupby.size();
 		for (String col: columnsAs.keySet()) {
 			n++;
@@ -788,26 +805,47 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 					key = key.substring(key.indexOf("(") + 1, key.indexOf(")"));
 					if (subWhereBefore) key = allCols.get(allCols.size() - 1);
 				} else {
+					while (keys.contains(allCols.get(n - 1).substring(allCols.get(n - 1).lastIndexOf(".") + 1))) {
+						++n;
+					}
+					keys.add(allCols.get(n - 1).substring(allCols.get(n - 1).lastIndexOf(".") + 1));
+
 					key = allCols.get(n - 1);
+
 					if (subWhereBefore) key = allCols.get(allCols.size() - 1);
 				}
 
 				if (tablesAliases.get(key.split("\\.")[0]) == null) {
 					if (!connection.getConnectionDB().equals("OracleNoSQL")) {
-						tmpSparql += "OPTIONAL { ?s1" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
-								+ " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " " + col + " }";
+						if (!outerLeft) {
+							tmpSparql += "OPTIONAL { ?s1" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
+									+ " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " " + col + " }";
+						} else {
+							tmpSparql += "{ ?s1" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
+									+ " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " " + col + " }";
+						}
 					} else {
-						tmpSparql += "OPTIONAL { ?indiv" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
+						tmpSparql += "{ ?indiv" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
 								+ " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " " + col + " } ";
 					}
 					nonExistentColumns = true;
 				} else {
 					if (!connection.getConnectionDB().equals("OracleNoSQL")) {
-						tmpSparql += "OPTIONAL { ?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
-								+ " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " " + col + " }";
+						if (!outerLeft) {
+							tmpSparql += "OPTIONAL { ?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
+									+ " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " " + col + " }";
+						} else {
+							tmpSparql += "{ ?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
+									+ " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " " + col + " }";
+						}
 					} else {
-						tmpSparql += "OPTIONAL { GRAPH ?g" + n + " {?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
-								+ " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " " + col + " } }";
+						if (!outerLeft) {
+							tmpSparql += "OPTIONAL { GRAPH ?g" + n + " {?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
+									+ " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " " + col + " } }";
+						} else {
+							tmpSparql += "{ GRAPH ?g" + n + " {?" + tableSymbols.get(tablesAliases.get(key.split("\\.")[0]))
+									+ " " + NoSQLNameSpacePrefix + ":" + key.substring(key.lastIndexOf(".") + 1) + " " + col + " } }";
+						}
 					}
 				}
 			}
@@ -878,11 +916,17 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 				// This will get the symbol from tableSymbols for the d from d.n and will get n from d.n
 				SPARQL += "\t?" + tableSymbols.get(tablesAliases.get(s.split(" = ")[1].split("\\.")[0])) + " " + NoSQLNameSpacePrefix + ":" + s.split(" = ")[1].split("\\.")[1] + " ?j" + n + " .\n";
 			} else {
-
-				// This will get the symbol from tableSymbols for the e from e.n and will get n from e.n
-				SPARQL += "\n\t\tGRAPH ?gj" + n + " { ?" + tableSymbols.get(tablesAliases.get(s.split(" = ")[0].split("\\.")[0])) + " " + NoSQLNameSpacePrefix + ":" + s.split(" = ")[0].split("\\.")[1] + " ?j" + n + " . } ";
-				// This will get the symbol from tableSymbols for the d from d.n and will get n from d.n
-				SPARQL += "\n\t\tGRAPH ?gj" + (n + 1) + " { ?" + tableSymbols.get(tablesAliases.get(s.split(" = ")[1].split("\\.")[0])) + " " + NoSQLNameSpacePrefix + ":" + s.split(" = ")[1].split("\\.")[1] + " ?j" + n + " .  } ";
+				if (outerLeft) {
+					// This will get the symbol from tableSymbols for the e from e.n and will get n from e.n
+					SPARQL += "\n\t\tOPTIONAL { GRAPH ?gj" + n + " { ?" + tableSymbols.get(tablesAliases.get(s.split(" = ")[0].split("\\.")[0])) + " " + NoSQLNameSpacePrefix + ":" + s.split(" = ")[0].split("\\.")[1] + " ?j" + n + " . } ";
+					// This will get the symbol from tableSymbols for the d from d.n and will get n from d.n
+					SPARQL += "\n\t\tGRAPH ?gj" + (n + 1) + " { ?" + tableSymbols.get(tablesAliases.get(s.split(" = ")[1].split("\\.")[0])) + " " + NoSQLNameSpacePrefix + ":" + s.split(" = ")[1].split("\\.")[1] + " ?j" + n + " .  } }";
+				} else {
+					// This will get the symbol from tableSymbols for the e from e.n and will get n from e.n
+					SPARQL += "\n\t\tGRAPH ?gj" + n + " { ?" + tableSymbols.get(tablesAliases.get(s.split(" = ")[0].split("\\.")[0])) + " " + NoSQLNameSpacePrefix + ":" + s.split(" = ")[0].split("\\.")[1] + " ?j" + n + " . } ";
+					// This will get the symbol from tableSymbols for the d from d.n and will get n from d.n
+					SPARQL += "\n\t\tGRAPH ?gj" + (n + 1) + " { ?" + tableSymbols.get(tablesAliases.get(s.split(" = ")[1].split("\\.")[0])) + " " + NoSQLNameSpacePrefix + ":" + s.split(" = ")[1].split("\\.")[1] + " ?j" + n + " .  } ";
+				}
 			}
 			n++;
 		}
@@ -918,7 +962,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 		subFromAfter = false;
 		subJoinAfter = false;
 
-		setSubStructures(tables, tablesAliases, tables2alias, columnsAs, aggrColumnsAs, tableSymbols, columns);
+		setSubStructures(tables, tablesAliases, tables2alias, columnsAs, aggrColumnsAs, tableSymbols, columns, columnNames);
 
 		return SPARQL;
 	}
@@ -930,7 +974,8 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 			LinkedHashMap<String, String> columnsAs,
 			LinkedHashMap<String, String> aggrColumnsAs,
 			HashMap<String,String> tableSymbols,
-			List<String> columns) {
+			List<String> columns,
+			List<String> columnNames) {
 
 		subTables = tables;
 		subTablesAliases = tablesAliases;
@@ -939,6 +984,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 		subAggrColumnsAs = aggrColumnsAs;
 		subTableSymbols = tableSymbols;
 		subColumns = columns;
+		subColumnNames = columnNames;
 		subAllCols.addAll(allCols);
 	}
 
@@ -983,7 +1029,6 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 	private String resolveColumnName(List<String> columnNames, String columnName)
 	{
 		String tmpColumnName = "";
-		int cnt = 0;
 		for (String column : columnNames) {
 			if (columnName.contains(".")) {
 				if (columnName.toUpperCase().equals(column.toUpperCase()))
@@ -992,11 +1037,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 			else {
 				if (columnName.toUpperCase().equals(column.substring(column.lastIndexOf(".") + 1).toUpperCase()))
 					tmpColumnName = column;
-				cnt++;
 			}
-		}
-		if (cnt > 1) {
-			System.out.println("Column name " + columnName + " is ambiguously defined, using " + tmpColumnName);
 		}
 		return tmpColumnName;
 	}
