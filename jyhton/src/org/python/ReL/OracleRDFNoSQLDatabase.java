@@ -8,21 +8,25 @@ import com.hp.hpl.jena.sparql.core.DatasetImpl;
 import oracle.rdf.kv.client.jena.DatasetGraphNoSql;
 import oracle.rdf.kv.client.jena.OracleGraphNoSql;
 import oracle.rdf.kv.client.jena.OracleNoSqlConnection;
+import org.apache.commons.lang3.SerializationUtils;
 import org.python.ReL.WDB.database.wdb.metadata.*;
 import org.python.core.*;
 
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.UUID;
+import java.sql.SQLException;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.python.ReL.OracleNoSQLDatabase.DBG;
+import static org.python.ReL.ProcessLanguages.debugMsg;
 
 /**
  * A class that is used to interface with the oracle database.
  * All statements and queries should go through here to communicate with oracle.
  */
 
-public class OracleRDFNoSQLDatabase extends DatabaseInterface {
+public class OracleRDFNoSQLDatabase extends DatabaseInterface implements Adapter, NonDefaultParser{
 
     private OracleNoSqlConnection connection;
     DatasetGraphNoSql datasetGraph = null;
@@ -31,9 +35,9 @@ public class OracleRDFNoSQLDatabase extends DatabaseInterface {
     private String nameSpace = "carnot:";
     private String nameSpacePrefix = "c";
 
-    public OracleRDFNoSQLDatabase(String url, String uname, String passw, String conn_type, String debug)
+    public OracleRDFNoSQLDatabase(PyRelConnection pyRelConnection, String url, String uname, String passw, String conn_type, String debug)
     {
-        super();
+        super(pyRelConnection);
 
         connection = null;
         this.debug = debug;
@@ -233,74 +237,230 @@ public class OracleRDFNoSQLDatabase extends DatabaseInterface {
         return results;
     }
 
+    @Override
+    public void putClass(org.python.ReL.WDB.database.wdb.metadata.Query classDefQuery) {
+//        SIMHelper simhelper = new SIMHelper(this.pyRelConn);
+//        simhelper.executeInstance(classDefQuery.getQueryName(), classDefQuery.getQueryName());
+//        final String instanceID = String.valueOf(UUID.randomUUID());
+//        final byte[] data = SerializationUtils.serialize((ClassDef)classDefQuery);
+//        final String dataStr = Arrays.toString(data);
+//        try {
+//            SQLVisitor.insertQuad(this.pyRelConn, classDefQuery.getQueryName(), dataStr, classDefQuery.getQueryName(), Integer.toString(((ClassDef)classDefQuery).getUid()), false);
+//        }
+//        catch (SQLException e) {
+//            // Ignore for now :)
+//        }
+    }
 
-    private class OracleRDFNoSQLAdapter implements Adapter {
-        private OracleRDFNoSQLDatabase db;
+    @Override
+    public ClassDef getClass(org.python.ReL.WDB.database.wdb.metadata.Query query) throws ClassNotFoundException {
+        // Predicate: carnot:QUERY_NAME
+        // Object: query.getUid() as a String
+//        String predicate = "carnot:" + query.getQueryName();
+//        String object = Integer.toString(((ClassDef)query).getUid());
+//        String sparqlQuery = "select ?x where { ?x " + predicate + " " + object + " }";
+//        try {
+//            ArrayList<PyObject> stuff = this.OracleNoSQLRunSPARQL(sparqlQuery);
+//        }
+//        catch (QueryParseException e) {
+//            throw new ClassNotFoundException();
+//        }
+        throw new ClassNotFoundException();
+    }
 
-        private OracleRDFNoSQLAdapter(OracleRDFNoSQLDatabase db)
-        {
-            this.db = db;
-        }
+    @Override
+    public ClassDef getClass(String className) throws ClassNotFoundException {
+        throw new ClassNotFoundException();
+    }
 
+    @Override
+    public void putObject(WDBObject wdbObject) {
+//        final byte[] data = SerializationUtils.serialize(wdbObject);
+//        final String dataStr = Arrays.toString(data);
+//        try {
+//            SQLVisitor.insertQuad(this.pyRelConn, wdbObject.getClassName(), wdbObject.getUid().toString(), wdbObject.getClassName(),
+//                    dataStr, false);
+//        }
+//        catch (SQLException e) {
+//            // Ignore for now :)
+//        }
+    }
 
+    @Override
+    public WDBObject getObject(String className, Integer Uid) {
+        return null;
+    }
 
-        @Override
-        public void putClass(ClassDef classDef)
-        {
+    @Override
+    public ArrayList<WDBObject> getObjects(org.python.ReL.WDB.database.wdb.metadata.Query indexDefQuery, String key) {
+        return null;
+    }
 
-        }
+    @Override
+    public void commit() {
 
-        @Override
-        public ClassDef getClass(org.python.ReL.WDB.database.wdb.metadata.Query query) throws ClassNotFoundException
-        {
-            throw new ClassNotFoundException();
-        }
+    }
 
-        @Override
-        public ClassDef getClass(String s) throws ClassNotFoundException
-        {
-            throw new ClassNotFoundException();
-        }
+    @Override
+    public void abort() {
 
-        @Override
-        public void putObject(WDBObject wdbObject)
-        {
-            final String instanceID = String.valueOf(UUID.randomUUID());
-            ArrayList<String> dvaNames = wdbObject.getDvaNames();
-            ArrayList<String> dvaVals = wdbObject.getDvaValues();
-            String className = wdbObject.getClassName();
-            for (int i = 0; i < dvaNames.size(); i++) {
-                OracleNoSQLAddQuad("SCHEMA", className, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://www.w3.org/2000/01/rdf-schema#Class", true);
-                OracleNoSQLAddQuad(className + "_" + "SCHEMA", dvaNames.get(i), "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://www.w3.org/2002/07/owl#DatatypeProperty", true);
-                OracleNoSQLAddQuad(className + "_" + "SCHEMA", dvaNames.get(i), "http://www.w3.org/2000/01/rdf-schema#domain", className, true);
-                OracleNoSQLAddQuad(className + "_" + "SCHEMA", dvaNames.get(i), "http://www.w3.org/2000/01/rdf-schema#range", "http://www.w3.org/2001/XMLSchema#string", true);
-                OracleNoSQLAddQuad(className + "_" + "SCHEMA", instanceID, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", className, true);
-                OracleNoSQLAddQuad(className, instanceID, dvaNames.get(i), dvaVals.get(i), false);
+    }
+
+    // NonDefaultParser implementation
+    @Override
+    public void insert(org.python.ReL.WDB.database.wdb.metadata.Query insertQuery) {
+        InsertQuery iq = (InsertQuery) insertQuery;
+        final String instanceID = String.valueOf(UUID.randomUUID());
+        for (int i = 0; i < iq.numberOfAssignments(); i++) {
+            DvaAssignment dvaAssignment = (DvaAssignment) iq.getAssignment(i);
+            try {
+                SQLVisitor.insertQuad(this.pyRelConn, iq.className, instanceID, dvaAssignment.getAttributeName(),
+                        dvaAssignment.Value.toString(), false);
+            }
+            catch (SQLException e) {
+                // Ignore for now :)
             }
         }
+    }
 
-        @Override
-        public WDBObject getObject(String s, Integer integer)
-        {
+    @Override
+    public void modify(org.python.ReL.WDB.database.wdb.metadata.Query modifyQuery) {
+        ModifyQuery mq = (ModifyQuery) modifyQuery;
+        String className = mq.className;
+        String eva_name = "";
+        String eva_class = "";
+        int limit = 1000000;
+        ArrayList<PyObject> rows = new ArrayList<>();
+        List<String> subjects = new ArrayList<>();
+        List<String> eva_subjects = new ArrayList<>();
+
+        String sparql = "select ?indiv where { ";
+        String where = "";
+        for (int i = 0; i < mq.assignmentList.size(); i++) {
+            EvaAssignment evaAssignment = (EvaAssignment) mq.assignmentList.get(i);
+            eva_name = evaAssignment.getAttributeName();
+            eva_class = evaAssignment.targetClass;
+            where = traverseWhereInorder(where, evaAssignment.expression.jjtGetChild(i)); // This sets the where variable to e.g., deptno = 20
+            String where1 = where.trim();
+            sparql += "GRAPH " + this.getNameSpacePrefix() + ":" + eva_class + " { ?indiv " + getNameSpacePrefix() + ":"
+                    + where1.replaceAll(" *= *", " \"") + "\"^^xsd:string }";
+        }
+        sparql += " }";
+        debugMsg(DBG, "\nProcessLanguages SIM Modify, sparql is: \n" + sparql + "\n");
+        rows = this.OracleNoSQLRunSPARQL(sparql);
+        for (int i = 1; i < rows.size(); i++) {
+            eva_subjects.add(String.format("%s", rows.get(i))
+                    .replaceAll("[()]", "")
+                    .replaceAll("'", "")
+                    .replaceAll(",", "")
+                    .replaceAll(this.getNameSpace(), ""));
+        }
+
+        // Process WHERE clause
+        if (mq.expression != null) {
+            where = "";
+            where = traverseWhereInorder(where, mq.expression);
+            where = where.replaceAll("  *", " ").replaceAll("^ ", "").replaceAll(" $", "");
+        }
+        sparql = "select ?indiv where { GRAPH " + this.getNameSpacePrefix() + ":" + className + " { ?indiv "
+                + this.getNameSpacePrefix() + ":" + where.replaceAll(" *= *", " \"") + "\"^^xsd:string } }";
+        debugMsg(DBG, "\nProcessLanguages SIM Modify, sparql is: \n" + sparql + "\n");
+        rows = this.OracleNoSQLRunSPARQL(sparql);
+        for (int i = 1; i < rows.size(); i++) {
+            subjects.add(String.format("%s", rows.get(i))
+                    .replaceAll("[()]", "")
+                    .replaceAll("'", "")
+                    .replaceAll(",", "")
+                    .replaceAll(this.getNameSpace(), ""));
+        }
+        for (String subject : subjects) {
+            for (String entity : eva_subjects)
+                this.OracleNoSQLAddQuad(className, subject, eva_name, entity, true);
+        }
+    }
+
+    @Override
+    public ArrayList<PyObject> retrieve(org.python.ReL.WDB.database.wdb.metadata.Query retrieveQuery) {
+        String where = "";
+        RetrieveQuery rq = (RetrieveQuery) retrieveQuery;
+        String className = rq.className;
+        List<String> dvaAttribs = new ArrayList<String>();
+        List<String> evaAttribs = new ArrayList<String>();
+        Map<String, String> whereAttrValues = new HashMap<String, String>();
+        List<String> columns;
+        for (int j = 0; j < rq.numAttributePaths(); j++) {
+            if (rq.getAttributePath(j).attribute == "*") {
+                try {
+                    columns = SQLVisitor.getSubjects(this.pyRelConn, className + "_" + this.pyRelConn.getSchemaString(), "rdf:type", "owl:DatatypeProperty");
+                    if (rq.getAttributePath(j).levelsOfIndirection() == 0) {
+                        for (int i = 0; i < columns.size(); i++)
+                            dvaAttribs.add(columns.get(i));
+                    }
+                }
+                catch (SQLException e) {
+                    // Ignore for now :)
+                }
+            }
+            else if (rq.getAttributePath(j).levelsOfIndirection() == 0)
+                dvaAttribs.add(rq.getAttributePath(j).attribute);
+            else {
+                String evaPath = "";
+                for (int k = rq.getAttributePath(j).levelsOfIndirection() - 1; k >= 0; k--) {
+                    debugMsg(DBG, "rq.getAttributePath(j).getIndirection(k): " + rq.getAttributePath(j).getIndirection(k));
+                    if (k > 0)
+                        evaPath = " OF " + rq.getAttributePath(j).getIndirection(k) + evaPath;
+                    else
+                        evaPath = rq.getAttributePath(j).getIndirection(k) + evaPath;
+                }
+                evaPath = rq.getAttributePath(j).attribute + " OF " + evaPath;
+                evaAttribs.add(evaPath);
+            }
+        }
+        if (DBG) {
+            System.out.println("className: " + className);
+            System.out.println("dvaAttribs: " + dvaAttribs);
+            System.out.println("evaAttribs: " + evaAttribs);
+        }
+        if (rq.expression != null) {
+            where = traverseWhereInorder(where, rq.expression);
+            where = where.replaceAll("= ", "= :").replaceAll("And", "&&").replaceAll("Or", "||");
+        }
+        debugMsg(DBG, "where: "+where);
+        // The following is temporary until filter is used for the where clause
+        String whereTmp = "";
+        if (where != "") {
+            whereTmp = where.replaceAll(" = :", " ")
+                    .replaceAll("&&", " ")
+                    .replaceAll("\\|\\|", " ")
+                    .replaceAll("  *", " ")
+                    .replaceAll("^  *", "")
+                    .replaceAll("  *$", ""); //temporary
+            debugMsg(DBG, whereTmp);
+            String[] whereTmpArray = whereTmp.split(" "); //temporary
+            for (int i = 0; i <= whereTmpArray.length - 1; i += 2) //temporary
+                whereAttrValues.put(whereTmpArray[i], whereTmpArray[i + 1]);
+        }
+        debugMsg(DBG, "whereAttrValues: "+whereAttrValues);
+        SIMHelper simhelper = new SIMHelper(this.pyRelConn);
+        try {
+            String sparql = simhelper.executeFrom(className, dvaAttribs, evaAttribs, whereAttrValues);
+            return this.OracleNoSQLRunSPARQL(sparql);
+        } catch (Exception e) {
+            System.out.println(e);
             return null;
         }
+    }
 
-        @Override
-        public ArrayList<WDBObject> getObjects(IndexDef indexDef, String s)
-        {
-            return null;
+    private String traverseWhereInorder(String where, org.python.ReL.WDB.parser.generated.wdb.parser.Node node)
+    {
+        if (node != null) {
+            if (node.jjtGetNumChildren() > 0)
+                where += traverseWhereInorder(where, node.jjtGetChild(0));
+            if (node.toString() != "Root")
+                where += " " + node.toString();
+            if (node.jjtGetNumChildren() > 1)
+                where += traverseWhereInorder(where, node.jjtGetChild(1));
         }
-
-        @Override
-        public void commit()
-        {
-
-        }
-
-        @Override
-        public void abort()
-        {
-
-        }
+        return where;
     }
 }

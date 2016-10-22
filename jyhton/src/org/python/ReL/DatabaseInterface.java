@@ -17,7 +17,11 @@ import java.util.ArrayList;
 public abstract class DatabaseInterface {
     private String nameSpace = "nameSpace should be overridden.";
     private String nameSpacePrefix = "nameSpacePrefix should be overridden.";
-    public Adapter adapter;
+    protected PyRelConnection pyRelConn;
+
+    DatabaseInterface(PyRelConnection pyRelConn) {
+        this.pyRelConn = pyRelConn;
+    }
 
     // This will just execute the statement. 
     public void executeStatement(String stmt) throws SQLException
@@ -61,6 +65,4 @@ public abstract class DatabaseInterface {
         System.out.println("\nThis is the top level OracleNoSQLRunSPARQL statement in DatabaseInterface and probably should be overridden if it's being called.\n");
         return null;
     }
-
-    ;
 }

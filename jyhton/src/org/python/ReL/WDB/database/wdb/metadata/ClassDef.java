@@ -13,13 +13,14 @@ import java.rmi.server.*;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class ClassDef extends Query implements Serializable {
+public class ClassDef implements Query, Serializable {
 	public String name;
 	public String comment;
 	public boolean sl;
 	protected ArrayList<Attribute> attributes;
 	protected ArrayList<Integer> instances;
 	protected ArrayList<IndexDef> indexes;
+	protected int uid;
 	
 	public ClassDef()
 	{
@@ -28,6 +29,7 @@ public class ClassDef extends Query implements Serializable {
 		attributes = new ArrayList<Attribute>();
 		instances = new ArrayList<Integer>();
 		indexes = new ArrayList<IndexDef>();
+		uid = new Integer(Math.abs((new UID()).hashCode()));
 	}
 	
 	public ClassDef(String _name, String _comment)
@@ -39,6 +41,7 @@ public class ClassDef extends Query implements Serializable {
 		indexes = new ArrayList<IndexDef>();
 		name = _name;
 		comment = _comment;
+		uid = new Integer(Math.abs((new UID()).hashCode()));
 	}
 	
 	public ClassDef(String _name, String _comment, Attribute[] _attributes)
@@ -50,11 +53,15 @@ public class ClassDef extends Query implements Serializable {
 		indexes = new ArrayList<IndexDef>();
 		name = _name;
 		comment = _comment;
-		
+		uid = new Integer(Math.abs((new UID()).hashCode()));
+
 		for(int i = 0; i < _attributes.length; i++)
 		{
 			attributes.add(_attributes[i]);
 		}
+	}
+	public int getUid() {
+		return this.uid;
 	}
 	
 	public IndexDef[] getIndexes()
@@ -305,5 +312,10 @@ public class ClassDef extends Query implements Serializable {
 			//If we got here and we weren't trying to output all the attributes, we didn't find the requested attribute. 
 			throw new NoSuchFieldException("Attribute \"" + attributePath.attribute + "\" is not a valid DVA");
 		}
+	}
+
+	@Override
+	public String getQueryName() {
+		return this.name;
 	}
 }

@@ -18,24 +18,24 @@ import java.util.*;
  * Window - Preferences - Java - Code Style - Code Templates
  */
 public final class SubclassDef extends ClassDef {
-	private ArrayList superClasses;
+	private ArrayList<String> superClasses;
 
 	public SubclassDef()
 	{
 		super();
-		superClasses = new ArrayList();
+		superClasses = new ArrayList<>();
 	}
 	
 	public SubclassDef(String _name, String _comment)
 	{
 		super(_name, _comment);
-		superClasses = new ArrayList();
+		superClasses = new ArrayList<>();
 	}
 	
 	public SubclassDef(String _name, String _comment, Attribute[] _attributes)
 	{
 		super(_name, _comment, _attributes);
-		superClasses = new ArrayList();
+		superClasses = new ArrayList<>();
 	}
 	public ClassDef getBaseClass(Adapter scda) throws Exception
 	{
@@ -58,7 +58,7 @@ public final class SubclassDef extends ClassDef {
 	}
 	public String getSuperClass(int index)
 	{
-		return (String)superClasses.get(index);
+		return superClasses.get(index);
 	}
 	public int numberOfSuperClasses()
 	{

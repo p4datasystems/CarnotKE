@@ -93,11 +93,11 @@ public class PyRelConnection extends PyObject {
         }
         else if (url.contains("OracleNoSQL")) {
             if (conn_type.equalsIgnoreCase("native_mode")) {
-                database = new OracleNoSQLDatabase(url, uname, pword, conn_type, debug);
+                database = new OracleNoSQLDatabase(this, url, uname, pword, conn_type, debug);
                 connection_DB = "Native_OracleNoSQL";
             }
             else {
-                database = new OracleRDFNoSQLDatabase(url, uname, pword, conn_type, debug);
+                database = new OracleRDFNoSQLDatabase(this, url, uname, pword, conn_type, debug);
                 connection_DB = "OracleNoSQL";
             }
 
@@ -108,7 +108,7 @@ public class PyRelConnection extends PyObject {
                 connection_DB = "Native_OracleNoSQL";
             }
             else {
-                database = new OracleRDFNoSQLDatabase(url, uname, pword, conn_type, debug);
+                database = new OracleRDFNoSQLDatabase(this, url, uname, pword, conn_type, debug);
                 connection_DB = "OracleNoSQL";
             }
         }

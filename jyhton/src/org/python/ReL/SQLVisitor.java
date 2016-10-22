@@ -1281,7 +1281,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 			connection.OracleNoSQLAddQuad(graph + "_" + schemaString, predicate, "http://www.w3.org/2000/01/rdf-schema#domain", graph, true);
 			connection.OracleNoSQLAddQuad(graph + "_" + schemaString, predicate, "http://www.w3.org/2000/01/rdf-schema#range", "http://www.w3.org/2001/XMLSchema#string", true);
 			connection.OracleNoSQLAddQuad(graph + "_" + schemaString, subject, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", graph, true);
-			connection.OracleNoSQLAddQuad(graph, subject, predicate, object, false);
+			connection.OracleNoSQLAddQuad(graph, subject, predicate, object, true);
 		}
 		else if (connection_DB.equals("Oracle")) {
 			String graphName = connection.getModel() + ":<" + graph + ">";

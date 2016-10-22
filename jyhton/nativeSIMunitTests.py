@@ -1,6 +1,6 @@
 import unittest
 
-connOracleNoSQL = connectTo 'OracleNoSQL' 'WDB' 'localhost:5010' 'native_mode' 'A0' 
+connOracleNoSQL = connectTo 'OracleNoSQL' 'WDB' 'localhost:5010' 'native_mode' 'A0'
 
 print "Connections are opened, start loading Databases"
 
@@ -65,17 +65,23 @@ SIM on connOracleNoSQL 'MODIFY LIMIT = ALL sim_project_emp (department := sim_de
 
 print "Beginning to query the native SIM database;"
 # 1. Show all instances of the SIM_person class
-SIM on connOracleNoSQL 'from sim_person retrieve *;'
+# print(SIM on connOracleNoSQL 'from sim_person retrieve *;')
+print()
 # 2. Show all instances of the SIM_emp class
-SIM on connOracleNoSQL 'from sim_project_emp retrieve *;'
+print(SIM on connOracleNoSQL 'from sim_project_emp retrieve *;')
+print()
 # 3. Show all instances of the SIM_project_emp class along with their respective department name and project name(s).
-SIM on connOracleNoSQL 'from sim_project_emp retrieve *, name OF department, name OF projects;'
+print(SIM on connOracleNoSQL 'from sim_project_emp retrieve *, name OF department, name OF projects;')
+print()
 # 4. Show all instances of the SIM_manager class along with their respective department names
-SIM on connOracleNoSQL 'from sim_manager retrieve *, name OF department;'
+print(SIM on connOracleNoSQL 'from sim_manager retrieve *, name OF department;')
+print()
 # 5. Show all instances of the SIM_project class along with their respective project employee and department name(s).
-SIM on connOracleNoSQL 'from sim_project retrieve *, name OF employees, name OF department;'
+print(SIM on connOracleNoSQL 'from sim_project retrieve *, name OF employees, name OF department;')
+print()
 # 6. Show all instances of the SIM_dept class along with their respective project employee, project, and manager name(s).
-SIM on connOracleNoSQL 'from sim_dept retrieve *, name OF employees, name OF projects, name OF manager;'
+print(SIM on connOracleNoSQL 'from sim_dept retrieve *, name OF employees, name OF projects, name OF manager;')
+print()
 
 
 

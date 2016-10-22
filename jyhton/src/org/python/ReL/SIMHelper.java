@@ -46,12 +46,14 @@ public class SIMHelper {
         Map<String, String> colNameToLabelMap = new HashMap<String, String>();
         String qBody = "";
         String projectString = "";
-        qBody = (connection.getConnectionDB().equals("OracleNoSQL"))
-                ? "GRAPH " + NoSQLNameSpacePrefix + ":" + className + "_" + schemaString + " { ?indiv rdf:type "
+        if (connection.getConnectionDB().equals("OracleNoSQL")) {
+            qBody = "GRAPH " + NoSQLNameSpacePrefix + ":" + className + "_" + schemaString + " { ?indiv rdf:type "
                         + NoSQLNameSpacePrefix + ":" + className + " } GRAPH " + NoSQLNameSpacePrefix + ":" + className
-                        + " { "
-
-                : "    GRAPH <" + className + "_" + schemaString + "> { ?indiv rdf:type :" + className + " }\n";
+                        + " { ";
+        }
+        else {
+            qBody = "    GRAPH <" + className + "_" + schemaString + "> { ?indiv rdf:type :" + className + " }\n";
+        }
 
         // Process DVAs
         for (int i = 0; i < dvaAttribs.size(); i++) {

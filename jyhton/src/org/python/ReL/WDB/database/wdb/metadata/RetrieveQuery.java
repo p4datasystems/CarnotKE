@@ -16,7 +16,12 @@ import java.util.*;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class RetrieveQuery extends Query {
+public class RetrieveQuery implements Query {
+
+	@Override
+	public String getQueryName() {
+		return this.className;
+	}
 	public String className;
 	public SimpleNode expression;
 	public ArrayList<AttributePath> attributePaths;

@@ -24,12 +24,11 @@ public class ProcessLanguages {
     private final boolean DBG;
     PyRelConnection conn;
     Adapter adapter;
+    ArrayList<PyType> pyTupleQueryInstanceTypes;
+    ArrayList<String> pyTupleQueryInstanceTypeNames;
     DatabaseInterface connDatabase;
-    String schemaString;
-    String NoSQLNameSpacePrefix = "";
     static Boolean parserInitialized = false;
     static QueryParser parser;
-    String where = "";
 
     /**
      * Process a language statement such as SQL or SIM.
@@ -43,171 +42,33 @@ public class ProcessLanguages {
     {
         this.conn = conn;
         connDatabase = conn.getDatabase();
-        this.adapter = connDatabase.adapter;
-        NoSQLNameSpacePrefix = connDatabase.getNameSpacePrefix();
+        this.adapter = null;
+        if (connDatabase instanceof Adapter) {
+            this.adapter = (Adapter) connDatabase;
+        }
         DBG = conn.getDebug().equalsIgnoreCase("debug");
     }
 
-    public void debugMsg(boolean debugOn, String message)
+    public ProcessLanguages(PyRelConnection conn, ArrayList<PyType> instanceTypes, ArrayList<String> instanceTypeNames)
+    {
+        this.conn = conn;
+        connDatabase = conn.getDatabase();
+        this.adapter = null;
+        if (connDatabase instanceof Adapter) {
+            this.adapter = (Adapter) connDatabase;
+        }
+        this.pyTupleQueryInstanceTypes = instanceTypes;
+        this.pyTupleQueryInstanceTypeNames = instanceTypeNames;
+        DBG = conn.getDebug().equalsIgnoreCase("debug");
+    }
+    public static void debugMsg(boolean debugOn, String message)
     {
         if (debugOn)
             System.out.println(message);
     }
 
     // ------------------------------------- SIM -------------------------
-    public synchronized String processSIM(String ReLstmt) throws SQLException
-    {
-        String Save_ReLstmt = ReLstmt;
-        ReLstmt += ";";
-        InputStream is = new ByteArrayInputStream(ReLstmt.getBytes());
-        Query q = null;
-        String sparql = null;
-        if (!parserInitialized) {
-            parser = new QueryParser(is);
-            parserInitialized = true;
-        }
-        else
-            parser.ReInit(is);
-
-        try {
-            q = parser.getNextQuery();
-        } catch (Exception e1) {
-            System.out.println(e1.getMessage());
-        }
-        // --------------------------------------------------------------------------------- SIM Insert
-        // E.g., SQL: INSERT INTO onto_DATA VALUES ( 1, SDO_RDF_TRIPLE_S('onto', '#PERSON', 'rdf:type', 'rdfs:Class'));
-        // E.g., SIM: INSERT dept ( DEPTNO := 10 , DNAME := "ACCOUNTING" , LOC := "NEW YORK" );
-        if (q instanceof InsertQuery) {
-            InsertQuery iq = (InsertQuery) q;
-            final String instanceID = String.valueOf(UUID.randomUUID());
-            for (int i = 0; i < iq.numberOfAssignments(); i++) {
-                DvaAssignment dvaAssignment = (DvaAssignment) iq.getAssignment(i);
-                SQLVisitor.insertQuad(conn, iq.className, instanceID, dvaAssignment.getAttributeName(),
-                        dvaAssignment.Value.toString(), false);
-            }
-        }
-        else if (q instanceof RetrieveQuery) {
-            RetrieveQuery rq = (RetrieveQuery) q;
-            String className = rq.className;
-            List<String> dvaAttribs = new ArrayList<String>();
-            List<String> evaAttribs = new ArrayList<String>();
-            Map<String, String> whereAttrValues = new HashMap<String, String>();
-            List<String> columns;
-            for (int j = 0; j < rq.numAttributePaths(); j++) {
-                if (rq.getAttributePath(j).attribute == "*") {
-                    columns = SQLVisitor.getSubjects(conn, className + "_" + conn.getSchemaString(), "rdf:type", "owl:DatatypeProperty");
-                    if (rq.getAttributePath(j).levelsOfIndirection() == 0) {
-                        for (int i = 0; i < columns.size(); i++)
-                            dvaAttribs.add(columns.get(i));
-                    }
-                }
-                else if (rq.getAttributePath(j).levelsOfIndirection() == 0)
-                    dvaAttribs.add(rq.getAttributePath(j).attribute);
-                else {
-                    String evaPath = "";
-                    for (int k = rq.getAttributePath(j).levelsOfIndirection() - 1; k >= 0; k--) {
-                        debugMsg(DBG, "rq.getAttributePath(j).getIndirection(k): " + rq.getAttributePath(j).getIndirection(k));
-                        if (k > 0)
-                            evaPath = " OF " + rq.getAttributePath(j).getIndirection(k) + evaPath;
-                        else
-                            evaPath = rq.getAttributePath(j).getIndirection(k) + evaPath;
-                    }
-                    evaPath = rq.getAttributePath(j).attribute + " OF " + evaPath;
-                    evaAttribs.add(evaPath);
-                }
-            }
-            if (DBG) {
-                System.out.println("className: " + className);
-                System.out.println("dvaAttribs: " + dvaAttribs);
-                System.out.println("evaAttribs: " + evaAttribs);
-            }
-            if (rq.expression != null) {
-                traverseWhereInorder(rq.expression);
-                where = where.replaceAll("= ", "= :").replaceAll("And", "&&").replaceAll("Or", "||");
-            }
-            debugMsg(DBG, "where: "+where);
-            // The following is temporary until filter is used for the where clause
-            String whereTmp = "";
-            if (where != "") {
-                whereTmp = where.replaceAll(" = :", " ")
-                        .replaceAll("&&", " ")
-                        .replaceAll("\\|\\|", " ")
-                        .replaceAll("  *", " ")
-                        .replaceAll("^  *", "")
-                        .replaceAll("  *$", ""); //temporary
-                debugMsg(DBG, whereTmp);
-                String[] whereTmpArray = whereTmp.split(" "); //temporary
-                for (int i = 0; i <= whereTmpArray.length - 1; i += 2) //temporary
-                    whereAttrValues.put(whereTmpArray[i], whereTmpArray[i + 1]);
-            }
-            debugMsg(DBG, "whereAttrValues: "+whereAttrValues);
-            SIMHelper simhelper = new SIMHelper(conn);
-            try {
-                sparql = simhelper.executeFrom(className, dvaAttribs, evaAttribs, whereAttrValues);
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-            debugMsg(DBG, "In ProcessesLangauges,sparql is: " + sparql);
-        }
-        else if (q instanceof ModifyQuery) {
-            ModifyQuery mq = (ModifyQuery) q;
-            String className = mq.className;
-            String eva_name = "";
-            String eva_class = "";
-            int limit = 1000000;
-            ArrayList<PyObject> rows = new ArrayList<>();
-            List<String> subjects = new ArrayList<>();
-            List<String> eva_subjects = new ArrayList<>();
-
-            sparql = "select ?indiv where { ";
-            for (int i = 0; i < mq.assignmentList.size(); i++) {
-                EvaAssignment evaAssignment = (EvaAssignment) mq.assignmentList.get(i);
-                eva_name = evaAssignment.getAttributeName();
-                eva_class = evaAssignment.targetClass;
-                traverseWhereInorder(evaAssignment.expression.jjtGetChild(i)); // This sets the where variable to e.g., deptno = 20
-                String where1 = where.trim();
-                sparql += "GRAPH " + NoSQLNameSpacePrefix + ":" + eva_class + " { ?indiv " + NoSQLNameSpacePrefix + ":"
-                        + where1.replaceAll(" *= *", " \"") + "\"^^xsd:string }";
-            }
-            sparql += " }";
-            debugMsg(DBG, "\nProcessLanguages SIM Modify, sparql is: \n" + sparql + "\n");
-            rows = conn.getDatabase().OracleNoSQLRunSPARQL(sparql);
-            for (int i = 1; i < rows.size(); i++) {
-                eva_subjects.add(String.format("%s", rows.get(i))
-                        .replaceAll("[()]", "")
-                        .replaceAll("'", "")
-                        .replaceAll(",", "")
-                        .replaceAll(conn.getDatabase().getNameSpace(), ""));
-            }
-
-            // Process WHERE clause
-            if (mq.expression != null) {
-                where = "";
-                traverseWhereInorder(mq.expression);
-                where = where.replaceAll("  *", " ").replaceAll("^ ", "").replaceAll(" $", "");
-            }
-            sparql = "select ?indiv where { GRAPH " + NoSQLNameSpacePrefix + ":" + className + " { ?indiv "
-                    + NoSQLNameSpacePrefix + ":" + where.replaceAll(" *= *", " \"") + "\"^^xsd:string } }";
-            debugMsg(DBG, "\nProcessLanguages SIM Modify, sparql is: \n" + sparql + "\n");
-            rows = conn.getDatabase().OracleNoSQLRunSPARQL(sparql);
-            for (int i = 1; i < rows.size(); i++) {
-                subjects.add(String.format("%s", rows.get(i))
-                        .replaceAll("[()]", "")
-                        .replaceAll("'", "")
-                        .replaceAll(",", "")
-                        .replaceAll(conn.getDatabase().getNameSpace(), ""));
-            }
-            for (String subject : subjects) {
-                for (String entity : eva_subjects)
-                    connDatabase.OracleNoSQLAddQuad(className, subject, eva_name, entity, true);
-            }
-            sparql = null;
-        }
-        return sparql;
-    }
-
-
-    public synchronized ArrayList<PyObject> processNativeSIM(String ReLstmt) throws Exception {
+    public synchronized ArrayList<PyObject> processSIM(String ReLstmt) throws Exception {
         final boolean DBG = true;
         ReLstmt = ReLstmt.replaceAll("\\_\\^\\_", ";");
         if (DBG) {
@@ -240,8 +101,6 @@ public class ProcessLanguages {
         if (q instanceof ClassDef) {
             ClassDef cd = (ClassDef) q;
             try {
-                if (cd.name != null)
-                    q.queryName = cd.name;
                 adapter.getClass(q);
                 //That class already exists;
                 throw new Exception("Class \"" + cd.name + "\" already exists");
@@ -268,11 +127,13 @@ public class ProcessLanguages {
             }
         }
 
-        if (q.getClass() == ModifyQuery.class) {
+        if (q instanceof ModifyQuery) {
+            if (connDatabase instanceof NonDefaultParser) {
+                ((NonDefaultParser) connDatabase).modify(q);
+                return null;
+            }
             ModifyQuery mq = (ModifyQuery) q;
             try {
-                if (mq.className != null)
-                    q.queryName = mq.className;
                 ClassDef targetClass = adapter.getClass(q);
                 WDBObject[] targetClassObjs = targetClass.search(mq.expression, adapter);
                 if (mq.limit > -1 && targetClassObjs.length > mq.limit)
@@ -287,11 +148,12 @@ public class ProcessLanguages {
         }
 
         if (q instanceof InsertQuery) {
+            if (connDatabase instanceof NonDefaultParser) {
+                ((NonDefaultParser) connDatabase).insert(q);
+                return null;
+            }
             InsertQuery iq = (InsertQuery) q;
             try {
-                if (iq.className != null)
-                    q.queryName = iq.className;
-
                 ClassDef targetClass = adapter.getClass(q);
                 WDBObject newObject = null;
 
@@ -309,13 +171,16 @@ public class ProcessLanguages {
                                 newObject = targetSubClass.newInstance(fromObjects[i].getBaseObject(adapter), adapter);
                                 setValues(iq.assignmentList, newObject, adapter);
                             }
-                        } else {
+                        }
+                        else {
                             throw new IllegalStateException("Inserted class \"" + targetClass.name + "\" is not a subclass of the from class \"" + iq.fromClassName);
                         }
-                    } else {
+                    }
+                    else {
                         throw new IllegalStateException("Can't extend base class \"" + targetClass.name + "\" from class \"" + iq.fromClassName);
                     }
-                } else {
+                }
+                else {
                     newObject = targetClass.newInstance(null, adapter);
                     setDefaultValues(targetClass, newObject, adapter);
                     setValues(iq.assignmentList, newObject, adapter);
@@ -401,7 +266,8 @@ public class ProcessLanguages {
 
                         adapter.commit();
                         System.out.println("Schemaless insert succeeded!");
-                    } else { // SCHEMALESS CLASS
+                    }
+                    else { // SCHEMALESS CLASS
                         System.out.println("Class '" + iq.className + "' does not exist. Attempting schemaless insert...");
                         // Creating Class
                         ClassDef foo = new ClassDef(iq.className, "Schemaless Insert");
@@ -455,8 +321,6 @@ public class ProcessLanguages {
         if (q instanceof IndexDef) {
             IndexDef indexQ = (IndexDef) q;
             try {
-                if (indexQ.className != null)
-                    q.queryName = indexQ.className;
                 ClassDef classDef = adapter.getClass(q);
                 classDef.addIndex(indexQ, adapter);
 
@@ -468,11 +332,12 @@ public class ProcessLanguages {
         }
 
         if (q instanceof RetrieveQuery) {
-            //Ok, its a retrieve...
+            //Ok, it's a retrieve...
+            if (connDatabase instanceof NonDefaultParser) {
+                return ((NonDefaultParser) connDatabase).retrieve(q);
+            }
             RetrieveQuery rq = (RetrieveQuery) q;
             try {
-                if (rq.className != null)
-                    q.queryName = rq.className;
                 ClassDef targetClass = adapter.getClass(q);
                 WDBObject[] targetClassObjs = targetClass.search(rq.expression, adapter);
                 int i, j;
@@ -521,13 +386,8 @@ public class ProcessLanguages {
                             columns.add(new PyString(colElement));
                         }
 
-//                        if (j >= table[i].length || table[i][j] == null)
-//                            System.out.format("| %" + columnWidths[j].toString() + "s ", "");
-//                        else
-//                            System.out.format("| %" + columnWidths[j].toString() + "s ", table[i][j]);
                     }
                     rows.add(new PyTuple(columns.toArray(new PyObject[columns.size()])));
-//                    System.out.format("|%n");
                 }
                 return rows;
                 // Return here? Table is a 2D array
@@ -717,7 +577,8 @@ public class ProcessLanguages {
             if (assignmentList.get(j) instanceof DvaAssignment) {
                 DvaAssignment dvaAssignment = (DvaAssignment) assignmentList.get(j);
                 targetObject.setDvaValue(dvaAssignment.AttributeName, dvaAssignment.Value, adapter);
-            } else if (assignmentList.get(j) instanceof EvaAssignment) {
+            }
+            else if (assignmentList.get(j) instanceof EvaAssignment) {
                 EvaAssignment evaAssignment = (EvaAssignment) assignmentList.get(j);
                 if (evaAssignment.mode == EvaAssignment.REPLACE_MODE) {
                     WDBObject[] currentObjects = targetObject.getEvaObjects(evaAssignment.AttributeName, adapter);
@@ -748,19 +609,6 @@ public class ProcessLanguages {
             for (j = i; j < row2.length + i; j++)
                 newRow[j] = row2[j - i];
             return newRow;
-        }
-    }
-
-
-    public void traverseWhereInorder(Node node)
-    {
-        if (node != null) {
-            if (node.jjtGetNumChildren() > 0)
-                traverseWhereInorder(node.jjtGetChild(0));
-            if (node.toString() != "Root")
-                where += " " + node.toString();
-            if (node.jjtGetNumChildren() > 1)
-                traverseWhereInorder(node.jjtGetChild(1));
         }
     }
 

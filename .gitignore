@@ -4,6 +4,8 @@
 jyhton/.hg
 jyhton/build
 jyhton/dist
+jyhton/WDB_db
+jyhton/WDB_STORE
 ./.hg
 STORE
 db
@@ -22,3 +24,5 @@ Session.vim
 *.pyc
 hs_err_pid* # jvm crash logs
 
+/jyhton/WDB_db/
+/jyhton/WDB_STORE/

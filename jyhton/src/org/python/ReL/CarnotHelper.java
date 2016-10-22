@@ -110,121 +110,121 @@ public class CarnotHelper extends SelectDeParser implements SelectVisitor, FromI
 
 
     /* SIMHelper method */
-    public String executeFrom(String className, List<String> dvaAttribs, List<String> evaAttribs,
-                              Map<String, String> whereAttrValues) throws SQLException {
-        // assume only a single 'dva OF eva' form, for now
-        List<List<String>> evaOfChains = new ArrayList<List<String>>();
-        //String dvaOfEva = null;
-        // the variable name for the dva e.g. lastnameOFspouse
-        //String dvaOfEvaVar = dvaOfEva + "OF" + eva;
-        for (String evaAttr : evaAttribs) {
-            // e.g.  ["firstname", "OF", "spouse", "OF", "children"]
-            List<String> evaOfChain = trimAndSplitOnDelim(evaAttr, " ");
-            // evaOfChain.removeAll(Collections.singletonList("OF"));
-            evaOfChain.removeAll(Collections.singletonList("OF"));
-            Collections.reverse(evaOfChain);
-            evaOfChains.add(evaOfChain); // e.g.  ["children", "spouse", "firstname"]
-        }
-
-        // Process Class Names
-        String colNames = "";
-        Map<String, String> colNameToLabelMap = new HashMap<String, String>();
-        String qBody = "";
-        String projectString = "";
-        qBody = (connection.getConnectionDB().equals("OracleNoSQL"))
-                ? "GRAPH " + NoSQLNameSpacePrefix + ":" + className + "_" + schemaString + " { ?indiv rdf:type "
-                + NoSQLNameSpacePrefix + ":" + className + " } GRAPH " + NoSQLNameSpacePrefix + ":" + className
-                + " { "
-
-                : "    GRAPH <" + className + "_" + schemaString + "> { ?indiv rdf:type :" + className + " }\n";
-
-        // Process DVAs
-        for (int i = 0; i < dvaAttribs.size(); i++) {
-            String attrURI = dvaAttribs.get(i);
-            String attrName = getName(attrURI);
-            if (i == 0)
-                colNames += " " + attrName;
-            else
-                colNames += ", " + attrName;
-            projectString += "?" + attrName + " ";
-            qBody += (connection.getConnectionDB().equals("OracleNoSQL"))
-                    ? " ?indiv " + NoSQLNameSpacePrefix + ":" + attrName + " ?" + attrName + " ."
-                    : "  ?indiv " + NoSQLNameSpacePrefix + ":" + attrName + " ?" + attrName + " .\n";
-        }
-
-        // Process WHERE Clause
-        for (String whereAttr : whereAttrValues.keySet()) {
-            qBody += (connection.getConnectionDB().equals("OracleNoSQL"))
-                    ? " ?indiv " + NoSQLNameSpacePrefix + ":" + whereAttr + "\"" + whereAttrValues.get(whereAttr) + "\"^^xsd:string ."
-                    : "	?indiv " + NoSQLNameSpacePrefix + ":" + whereAttr + " " + NoSQLNameSpacePrefix + ":"
-                    + whereAttrValues.get(whereAttr) + " .\n";
-        }
-        if (connection.getConnectionDB().equals("OracleNoSQL"))
-            qBody += " } ";
-
-        // Process EVAs
-        if (evaOfChains.size() > 0) {
-            qBody += (connection.getConnectionDB().equals("OracleNoSQL"))
-                    ? " OPTIONAL { "
-                    : "   OPTIONAL { \n";
-            int i = -1;
-            int h = -1;
-            String previous_evaOfChain0 = "";
-            for (List<String> evaOfChain : evaOfChains) {
-                String evaColName = ""; // the retrieval last var name
-                for (int l = evaOfChain.size() - 1; l >= 0; l--) {
-                    // evaColName = ((evaColName.length() == 0) ? "" : evaColName + "OF") + evaOfChain.get(l);
-                    evaColName = ((evaColName.length() == 0) ? "" : evaColName + "AT") + evaOfChain.get(l);
-                }
-                // The following will only work if evaOfChains is sorted on the first element of each list.
-                if (previous_evaOfChain0.equals("") || !previous_evaOfChain0.equals(evaOfChain.get(0)))
-                    i++;
-                h++;
-                previous_evaOfChain0 = evaOfChain.get(0);
-                String priorVarName = null; // previous var
-                String thisVarName = "?x" + i + "_0";
-                // e.g. lastName == "firstnameOFspouseOFchildren"
-                qBody += (connection.getConnectionDB().equals("OracleNoSQL"))
-                        ? "GRAPH ?g" + i + " { ?indiv " + NoSQLNameSpacePrefix + ":" + evaOfChain.get(0)
-                        + " " + thisVarName + " . }"
-
-                        : "      ?indiv " + NoSQLNameSpacePrefix + ":" + evaOfChain.get(0) + " "
-                        + thisVarName + " .\n";
-                for (int j = 1; j < evaOfChain.size(); j++) {
-                    priorVarName = "x" + i + "_" + (j - 1);
-                    thisVarName = "x" + h + "_" + j;
-                    if (j == evaOfChain.size() - 1) {
-                        if (colNames.length() > 0)
-                            colNames += ", ";
-                        colNames += thisVarName;
-                        colNameToLabelMap.put(thisVarName.toUpperCase(), evaColName.toUpperCase());
-                    }
-                    projectString += "?" + thisVarName + " ";
-                    qBody += (connection.getConnectionDB().equals("OracleNoSQL"))
-                            ? " GRAPH ?g" + j + " { ?" + priorVarName + " " + NoSQLNameSpacePrefix + ":" + evaOfChain
-                            .get(j) + " ?" + thisVarName + " . }"
-
-                            : "      ?" + priorVarName + " " + NoSQLNameSpacePrefix + ":" + evaOfChain.get(j)
-                            + " ?" + thisVarName + " .\n";
-                }
-            }
-            qBody += "      } \n";
-        }
-        String query = "";
-        if (connection.getConnectionDB().equals("OracleNoSQL"))
-            query = "select " + projectString + " where { " + qBody + " }";
-        else {
-            query = "SELECT DISTINCT " + colNames + "\n from table(\n" +
-                    "   sem_match('select * where {\n" +
-                    qBody;
-            query += "   }',\n" +
-                    "	SEM_MODELS('" + connection.getModel() + "'), null,\n" +
-                    "	SEM_ALIASES( SEM_ALIAS('', '" + connection.getNamespace() + "')), null) )";
-            // System.out.println(query);
-            // SPARQLDoer.executeAndPrintRdfSelect(connection, query, colNameToLabelMap);
-        }
-        return query;
-    }
+//    public String executeFrom(String className, List<String> dvaAttribs, List<String> evaAttribs,
+//                              Map<String, String> whereAttrValues) throws SQLException {
+//        // assume only a single 'dva OF eva' form, for now
+//        List<List<String>> evaOfChains = new ArrayList<List<String>>();
+//        //String dvaOfEva = null;
+//        // the variable name for the dva e.g. lastnameOFspouse
+//        //String dvaOfEvaVar = dvaOfEva + "OF" + eva;
+//        for (String evaAttr : evaAttribs) {
+//            // e.g.  ["firstname", "OF", "spouse", "OF", "children"]
+//            List<String> evaOfChain = trimAndSplitOnDelim(evaAttr, " ");
+//            // evaOfChain.removeAll(Collections.singletonList("OF"));
+//            evaOfChain.removeAll(Collections.singletonList("OF"));
+//            Collections.reverse(evaOfChain);
+//            evaOfChains.add(evaOfChain); // e.g.  ["children", "spouse", "firstname"]
+//        }
+//
+//        // Process Class Names
+//        String colNames = "";
+//        Map<String, String> colNameToLabelMap = new HashMap<String, String>();
+//        String qBody = "";
+//        String projectString = "";
+//        qBody = (connection.getConnectionDB().equals("OracleNoSQL"))
+//                ? "GRAPH " + NoSQLNameSpacePrefix + ":" + className + "_" + schemaString + " { ?indiv rdf:type "
+//                + NoSQLNameSpacePrefix + ":" + className + " } GRAPH " + NoSQLNameSpacePrefix + ":" + className
+//                + " { "
+//
+//                : "    GRAPH <" + className + "_" + schemaString + "> { ?indiv rdf:type :" + className + " }\n";
+//
+//        // Process DVAs
+//        for (int i = 0; i < dvaAttribs.size(); i++) {
+//            String attrURI = dvaAttribs.get(i);
+//            String attrName = getName(attrURI);
+//            if (i == 0)
+//                colNames += " " + attrName;
+//            else
+//                colNames += ", " + attrName;
+//            projectString += "?" + attrName + " ";
+//            qBody += (connection.getConnectionDB().equals("OracleNoSQL"))
+//                    ? " ?indiv " + NoSQLNameSpacePrefix + ":" + attrName + " ?" + attrName + " ."
+//                    : "  ?indiv " + NoSQLNameSpacePrefix + ":" + attrName + " ?" + attrName + " .\n";
+//        }
+//
+//        // Process WHERE Clause
+//        for (String whereAttr : whereAttrValues.keySet()) {
+//            qBody += (connection.getConnectionDB().equals("OracleNoSQL"))
+//                    ? " ?indiv " + NoSQLNameSpacePrefix + ":" + whereAttr + "\"" + whereAttrValues.get(whereAttr) + "\"^^xsd:string ."
+//                    : "	?indiv " + NoSQLNameSpacePrefix + ":" + whereAttr + " " + NoSQLNameSpacePrefix + ":"
+//                    + whereAttrValues.get(whereAttr) + " .\n";
+//        }
+//        if (connection.getConnectionDB().equals("OracleNoSQL"))
+//            qBody += " } ";
+//
+//        // Process EVAs
+//        if (evaOfChains.size() > 0) {
+//            qBody += (connection.getConnectionDB().equals("OracleNoSQL"))
+//                    ? " OPTIONAL { "
+//                    : "   OPTIONAL { \n";
+//            int i = -1;
+//            int h = -1;
+//            String previous_evaOfChain0 = "";
+//            for (List<String> evaOfChain : evaOfChains) {
+//                String evaColName = ""; // the retrieval last var name
+//                for (int l = evaOfChain.size() - 1; l >= 0; l--) {
+//                    // evaColName = ((evaColName.length() == 0) ? "" : evaColName + "OF") + evaOfChain.get(l);
+//                    evaColName = ((evaColName.length() == 0) ? "" : evaColName + "AT") + evaOfChain.get(l);
+//                }
+//                // The following will only work if evaOfChains is sorted on the first element of each list.
+//                if (previous_evaOfChain0.equals("") || !previous_evaOfChain0.equals(evaOfChain.get(0)))
+//                    i++;
+//                h++;
+//                previous_evaOfChain0 = evaOfChain.get(0);
+//                String priorVarName = null; // previous var
+//                String thisVarName = "?x" + i + "_0";
+//                // e.g. lastName == "firstnameOFspouseOFchildren"
+//                qBody += (connection.getConnectionDB().equals("OracleNoSQL"))
+//                        ? "GRAPH ?g" + i + " { ?indiv " + NoSQLNameSpacePrefix + ":" + evaOfChain.get(0)
+//                        + " " + thisVarName + " . }"
+//
+//                        : "      ?indiv " + NoSQLNameSpacePrefix + ":" + evaOfChain.get(0) + " "
+//                        + thisVarName + " .\n";
+//                for (int j = 1; j < evaOfChain.size(); j++) {
+//                    priorVarName = "x" + i + "_" + (j - 1);
+//                    thisVarName = "x" + h + "_" + j;
+//                    if (j == evaOfChain.size() - 1) {
+//                        if (colNames.length() > 0)
+//                            colNames += ", ";
+//                        colNames += thisVarName;
+//                        colNameToLabelMap.put(thisVarName.toUpperCase(), evaColName.toUpperCase());
+//                    }
+//                    projectString += "?" + thisVarName + " ";
+//                    qBody += (connection.getConnectionDB().equals("OracleNoSQL"))
+//                            ? " GRAPH ?g" + j + " { ?" + priorVarName + " " + NoSQLNameSpacePrefix + ":" + evaOfChain
+//                            .get(j) + " ?" + thisVarName + " . }"
+//
+//                            : "      ?" + priorVarName + " " + NoSQLNameSpacePrefix + ":" + evaOfChain.get(j)
+//                            + " ?" + thisVarName + " .\n";
+//                }
+//            }
+//            qBody += "      } \n";
+//        }
+//        String query = "";
+//        if (connection.getConnectionDB().equals("OracleNoSQL"))
+//            query = "select " + projectString + " where { " + qBody + " }";
+//        else {
+//            query = "SELECT DISTINCT " + colNames + "\n from table(\n" +
+//                    "   sem_match('select * where {\n" +
+//                    qBody;
+//            query += "   }',\n" +
+//                    "	SEM_MODELS('" + connection.getModel() + "'), null,\n" +
+//                    "	SEM_ALIASES( SEM_ALIAS('', '" + connection.getNamespace() + "')), null) )";
+//            // System.out.println(query);
+//            // SPARQLDoer.executeAndPrintRdfSelect(connection, query, colNameToLabelMap);
+//        }
+//        return query;
+//    }
 
     /**
      * Trim and split String on a delimeter string.

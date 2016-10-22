@@ -12,13 +12,13 @@ package org.python.ReL.WDB.database.wdb.metadata;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class Query {
-    public String queryName;
-
-    public Query(){}
-
-    public Query(String queryName) {
-        this.queryName = queryName;
-    }
+public interface Query {
+    String getQueryName();
+//
+//    public Query(){}
+//
+//    public Query(String queryName) {
+//        this.queryName = queryName;
+//    }
 
 }
