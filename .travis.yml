@@ -5,9 +5,9 @@ jdk:
 
 sudo: required
 
-before_install:
-  - sudo rm -rf /var/lib/cassandra/*
-  - wget http://apache.spinellicreations.com/cassandra/2.1.14/apache-cassandra-2.1.14-bin.tar.gz && tar -xvzf apache-cassandra-2.1.14-bin.tar.gz && sudo sh apache-cassandra-2.1.14/bin/cassandra
+# before_install:
+#   - sudo rm -rf /var/lib/cassandra/*
+#   - wget http://apache.spinellicreations.com/cassandra/2.1.14/apache-cassandra-2.1.14-bin.tar.gz && tar -xvzf apache-cassandra-2.1.14-bin.tar.gz && sudo sh apache-cassandra-2.1.14/bin/cassandra
 
 before_script:
     - cd jyhton
@@ -22,9 +22,9 @@ script:
     - jdk_switcher use oraclejdk8
     - ant
 
-after_script:
-    - export INSTALLATION_ROOT="."
-    - dist/bin/jython nativeSIMunitTests.py
-    - dist/bin/jython ReLUnitTests.py
-    - dist/bin/jython SPARQLUnitTests.py
-    - ./titan_sim_native_test.sh
+# after_script:
+#     - export INSTALLATION_ROOT="."
+#     - dist/bin/jython nativeSIMunitTests.py
+#     - dist/bin/jython ReLUnitTests.py
+#     - dist/bin/jython SPARQLUnitTests.py
+#     - ./titan_sim_native_test.sh
