@@ -5,7 +5,7 @@ import java.util.ArrayList;
  * Created by Josh Hurt on 5/3/16.
  */
 
-public interface Adapter {
+public interface ParserAdapter {
     String classKeyPrefix = "class";
     String objectKeyPrefix = "object";
 

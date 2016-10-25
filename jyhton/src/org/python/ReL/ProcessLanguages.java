@@ -11,19 +11,17 @@ import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.update.Update;
 import org.cyphersim.CypherSimTranslator;
 import org.python.ReL.WDB.database.wdb.metadata.*;
-import org.python.ReL.WDB.parser.generated.wdb.parser.Node;
 import org.python.ReL.WDB.parser.generated.wdb.parser.QueryParser;
 import org.python.core.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.sql.SQLException;
 import java.util.*;
 
 public class ProcessLanguages {
     private final boolean DBG;
     PyRelConnection conn;
-    Adapter adapter;
+    ParserAdapter parserAdapter;
     ArrayList<PyType> pyTupleQueryInstanceTypes;
     ArrayList<String> pyTupleQueryInstanceTypeNames;
     DatabaseInterface connDatabase;
@@ -42,9 +40,9 @@ public class ProcessLanguages {
     {
         this.conn = conn;
         connDatabase = conn.getDatabase();
-        this.adapter = null;
-        if (connDatabase instanceof Adapter) {
-            this.adapter = (Adapter) connDatabase;
+        this.parserAdapter = null;
+        if (connDatabase instanceof ParserAdapter) {
+            this.parserAdapter = (ParserAdapter) connDatabase;
         }
         DBG = conn.getDebug().equalsIgnoreCase("debug");
     }
@@ -53,9 +51,9 @@ public class ProcessLanguages {
     {
         this.conn = conn;
         connDatabase = conn.getDatabase();
-        this.adapter = null;
-        if (connDatabase instanceof Adapter) {
-            this.adapter = (Adapter) connDatabase;
+        this.parserAdapter = null;
+        if (connDatabase instanceof ParserAdapter) {
+            this.parserAdapter = (ParserAdapter) connDatabase;
         }
         this.pyTupleQueryInstanceTypes = instanceTypes;
         this.pyTupleQueryInstanceTypeNames = instanceTypeNames;
@@ -101,7 +99,7 @@ public class ProcessLanguages {
         if (q instanceof ClassDef) {
             ClassDef cd = (ClassDef) q;
             try {
-                adapter.getClass(q);
+                parserAdapter.getClass(q);
                 //That class already exists;
                 throw new Exception("Class \"" + cd.name + "\" already exists");
             } catch (ClassNotFoundException cnfe) {
@@ -109,20 +107,20 @@ public class ProcessLanguages {
                     ClassDef baseClass = null;
                     for (int i = 0; i < ((SubclassDef) cd).numberOfSuperClasses(); i++) {
                         //Cycles are implicitly checked since getClass will fail for the current defining class
-                        ClassDef superClass = adapter.getClass(((SubclassDef) cd).getSuperClass(i));
+                        ClassDef superClass = parserAdapter.getClass(((SubclassDef) cd).getSuperClass(i));
                         if (baseClass == null)
-                            baseClass = superClass.getBaseClass(adapter);
-                        else if (!baseClass.name.equals(superClass.getBaseClass(adapter).name))
+                            baseClass = superClass.getBaseClass(parserAdapter);
+                        else if (!baseClass.name.equals(superClass.getBaseClass(parserAdapter).name))
                             throw new Exception("Super classes of class \"" + cd.name + "\" do not share the same base class");
                     }
                 }
 
-                adapter.putClass(cd);
-                adapter.commit();
+                parserAdapter.putClass(cd);
+                parserAdapter.commit();
 
             } catch (Exception e) {
                 System.out.println("This class already exists: " + cd.name);
-                adapter.abort();
+                parserAdapter.abort();
                 return null;
             }
         }
@@ -134,16 +132,16 @@ public class ProcessLanguages {
             }
             ModifyQuery mq = (ModifyQuery) q;
             try {
-                ClassDef targetClass = adapter.getClass(q);
-                WDBObject[] targetClassObjs = targetClass.search(mq.expression, adapter);
+                ClassDef targetClass = parserAdapter.getClass(q);
+                WDBObject[] targetClassObjs = targetClass.search(mq.expression, parserAdapter);
                 if (mq.limit > -1 && targetClassObjs.length > mq.limit)
                     throw new Exception("Matching entities exceeds limit of " + mq.limit.toString());
                 for (int i = 0; i < targetClassObjs.length; i++)
-                    setValues(mq.assignmentList, targetClassObjs[i], adapter);
-                adapter.commit();
+                    setValues(mq.assignmentList, targetClassObjs[i], parserAdapter);
+                parserAdapter.commit();
             } catch (Exception e) {
                 System.out.println(e.toString());
-                adapter.abort();
+                parserAdapter.abort();
             }
         }
 
@@ -154,22 +152,22 @@ public class ProcessLanguages {
             }
             InsertQuery iq = (InsertQuery) q;
             try {
-                ClassDef targetClass = adapter.getClass(q);
+                ClassDef targetClass = parserAdapter.getClass(q);
                 WDBObject newObject = null;
 
                 if (iq.fromClassName != null) {
                     //Inserting from an entity of a superclass...
                     if (targetClass.getClass() == SubclassDef.class) {
                         SubclassDef targetSubClass = (SubclassDef) targetClass;
-                        ClassDef fromClass = adapter.getClass(iq.fromClassName);
-                        if (targetSubClass.isSubclassOf(fromClass.name, adapter)) {
-                            WDBObject[] fromObjects = fromClass.search(iq.expression, adapter);
+                        ClassDef fromClass = parserAdapter.getClass(iq.fromClassName);
+                        if (targetSubClass.isSubclassOf(fromClass.name, parserAdapter)) {
+                            WDBObject[] fromObjects = fromClass.search(iq.expression, parserAdapter);
                             if (fromObjects.length <= 0) {
                                 throw new IllegalStateException("Can't find any entities from class \"" + fromClass.name + "\" to extend");
                             }
                             for (int i = 0; i < fromObjects.length; i++) {
-                                newObject = targetSubClass.newInstance(fromObjects[i].getBaseObject(adapter), adapter);
-                                setValues(iq.assignmentList, newObject, adapter);
+                                newObject = targetSubClass.newInstance(fromObjects[i].getBaseObject(parserAdapter), parserAdapter);
+                                setValues(iq.assignmentList, newObject, parserAdapter);
                             }
                         }
                         else {
@@ -181,16 +179,16 @@ public class ProcessLanguages {
                     }
                 }
                 else {
-                    newObject = targetClass.newInstance(null, adapter);
-                    setDefaultValues(targetClass, newObject, adapter);
-                    setValues(iq.assignmentList, newObject, adapter);
-                    checkRequiredValues(targetClass, newObject, adapter);
+                    newObject = targetClass.newInstance(null, parserAdapter);
+                    setDefaultValues(targetClass, newObject, parserAdapter);
+                    setValues(iq.assignmentList, newObject, parserAdapter);
+                    checkRequiredValues(targetClass, newObject, parserAdapter);
                 }
 
                 if (newObject != null) {
-                    newObject.commit(adapter);
+                    newObject.commit(parserAdapter);
                 }
-                adapter.commit();
+                parserAdapter.commit();
             } catch (Exception e) {
                 try {
                     if (iq.className.contains(".")) { // SCHEMALESS SUBCLASS
@@ -230,41 +228,41 @@ public class ProcessLanguages {
 
                         ClassDef baseClass = null;
                         for (int i = 0; i < ((SubclassDef) foo).numberOfSuperClasses(); i++) {
-                            ClassDef superClass = adapter.getClass(((SubclassDef) foo).getSuperClass(i));
+                            ClassDef superClass = parserAdapter.getClass(((SubclassDef) foo).getSuperClass(i));
                             if (baseClass == null)
-                                baseClass = superClass.getBaseClass(adapter);
-                            else if (!baseClass.name.equals(superClass.getBaseClass(adapter).name))
+                                baseClass = superClass.getBaseClass(parserAdapter);
+                            else if (!baseClass.name.equals(superClass.getBaseClass(parserAdapter).name))
                                 throw new Exception("Super classes of class \"" + foo.name + "\" does not share the same base class");
                         }
 
-                        adapter.putClass(foo);
-                        adapter.commit();
+                        parserAdapter.putClass(foo);
+                        parserAdapter.commit();
 
                         // Insert into our new SubClass
 
-                        ClassDef targetClass = adapter.getClass(iq.className);
+                        ClassDef targetClass = parserAdapter.getClass(iq.className);
                         WDBObject newObject = null;
 
                         SubclassDef targetSubClass = (SubclassDef) targetClass;
-                        ClassDef fromClass = adapter.getClass(iq.fromClassName);
-                        if (targetSubClass.isSubclassOf(fromClass.name, adapter)) {
-                            WDBObject[] fromObjects = fromClass.search(iq.expression, adapter);
+                        ClassDef fromClass = parserAdapter.getClass(iq.fromClassName);
+                        if (targetSubClass.isSubclassOf(fromClass.name, parserAdapter)) {
+                            WDBObject[] fromObjects = fromClass.search(iq.expression, parserAdapter);
                             if (fromObjects.length <= 0) {
                                 throw new IllegalStateException("Can't find any entities from class \"" + fromClass.name + "\" to extend");
                             }
                             for (int i = 0; i < fromObjects.length; i++) {
-                                newObject = targetSubClass.newInstance(fromObjects[i].getBaseObject(adapter), adapter);
-                                setValues(iq.assignmentList, newObject, adapter);
+                                newObject = targetSubClass.newInstance(fromObjects[i].getBaseObject(parserAdapter), parserAdapter);
+                                setValues(iq.assignmentList, newObject, parserAdapter);
                             }
                         } else {
                             throw new IllegalStateException("Inserted class \"" + targetClass.name + "\" is not a subclass of the from class \"" + iq.fromClassName);
                         }
 
                         if (newObject != null) {
-                            newObject.commit(adapter);
+                            newObject.commit(parserAdapter);
                         }
 
-                        adapter.commit();
+                        parserAdapter.commit();
                         System.out.println("Schemaless insert succeeded!");
                     }
                     else { // SCHEMALESS CLASS
@@ -293,27 +291,27 @@ public class ProcessLanguages {
                             foo.addAttribute(dva);
                         }
 
-                        adapter.putClass(foo);
-                        adapter.commit();
+                        parserAdapter.putClass(foo);
+                        parserAdapter.commit();
 
                         // Inserting into our new Class
-                        ClassDef targetClass = adapter.getClass(iq.className);
+                        ClassDef targetClass = parserAdapter.getClass(iq.className);
                         WDBObject newObject = null;
 
-                        newObject = targetClass.newInstance(null, adapter);
-                        setDefaultValues(targetClass, newObject, adapter);
-                        setValues(iq.assignmentList, newObject, adapter);
-                        checkRequiredValues(targetClass, newObject, adapter);
+                        newObject = targetClass.newInstance(null, parserAdapter);
+                        setDefaultValues(targetClass, newObject, parserAdapter);
+                        setValues(iq.assignmentList, newObject, parserAdapter);
+                        checkRequiredValues(targetClass, newObject, parserAdapter);
 
                         if (newObject != null)
-                            newObject.commit(adapter);
+                            newObject.commit(parserAdapter);
 
-                        adapter.commit();
+                        parserAdapter.commit();
                         System.out.println("Schemaless insert succeeded!");
                     }
                 } catch (Exception foo) {
                     System.out.println("Schemaless insert failed due to the following:\n" + foo);
-                    adapter.abort();
+                    parserAdapter.abort();
                 }
             }
         }
@@ -321,13 +319,13 @@ public class ProcessLanguages {
         if (q instanceof IndexDef) {
             IndexDef indexQ = (IndexDef) q;
             try {
-                ClassDef classDef = adapter.getClass(q);
-                classDef.addIndex(indexQ, adapter);
+                ClassDef classDef = parserAdapter.getClass(q);
+                classDef.addIndex(indexQ, parserAdapter);
 
-                adapter.commit();
+                parserAdapter.commit();
             } catch (Exception e) {
                 System.out.println(e.toString());
-                adapter.abort();
+                parserAdapter.abort();
             }
         }
 
@@ -338,8 +336,8 @@ public class ProcessLanguages {
             }
             RetrieveQuery rq = (RetrieveQuery) q;
             try {
-                ClassDef targetClass = adapter.getClass(q);
-                WDBObject[] targetClassObjs = targetClass.search(rq.expression, adapter);
+                ClassDef targetClass = parserAdapter.getClass(q);
+                WDBObject[] targetClassObjs = targetClass.search(rq.expression, parserAdapter);
                 int i, j;
                 String[][] table;
                 String[][] newtable;
@@ -347,18 +345,18 @@ public class ProcessLanguages {
 
                 PrintNode node = new PrintNode(0, 0);
                 for (j = 0; j < rq.numAttributePaths(); j++)
-                    targetClass.printAttributeName(node, rq.getAttributePath(j), adapter);
+                    targetClass.printAttributeName(node, rq.getAttributePath(j), parserAdapter);
 
                 table = node.printRow();
                 for (i = 0; i < targetClassObjs.length; i++) {
                     node = new PrintNode(0, 0);
                     for (j = 0; j < rq.numAttributePaths(); j++)
-                        targetClassObjs[i].PrintAttribute(node, rq.getAttributePath(j), adapter);
+                        targetClassObjs[i].PrintAttribute(node, rq.getAttributePath(j), parserAdapter);
                     newtable = joinRows(table, node.printRow());
                     table = newtable;
                 }
 
-                adapter.commit();
+                parserAdapter.commit();
 
                 Integer[] columnWidths = new Integer[table[0].length];
 
@@ -393,7 +391,7 @@ public class ProcessLanguages {
                 // Return here? Table is a 2D array
             } catch (Exception e) {
                 System.out.println(e.toString());
-                adapter.abort();
+                parserAdapter.abort();
             }
         }
 
@@ -436,7 +434,7 @@ public class ProcessLanguages {
                 conn.commit_oorel_session();
                 ArrayList<PyObject> rowResults;
                 if (conn.getConnectionDB().equals("OracleNoSQL")) {
-                    rowResults = conn.getDatabase().OracleNoSQLRunSPARQL(sparql);
+                    rowResults = ((OracleRDFNoSQLDatabase) conn.getDatabase()).OracleNoSQLRunSPARQL(sparql);
                     //a lot of conversion going on here. . .
                     return rowResults.toArray(new PyObject[rowResults.size()]);
                 }
@@ -549,46 +547,46 @@ public class ProcessLanguages {
     }
 
 
-    private static void setDefaultValues(ClassDef targetClass, WDBObject targetObject, Adapter adapter) throws Exception
+    private static void setDefaultValues(ClassDef targetClass, WDBObject targetObject, ParserAdapter parserAdapter) throws Exception
     {
         for (int j = 0; j < targetClass.numberOfAttributes(); j++) {
             if (targetClass.getAttribute(j) instanceof DVA) {
                 DVA dva = (DVA) targetClass.getAttribute(j);
                 if (dva.initialValue != null)
-                    targetObject.setDvaValue(dva.name, dva.initialValue, adapter);
+                    targetObject.setDvaValue(dva.name, dva.initialValue, parserAdapter);
             }
         }
     }
 
 
-    private static void checkRequiredValues(ClassDef targetClass, WDBObject targetObject, Adapter adapter) throws Exception
+    private static void checkRequiredValues(ClassDef targetClass, WDBObject targetObject, ParserAdapter parserAdapter) throws Exception
     {
         for (int j = 0; j < targetClass.numberOfAttributes(); j++) {
             Attribute attribute = (Attribute) targetClass.getAttribute(j);
-            if (attribute.required != null && attribute.required && targetObject.getDvaValue(attribute.name, adapter) == null)
+            if (attribute.required != null && attribute.required && targetObject.getDvaValue(attribute.name, parserAdapter) == null)
                 throw new Exception("Attribute \"" + targetClass.getAttribute(j).name + "\" is required");
         }
     }
 
 
-    private static void setValues(ArrayList assignmentList, WDBObject targetObject, Adapter adapter) throws Exception
+    private static void setValues(ArrayList assignmentList, WDBObject targetObject, ParserAdapter parserAdapter) throws Exception
     {
         for (int j = 0; j < assignmentList.size(); j++) {
             if (assignmentList.get(j) instanceof DvaAssignment) {
                 DvaAssignment dvaAssignment = (DvaAssignment) assignmentList.get(j);
-                targetObject.setDvaValue(dvaAssignment.AttributeName, dvaAssignment.Value, adapter);
+                targetObject.setDvaValue(dvaAssignment.AttributeName, dvaAssignment.Value, parserAdapter);
             }
             else if (assignmentList.get(j) instanceof EvaAssignment) {
                 EvaAssignment evaAssignment = (EvaAssignment) assignmentList.get(j);
                 if (evaAssignment.mode == EvaAssignment.REPLACE_MODE) {
-                    WDBObject[] currentObjects = targetObject.getEvaObjects(evaAssignment.AttributeName, adapter);
-                    targetObject.removeEvaObjects(evaAssignment.AttributeName, evaAssignment.targetClass, currentObjects, adapter);
-                    targetObject.addEvaObjects(evaAssignment.AttributeName, evaAssignment.targetClass, evaAssignment.expression, adapter);
+                    WDBObject[] currentObjects = targetObject.getEvaObjects(evaAssignment.AttributeName, parserAdapter);
+                    targetObject.removeEvaObjects(evaAssignment.AttributeName, evaAssignment.targetClass, currentObjects, parserAdapter);
+                    targetObject.addEvaObjects(evaAssignment.AttributeName, evaAssignment.targetClass, evaAssignment.expression, parserAdapter);
                 }
                 else if (evaAssignment.mode == EvaAssignment.EXCLUDE_MODE)
-                    targetObject.removeEvaObjects(evaAssignment.AttributeName, evaAssignment.targetClass, evaAssignment.expression, adapter);
+                    targetObject.removeEvaObjects(evaAssignment.AttributeName, evaAssignment.targetClass, evaAssignment.expression, parserAdapter);
                 else if (evaAssignment.mode == EvaAssignment.INCLUDE_MODE)
-                    targetObject.addEvaObjects(evaAssignment.AttributeName, evaAssignment.targetClass, evaAssignment.expression, adapter);
+                    targetObject.addEvaObjects(evaAssignment.AttributeName, evaAssignment.targetClass, evaAssignment.expression, parserAdapter);
                 else {
                     throw new Exception("Unsupported multivalue EVA insert/modify mode");
                 }

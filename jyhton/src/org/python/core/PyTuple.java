@@ -10,6 +10,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.python.ReL.OracleRDFNoSQLDatabase;
 import org.python.ReL.ProcessLanguages;
 import org.python.ReL.ProcessOracleEESQL;
 import org.python.ReL.PyRelConnection;
@@ -154,7 +155,9 @@ public class PyTuple extends PySequenceList implements List {
         if (ReLmode == "RDF") {
             System.out.println("Saw an RDF: " + ReLstmt);
             String[] s = ReLstmt.split(" ");
-            conn.OracleNoSQLAddQuad(s[0], s[1], s[2], s[3], false);
+            // TODO(jhurt): Handle this more elegantly as the database may not always be OracleRDFNoSQL.
+            // DO NOT add a method to DatabaseInterface class. Do it better than that.
+            ((OracleRDFNoSQLDatabase)conn.getDatabase()).OracleNoSQLAddQuad(s[0], s[1], s[2], s[3], false);
         }
 
         if (ReLmode == "JAPI") {
@@ -232,7 +235,10 @@ public class PyTuple extends PySequenceList implements List {
         }
 
         if (ReLmode == "SPARQL") {
-            rows = conn.getDatabase().OracleNoSQLRunSPARQL(ReLstmt);
+            // TODO(jhurt): Handle this more elegantly. Perhaps create a SPARQL interface
+            // which contains the 'runSPARQL' method and have the database implementations implement that.
+            // Then you could cast the below call as '((SPARQL) conn.getDatabase()).runSPARQL(ReLstmt)'
+            rows = ((OracleRDFNoSQLDatabase) conn.getDatabase()).OracleNoSQLRunSPARQL(ReLstmt);
             PyObject[] results = rows.toArray(new PyObject[rows.size()]);
             //put results in array for this tuple object
             array = new PyObject[results.length];

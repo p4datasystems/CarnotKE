@@ -8,12 +8,10 @@ import com.hp.hpl.jena.sparql.core.DatasetImpl;
 import oracle.rdf.kv.client.jena.DatasetGraphNoSql;
 import oracle.rdf.kv.client.jena.OracleGraphNoSql;
 import oracle.rdf.kv.client.jena.OracleNoSqlConnection;
-import org.apache.commons.lang3.SerializationUtils;
 import org.python.ReL.WDB.database.wdb.metadata.*;
 import org.python.core.*;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,7 +24,7 @@ import static org.python.ReL.ProcessLanguages.debugMsg;
  * All statements and queries should go through here to communicate with oracle.
  */
 
-public class OracleRDFNoSQLDatabase extends DatabaseInterface implements Adapter, NonDefaultParser{
+public class OracleRDFNoSQLDatabase extends DatabaseInterface implements ParserAdapter, NonDefaultParser{
 
     private OracleNoSqlConnection connection;
     DatasetGraphNoSql datasetGraph = null;
@@ -70,7 +68,6 @@ public class OracleRDFNoSQLDatabase extends DatabaseInterface implements Adapter
         return nameSpacePrefix;
     }
 
-    @Override
     public void OracleNoSQLAddQuad(String graph, String subject, String predicate, String object, Boolean object_as_uri)
     {
         if (!graph.contains("http://")) graph = nameSpace + graph;
@@ -90,7 +87,20 @@ public class OracleRDFNoSQLDatabase extends DatabaseInterface implements Adapter
         }
     }
 
-    @Override
+    public void addTypedPyobject(ArrayList<PyObject> items, String item) {
+        try {
+            Double.parseDouble(item);
+            try {
+                Integer.parseInt(item);
+                items.add(new PyInteger(Integer.parseInt(item)));
+            } catch (NumberFormatException e) {
+                items.add(new PyFloat(Float.parseFloat(item)));
+            }
+        } catch (NumberFormatException e) {
+            items.add(new PyString(item));
+        }
+    }
+
     public ArrayList<PyObject> OracleNoSQLRunSPARQL(String sparql)
     {
         Dataset ds = DatasetImpl.wrap(datasetGraph);
@@ -145,17 +155,7 @@ public class OracleRDFNoSQLDatabase extends DatabaseInterface implements Adapter
                                         .replaceAll("</uri>", "")
                                         .replaceAll(nameSpace, "");
 
-                                try {
-                                    Double.parseDouble(item);
-                                    try {
-                                        Integer.parseInt(item);
-                                        items.add(new PyInteger(Integer.parseInt(item)));
-                                    } catch (NumberFormatException e) {
-                                        items.add(new PyFloat(Float.parseFloat(item)));
-                                    }
-                                } catch (NumberFormatException e) {
-                                    items.add(new PyString(item));
-                                }
+                                this.addTypedPyobject(items, item);
                                 num++;
                                 break;
                             }
@@ -180,17 +180,7 @@ public class OracleRDFNoSQLDatabase extends DatabaseInterface implements Adapter
                                 // For date data types, see http://www.w3schools.com/xml/schema_dtypes_date.asp
                                 // For misc. data types, see http://www.w3schools.com/xml/schema_dtypes_misc.asp
 
-                                try {
-                                    Double.parseDouble(item);
-                                    try {
-                                        Integer.parseInt(item);
-                                        items.add(new PyInteger(Integer.parseInt(item)));
-                                    } catch (NumberFormatException e) {
-                                        items.add(new PyFloat(Float.parseFloat(item)));
-                                    }
-                                } catch (NumberFormatException e) {
-                                    items.add(new PyString(item));
-                                }
+                                this.addTypedPyobject(items, item);
                                 num++;
                                 break;
                             }
@@ -222,6 +212,22 @@ public class OracleRDFNoSQLDatabase extends DatabaseInterface implements Adapter
             qexec.close();
         }
         return (rows);
+    }
+
+    public List<String> getSubjects(String graph, String predicate, String object) {
+        ArrayList<PyObject> rows = new ArrayList<PyObject>();
+        List<String> subjects = new ArrayList<String>();
+        String sparql = "SELECT ?s WHERE { GRAPH " + "c:" + graph + " { ?s " + predicate + " " + object + " } } ";
+        if (DBG) System.out.println("\ngetSujects, sparql is: \n" + sparql);
+        rows = this.OracleNoSQLRunSPARQL(sparql);
+        for (int i = 1; i < rows.size(); i++) {
+            subjects.add(String.format("%s", rows.get(i))
+                    .replaceAll("[()]", "")
+                    .replaceAll("'", "")
+                    .replaceAll(",", "")
+                    .replaceAll(this.getNameSpace(), ""));
+        }
+        return subjects;
     }
 
     //helper to convert lists to arrays
@@ -311,15 +317,24 @@ public class OracleRDFNoSQLDatabase extends DatabaseInterface implements Adapter
     public void insert(org.python.ReL.WDB.database.wdb.metadata.Query insertQuery) {
         InsertQuery iq = (InsertQuery) insertQuery;
         final String instanceID = String.valueOf(UUID.randomUUID());
+        String graph, subject, schemaString, predicate, object;
         for (int i = 0; i < iq.numberOfAssignments(); i++) {
             DvaAssignment dvaAssignment = (DvaAssignment) iq.getAssignment(i);
-            try {
-                SQLVisitor.insertQuad(this.pyRelConn, iq.className, instanceID, dvaAssignment.getAttributeName(),
-                        dvaAssignment.Value.toString(), false);
-            }
-            catch (SQLException e) {
-                // Ignore for now :)
-            }
+            schemaString = pyRelConn.getSchemaString();
+            graph = iq.className;
+            subject = instanceID;
+            predicate = dvaAssignment.getAttributeName();
+            object = dvaAssignment.Value.toString();
+            this.OracleNoSQLAddQuad(schemaString, graph, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://www.w3.org/2000/01/rdf-schema#Class", true);
+            // Unimplemented as of now
+            // if(eva)
+            this.OracleNoSQLAddQuad(graph + "_" + schemaString, predicate, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://www.w3.org/2002/07/owl#DatatypeProperty", true);
+            this.OracleNoSQLAddQuad(graph + "_" + schemaString, predicate, "http://www.w3.org/2000/01/rdf-schema#domain", graph, true);
+            this.OracleNoSQLAddQuad(graph + "_" + schemaString, predicate, "http://www.w3.org/2000/01/rdf-schema#range", "http://www.w3.org/2001/XMLSchema#string", true);
+            this.OracleNoSQLAddQuad(graph + "_" + schemaString, subject, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", graph, true);
+            this.OracleNoSQLAddQuad(graph, subject, predicate, object, true);
+            this.OracleNoSQLAddQuad(iq.className, instanceID, dvaAssignment.getAttributeName(),
+                    dvaAssignment.Value.toString(), false);
         }
     }
 
@@ -390,15 +405,10 @@ public class OracleRDFNoSQLDatabase extends DatabaseInterface implements Adapter
         List<String> columns;
         for (int j = 0; j < rq.numAttributePaths(); j++) {
             if (rq.getAttributePath(j).attribute == "*") {
-                try {
-                    columns = SQLVisitor.getSubjects(this.pyRelConn, className + "_" + this.pyRelConn.getSchemaString(), "rdf:type", "owl:DatatypeProperty");
-                    if (rq.getAttributePath(j).levelsOfIndirection() == 0) {
-                        for (int i = 0; i < columns.size(); i++)
-                            dvaAttribs.add(columns.get(i));
-                    }
-                }
-                catch (SQLException e) {
-                    // Ignore for now :)
+                columns = this.getSubjects(className + "_" + this.pyRelConn.getSchemaString(), "rdf:type", "owl:DatatypeProperty");
+                if (rq.getAttributePath(j).levelsOfIndirection() == 0) {
+                    for (int i = 0; i < columns.size(); i++)
+                        dvaAttribs.add(columns.get(i));
                 }
             }
             else if (rq.getAttributePath(j).levelsOfIndirection() == 0)

@@ -3,7 +3,6 @@ package org.python.ReL;
 
 import org.python.ReL.WDB.database.wdb.metadata.*;
 import org.python.core.PyObject;
-import org.python.core.PyTuple;
 
 import java.sql.*;
 import java.util.*;
@@ -16,7 +15,7 @@ import static org.python.ReL.ProcessLanguages.debugMsg;
  * All statements and queries should go through here to communicate with oracle.
  */
 
-public class OracleDatabase extends DatabaseInterface implements Adapter, NonDefaultParser {
+public class OracleDatabase extends DatabaseInterface implements ParserAdapter, NonDefaultParser {
 
     private Connection connection;
     private Statement callableStatement;
@@ -24,9 +23,9 @@ public class OracleDatabase extends DatabaseInterface implements Adapter, NonDef
     private ResultSet rs;
     private String debug;
 
-    public OracleDatabase(String url, String uname, String passw, String conn_type, String debug)
+    public OracleDatabase(PyRelConnection pyRelConnection, String url, String uname, String passw, String conn_type, String debug)
     {
-        super(null);
+        super(pyRelConnection);
         try {
             Class.forName("oracle.jdbc.OracleDriver");
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -85,6 +84,78 @@ public class OracleDatabase extends DatabaseInterface implements Adapter, NonDef
         return rs;
     }
 
+    public void insertQuad(String graph, String subject, String predicate, String object, Boolean eva) {
+        String graphName = pyRelConn.getModel() + ":<" + graph + ">";
+        String graphName2 = pyRelConn.getModel() + ":<" + graph + "_" + pyRelConn.getSchemaString() + ">";
+
+        if (!subject.contains(":")) {
+            // no specified pyRelConn.getNamespace():  use current default pyRelConn.getNamespace()
+            subject = pyRelConn.getNamespace() + subject;
+        }
+        if (!predicate.contains(":")) {
+            // no specified pyRelConn.getNamespace():  use current default pyRelConn.getNamespace()
+            predicate = pyRelConn.getNamespace() + predicate;
+        }
+        if (!object.contains(":")) {
+            // no specified pyRelConn.getNamespace():  use current default pyRelConn.getNamespace()
+            object = pyRelConn.getNamespace() + object;
+        }
+        String typeString = "";
+        String s = "";
+        try {
+            if (!graph.equals("")) {
+                s = "INSERT INTO " + pyRelConn.getTable() + " VALUES ( " + pyRelConn.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName +
+                        "', '" + subject.replaceAll("'", "") + "', '" + predicate.replaceAll("'", "") + "', '" + object.replaceAll("'", "") + typeString + "'))";
+                pyRelConn.executeStatement(s);
+                s = "INSERT INTO " + pyRelConn.getTable() + " VALUES ( " + pyRelConn.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
+                        "', '" + subject.replaceAll("'", "") + "', 'rdf:type', '" + pyRelConn.getNamespace() + graph + "'))";
+                pyRelConn.executeStatement(s);
+                if (eva)
+                    s = "INSERT INTO " + pyRelConn.getTable() + " VALUES ( " + pyRelConn.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
+                            "', '" + predicate.replaceAll("'", "") + "', 'rdf:type', 'owl:FunctionalProperty'))";
+                else
+                    s = "INSERT INTO " + pyRelConn.getTable() + " VALUES ( " + pyRelConn.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
+                            "', '" + predicate.replaceAll("'", "") + "', 'rdf:type', 'owl:DatatypeProperty'))";
+                pyRelConn.executeStatement(s);
+                s = "INSERT INTO " + pyRelConn.getTable() + " VALUES ( " + pyRelConn.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
+                        "', '" + predicate.replaceAll("'", "") + "', 'rdfs:domain', '" + pyRelConn.getNamespace() + graph + "'))";
+                pyRelConn.executeStatement(s);
+                s = "INSERT INTO " + pyRelConn.getTable() + " VALUES ( " + pyRelConn.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
+                        "', '" + predicate.replaceAll("'", "") + "', 'rdfs:range', 'xsd:string'))";
+                pyRelConn.executeStatement(s);
+            }
+            else {
+                s = "INSERT INTO " + pyRelConn.getTable() + " VALUES ( " + pyRelConn.getModel() + "_SQNC.nextval, " + "SDO_RDF_TRIPLE_S('" + graphName2 +
+                        "', '" + subject.replaceAll("'", "") + "', '" + predicate.replaceAll("'", "") + "', '" + object.replaceAll("'", "") + typeString + "'))";
+                pyRelConn.executeStatement(s);
+            }
+        }
+        catch (SQLException e) {
+            // Ignore for now :)
+        }
+    }
+
+    public List<String> getSubjects(String graph, String predicate, String object) {
+        List<String> subjects = new ArrayList<>();
+        String q =
+                "select distinct sub from table(sem_match(\n'select * where {\n" +
+                        "\tGRAPH <" + graph + "> {?sub " + predicate + " " + object + "}\n" +
+                        "}',\n" +
+                        "SEM_MODELS('"
+                        + pyRelConn.getModel() + "'), null,\n" +
+                        "SEM_ALIASES( SEM_ALIAS('', '"
+                        + pyRelConn.getNamespace() + "')), null) )";
+        if (DBG) System.out.println("\ngetSubjects: query=\n" + q);
+        try {
+            subjects = SPARQLDoer.executeRdfSelect(pyRelConn, q);
+        } catch (SQLException ex) {
+            System.out.println(ex);
+        }
+        return subjects;
+    }
+
+
+
     @Override
     public void putClass(Query classDefQuery) {
 
@@ -131,71 +202,68 @@ public class OracleDatabase extends DatabaseInterface implements Adapter, NonDef
         final String instanceID = String.valueOf(UUID.randomUUID());
         for (int i = 0; i < iq.numberOfAssignments(); i++) {
             DvaAssignment dvaAssignment = (DvaAssignment) iq.getAssignment(i);
-            try {
-                SQLVisitor.insertQuad(this.pyRelConn, iq.className, instanceID, dvaAssignment.getAttributeName(),
-                        dvaAssignment.Value.toString(), false);
-            }
-            catch (SQLException e) {
-                // Ignore for now :)
-            }
+            this.insertQuad(iq.className, instanceID, dvaAssignment.getAttributeName(),
+                    dvaAssignment.Value.toString(), false);
         }
     }
 
     @Override
     public void modify(org.python.ReL.WDB.database.wdb.metadata.Query modifyQuery) {
-        ModifyQuery mq = (ModifyQuery) modifyQuery;
-        String className = mq.className;
-        String eva_name = "";
-        String eva_class = "";
-        int limit = 1000000;
-        ArrayList<PyObject> rows = new ArrayList<>();
-        List<String> subjects = new ArrayList<>();
-        List<String> eva_subjects = new ArrayList<>();
-
-        String sparql = "select ?indiv where { ";
-        String where = "";
-        for (int i = 0; i < mq.assignmentList.size(); i++) {
-            EvaAssignment evaAssignment = (EvaAssignment) mq.assignmentList.get(i);
-            eva_name = evaAssignment.getAttributeName();
-            eva_class = evaAssignment.targetClass;
-            where = traverseWhereInorder(where, evaAssignment.expression.jjtGetChild(i)); // This sets the where variable to e.g., deptno = 20
-            String where1 = where.trim();
-            sparql += "GRAPH " + this.getNameSpacePrefix() + ":" + eva_class + " { ?indiv " + getNameSpacePrefix() + ":"
-                    + where1.replaceAll(" *= *", " \"") + "\"^^xsd:string }";
-        }
-        sparql += " }";
-        debugMsg(DBG, "\nProcessLanguages SIM Modify, sparql is: \n" + sparql + "\n");
-        rows = this.OracleNoSQLRunSPARQL(sparql);
-        for (int i = 1; i < rows.size(); i++) {
-            eva_subjects.add(String.format("%s", rows.get(i))
-                    .replaceAll("[()]", "")
-                    .replaceAll("'", "")
-                    .replaceAll(",", "")
-                    .replaceAll(this.getNameSpace(), ""));
-        }
-
-        // Process WHERE clause
-        if (mq.expression != null) {
-            where = "";
-            where = traverseWhereInorder(where, mq.expression);
-            where = where.replaceAll("  *", " ").replaceAll("^ ", "").replaceAll(" $", "");
-        }
-        sparql = "select ?indiv where { GRAPH " + this.getNameSpacePrefix() + ":" + className + " { ?indiv "
-                + this.getNameSpacePrefix() + ":" + where.replaceAll(" *= *", " \"") + "\"^^xsd:string } }";
-        debugMsg(DBG, "\nProcessLanguages SIM Modify, sparql is: \n" + sparql + "\n");
-        rows = this.OracleNoSQLRunSPARQL(sparql);
-        for (int i = 1; i < rows.size(); i++) {
-            subjects.add(String.format("%s", rows.get(i))
-                    .replaceAll("[()]", "")
-                    .replaceAll("'", "")
-                    .replaceAll(",", "")
-                    .replaceAll(this.getNameSpace(), ""));
-        }
-        for (String subject : subjects) {
-            for (String entity : eva_subjects)
-                this.OracleNoSQLAddQuad(className, subject, eva_name, entity, true);
-        }
-        sparql = null;
+        // TODO(jhurt): I am unsure about this class using OracleNoSQLRunSPARQL method. Is it supposed to?
+        // If so, then simply take the implementation from OracleRDFNoSQLDatabase and put it here as well.
+//        ModifyQuery mq = (ModifyQuery) modifyQuery;
+//        String className = mq.className;
+//        String eva_name = "";
+//        String eva_class = "";
+//        int limit = 1000000;
+//        ArrayList<PyObject> rows = new ArrayList<>();
+//        List<String> subjects = new ArrayList<>();
+//        List<String> eva_subjects = new ArrayList<>();
+//
+//        String sparql = "select ?indiv where { ";
+//        String where = "";
+//        for (int i = 0; i < mq.assignmentList.size(); i++) {
+//            EvaAssignment evaAssignment = (EvaAssignment) mq.assignmentList.get(i);
+//            eva_name = evaAssignment.getAttributeName();
+//            eva_class = evaAssignment.targetClass;
+//            where = traverseWhereInorder(where, evaAssignment.expression.jjtGetChild(i)); // This sets the where variable to e.g., deptno = 20
+//            String where1 = where.trim();
+//            sparql += "GRAPH " + this.getNameSpacePrefix() + ":" + eva_class + " { ?indiv " + getNameSpacePrefix() + ":"
+//                    + where1.replaceAll(" *= *", " \"") + "\"^^xsd:string }";
+//        }
+//        sparql += " }";
+//        debugMsg(DBG, "\nProcessLanguages SIM Modify, sparql is: \n" + sparql + "\n");
+//        rows = this.OracleNoSQLRunSPARQL(sparql);
+//        for (int i = 1; i < rows.size(); i++) {
+//            eva_subjects.add(String.format("%s", rows.get(i))
+//                    .replaceAll("[()]", "")
+//                    .replaceAll("'", "")
+//                    .replaceAll(",", "")
+//                    .replaceAll(this.getNameSpace(), ""));
+//        }
+//
+//        // Process WHERE clause
+//        if (mq.expression != null) {
+//            where = "";
+//            where = traverseWhereInorder(where, mq.expression);
+//            where = where.replaceAll("  *", " ").replaceAll("^ ", "").replaceAll(" $", "");
+//        }
+//        sparql = "select ?indiv where { GRAPH " + this.getNameSpacePrefix() + ":" + className + " { ?indiv "
+//                + this.getNameSpacePrefix() + ":" + where.replaceAll(" *= *", " \"") + "\"^^xsd:string } }";
+//        debugMsg(DBG, "\nProcessLanguages SIM Modify, sparql is: \n" + sparql + "\n");
+//        rows = this.OracleNoSQLRunSPARQL(sparql);
+//        for (int i = 1; i < rows.size(); i++) {
+//            subjects.add(String.format("%s", rows.get(i))
+//                    .replaceAll("[()]", "")
+//                    .replaceAll("'", "")
+//                    .replaceAll(",", "")
+//                    .replaceAll(this.getNameSpace(), ""));
+//        }
+//        for (String subject : subjects) {
+//            for (String entity : eva_subjects)
+//                this.OracleNoSQLAddQuad(className, subject, eva_name, entity, true);
+//        }
+//        sparql = null;
     }
 
     @Override
@@ -209,15 +277,10 @@ public class OracleDatabase extends DatabaseInterface implements Adapter, NonDef
         List<String> columns;
         for (int j = 0; j < rq.numAttributePaths(); j++) {
             if (rq.getAttributePath(j).attribute == "*") {
-                try {
-                    columns = SQLVisitor.getSubjects(this.pyRelConn, className + "_" + this.pyRelConn.getSchemaString(), "rdf:type", "owl:DatatypeProperty");
-                    if (rq.getAttributePath(j).levelsOfIndirection() == 0) {
-                        for (int i = 0; i < columns.size(); i++)
-                            dvaAttribs.add(columns.get(i));
-                    }
-                }
-                catch (SQLException e) {
-                    // Ignore for now :)
+                columns = this.getSubjects(className + "_" + this.pyRelConn.getSchemaString(), "rdf:type", "owl:DatatypeProperty");
+                if (rq.getAttributePath(j).levelsOfIndirection() == 0) {
+                    for (int i = 0; i < columns.size(); i++)
+                        dvaAttribs.add(columns.get(i));
                 }
             }
             else if (rq.getAttributePath(j).levelsOfIndirection() == 0)

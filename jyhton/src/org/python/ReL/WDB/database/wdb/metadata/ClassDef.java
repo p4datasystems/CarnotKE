@@ -70,7 +70,7 @@ public class ClassDef implements Query, Serializable {
 		
 		return (IndexDef[])this.indexes.toArray(indexes);
 	}
-	public void addIndex(IndexDef index, Adapter scda) throws Exception
+	public void addIndex(IndexDef index, ParserAdapter scda) throws Exception
 	{
 		indexes.add(index);
 		this.commit(scda);
@@ -85,7 +85,7 @@ public class ClassDef implements Query, Serializable {
 		instances.remove(uid);
 	}
 	
-	public WDBObject getInstance(int index, Adapter da) throws Exception
+	public WDBObject getInstance(int index, ParserAdapter da) throws Exception
 	{
 		return da.getObject(this.name, (Integer)instances.get(index));
 	}
@@ -137,15 +137,15 @@ public class ClassDef implements Query, Serializable {
 		return attributes.size();
 	}
 	
-	public boolean isSubclassOf(String _parent, Adapter scda) throws Exception
+	public boolean isSubclassOf(String _parent, ParserAdapter scda) throws Exception
 	{
 		return false;
 	}
-	public ClassDef getBaseClass(Adapter scda) throws Exception
+	public ClassDef getBaseClass(ParserAdapter scda) throws Exception
 	{
 		return this;
 	}
-	public WDBObject newInstance(WDBObject parent, Adapter scda) throws Exception
+	public WDBObject newInstance(WDBObject parent, ParserAdapter scda) throws Exception
 	{
 		if(parent != null)
 		{
@@ -168,11 +168,11 @@ public class ClassDef implements Query, Serializable {
 		return newObject;
 	}
 
-	public void commit(Adapter scda) throws Exception
+	public void commit(ParserAdapter scda) throws Exception
 	{
 		scda.putClass(this);
 	}
-	public WDBObject[] search(SimpleNode expression, Adapter scda) throws Exception
+	public WDBObject[] search(SimpleNode expression, ParserAdapter scda) throws Exception
 	{
         boolean hasWhereClause = (expression != null);
 		WDBObject[] matchesArray = new WDBObject[0];
@@ -213,7 +213,7 @@ public class ClassDef implements Query, Serializable {
 
 		return (WDBObject[])matchesList.toArray(matchesArray);
 	}
-	public void padAttribute(PrintNode row, AttributePath attributePath, Adapter scda) throws Exception
+	public void padAttribute(PrintNode row, AttributePath attributePath, ParserAdapter scda) throws Exception
 	{
 		for(int j = 0; j < attributes.size(); j++)
 		{	
@@ -269,7 +269,7 @@ public class ClassDef implements Query, Serializable {
 			}
 		}
 	}
-	public void printAttributeName(PrintNode row, AttributePath attributePath, Adapter scda) throws Exception
+	public void printAttributeName(PrintNode row, AttributePath attributePath, ParserAdapter scda) throws Exception
 	{
 		for(int j = 0; j < attributes.size(); j++)
 		{	

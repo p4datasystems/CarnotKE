@@ -13,7 +13,6 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.python.ReL.WDB.database.wdb.metadata.ClassDef;
-import org.python.ReL.WDB.database.wdb.metadata.IndexDef;
 import org.python.ReL.WDB.database.wdb.metadata.Query;
 import org.python.ReL.WDB.database.wdb.metadata.WDBObject;
 
@@ -22,10 +21,10 @@ import org.python.ReL.WDB.database.wdb.metadata.WDBObject;
  * @author Raymond Chee
  * @date 05/26/2016
  *
- * TitanDB Adapter for CarnotKE
+ * TitanDB ParserAdapter for CarnotKE
  */
 
-public class TitanNoSQLDatabase extends DatabaseInterface implements Adapter {
+public class TitanNoSQLDatabase extends DatabaseInterface implements ParserAdapter {
 
     private static TitanGraph graph = null;
     private static File INSTALLATION_ROOT;

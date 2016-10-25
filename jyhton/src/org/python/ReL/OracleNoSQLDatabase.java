@@ -21,7 +21,7 @@ import java.util.Arrays;
 /**
  * @author Joshua Hurt
  */
-public class OracleNoSQLDatabase extends DatabaseInterface implements Adapter {
+public class OracleNoSQLDatabase extends DatabaseInterface implements ParserAdapter {
     public static boolean DBG;
     private File INSTALLATION_ROOT;
     private static final int MIN_PORT_NUMBER = 2000;

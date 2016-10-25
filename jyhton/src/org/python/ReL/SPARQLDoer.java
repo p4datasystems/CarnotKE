@@ -358,7 +358,7 @@ public class SPARQLDoer {
         List<String> rowIds = new ArrayList<String>();
         if (connection.getConnectionDB().equals("OracleNoSQL")) {
             ArrayList<PyObject> rows = new ArrayList<PyObject>();
-            rows = connection.getDatabase().OracleNoSQLRunSPARQL(selectStmt);
+            rows = ((OracleRDFNoSQLDatabase) connection.getDatabase()).OracleNoSQLRunSPARQL(selectStmt);
             for (int i = 1; i < rows.size(); i++) {
                 rowIds.add(String.format("%s", rows.get(i))
                         .replaceAll("[()]", "")
