@@ -2,7 +2,7 @@
 
 package org.python.ReL.WDB.parser.generated.wdb.parser;
 
-import org.python.ReL.WDB.database.wdb.metadata.Adapter;
+import org.python.ReL.WDB.database.wdb.metadata.ParserAdapter;
 import org.python.ReL.WDB.database.wdb.metadata.AttributePath;
 import org.python.ReL.WDB.database.wdb.metadata.IndexSelectResult;
 import org.python.ReL.WDB.database.wdb.metadata.WDBObject;
@@ -40,7 +40,7 @@ public class Cond extends SimpleNode {
   {
   	return attributePath.attribute + " " + quantifier + " " + value;
   }
-  public IndexSelectResult filterObjectsWithIndexes(Adapter da, ArrayList indexes) throws Exception
+  public IndexSelectResult filterObjectsWithIndexes(ParserAdapter da, ArrayList indexes) throws Exception
   {
 	  IndexSelectResult isr = new IndexSelectResult();
 	  if(this.attributePath.levelsOfIndirection() > 0 || !this.quantifier.equals("="))
@@ -54,7 +54,7 @@ public class Cond extends SimpleNode {
 		  return isr;
 	  }
   }
-  public boolean eval(Adapter da, WDBObject wdbO) throws Exception
+  public boolean eval(ParserAdapter da, WDBObject wdbO) throws Exception
   {
   	if(this.quantifier.equals("="))
   	{
@@ -74,7 +74,7 @@ public class Cond extends SimpleNode {
   	throw new IllegalStateException("Symbol \"" + this.quantifier + "\" is not a vaid quantifier");
   }
   /*
-  public boolean eval(Adapter da, WDBObject wdbO) throws Exception
+  public boolean eval(ParserAdapter da, WDBObject wdbO) throws Exception
   {
 	WDBObject refWdbO;
 	Integer[] ref_all;

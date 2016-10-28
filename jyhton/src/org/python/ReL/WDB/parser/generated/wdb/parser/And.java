@@ -3,7 +3,7 @@
 
 package org.python.ReL.WDB.parser.generated.wdb.parser;
 
-import org.python.ReL.WDB.database.wdb.metadata.Adapter;
+import org.python.ReL.WDB.database.wdb.metadata.ParserAdapter;
 import org.python.ReL.WDB.database.wdb.metadata.IndexSelectResult;
 import org.python.ReL.WDB.database.wdb.metadata.WDBObject;
 
@@ -19,7 +19,7 @@ public class And extends SimpleNode {
     super(p, id);
   }
 
-  public IndexSelectResult filterObjectsWithIndexes(Adapter da, ArrayList indexes) throws Exception
+  public IndexSelectResult filterObjectsWithIndexes(ParserAdapter da, ArrayList indexes) throws Exception
   {
 	  SimpleNode n1 = (SimpleNode)children[0];
 	  SimpleNode n2 = (SimpleNode)children[1];
@@ -27,7 +27,7 @@ public class And extends SimpleNode {
 	  IndexSelectResult rightResult = n2.filterObjectsWithIndexes(da, indexes);
 	  return leftResult.and(leftResult);
   }
-  public boolean eval(Adapter da, WDBObject wdbO) throws Exception
+  public boolean eval(ParserAdapter da, WDBObject wdbO) throws Exception
   {
   	SimpleNode n1 = (SimpleNode)children[0];
   	SimpleNode n2 = (SimpleNode)children[1];

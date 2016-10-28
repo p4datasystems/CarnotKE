@@ -15,7 +15,7 @@ public class IndexSelectResult {
 	{
 		this.andDvaList = new Hashtable<String, Object>();
 	}
-	public WDBObject[] getFilteredResults(Adapter scda, ArrayList indexes) throws Exception
+	public WDBObject[] getFilteredResults(ParserAdapter scda, ArrayList indexes) throws Exception
 	{
 		this.doDelayedAnd(scda, indexes);
 		if(filteredList != null)
@@ -108,7 +108,7 @@ public class IndexSelectResult {
 
 		return this.filteredList;
 	}
-	public void doDelayedAnd(Adapter scda, ArrayList indexes) throws Exception
+	public void doDelayedAnd(ParserAdapter scda, ArrayList indexes) throws Exception
 	{
 		if(andDvaList.isEmpty())
 		{

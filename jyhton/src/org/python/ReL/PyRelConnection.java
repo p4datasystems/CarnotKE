@@ -80,7 +80,7 @@ public class PyRelConnection extends PyObject {
          */
 
         if (url.contains("jdbc:oracle")) {
-            database = new OracleDatabase(url, uname, pword, conn_type, debug);
+            database = new OracleDatabase(this, url, uname, pword, conn_type, debug);
             connection_DB = "Oracle";
 
             // make sure the quad store is setup. 
@@ -93,11 +93,11 @@ public class PyRelConnection extends PyObject {
         }
         else if (url.contains("OracleNoSQL")) {
             if (conn_type.equalsIgnoreCase("native_mode")) {
-                database = new OracleNoSQLDatabase(url, uname, pword, conn_type, debug);
+                database = new OracleNoSQLDatabase(this, url, uname, pword, conn_type, debug);
                 connection_DB = "Native_OracleNoSQL";
             }
             else {
-                database = new OracleRDFNoSQLDatabase(url, uname, pword, conn_type, debug);
+                database = new OracleRDFNoSQLDatabase(this, url, uname, pword, conn_type, debug);
                 connection_DB = "OracleNoSQL";
             }
 
@@ -108,7 +108,7 @@ public class PyRelConnection extends PyObject {
                 connection_DB = "Native_OracleNoSQL";
             }
             else {
-                database = new OracleRDFNoSQLDatabase(url, uname, pword, conn_type, debug);
+                database = new OracleRDFNoSQLDatabase(this, url, uname, pword, conn_type, debug);
                 connection_DB = "OracleNoSQL";
             }
         }
@@ -202,13 +202,7 @@ public class PyRelConnection extends PyObject {
         return database.executeQuery(query);
     }
 
-    // This will execute OracleNoSQLAddQuad. 
-    public void OracleNoSQLAddQuad(String graph, String subject, String predicate, String object, Boolean object_as_uri)
-    {
-        database.OracleNoSQLAddQuad(graph, subject, predicate, object, object_as_uri);
-    }
-
-    // The rest of this code is to provide access to our OORel session information. 
+    // The rest of this code is to provide access to our OORel session information.
     // We return the unique id this instace has in our connection. 
     // Each connection could have different instances in the sessions. 
     public int addToSession(PyObject obj)

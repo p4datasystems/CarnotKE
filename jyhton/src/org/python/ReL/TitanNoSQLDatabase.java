@@ -13,7 +13,6 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.*;
 import org.python.ReL.WDB.database.wdb.metadata.ClassDef;
-import org.python.ReL.WDB.database.wdb.metadata.IndexDef;
 import org.python.ReL.WDB.database.wdb.metadata.Query;
 import org.python.ReL.WDB.database.wdb.metadata.WDBObject;
 
@@ -22,10 +21,10 @@ import org.python.ReL.WDB.database.wdb.metadata.WDBObject;
  * @author Raymond Chee
  * @date 05/26/2016
  *
- * TitanDB Adapter for CarnotKE
+ * TitanDB ParserAdapter for CarnotKE
  */
 
-public class TitanNoSQLDatabase extends DatabaseInterface {
+public class TitanNoSQLDatabase extends DatabaseInterface implements ParserAdapter {
 
     private static TitanGraph graph = null;
     private static File INSTALLATION_ROOT;
@@ -64,7 +63,7 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
      * Default constructor to support TitanNoSQLAdapter.
      */
     public TitanNoSQLDatabase() {
-        this.adapter = new TitanNoSQLAdapter(this);
+        super(null);
         initTitanDB();
     }
 
@@ -185,92 +184,70 @@ public class TitanNoSQLDatabase extends DatabaseInterface {
         return null;
     }
 
-    private class TitanNoSQLAdapter implements Adapter {
+    /**
+     * Inserting a new ClassDef into the graph.
+     *
+     * @param query ClassDef that needs to be inserted
+     */
+    @Override
+    public void putClass(Query query) {
+        ClassDef cd = (ClassDef) query;
+        this.putClassDef(cd);
+    }
 
-        private TitanNoSQLDatabase db;
+    /**
+     * Searches for a ClassDef that matches the query in the graph.
+     *
+     * @param query Query that searches for the ClassDef
+     * @return ClassDef that the query searches for
+     * @throws ClassNotFoundException When the ClassDef does not exist in the graph
+     */
+    @Override
+    public ClassDef getClass(Query query) throws ClassNotFoundException {
+        return getClass(query.getQueryName());
+    }
 
-        /**
-         * Constructor of TitanNoSQLDatabase.
-         *
-         * @param db TitanNoSQLDatabase Object
-         */
-        private TitanNoSQLAdapter(TitanNoSQLDatabase db) {
-            this.db = db;
+    @Override
+    public ClassDef getClass(String className) throws ClassNotFoundException {
+        ClassDef classDef = this.getClassDef(className);
+        if (classDef == null) {
+            throw new ClassNotFoundException("Key is not present in table");
         }
+        return classDef;
+    }
 
-        /**
-         * Inserting a new ClassDef into the graph.
-         *
-         * @param cd ClassDef that needs to be inserted
-         */
-        @Override
-        public void putClass(ClassDef cd) {
-            db.putClassDef(cd);
-        }
+    /**
+     * Inserting the WDBObject into the graph
+     * @param wthisObject The WDBObject
+     */
+    @Override
+    public void putObject(WDBObject wthisObject) {
+        this.putWDBObject(wthisObject);
+    }
 
-        /**
-         * Searches for a ClassDef that matches the query in the graph.
-         *
-         * @param query Query that searches for the ClassDef
-         * @return ClassDef that the query searches for
-         * @throws ClassNotFoundException When the ClassDef does not exist in the graph
-         */
-        @Override
-        public ClassDef getClass(Query query) throws ClassNotFoundException {
-            return getClass(query.queryName);
-        }
+    /**
+     * Return the WDBObject from the graph with specific requirements
+     * @param className Name of the ClassDef
+     * @param Uid UID of the WDBObject
+     * @return WDBObject from the graph
+     */
+    @Override
+    public WDBObject getObject(String className, Integer Uid) {
+        return this.getWDBObject(className, Uid);
+    }
 
-        /**
-         * Searches for a ClassDef that matches to the string name in the graph.
-         *
-         * @param s Name of the ClassDef
-         * @return ClassDef with the name of s
-         * @throws ClassNotFoundException
-         */
-        @Override
-        public ClassDef getClass(String s) throws ClassNotFoundException {
-            ClassDef classDef = db.getClassDef(s);
-            if (classDef == null) {
-                throw new ClassNotFoundException("Key is not present in table");
-            }
-            return classDef;
-        }
+    @Override
+    public ArrayList<WDBObject> getObjects(Query indexDefQuery, String key) {
+        throw new UnsupportedOperationException();
+    }
 
-        /**
-         * Inserting the WDBObject into the graph
-         * @param wdbObject The WDBObject
-         */
-        @Override
-        public void putObject(WDBObject wdbObject) {
-            db.putWDBObject(wdbObject);
-        }
+    @Override
+    public void commit() {
+        graph.tx().commit();
+    }
 
-        /**
-         * Return the WDBObject from the graph with specific requirements
-         * @param className Name of the ClassDef
-         * @param Uid UID of the WDBObject
-         * @return WDBObject from the graph
-         */
-        @Override
-        public WDBObject getObject(String className, Integer Uid) {
-            return db.getWDBObject(className, Uid);
-        }
-
-        @Override
-        public ArrayList<WDBObject> getObjects(IndexDef indexDef, String s) {
-            throw new UnsupportedOperationException();
-        }
-
-
-        @Override
-        public void commit() {
-            graph.tx().commit();
-        }
-
-        @Override
-        public void abort() {
-
-        }
+    @Override
+    public void abort() {
 
     }
 }

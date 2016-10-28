@@ -10,6 +10,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.python.ReL.OracleRDFNoSQLDatabase;
 import org.python.ReL.ProcessLanguages;
 import org.python.ReL.ProcessOracleEESQL;
 import org.python.ReL.PyRelConnection;
@@ -142,7 +143,7 @@ public class PyTuple extends PySequenceList implements List {
     {
         super(subtype);
         PyRelConnection conn = (PyRelConnection) connection;
-        final boolean DBG = conn.getDebug().equalsIgnoreCase("debug");
+        final boolean DBG = false;
         ArrayList<PyObject> rows = new ArrayList<PyObject>();
 
         String[] strings = ReLstring.split(";");
@@ -154,7 +155,9 @@ public class PyTuple extends PySequenceList implements List {
         if (ReLmode == "RDF") {
             System.out.println("Saw an RDF: " + ReLstmt);
             String[] s = ReLstmt.split(" ");
-            conn.OracleNoSQLAddQuad(s[0], s[1], s[2], s[3], false);
+            // TODO(jhurt): Handle this more elegantly as the database may not always be OracleRDFNoSQL.
+            // DO NOT add a method to DatabaseInterface class. Do it better than that.
+            ((OracleRDFNoSQLDatabase)conn.getDatabase()).OracleNoSQLAddQuad(s[0], s[1], s[2], s[3], false);
         }
 
         if (ReLmode == "JAPI") {
@@ -232,7 +235,10 @@ public class PyTuple extends PySequenceList implements List {
         }
 
         if (ReLmode == "SPARQL") {
-            rows = conn.getDatabase().OracleNoSQLRunSPARQL(ReLstmt);
+            // TODO(jhurt): Handle this more elegantly. Perhaps create a SPARQL interface
+            // which contains the 'runSPARQL' method and have the database implementations implement that.
+            // Then you could cast the below call as '((SPARQL) conn.getDatabase()).runSPARQL(ReLstmt)'
+            rows = ((OracleRDFNoSQLDatabase) conn.getDatabase()).OracleNoSQLRunSPARQL(ReLstmt);
             PyObject[] results = rows.toArray(new PyObject[rows.size()]);
             //put results in array for this tuple object
             array = new PyObject[results.length];
@@ -280,65 +286,28 @@ public class PyTuple extends PySequenceList implements List {
                     System.arraycopy(results, 0, array, 0, results.length);
                 }
             }
-            else
+            else {
                 System.out.println("Connection type must be \"native_mode\", or \"rdf_mode\", not \"" + conn.getConnectionType() + "\"");
+            }
         }
-        else if (ReLmode == "SIM") {
+        else if (ReLmode.equals("SIM")) {
             debugMsg(DBG, "PyTuple sim is: " + ReLstmt);
             ProcessLanguages processLanguage;
-            if (conn.getConnectionType() == "native_mode") {
-                try {
-                    processLanguage = new ProcessLanguages(conn);
-                    ArrayList<PyObject> rowResults = processLanguage.processNativeSIM(ReLstmt);
-                    if (rowResults != null) {
-                        PyObject[] results = rowResults.toArray(new PyObject[rowResults.size()]);
-                        array = new PyObject[results.length];
-                        System.arraycopy(results, 0, array, 0, results.length);
-                    }
-
-                } catch (Exception e) {
-                    // Should shut down the connection
-                    System.out.println(e);
+            try {
+                processLanguage = new ProcessLanguages(conn, relQueryInstancesType, relQueryInstancesTypeNames);
+                ArrayList<PyObject> rowResults = processLanguage.processSIM(ReLstmt);
+                if (rowResults != null) {
+                    PyObject[] results = rowResults.toArray(new PyObject[rowResults.size()]);
+                    array = new PyObject[results.length];
+                    System.arraycopy(results, 0, array, 0, results.length);
                 }
+            } catch (Exception e) {
+                // Should shut down the connection
+                System.out.println(e);
             }
-            else {
-                String sparql = null;
-                processLanguage = new ProcessLanguages(conn);
-                try {
-                    sparql = processLanguage.processSIM(ReLstmt);
-                } catch (Exception e1) {
-                    System.out.println(e1.getMessage());
-                }
-                if (sparql != null) {
-                    String connection_DB = conn.getConnectionDB();
-                    // Is 'OracleNoSQLDatabase' connection
-                    if (connection_DB.equals("OracleNoSQL")) {
-                        rows = conn.getDatabase().OracleNoSQLRunSPARQL(sparql);
-                        // TODO: Figure out why this array needs to be populated.
-                        // This poses a huge problem to the design
-                        PyObject[] results = rows.toArray(new PyObject[rows.size()]);
-                        //put results in array for this tuple object
-                        array = new PyObject[results.length];
-                        System.arraycopy(results, 0, array, 0, results.length);
-                    }
-                    else {
-                        ProcessOracleEESQL processOracleEESQL = new ProcessOracleEESQL(conn, relQueryInstancesType, relQueryInstancesTypeNames);
-                        try {
-                            // TODO: Fix this. Looks like sparql is always null when this is called. Not good
-                            ArrayList<PyObject> rowResults = processOracleEESQL.processSQL(sparql);
-                            //a lot of conversion going on here. . .
-                            PyObject[] results = rows.toArray(new PyObject[rows.size()]);
-                            //put results in array for this tuple object
-                            array = new PyObject[results.length];
-                            System.arraycopy(results, 0, array, 0, results.length);
-                        } catch (Exception e) {
-                            System.out.println(e);
-                        }
-                    }
-                }}
         }
-        }
-    
+    }
+
 
     /* A helper for creating user object instances.
        This is useful for returning instance during joins. This guy expects the columns associated with

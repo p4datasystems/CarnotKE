@@ -6,7 +6,11 @@ import org.python.ReL.WDB.parser.generated.wdb.parser.SimpleNode;
 import java.util.ArrayList;
 
 
-public class UpdateQuery extends Query {
+public class UpdateQuery implements Query {
+	@Override
+	public String getQueryName() {
+		return this.className;
+	}
 	public String className;
 	public SimpleNode expression;
 	public ArrayList<Assignment> assignmentList;
@@ -64,4 +68,5 @@ public class UpdateQuery extends Query {
 	{
 		return (Assignment)assignmentList.get(index);
 	}
+
 }

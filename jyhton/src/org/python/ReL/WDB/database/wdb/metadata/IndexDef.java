@@ -14,7 +14,12 @@ import java.util.*;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class IndexDef extends Query implements Serializable {
+public class IndexDef implements Query, Serializable {
+
+	@Override
+	public String getQueryName() {
+		return this.className;
+	}
 	public String name;
 	public String className;
 	public String comment;

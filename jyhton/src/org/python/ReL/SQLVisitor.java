@@ -115,7 +115,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 			}
 
 			ProcessLanguages processLanguage = new ProcessLanguages(connection);
-			processLanguage.processSIM("INSERT " + stmt.getTable().toString() + " ( " + attvalPairs + ")");
+//			processLanguage.processSIM("INSERT " + stmt.getTable().toString() + " ( " + attvalPairs + ")");
 		}
 	}
 
@@ -1231,7 +1231,7 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 			String sparql = "SELECT ?s WHERE { GRAPH " + "c:" + graph + " { ?s " + predicate + " " + object + " } } ";
 			if (connection.getDebug() == "debug")
 				System.out.println("\ngetSujects, sparql is: \n" + sparql);
-			rows = connection.getDatabase().OracleNoSQLRunSPARQL(sparql);
+//			rows = connection.getDatabase().OracleNoSQLRunSPARQL(sparql);
 			for (int i = 1; i < rows.size(); i++) {
 				subjects.add(String.format("%s", rows.get(i))
 						.replaceAll("[()]", "")
@@ -1274,14 +1274,14 @@ public class SQLVisitor extends SelectDeParser implements SelectVisitor, FromIte
 		final String connection_DB = connection.getConnectionDB();
 		final String schemaString = connection.getSchemaString();
 		if (connection_DB.equals("OracleNoSQL")) {
-			connection.OracleNoSQLAddQuad(schemaString, graph, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://www.w3.org/2000/01/rdf-schema#Class", true);
+//			connection.OracleNoSQLAddQuad(schemaString, graph, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://www.w3.org/2000/01/rdf-schema#Class", true);
 			// Unimplemented as of now
 			// if(eva)
-			connection.OracleNoSQLAddQuad(graph + "_" + schemaString, predicate, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://www.w3.org/2002/07/owl#DatatypeProperty", true);
-			connection.OracleNoSQLAddQuad(graph + "_" + schemaString, predicate, "http://www.w3.org/2000/01/rdf-schema#domain", graph, true);
-			connection.OracleNoSQLAddQuad(graph + "_" + schemaString, predicate, "http://www.w3.org/2000/01/rdf-schema#range", "http://www.w3.org/2001/XMLSchema#string", true);
-			connection.OracleNoSQLAddQuad(graph + "_" + schemaString, subject, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", graph, true);
-			connection.OracleNoSQLAddQuad(graph, subject, predicate, object, false);
+//			connection.OracleNoSQLAddQuad(graph + "_" + schemaString, predicate, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://www.w3.org/2002/07/owl#DatatypeProperty", true);
+//			connection.OracleNoSQLAddQuad(graph + "_" + schemaString, predicate, "http://www.w3.org/2000/01/rdf-schema#domain", graph, true);
+//			connection.OracleNoSQLAddQuad(graph + "_" + schemaString, predicate, "http://www.w3.org/2000/01/rdf-schema#range", "http://www.w3.org/2001/XMLSchema#string", true);
+//			connection.OracleNoSQLAddQuad(graph + "_" + schemaString, subject, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", graph, true);
+//			connection.OracleNoSQLAddQuad(graph, subject, predicate, object, true);
 		}
 		else if (connection_DB.equals("Oracle")) {
 			String graphName = connection.getModel() + ":<" + graph + ">";

@@ -14,7 +14,7 @@ import java.util.*;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class SourceQuery extends Query implements Serializable {
+public class SourceQuery implements Query, Serializable {
 	public String filename;
 	
 	public SourceQuery()
@@ -33,5 +33,10 @@ public class SourceQuery extends Query implements Serializable {
 	 */
 	public void setFilename(String filename) {
 		this.filename = filename;
+	}
+
+	@Override
+	public String getQueryName() {
+		return null;
 	}
 }
