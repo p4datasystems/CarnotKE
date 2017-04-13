@@ -3,6 +3,8 @@ package org.python.ReL;
 import java.util.*;
 import java.io.*;
 
+import com.thinkaurelius.titan.core.schema.TitanGraphIndex;
+import com.thinkaurelius.titan.core.schema.TitanManagement;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
@@ -36,11 +38,29 @@ public class TitanNoSQLDatabase extends DatabaseInterface implements ParserAdapt
     private void initTitanDB() {
         validateInstallationRoot();
         graph = TitanFactory.open(PROPERTIES_PATH);
-        graph.tx().commit();
         List<Logger> loggers = Collections.<Logger>list(LogManager.getCurrentLoggers());
         loggers.add(LogManager.getRootLogger());
         for (Logger logger : loggers) {
             logger.setLevel(Level.OFF);
+        }
+        
+        TitanManagement mgmt = graph.openManagement();
+        boolean initGraph = mgmt.containsPropertyKey("classDefName");
+
+        if(!initGraph) {
+            initGraph = true;
+            PropertyKey classDefName = mgmt.makePropertyKey("classDefName").dataType(String.class).make();
+            VertexLabel classDefLabel = mgmt.makeVertexLabel("classDef").make();
+            TitanGraphIndex classDefIndex = mgmt.buildIndex("byClassDefName", Vertex.class).addKey(classDefName).
+                    indexOnly(classDefLabel).buildCompositeIndex();
+            mgmt.commit();
+
+            mgmt = graph.openManagement();
+            PropertyKey WDBObjectName = mgmt.makePropertyKey("WDBObjectName").dataType(String.class).make();
+            VertexLabel WDBObjectLabel = mgmt.makeVertexLabel("WDBObject").make();
+            TitanGraphIndex WDBObjectIndex = mgmt.buildIndex("byWDBObjectName", Vertex.class).addKey(WDBObjectName).
+                    indexOnly(WDBObjectLabel).buildCompositeIndex();
+            mgmt.commit();
         }
     }
 
@@ -76,12 +96,12 @@ public class TitanNoSQLDatabase extends DatabaseInterface implements ParserAdapt
      */
     private Vertex getClassDefVertex(String classDefName) {
         GraphTraversalSource g = graph.traversal();
-        GraphTraversal<Vertex, Vertex> graphTraversal = g.V();
+        GraphTraversal<Vertex, Vertex> graphTraversal = g.V().has("classDefName", classDefName);
 
         while (graphTraversal.hasNext()) {
             Vertex currentVertex = graphTraversal.next();
-            if(currentVertex.property("name").isPresent()) {
-                if (currentVertex.property("name").value().equals(classDefName)) {
+            if(currentVertex.property("classDefName").isPresent()) {
+                if (currentVertex.property("classDefName").value().equals(classDefName)) {
                     return currentVertex;
                 }
             }
@@ -94,17 +114,14 @@ public class TitanNoSQLDatabase extends DatabaseInterface implements ParserAdapt
      * @param classDef ClassDef object
      */
     private void putClassDef(ClassDef classDef) {
-
         Vertex classDefVertex = getClassDefVertex(classDef.name);
         if(classDefVertex == null) {
-            classDefVertex = graph.addVertex(T.label, "classDef", "name", classDef.name);
-        } else {
-            System.out.println("Found vertex " + classDefVertex.id().toString());
+            classDefVertex = graph.addVertex(T.label, "classDef", "classDefName", classDef.name);
         }
         final byte[] data = SerializationUtils.serialize(classDef);
-        classDefVertex.property("valueData", data);
+        classDefVertex.property("classDefData", data);
         graph.tx().commit();
-        System.out.println("Inserting class " + classDef.name + " complete");
+        System.out.println("Inserting classDef " + classDef.name + " complete");
     }
 
     /**
@@ -114,13 +131,13 @@ public class TitanNoSQLDatabase extends DatabaseInterface implements ParserAdapt
      */
     private ClassDef getClassDef(String classDefName) {
         GraphTraversalSource g = graph.traversal();
-        GraphTraversal<Vertex, Vertex> graphTraversal = g.V();
+        GraphTraversal<Vertex, Vertex> graphTraversal = g.V().has("classDefName", classDefName);
 
         while (graphTraversal.hasNext()) {
             Vertex currentVertex = graphTraversal.next();
-            if(currentVertex.property("name").isPresent()) {
-                if (currentVertex.property("name").value().equals(classDefName)) {
-                    return (ClassDef) SerializationUtils.deserialize((byte[]) currentVertex.property("valueData").value());
+            if(currentVertex.property("classDefName").isPresent()) {
+                if (currentVertex.property("classDefName").value().equals(classDefName)) {
+                    return (ClassDef) SerializationUtils.deserialize((byte[]) currentVertex.property("classDefData").value());
                 }
             }
         }
@@ -134,11 +151,11 @@ public class TitanNoSQLDatabase extends DatabaseInterface implements ParserAdapt
      */
     private Vertex getWDBObjectVertex(Integer Uid) {
         GraphTraversalSource g = graph.traversal();
-        GraphTraversal<Vertex, Vertex> graphTraversal = g.V();
+        GraphTraversal<Vertex, Vertex> graphTraversal = g.V().has("WDBObjectName", "" + Uid);
         while (graphTraversal.hasNext()) {
             Vertex currentVertex = graphTraversal.next();
-            if(currentVertex.property("name").isPresent()) {
-                if (currentVertex.property("name").value().equals("" + Uid)) {
+            if(currentVertex.property("WDBObjectName").isPresent()) {
+                if (currentVertex.property("WDBObjectName").value().equals("" + Uid)) {
                     return currentVertex;
                 }
             }
@@ -154,14 +171,30 @@ public class TitanNoSQLDatabase extends DatabaseInterface implements ParserAdapt
 
         Vertex WDBObjectVertex = getWDBObjectVertex(wdbObject.getUid());
         if(WDBObjectVertex == null) {
-            WDBObjectVertex = graph.addVertex(T.label, "WDBObject", "name", "" + wdbObject.getUid());
-        } else {
-            System.out.println("Found vertex " + WDBObjectVertex.id().toString());
+            WDBObjectVertex = graph.addVertex(T.label, "WDBObject", "WDBObjectName", "" + wdbObject.getUid());
         }
         final byte[] data = SerializationUtils.serialize(wdbObject);
-        WDBObjectVertex.property("valueData", data);
+        WDBObjectVertex.property("WDBObjectData", data);
+
+        ArrayList<String> dvaNameList = wdbObject.getDvaNames();
+        ArrayList<String> dvaValueList = wdbObject.getDvaValues();
+        for (int i = 0; i < dvaNameList.size(); i++) {
+            if (!WDBObjectVertex.property(dvaNameList.get(i)).isPresent()) {
+                WDBObjectVertex.property(dvaNameList.get(i), dvaValueList.get(i));
+            }
+            TitanManagement mgmt = graph.openManagement();
+            String currentPropertyKeyName = wdbObject.getClassName() + dvaNameList.get(i);
+            if(!mgmt.containsPropertyKey(currentPropertyKeyName)) {
+                PropertyKey currentPropertyKey = mgmt.makePropertyKey(currentPropertyKeyName).dataType(String.class).make();
+                VertexLabel WDBObjectLabel = mgmt.getVertexLabel("WDBObject");
+                TitanGraphIndex WDBObjectIndex = mgmt.buildIndex("by" + currentPropertyKeyName, Vertex.class)
+                        .addKey(currentPropertyKey).indexOnly(WDBObjectLabel).buildCompositeIndex();
+                mgmt.commit();
+            }
+        }
         graph.tx().commit();
-        System.out.println("Inserting object " + wdbObject.getUid() + " complete");
+
+        System.out.println("Inserting WDBObject " + wdbObject.getUid() + " complete");
     }
 
     /**
@@ -172,12 +205,12 @@ public class TitanNoSQLDatabase extends DatabaseInterface implements ParserAdapt
      */
     private WDBObject getWDBObject(String className, Integer Uid) {
         GraphTraversalSource g = graph.traversal();
-        GraphTraversal<Vertex, Vertex> graphTraversal = g.V();
+        GraphTraversal<Vertex, Vertex> graphTraversal = g.V().has("WDBObjectName", "" + Uid);
         while (graphTraversal.hasNext()) {
             Vertex currentVertex = graphTraversal.next();
-            if(currentVertex.property("name").isPresent()) {
-                if (currentVertex.property("name").value().equals("" + Uid)) {
-                    return (WDBObject) SerializationUtils.deserialize((byte[]) currentVertex.property("valueData").value());
+            if(currentVertex.property("WDBObjectName").isPresent()) {
+                if (currentVertex.property("WDBObjectName").value().equals("" + Uid)) {
+                    return (WDBObject) SerializationUtils.deserialize((byte[]) currentVertex.property("WDBObjectData").value());
                 }
             }
         }
